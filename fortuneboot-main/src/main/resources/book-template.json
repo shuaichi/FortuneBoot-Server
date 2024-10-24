@@ -1,0 +1,1526 @@
+[
+  {
+    "bookTemplateId": 1,
+    "bookTemplateName": "生活账本1",
+    "remark": "用于个人生活记账。将支出分为维持类，消费类，提升类，社交类4个大类，收入分为主动收入，被动收入，社交收入3个大类。",
+    "previewUrl": "http://tpl.moneywhere.com/生活账本1.png",
+    "tagList": [
+      {
+        "tagId": 1,
+        "tagName": "饮食",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "tagId": 2,
+        "tagName": "居住",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "tagId": 3,
+        "tagName": "衣着",
+        "remark": "维护个人形象方面的支出，比如美容，美甲，衣服，首饰等。",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 300
+      },
+      {
+        "tagId": 4,
+        "tagName": "出行",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 400
+      },
+      {
+        "tagId": 5,
+        "tagName": "数码",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 500
+      },
+      {
+        "tagId": 6,
+        "tagName": "养车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 600
+      },
+      {
+        "tagId": 7,
+        "tagName": "医疗",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 700
+      },
+      {
+        "tagId": 8,
+        "tagName": "教育",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 800
+      },
+      {
+        "tagId": 9,
+        "tagName": "娱乐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 900
+      },
+      {
+        "tagId": 10,
+        "tagName": "日用",
+        "remark": "日用消耗品。",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "parentId": "",
+        "sequence": 1000
+      },
+      {
+        "tagId": 11,
+        "tagName": "早餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 1
+      },
+      {
+        "tagId": 12,
+        "tagName": "午餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 1
+      },
+      {
+        "tagId": 13,
+        "tagName": "晚餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 1
+      },
+      {
+        "tagId": 14,
+        "tagName": "零食",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 1
+      },
+      {
+        "tagId": 15,
+        "tagName": "买菜",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 500,
+        "parentId": 1
+      },
+      {
+        "tagId": 16,
+        "tagName": "水果",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 600,
+        "parentId": 1
+      },
+      {
+        "tagId": 18,
+        "tagName": "房租",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 2
+      },
+      {
+        "tagId": 19,
+        "tagName": "水费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 2
+      },
+      {
+        "tagId": 20,
+        "tagName": "电费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 2
+      },
+      {
+        "tagId": 21,
+        "tagName": "天然气",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 2
+      },
+      {
+        "tagId": 22,
+        "tagName": "物业费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 500,
+        "parentId": 2
+      },
+      {
+        "tagId": 23,
+        "tagName": "话费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 600,
+        "parentId": 2
+      },
+      {
+        "tagId": 24,
+        "tagName": "房贷",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 700,
+        "parentId": 2
+      },
+      {
+        "tagId": 25,
+        "tagName": "衣服",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 3
+      },
+      {
+        "tagId": 26,
+        "tagName": "理发",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 3
+      },
+      {
+        "tagId": 27,
+        "tagName": "地铁",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 4
+      },
+      {
+        "tagId": 28,
+        "tagName": "公交",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 4
+      },
+      {
+        "tagId": 29,
+        "tagName": "打车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 4
+      },
+      {
+        "tagId": 30,
+        "tagName": "顺风车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 4
+      },
+      {
+        "tagId": 31,
+        "tagName": "高铁",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 500,
+        "parentId": 4
+      },
+      {
+        "tagId": 32,
+        "tagName": "手机",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 5
+      },
+      {
+        "tagId": 33,
+        "tagName": "电脑",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 5
+      },
+      {
+        "tagId": 34,
+        "tagName": "软件",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 5
+      },
+      {
+        "tagId": 35,
+        "tagName": "配件",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 5
+      },
+      {
+        "tagId": 36,
+        "tagName": "加油",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 6
+      },
+      {
+        "tagId": 37,
+        "tagName": "停车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 6
+      },
+      {
+        "tagId": 38,
+        "tagName": "维修",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 6
+      },
+      {
+        "tagId": 39,
+        "tagName": "洗车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 6
+      },
+      {
+        "tagId": 40,
+        "tagName": "过路费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 500,
+        "parentId": 6
+      },
+      {
+        "tagId": 41,
+        "tagName": "违章罚款",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 600,
+        "parentId": 6
+      },
+      {
+        "tagId": 42,
+        "tagName": "车险",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 700,
+        "parentId": 6
+      },
+      {
+        "tagId": 43,
+        "tagName": "配饰",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 800,
+        "parentId": 6
+      },
+      {
+        "tagId": 44,
+        "tagName": "年检",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 900,
+        "parentId": 6
+      },
+      {
+        "tagId": 45,
+        "tagName": "烟",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 700,
+        "parentId": 1
+      },
+      {
+        "tagId": 46,
+        "tagName": "酒",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 800,
+        "parentId": 1
+      },
+      {
+        "tagId": 47,
+        "tagName": "饮用水",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 900,
+        "parentId": 1
+      },
+      {
+        "tagId": 49,
+        "tagName": "牛奶",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 1000,
+        "parentId": 1
+      },
+      {
+        "tagId": 50,
+        "tagName": "飞机",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 600,
+        "parentId": 4
+      },
+      {
+        "tagId": 51,
+        "tagName": "体检",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 7
+      },
+      {
+        "tagId": 52,
+        "tagName": "保险",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 7
+      },
+      {
+        "tagId": 53,
+        "tagName": "保健品",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 7
+      },
+      {
+        "tagId": 54,
+        "tagName": "牙科",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 400,
+        "parentId": 7
+      },
+      {
+        "tagId": 55,
+        "tagName": "买书",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 8
+      },
+      {
+        "tagId": 56,
+        "tagName": "培训",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 8
+      },
+      {
+        "tagId": 57,
+        "tagName": "游戏",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 100,
+        "parentId": 9
+      },
+      {
+        "tagId": 58,
+        "tagName": "电影",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 200,
+        "parentId": 9
+      },
+      {
+        "tagId": 59,
+        "tagName": "健身",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sequence": 300,
+        "parentId": 9
+      }
+    ],
+    "categoryList": [
+      {
+        "categoryId": 1,
+        "categoryName": "维持类",
+        "type": 100,
+        "remark": "维持生活的必须开支，是无法节省的开支。",
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 2,
+        "categoryName": "消费类",
+        "type": 100,
+        "remark": "可以节省的开支，比如娱乐，旅游等。",
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 3,
+        "categoryName": "提升类",
+        "type": 100,
+        "remark": "提升自己的生存能力，比如买书，保险等消费。",
+        "parentId": "",
+        "sequence": 300
+      },
+      {
+        "categoryId": 4,
+        "categoryName": "社交类",
+        "type": 100,
+        "remark": "社交类型的支出，比如请朋友吃饭，送礼等。",
+        "parentId": "",
+        "sequence": 400
+      },
+      {
+        "categoryId": 5,
+        "categoryName": "主动收入",
+        "type": 200,
+        "remark": "即劳动收入，指用时间来换取金钱，它最大的特点就是必须花费时间和精力去获得。",
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 6,
+        "categoryName": "工资",
+        "type": 200,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 5
+      },
+      {
+        "categoryId": 7,
+        "categoryName": "兼职",
+        "type": 200,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 5
+      },
+      {
+        "categoryId": 8,
+        "categoryName": "薅羊毛",
+        "type": 200,
+        "remark": "利用各种网络金融产品或红包活动推广下线抽成赚钱，比如外卖优惠券、减免优惠、送话费等。",
+        "sequence": 300,
+        "parentId": 5
+      },
+      {
+        "categoryId": 9,
+        "categoryName": "被动收入",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 10,
+        "categoryName": "理财",
+        "type": 200,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 9
+      },
+      {
+        "categoryId": 11,
+        "categoryName": "租金",
+        "type": 200,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 9
+      },
+      {
+        "categoryId": 12,
+        "categoryName": "社交收入",
+        "type": 200,
+        "remark": "比如收到的红包。",
+        "parentId": "",
+        "sequence": 300
+      }
+    ],
+    "payeeList": [
+      {
+        "payeeId": 1,
+        "payeeName": "美团外卖",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 200
+      },
+      {
+        "payeeId": 2,
+        "payeeName": "京东商城",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 100
+      },
+      {
+        "payeeId": 3,
+        "payeeName": "淘宝商城",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 400
+      },
+      {
+        "payeeId": 4,
+        "payeeName": "拼多多",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 300
+      }
+    ]
+  },
+  {
+    "bookTemplateId": 2,
+    "bookTemplateName": "餐饮店账本",
+    "remark": "用于开餐饮店记录收支情况。",
+    "previewUrl": "http://tpl.moneywhere.com/餐饮店账本1.png",
+    "tagList": [],
+    "categoryList": [
+      {
+        "categoryId": 13,
+        "categoryName": "员工",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 300
+      },
+      {
+        "categoryId": 14,
+        "categoryName": "原材料",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 15,
+        "categoryName": "设备",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 400
+      },
+      {
+        "categoryId": 16,
+        "categoryName": "门店",
+        "type": 100,
+        "remark": "门店租金，水电费。",
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 17,
+        "categoryName": "营销",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 500
+      },
+      {
+        "categoryId": 18,
+        "categoryName": "住宿",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 13
+      },
+      {
+        "categoryId": 19,
+        "categoryName": "工资",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 13
+      },
+      {
+        "categoryId": 20,
+        "categoryName": "福利",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 13
+      },
+      {
+        "categoryId": 21,
+        "categoryName": "招聘",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 13
+      },
+      {
+        "categoryId": 22,
+        "categoryName": "水费",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 18
+      },
+      {
+        "categoryId": 23,
+        "categoryName": "电费",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 18
+      },
+      {
+        "categoryId": 24,
+        "categoryName": "天然气",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 18
+      },
+      {
+        "categoryId": 25,
+        "categoryName": "蔬菜",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 14
+      },
+      {
+        "categoryId": 26,
+        "categoryName": "调料",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 14
+      },
+      {
+        "categoryId": 27,
+        "categoryName": "干货",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 14
+      },
+      {
+        "categoryId": 28,
+        "categoryName": "肉类",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 14
+      },
+      {
+        "categoryId": 29,
+        "categoryName": "租金",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 16
+      },
+      {
+        "categoryId": 30,
+        "categoryName": "水费",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 16
+      },
+      {
+        "categoryId": 31,
+        "categoryName": "电费",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 16
+      },
+      {
+        "categoryId": 32,
+        "categoryName": "燃料",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 16
+      },
+      {
+        "categoryId": 33,
+        "categoryName": "物业费",
+        "type": 100,
+        "remark": null,
+        "sequence": 500,
+        "parentId": 16
+      },
+      {
+        "categoryId": 34,
+        "categoryName": "堂食",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 35,
+        "categoryName": "外卖",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 36,
+        "categoryName": "美团",
+        "type": 200,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 35
+      },
+      {
+        "categoryId": 37,
+        "categoryName": "饿了么",
+        "type": 200,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 35
+      },
+      {
+        "categoryId": 38,
+        "categoryName": "租金",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 18
+      }
+    ],
+    "payeeList": [
+      {
+        "payeeId": 5,
+        "payeeName": "门店房东",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 100
+      },
+      {
+        "payeeId": 6,
+        "payeeName": "美团买菜",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 200
+      },
+      {
+        "payeeId": 7,
+        "payeeName": "京东商城",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 300
+      },
+      {
+        "payeeId": 8,
+        "payeeName": "拼多多",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 400
+      },
+      {
+        "payeeId": 9,
+        "payeeName": "美团",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 500
+      },
+      {
+        "payeeId": 10,
+        "payeeName": "饿了么",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 600
+      }
+    ]
+  },
+  {
+    "bookTemplateId": 3,
+    "bookTemplateName": "生活账本2",
+    "remark": "参考随手记",
+    "previewUrl": "http://tpl.moneywhere.com/生活账本2.png",
+    "tagList": [],
+    "categoryList": [
+      {
+        "categoryId": 39,
+        "categoryName": "食品酒水",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 40,
+        "categoryName": "居家物业",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 41,
+        "categoryName": "衣服饰品",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 300
+      },
+      {
+        "categoryId": 42,
+        "categoryName": "行车交通",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 400
+      },
+      {
+        "categoryId": 43,
+        "categoryName": "交流通讯",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 500
+      },
+      {
+        "categoryId": 44,
+        "categoryName": "休闲娱乐",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 600
+      },
+      {
+        "categoryId": 45,
+        "categoryName": "学习进修",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 700
+      },
+      {
+        "categoryId": 46,
+        "categoryName": "人情往来",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 800
+      },
+      {
+        "categoryId": 47,
+        "categoryName": "医疗保健",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 900
+      },
+      {
+        "categoryId": 48,
+        "categoryName": "金融保险",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 1000
+      },
+      {
+        "categoryId": 49,
+        "categoryName": "其他杂项",
+        "type": 100,
+        "remark": null,
+        "parentId": "",
+        "sequence": 1100
+      },
+      {
+        "categoryId": 50,
+        "categoryName": "早午晚餐",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 39
+      },
+      {
+        "categoryId": 51,
+        "categoryName": "烟酒茶",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 39
+      },
+      {
+        "categoryId": 52,
+        "categoryName": "水果零食",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 39
+      },
+      {
+        "categoryId": 53,
+        "categoryName": "日常用品",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 40
+      },
+      {
+        "categoryId": 54,
+        "categoryName": "水电煤气",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 40
+      },
+      {
+        "categoryId": 55,
+        "categoryName": "房租",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 40
+      },
+      {
+        "categoryId": 56,
+        "categoryName": "物业管理",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 40
+      },
+      {
+        "categoryId": 57,
+        "categoryName": "维修保养",
+        "type": 100,
+        "remark": null,
+        "sequence": 500,
+        "parentId": 40
+      },
+      {
+        "categoryId": 58,
+        "categoryName": "衣服裤子",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 41
+      },
+      {
+        "categoryId": 59,
+        "categoryName": "鞋帽包包",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 41
+      },
+      {
+        "categoryId": 60,
+        "categoryName": "化妆饰品",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 41
+      },
+      {
+        "categoryId": 61,
+        "categoryName": "公共交通",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 42
+      },
+      {
+        "categoryId": 62,
+        "categoryName": "打车租车",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 42
+      },
+      {
+        "categoryId": 63,
+        "categoryName": "私家车费用",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 42
+      },
+      {
+        "categoryId": 64,
+        "categoryName": "座机费",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 43
+      },
+      {
+        "categoryId": 65,
+        "categoryName": "手机费",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 43
+      },
+      {
+        "categoryId": 66,
+        "categoryName": "上网费",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 43
+      },
+      {
+        "categoryId": 67,
+        "categoryName": "邮寄费",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 43
+      },
+      {
+        "categoryId": 68,
+        "categoryName": "运动健身",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 44
+      },
+      {
+        "categoryId": 69,
+        "categoryName": "腐败聚会",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 44
+      },
+      {
+        "categoryId": 70,
+        "categoryName": "休闲玩乐",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 44
+      },
+      {
+        "categoryId": 71,
+        "categoryName": "宠物宝贝",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 44
+      },
+      {
+        "categoryId": 72,
+        "categoryName": "旅游度假",
+        "type": 100,
+        "remark": null,
+        "sequence": 500,
+        "parentId": 44
+      },
+      {
+        "categoryId": 73,
+        "categoryName": "数码装备",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 45
+      },
+      {
+        "categoryId": 74,
+        "categoryName": "书报杂志",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 45
+      },
+      {
+        "categoryId": 75,
+        "categoryName": "培训进修",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 45
+      },
+      {
+        "categoryId": 76,
+        "categoryName": "送礼请客",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 46
+      },
+      {
+        "categoryId": 77,
+        "categoryName": "孝敬家长",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 46
+      },
+      {
+        "categoryId": 78,
+        "categoryName": "还人钱物",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 46
+      },
+      {
+        "categoryId": 79,
+        "categoryName": "慈善捐助",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 46
+      },
+      {
+        "categoryId": 80,
+        "categoryName": "药品费",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 47
+      },
+      {
+        "categoryId": 81,
+        "categoryName": "保健费",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 47
+      },
+      {
+        "categoryId": 82,
+        "categoryName": "美容费",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 47
+      },
+      {
+        "categoryId": 83,
+        "categoryName": "治疗费",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 47
+      },
+      {
+        "categoryId": 84,
+        "categoryName": "银行手续",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 48
+      },
+      {
+        "categoryId": 85,
+        "categoryName": "投资亏损",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 48
+      },
+      {
+        "categoryId": 86,
+        "categoryName": "按揭还款",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 48
+      },
+      {
+        "categoryId": 87,
+        "categoryName": "消费税收",
+        "type": 100,
+        "remark": null,
+        "sequence": 400,
+        "parentId": 48
+      },
+      {
+        "categoryId": 88,
+        "categoryName": "利息支出",
+        "type": 100,
+        "remark": null,
+        "sequence": 500,
+        "parentId": 48
+      },
+      {
+        "categoryId": 89,
+        "categoryName": "赔偿罚款",
+        "type": 100,
+        "remark": null,
+        "sequence": 600,
+        "parentId": 48
+      },
+      {
+        "categoryId": 90,
+        "categoryName": "其他支出",
+        "type": 100,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 49
+      },
+      {
+        "categoryId": 91,
+        "categoryName": "意外丢失",
+        "type": 100,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 49
+      },
+      {
+        "categoryId": 92,
+        "categoryName": "烂账损失",
+        "type": 100,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 49
+      },
+      {
+        "categoryId": 93,
+        "categoryName": "主动收入",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 100
+      },
+      {
+        "categoryId": 94,
+        "categoryName": "被动收入",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 200
+      },
+      {
+        "categoryId": 95,
+        "categoryName": "社交收入",
+        "type": 200,
+        "remark": null,
+        "parentId": "",
+        "sequence": 300
+      },
+      {
+        "categoryId": 96,
+        "categoryName": "工资",
+        "type": 200,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 93
+      },
+      {
+        "categoryId": 97,
+        "categoryName": "兼职",
+        "type": 200,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 93
+      },
+      {
+        "categoryId": 99,
+        "categoryName": "羊毛",
+        "type": 200,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 93
+      },
+      {
+        "categoryId": 100,
+        "categoryName": "租金",
+        "type": 200,
+        "remark": null,
+        "sequence": 100,
+        "parentId": 94
+      },
+      {
+        "categoryId": 101,
+        "categoryName": "利息",
+        "type": 200,
+        "remark": null,
+        "sequence": 200,
+        "parentId": 94
+      },
+      {
+        "categoryId": 102,
+        "categoryName": "理财",
+        "type": 200,
+        "remark": null,
+        "sequence": 300,
+        "parentId": 94
+      }
+    ],
+    "payeeList": [
+      {
+        "payeeId": 11,
+        "payeeName": "美团优选",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 100
+      },
+      {
+        "payeeId": 12,
+        "payeeName": "京东",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 200
+      },
+      {
+        "payeeId": 13,
+        "payeeName": "抖音",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 300
+      },
+      {
+        "payeeId": 14,
+        "payeeName": "拼多多",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "sequence": 400
+      }
+    ]
+  }
+]
