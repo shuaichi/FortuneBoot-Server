@@ -36,9 +36,6 @@ public class AddUserCommand {
     @ExcelColumn(name = "角色ID")
     private Long roleId;
 
-    @ExcelColumn(name = "职位ID")
-    private Long postId;
-
     @ExcelColumn(name = "备注")
     private String remark;
 }
