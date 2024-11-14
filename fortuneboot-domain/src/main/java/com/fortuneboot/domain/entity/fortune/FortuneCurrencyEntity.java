@@ -3,6 +3,7 @@ package com.fortuneboot.domain.entity.fortune;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fortuneboot.common.core.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
  * @Date 2024/6/5 22:15
  **/
 @Data
+@TableName("fortune_currency")
 @EqualsAndHashCode(callSuper = true)
 public class FortuneCurrencyEntity extends BaseEntity<FortuneCurrencyEntity> {
 

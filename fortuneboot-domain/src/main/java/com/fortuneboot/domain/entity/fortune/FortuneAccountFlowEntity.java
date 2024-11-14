@@ -3,6 +3,7 @@ package com.fortuneboot.domain.entity.fortune;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fortuneboot.common.core.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -12,12 +13,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 账单流水实体类
+ * 账单流水表
  *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/3 23:08
  **/
 @Data
+@TableName("fortune_account_flow")
 @EqualsAndHashCode(callSuper = true)
 public class FortuneAccountFlowEntity extends BaseEntity<FortuneAccountFlowEntity> {
 
