@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 账本
+ * 账本表
  *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/4 22:52

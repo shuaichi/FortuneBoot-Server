@@ -3,18 +3,20 @@ package com.fortuneboot.domain.entity.fortune;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fortuneboot.common.core.base.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 分类
+ * 分类表
  *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/4 23:15
  **/
 @Data
+@TableName("fortune_category")
 @EqualsAndHashCode(callSuper = true)
 public class FortuneCategoryEntity extends BaseEntity<FortuneCategoryEntity> {
 
