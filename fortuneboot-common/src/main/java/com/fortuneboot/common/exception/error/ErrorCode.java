@@ -118,28 +118,6 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         CONFIG_VALUE_IS_NOT_IN_OPTIONS(10602, "参数键值不存在列表中", "Business.CONFIG_VALUE_IS_NOT_IN_OPTIONS"),
 
-        // ------------------------------- POST --------------------------------------------
-
-        POST_NAME_IS_NOT_UNIQUE(10701, "岗位名称:{}, 已存在", "Business.POST_NAME_IS_NOT_UNIQUE"),
-
-        POST_CODE_IS_NOT_UNIQUE(10702, "岗位编号:{}, 已存在", "Business.POST_CODE_IS_NOT_UNIQUE"),
-
-        POST_ALREADY_ASSIGNED_TO_USER_CAN_NOT_BE_DELETED(10703, "职位已分配给用户，请先取消分配再删除", "Business.POST_ALREADY_ASSIGNED_TO_USER_CAN_NOT_BE_DELETED"),
-
-        // ------------------------------- DEPT ---------------------------------------------
-
-        DEPT_NAME_IS_NOT_UNIQUE(10801, "部门名称:{}, 已存在", "Business.DEPT_NAME_IS_NOT_UNIQUE"),
-
-        DEPT_PARENT_ID_IS_NOT_ALLOWED_SELF(10802, "父级部门不能选择自己", "Business.DEPT_PARENT_ID_IS_NOT_ALLOWED_SELF"),
-
-        DEPT_STATUS_ID_IS_NOT_ALLOWED_CHANGE(10803, "子部门还有正在启用的部门，暂时不能停用该部门", "Business.DEPT_STATUS_ID_IS_NOT_ALLOWED_CHANGE"),
-
-        DEPT_EXIST_CHILD_DEPT_NOT_ALLOW_DELETE(10804, "该部门存在下级部门不允许删除", "Business.DEPT_EXIST_CHILD_DEPT_NOT_ALLOW_DELETE"),
-
-        DEPT_EXIST_LINK_USER_NOT_ALLOW_DELETE(10805, "该部门存在关联的用户不允许删除", "Business.DEPT_EXIST_LINK_USER_NOT_ALLOW_DELETE"),
-
-        DEPT_PARENT_DEPT_NO_EXIST_OR_DISABLED(10806, "该父级部门不存在或已停用", "Business.DEPT_PARENT_DEPT_NO_EXIST_OR_DISABLED"),
-
         // -------------------------------  MENU -------------------------------------------------
 
         MENU_NAME_IS_NOT_UNIQUE(10901, "新增菜单:{} 失败，菜单名称已存在", "Business.MENU_NAME_IS_NOT_UNIQUE"),
@@ -164,8 +142,6 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ROLE_KEY_IS_NOT_UNIQUE(11002, "角色标识：{}, 已存在", "Business.ROLE_KEY_IS_NOT_UNIQUE"),
 
-        ROLE_DATA_SCOPE_DUPLICATED_DEPT(11003, "重复的部门id", "Business.ROLE_DATA_SCOPE_DUPLICATED_DEPT"),
-
         ROLE_ALREADY_ASSIGN_TO_USER(11004, "角色已分配给用户，请先取消分配，再删除角色", "Business.ROLE_ALREADY_ASSIGN_TO_USER"),
 
         ROLE_IS_NOT_AVAILABLE(11005, "角色：{} 已禁用，无法分配给用户", "Business.ROLE_IS_NOT_AVAILABLE"),
@@ -179,8 +155,6 @@ public enum ErrorCode implements ErrorCodeInterface {
         USER_CACHE_IS_EXPIRE(11003, "用户缓存信息已经过期", "Business.USER_CACHE_IS_EXPIRE"),
 
         USER_FAIL_TO_GET_USER_ID(11004, "获取用户ID失败", "Business.USER_FAIL_TO_GET_USER_ID"),
-
-        USER_FAIL_TO_GET_DEPT_ID(10504, "获取用户部门ID失败", "Business.USER_FAIL_TO_GET_DEPT_ID"),
 
         USER_FAIL_TO_GET_ACCOUNT(10505, "获取用户账户失败", "Business.USER_FAIL_TO_GET_ACCOUNT"),
 
