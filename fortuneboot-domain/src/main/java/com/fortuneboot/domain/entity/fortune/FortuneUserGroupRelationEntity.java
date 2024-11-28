@@ -25,7 +25,7 @@ public class FortuneUserGroupRelationEntity extends BaseEntity<FortuneUserGroupR
     private Long userGroupRelationId;
 
     /**
-     * com.fortuneboot.common.enums.fortune.RoleTypeEnum
+     * @see com.fortuneboot.common.enums.fortune.RoleTypeEnum
      */
     @Schema(description = "权限")
     @TableField("role_type")
@@ -38,4 +38,8 @@ public class FortuneUserGroupRelationEntity extends BaseEntity<FortuneUserGroupR
     @Schema(description = "用户ID")
     @TableField("user_id")
     private Long userId;
+
+    @Schema(description = "默认分组")
+    @TableField("default_group")
+    private Boolean defaultGroup;
 }

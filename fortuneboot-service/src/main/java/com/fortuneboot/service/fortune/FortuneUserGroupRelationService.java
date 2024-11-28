@@ -1,6 +1,8 @@
 package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationModifyCommand;
@@ -9,6 +11,8 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.domain.vo.fortune.FortuneUserGroupRelationVo;
 import com.fortuneboot.factory.fortune.FortuneUserGroupRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
+import com.fortuneboot.infrastructure.user.AuthenticationUtils;
+import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
 import com.fortuneboot.repository.system.SysUserRepository;
 import com.fortuneboot.service.system.UserApplicationService;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +56,9 @@ public class FortuneUserGroupRelationService {
 
     public void removeFortuneUserGroupRelation(Long userGroupRelationId) {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.loadById(userGroupRelationId);
+        if (relationModel.getDefaultGroup()){
+            throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP);
+        }
         relationModel.deleteById();
     }
 
@@ -64,5 +72,17 @@ public class FortuneUserGroupRelationService {
             fortuneUserGroupRelationVo.setUserName(userIdMapName.get(item.getUserId()));
             return fortuneUserGroupRelationVo;
         }).toList();
+    }
+
+    public Boolean setDefaultGroup(Long groupId) {
+        List<FortuneUserGroupRelationEntity> groupRelationList = fortuneUserGroupRelationRepository.getByUserId();
+        for (FortuneUserGroupRelationEntity relationEntity : groupRelationList) {
+            if (Objects.equals(groupId, relationEntity.getUserGroupRelationId())) {
+                relationEntity.setDefaultGroup(Boolean.TRUE);
+            }else {
+                relationEntity.setDefaultGroup(Boolean.FALSE);
+            }
+        }
+        return fortuneUserGroupRelationRepository.updateBatchById(groupRelationList);
     }
 }

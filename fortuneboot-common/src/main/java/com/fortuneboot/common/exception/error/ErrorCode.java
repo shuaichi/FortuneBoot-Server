@@ -178,6 +178,9 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         USER_ADMIN_CAN_NOT_BE_MODIFY(10515, "管理员不允许做任何修改", "Business.USER_ADMIN_CAN_NOT_BE_MODIFY"),
 
+        // ---------------------------------- GROUP -----------------------------------------------
+
+        GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001,"不能删除默认分组","Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
         ;
 
 
