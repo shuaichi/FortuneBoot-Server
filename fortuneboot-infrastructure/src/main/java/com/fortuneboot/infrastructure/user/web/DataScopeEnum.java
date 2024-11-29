@@ -32,8 +32,4 @@ public enum DataScopeEnum implements BasicEnum<Integer> {
         return description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
 }
