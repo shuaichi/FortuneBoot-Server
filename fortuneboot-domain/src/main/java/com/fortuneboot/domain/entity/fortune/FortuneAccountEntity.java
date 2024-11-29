@@ -99,7 +99,7 @@ public class FortuneAccountEntity extends BaseEntity<FortuneAccountEntity> {
     private Long groupId;
 
     @Schema(description = "排序")
-    @TableField("sequence")
+    @TableField("sort")
     private Integer sort;
 
     @Schema(description = "回收站")

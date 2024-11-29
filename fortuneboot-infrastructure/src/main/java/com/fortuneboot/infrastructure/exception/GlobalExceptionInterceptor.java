@@ -16,6 +16,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Objects;
+
 /**
  * 全局异常处理器
  *
@@ -88,7 +90,7 @@ public class GlobalExceptionInterceptor {
     @ExceptionHandler(BindException.class)
     public ResponseDTO<?> handleBindException(BindException e) {
         log.error(e.getMessage(), e);
-        String message = e.getAllErrors().get(0).getDefaultMessage();
+        String message = e.getAllErrors().getFirst().getDefaultMessage();
         return ResponseDTO.fail(new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, message));
     }
 
@@ -98,7 +100,7 @@ public class GlobalExceptionInterceptor {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseDTO<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
+        String message = Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage();
         return ResponseDTO.fail(new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, message));
     }
 

@@ -79,7 +79,6 @@ public class FortuneGroupService {
     public void addFortuneGroup(FortuneGroupAddCommand groupAddCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
-        // TODO 校验参数存在.
         fortuneGroupModel.insert();
         // 设置权限
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
@@ -92,7 +91,6 @@ public class FortuneGroupService {
     public void modifyFortuneGroup(FortuneGroupModifyCommand groupModifyCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupModifyCommand.getGroupId());
         fortuneGroupModel.loadModifyCommand(groupModifyCommand);
-        // TODO 校验参数存在.
         fortuneGroupModel.updateById();
     }
 

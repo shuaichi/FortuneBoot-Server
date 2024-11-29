@@ -54,7 +54,7 @@ public class FortuneTagEntity extends BaseEntity<FortuneTagEntity> {
     private Boolean enable;
 
     @Schema(description = "顺序")
-    @TableField("sequence")
+    @TableField("sort")
     private Integer sort;
 
     @Schema(description = "备注")
