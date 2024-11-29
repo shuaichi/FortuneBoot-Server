@@ -36,10 +36,6 @@ public class AddRoleCommand {
     @NotNull(message = "显示顺序不能为空")
     private Integer roleSort;
 
-
-    private String remark;
-
-
     @ExcelColumn(name = "数据范围")
     private String dataScope;
 
@@ -48,5 +44,10 @@ public class AddRoleCommand {
 
     @NotNull
     private List<Long> menuIds;
+
+    @NotNull
+    private Boolean allowRegister;
+
+    private String remark;
 
 }

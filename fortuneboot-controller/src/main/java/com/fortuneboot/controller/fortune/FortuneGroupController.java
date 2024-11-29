@@ -140,7 +140,8 @@ public class FortuneGroupController {
     @Operation(summary = "设置为默认分组")
     @PutMapping("/setDefaultGroup/{groupId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<Boolean> setDefaultGroup(@PathVariable Long groupId) {
-        return ResponseDTO.ok(fortuneUserGroupRelationService.setDefaultGroup(groupId));
+    public ResponseDTO<Void> setDefaultGroup(@PathVariable Long groupId) {
+        fortuneUserGroupRelationService.setDefaultGroup(groupId);
+        return ResponseDTO.ok();
     }
 }

@@ -30,7 +30,7 @@ public enum MenuTypeEnum implements BasicEnum<Integer> {
     }
 
     @Override
-    public String description() {
+    public String getDescription() {
         return description;
     }
 

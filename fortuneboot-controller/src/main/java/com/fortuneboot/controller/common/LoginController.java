@@ -3,10 +3,10 @@ package com.fortuneboot.controller.common;
 import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.core.dto.ResponseDTO;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode.Business;
+import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.domain.common.dto.CurrentLoginUserDTO;
 import com.fortuneboot.domain.common.dto.TokenDTO;
+import com.fortuneboot.domain.dto.RoleDTO;
 import com.fortuneboot.service.system.MenuApplicationService;
 import com.fortuneboot.domain.dto.menu.RouterDTO;
 import com.fortuneboot.service.system.UserApplicationService;
@@ -129,11 +129,20 @@ public class LoginController {
         return ResponseDTO.ok(routerTree);
     }
 
+    @Operation(summary = "获取允许注册的角色",description = "用于用户注册使用，注册时必选")
+    @GetMapping("/getAllowRegisterRoles")
+    public ResponseDTO<List<RoleDTO>> getAllowRegisterRoles() {
+        List<RoleDTO> roleDTOList = userApplicationService.getAllowRegisterRoles();
+        return ResponseDTO.ok(roleDTOList);
+    }
+
 
     @Operation(summary = "注册接口", description = "暂未实现")
     @PostMapping("/register")
     public ResponseDTO<Void> register(@RequestBody AddUserCommand command) {
-        return ResponseDTO.fail(new ApiException(Business.COMMON_UNSUPPORTED_OPERATION));
+        command.setSource(UserSourceEnum.REGISTER.getValue());
+        userApplicationService.register(command);
+        return ResponseDTO.ok();
     }
 
 }

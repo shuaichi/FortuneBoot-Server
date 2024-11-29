@@ -19,7 +19,8 @@ public interface SysRoleRepository extends IService<SysRoleEntity> {
 
     /**
      * 校验角色名称是否唯一
-     * @param roleId 角色Id
+     *
+     * @param roleId   角色Id
      * @param roleName 角色名称
      * @return 结果
      */
@@ -27,7 +28,8 @@ public interface SysRoleRepository extends IService<SysRoleEntity> {
 
     /**
      * 校验角色权限是否唯一
-     * @param roleId 角色Id
+     *
+     * @param roleId  角色Id
      * @param roleKey 角色的Key
      * @return 结果
      */
@@ -44,10 +46,16 @@ public interface SysRoleRepository extends IService<SysRoleEntity> {
 
     /**
      * 获取用户的权限列表
+     *
      * @param roleId 角色id
      * @return 菜单列表
      */
     List<SysMenuEntity> getMenuListByRoleId(Long roleId);
 
-
+    /**
+     * 获取允许注册的角色
+     *
+     * @return
+     */
+    List<SysRoleEntity> getAllowRegisterRoles();
 }

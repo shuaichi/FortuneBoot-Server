@@ -199,7 +199,7 @@ public class LoginService {
      */
     public void recordLoginInfo(SystemLoginUser loginUser) {
         ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(loginUser.getUsername(), LoginStatusEnum.LOGIN_SUCCESS,
-            LoginStatusEnum.LOGIN_SUCCESS.description()));
+            LoginStatusEnum.LOGIN_SUCCESS.getDescription()));
 
         SysUserEntity entity = redisCache.userCache.getObjectById(loginUser.getUserId());
 

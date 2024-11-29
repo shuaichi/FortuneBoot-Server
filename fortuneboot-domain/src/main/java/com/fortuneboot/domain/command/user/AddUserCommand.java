@@ -38,4 +38,9 @@ public class AddUserCommand {
 
     @ExcelColumn(name = "备注")
     private String remark;
+
+    /**
+     * 来源
+     */
+    private Integer source;
 }

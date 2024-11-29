@@ -51,6 +51,11 @@ public class SysRoleEntity extends BaseEntity<SysRoleEntity> {
     @TableField("`status`")
     private Integer status;
 
+
+    @Schema(description = "允许注册")
+    @TableField("allow_register")
+    private Boolean allowRegister;
+
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;

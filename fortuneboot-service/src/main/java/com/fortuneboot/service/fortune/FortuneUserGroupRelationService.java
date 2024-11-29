@@ -74,7 +74,7 @@ public class FortuneUserGroupRelationService {
         }).toList();
     }
 
-    public Boolean setDefaultGroup(Long groupId) {
+    public void setDefaultGroup(Long groupId) {
         List<FortuneUserGroupRelationEntity> groupRelationList = fortuneUserGroupRelationRepository.getByUserId();
         for (FortuneUserGroupRelationEntity relationEntity : groupRelationList) {
             if (Objects.equals(groupId, relationEntity.getUserGroupRelationId())) {
@@ -83,6 +83,6 @@ public class FortuneUserGroupRelationService {
                 relationEntity.setDefaultGroup(Boolean.FALSE);
             }
         }
-        return fortuneUserGroupRelationRepository.updateBatchById(groupRelationList);
+        fortuneUserGroupRelationRepository.updateBatchById(groupRelationList);
     }
 }

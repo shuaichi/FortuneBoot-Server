@@ -1,5 +1,7 @@
 package com.fortuneboot.repository.system.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.dao.system.SysRoleMapper;
@@ -55,5 +57,11 @@ public class SysRoleRepositoryImpl extends ServiceImpl<SysRoleMapper, SysRoleEnt
         return baseMapper.getMenuListByRoleId(roleId);
     }
 
+    @Override
+    public List<SysRoleEntity> getAllowRegisterRoles() {
+        LambdaQueryWrapper<SysRoleEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(SysRoleEntity.class);
+        queryWrapper.eq(SysRoleEntity::getAllowRegister,Boolean.TRUE);
+        return this.list(queryWrapper);
+    }
 
 }

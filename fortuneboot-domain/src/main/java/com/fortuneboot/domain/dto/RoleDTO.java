@@ -25,6 +25,7 @@ public class RoleDTO {
             this.status = entity.getStatus();
             this.remark = entity.getRemark();
             this.dataScope = entity.getDataScope();
+            this.allowRegister = entity.getAllowRegister();
         }
     }
 
@@ -44,6 +45,8 @@ public class RoleDTO {
     private Date createTime;
     @ExcelColumn(name = "数据范围")
     private Integer dataScope;
+    @ExcelColumn(name = "数据范围")
+    private Boolean allowRegister;
 
     private List<Long> selectedMenuList;
 }
