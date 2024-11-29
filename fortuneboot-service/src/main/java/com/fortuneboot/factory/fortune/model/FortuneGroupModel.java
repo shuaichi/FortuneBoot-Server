@@ -1,8 +1,6 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;

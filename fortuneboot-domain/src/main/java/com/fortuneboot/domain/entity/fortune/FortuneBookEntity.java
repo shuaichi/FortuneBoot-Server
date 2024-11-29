@@ -53,7 +53,7 @@ public class FortuneBookEntity extends BaseEntity<FortuneBookEntity> {
     private Long defaultTransferInAccountId;
 
     @Schema(description = "顺序")
-    @TableField("sequence")
+    @TableField("sort")
     private Integer sort;
 
     @Schema(description = "备注")

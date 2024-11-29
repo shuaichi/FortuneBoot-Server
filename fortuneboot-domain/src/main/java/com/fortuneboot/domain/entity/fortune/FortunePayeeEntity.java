@@ -29,7 +29,7 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
     private String payeeName;
 
     @Schema(description = "顺序")
-    @TableField("sequence")
+    @TableField("sort")
     private Integer sort;
 
     @Schema(description = "可支出")
