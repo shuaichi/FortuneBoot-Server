@@ -54,7 +54,7 @@ public class BasicEnumUtil {
     public static <E extends Enum<E>> String getDescriptionByValue(Class<E> enumClass, Object value) {
         E basicEnum = fromValueSafely(enumClass, value);
         if (basicEnum != null) {
-            return ((BasicEnum<?>) basicEnum).description();
+            return ((BasicEnum<?>) basicEnum).getDescription();
         }
         return UNKNOWN;
     }

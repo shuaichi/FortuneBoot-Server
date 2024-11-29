@@ -32,7 +32,7 @@ public enum ConfigKeyEnum implements BasicEnum<String> {
     }
 
     @Override
-    public String description() {
+    public String getDescription() {
         return description;
     }
 

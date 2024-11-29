@@ -97,7 +97,7 @@ public class SecurityConfig {
                 redisCache.loginUserCache.delete(loginUser.getCachedKey());
                 // 记录用户退出日志
                 ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(
-                        userName, LoginStatusEnum.LOGOUT, LoginStatusEnum.LOGOUT.description()));
+                        userName, LoginStatusEnum.LOGOUT, LoginStatusEnum.LOGOUT.getDescription()));
             }
             ServletHolderUtil.renderString(response, JSONUtil.toJsonStr(ResponseDTO.ok()));
         };

@@ -34,12 +34,8 @@ public enum UserStatusEnum implements DictionaryEnum<Integer> {
     }
 
     @Override
-    public String description() {
-        return this.description;
-    }
-
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     @Override

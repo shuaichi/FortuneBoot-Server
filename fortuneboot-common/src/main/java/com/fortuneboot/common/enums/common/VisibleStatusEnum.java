@@ -34,7 +34,7 @@ public enum VisibleStatusEnum implements DictionaryEnum<Integer> {
     }
 
     @Override
-    public String description() {
+    public String getDescription() {
         return description;
     }
 

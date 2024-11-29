@@ -2,8 +2,11 @@ package com.fortuneboot.service.system;
 
 import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.factory.system.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
+import com.fortuneboot.repository.system.SysConfigRepository;
 import com.fortuneboot.repository.system.SysRoleRepository;
 import com.fortuneboot.service.cache.CacheCenter;
 import com.fortuneboot.domain.common.command.BulkOperationCommand;
@@ -27,6 +30,7 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.repository.system.SysUserRepository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +50,8 @@ public class UserApplicationService {
 
 
     private final UserModelFactory userModelFactory;
+
+    private final SysConfigRepository sysConfigRepository;
 
 
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
@@ -96,7 +102,7 @@ public class UserApplicationService {
         UserDetailDTO detailDTO = new UserDetailDTO();
 
         LambdaQueryWrapper<SysRoleEntity> roleQuery = new LambdaQueryWrapper<SysRoleEntity>()
-            .orderByAsc(SysRoleEntity::getRoleSort);
+                .orderByAsc(SysRoleEntity::getRoleSort);
         List<RoleDTO> roleDtoList = roleRepository.list(roleQuery).stream().map(RoleDTO::new).collect(Collectors.toList());
         detailDTO.setRoleOptions(roleDtoList);
 
@@ -176,4 +182,19 @@ public class UserApplicationService {
     }
 
 
+    public void register(AddUserCommand command) {
+        String configValue = sysConfigRepository.getConfigValueByKey("sys.account.registerUser");
+        boolean registerUser = Boolean.parseBoolean(configValue);
+        if (registerUser) {
+            this.addUser(command);
+        } else {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
+        }
+    }
+
+    public List<RoleDTO> getAllowRegisterRoles() {
+        List<SysRoleEntity> roleEntityList = roleRepository.getAllowRegisterRoles();
+        return roleEntityList.stream().map(RoleDTO::new).collect(Collectors.toList());
+
+    }
 }

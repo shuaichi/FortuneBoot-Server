@@ -4,6 +4,7 @@ import cn.hutool.core.collection.ListUtil;
 import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.utils.poi.CustomExcelUtil;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.common.command.BulkOperationCommand;
@@ -76,6 +77,7 @@ public class SysUserController extends BaseController {
         List<AddUserCommand> commands = CustomExcelUtil.readFromRequest(AddUserCommand.class, file);
 
         for (AddUserCommand command : commands) {
+            command.setSource(UserSourceEnum.ADMIN_IMPORT.getValue());
             userApplicationService.addUser(command);
         }
         return ResponseDTO.ok();
@@ -109,6 +111,7 @@ public class SysUserController extends BaseController {
     @AccessLog(title = "用户管理", businessType = BusinessTypeEnum.ADD)
     @PostMapping
     public ResponseDTO<Void> add(@Validated @RequestBody AddUserCommand command) {
+        command.setSource(UserSourceEnum.ADMIN_ADD.getValue());
         userApplicationService.addUser(command);
         return ResponseDTO.ok();
     }

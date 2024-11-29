@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.fortuneboot.common.core.base.BaseEntity;
+import com.fortuneboot.common.enums.common.UserSourceEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -83,6 +84,13 @@ public class SysUserEntity extends BaseEntity<SysUserEntity> {
     @Schema(description = "超级管理员标志（1是，0否）")
     @TableField("is_admin")
     private Boolean isAdmin;
+
+    /**
+     * @see UserSourceEnum
+     */
+    @Schema(description = "用户来源 1、注册 2、超管添加 3、超管导入")
+    @TableField("source")
+    private Integer source;
 
     @Schema(description = "备注")
     @TableField("remark")
