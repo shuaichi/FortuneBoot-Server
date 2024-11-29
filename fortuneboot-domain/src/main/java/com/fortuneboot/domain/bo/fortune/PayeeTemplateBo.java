@@ -34,7 +34,7 @@ public class PayeeTemplateBo {
     /**
      * 排序
      */
-    private Integer sequence;
+    private Integer sort;
 
     /**
      * 备注

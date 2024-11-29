@@ -100,7 +100,7 @@ public class FortuneAccountEntity extends BaseEntity<FortuneAccountEntity> {
 
     @Schema(description = "排序")
     @TableField("sequence")
-    private Integer sequence;
+    private Integer sort;
 
     @Schema(description = "回收站")
     @TableField("recycle_bin")

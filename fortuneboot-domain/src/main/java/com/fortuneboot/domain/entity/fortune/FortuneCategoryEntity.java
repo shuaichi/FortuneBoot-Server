@@ -45,7 +45,7 @@ public class FortuneCategoryEntity extends BaseEntity<FortuneCategoryEntity> {
 
     @Schema(description = "排序")
     @TableField("sequence")
-    private Integer sequence;
+    private Integer sort;
 
     @Schema(description = "备注")
     @TableField("remark")
