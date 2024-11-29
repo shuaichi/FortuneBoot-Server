@@ -44,7 +44,7 @@ public class TagTemplateBo {
     /**
      * 排序
      */
-    private Integer sequence;
+    private Integer sort;
 
     /**
      * 备注

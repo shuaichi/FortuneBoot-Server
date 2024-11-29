@@ -30,7 +30,7 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
 
     @Schema(description = "顺序")
     @TableField("sequence")
-    private Integer sequence;
+    private Integer sort;
 
     @Schema(description = "可支出")
     @TableField("can_expense")

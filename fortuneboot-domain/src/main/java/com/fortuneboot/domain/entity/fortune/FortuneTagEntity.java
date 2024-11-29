@@ -55,7 +55,7 @@ public class FortuneTagEntity extends BaseEntity<FortuneTagEntity> {
 
     @Schema(description = "顺序")
     @TableField("sequence")
-    private Integer sequence;
+    private Integer sort;
 
     @Schema(description = "备注")
     @TableField("remark")
