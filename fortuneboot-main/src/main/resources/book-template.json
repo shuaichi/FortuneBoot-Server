@@ -13,7 +13,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "tagId": 2,
@@ -23,7 +23,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "tagId": 3,
@@ -33,7 +33,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       },
       {
         "tagId": 4,
@@ -43,7 +43,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 400
+        "sort": 400
       },
       {
         "tagId": 5,
@@ -53,7 +53,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 500
+        "sort": 500
       },
       {
         "tagId": 6,
@@ -63,7 +63,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 600
+        "sort": 600
       },
       {
         "tagId": 7,
@@ -73,7 +73,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 700
+        "sort": 700
       },
       {
         "tagId": 8,
@@ -83,7 +83,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 800
+        "sort": 800
       },
       {
         "tagId": 9,
@@ -93,7 +93,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 900
+        "sort": 900
       },
       {
         "tagId": 10,
@@ -103,7 +103,7 @@
         "canIncome": false,
         "canTransfer": false,
         "parentId": "",
-        "sequence": 1000
+        "sort": 1000
       },
       {
         "tagId": 11,
@@ -112,7 +112,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 1
       },
       {
@@ -122,7 +122,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 1
       },
       {
@@ -132,7 +132,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 1
       },
       {
@@ -142,7 +142,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 1
       },
       {
@@ -152,7 +152,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 1
       },
       {
@@ -162,7 +162,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 600,
+        "sort": 600,
         "parentId": 1
       },
       {
@@ -172,7 +172,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 2
       },
       {
@@ -182,7 +182,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 2
       },
       {
@@ -192,7 +192,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 2
       },
       {
@@ -202,7 +202,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 2
       },
       {
@@ -212,7 +212,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 2
       },
       {
@@ -222,7 +222,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 600,
+        "sort": 600,
         "parentId": 2
       },
       {
@@ -232,7 +232,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 700,
+        "sort": 700,
         "parentId": 2
       },
       {
@@ -242,7 +242,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 3
       },
       {
@@ -252,7 +252,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 3
       },
       {
@@ -262,7 +262,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 4
       },
       {
@@ -272,7 +272,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 4
       },
       {
@@ -282,7 +282,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 4
       },
       {
@@ -292,7 +292,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 4
       },
       {
@@ -302,7 +302,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 4
       },
       {
@@ -312,7 +312,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 5
       },
       {
@@ -322,7 +322,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 5
       },
       {
@@ -332,7 +332,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 5
       },
       {
@@ -342,7 +342,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 5
       },
       {
@@ -352,7 +352,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 6
       },
       {
@@ -362,7 +362,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 6
       },
       {
@@ -372,7 +372,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 6
       },
       {
@@ -382,7 +382,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 6
       },
       {
@@ -392,7 +392,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 6
       },
       {
@@ -402,7 +402,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 600,
+        "sort": 600,
         "parentId": 6
       },
       {
@@ -412,7 +412,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 700,
+        "sort": 700,
         "parentId": 6
       },
       {
@@ -422,7 +422,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 800,
+        "sort": 800,
         "parentId": 6
       },
       {
@@ -432,7 +432,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 900,
+        "sort": 900,
         "parentId": 6
       },
       {
@@ -442,7 +442,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 700,
+        "sort": 700,
         "parentId": 1
       },
       {
@@ -452,7 +452,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 800,
+        "sort": 800,
         "parentId": 1
       },
       {
@@ -462,7 +462,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 900,
+        "sort": 900,
         "parentId": 1
       },
       {
@@ -472,7 +472,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 1000,
+        "sort": 1000,
         "parentId": 1
       },
       {
@@ -482,7 +482,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 600,
+        "sort": 600,
         "parentId": 4
       },
       {
@@ -492,7 +492,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 7
       },
       {
@@ -502,7 +502,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 7
       },
       {
@@ -512,7 +512,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 7
       },
       {
@@ -522,7 +522,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 7
       },
       {
@@ -532,7 +532,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 8
       },
       {
@@ -542,7 +542,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 8
       },
       {
@@ -552,7 +552,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 9
       },
       {
@@ -562,7 +562,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 9
       },
       {
@@ -572,7 +572,7 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 9
       }
     ],
@@ -583,7 +583,7 @@
         "type": 100,
         "remark": "维持生活的必须开支，是无法节省的开支。",
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 2,
@@ -591,7 +591,7 @@
         "type": 100,
         "remark": "可以节省的开支，比如娱乐，旅游等。",
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 3,
@@ -599,7 +599,7 @@
         "type": 100,
         "remark": "提升自己的生存能力，比如买书，保险等消费。",
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       },
       {
         "categoryId": 4,
@@ -607,7 +607,7 @@
         "type": 100,
         "remark": "社交类型的支出，比如请朋友吃饭，送礼等。",
         "parentId": "",
-        "sequence": 400
+        "sort": 400
       },
       {
         "categoryId": 5,
@@ -615,14 +615,14 @@
         "type": 200,
         "remark": "即劳动收入，指用时间来换取金钱，它最大的特点就是必须花费时间和精力去获得。",
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 6,
         "categoryName": "工资",
         "type": 200,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 5
       },
       {
@@ -630,7 +630,7 @@
         "categoryName": "兼职",
         "type": 200,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 5
       },
       {
@@ -638,7 +638,7 @@
         "categoryName": "薅羊毛",
         "type": 200,
         "remark": "利用各种网络金融产品或红包活动推广下线抽成赚钱，比如外卖优惠券、减免优惠、送话费等。",
-        "sequence": 300,
+        "sort": 300,
         "parentId": 5
       },
       {
@@ -647,14 +647,14 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 10,
         "categoryName": "理财",
         "type": 200,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 9
       },
       {
@@ -662,7 +662,7 @@
         "categoryName": "租金",
         "type": 200,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 9
       },
       {
@@ -671,7 +671,7 @@
         "type": 200,
         "remark": "比如收到的红包。",
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       }
     ],
     "payeeList": [
@@ -681,7 +681,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 200
+        "sort": 200
       },
       {
         "payeeId": 2,
@@ -689,7 +689,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 100
+        "sort": 100
       },
       {
         "payeeId": 3,
@@ -697,7 +697,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 400
+        "sort": 400
       },
       {
         "payeeId": 4,
@@ -705,7 +705,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 300
+        "sort": 300
       }
     ]
   },
@@ -722,7 +722,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       },
       {
         "categoryId": 14,
@@ -730,7 +730,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 15,
@@ -738,7 +738,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 400
+        "sort": 400
       },
       {
         "categoryId": 16,
@@ -746,7 +746,7 @@
         "type": 100,
         "remark": "门店租金，水电费。",
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 17,
@@ -754,14 +754,14 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 500
+        "sort": 500
       },
       {
         "categoryId": 18,
         "categoryName": "住宿",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 13
       },
       {
@@ -769,7 +769,7 @@
         "categoryName": "工资",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 13
       },
       {
@@ -777,7 +777,7 @@
         "categoryName": "福利",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 13
       },
       {
@@ -785,7 +785,7 @@
         "categoryName": "招聘",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 13
       },
       {
@@ -793,7 +793,7 @@
         "categoryName": "水费",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 18
       },
       {
@@ -801,7 +801,7 @@
         "categoryName": "电费",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 18
       },
       {
@@ -809,7 +809,7 @@
         "categoryName": "天然气",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 18
       },
       {
@@ -817,7 +817,7 @@
         "categoryName": "蔬菜",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 14
       },
       {
@@ -825,7 +825,7 @@
         "categoryName": "调料",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 14
       },
       {
@@ -833,7 +833,7 @@
         "categoryName": "干货",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 14
       },
       {
@@ -841,7 +841,7 @@
         "categoryName": "肉类",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 14
       },
       {
@@ -849,7 +849,7 @@
         "categoryName": "租金",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 16
       },
       {
@@ -857,7 +857,7 @@
         "categoryName": "水费",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 16
       },
       {
@@ -865,7 +865,7 @@
         "categoryName": "电费",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 16
       },
       {
@@ -873,7 +873,7 @@
         "categoryName": "燃料",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 16
       },
       {
@@ -881,7 +881,7 @@
         "categoryName": "物业费",
         "type": 100,
         "remark": null,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 16
       },
       {
@@ -890,7 +890,7 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 35,
@@ -898,14 +898,14 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 36,
         "categoryName": "美团",
         "type": 200,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 35
       },
       {
@@ -913,7 +913,7 @@
         "categoryName": "饿了么",
         "type": 200,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 35
       },
       {
@@ -921,7 +921,7 @@
         "categoryName": "租金",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 18
       }
     ],
@@ -932,7 +932,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 100
+        "sort": 100
       },
       {
         "payeeId": 6,
@@ -940,7 +940,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 200
+        "sort": 200
       },
       {
         "payeeId": 7,
@@ -948,7 +948,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 300
+        "sort": 300
       },
       {
         "payeeId": 8,
@@ -956,7 +956,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 400
+        "sort": 400
       },
       {
         "payeeId": 9,
@@ -964,7 +964,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 500
+        "sort": 500
       },
       {
         "payeeId": 10,
@@ -972,7 +972,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 600
+        "sort": 600
       }
     ]
   },
@@ -989,7 +989,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 40,
@@ -997,7 +997,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 41,
@@ -1005,7 +1005,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       },
       {
         "categoryId": 42,
@@ -1013,7 +1013,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 400
+        "sort": 400
       },
       {
         "categoryId": 43,
@@ -1021,7 +1021,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 500
+        "sort": 500
       },
       {
         "categoryId": 44,
@@ -1029,7 +1029,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 600
+        "sort": 600
       },
       {
         "categoryId": 45,
@@ -1037,7 +1037,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 700
+        "sort": 700
       },
       {
         "categoryId": 46,
@@ -1045,7 +1045,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 800
+        "sort": 800
       },
       {
         "categoryId": 47,
@@ -1053,7 +1053,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 900
+        "sort": 900
       },
       {
         "categoryId": 48,
@@ -1061,7 +1061,7 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 1000
+        "sort": 1000
       },
       {
         "categoryId": 49,
@@ -1069,14 +1069,14 @@
         "type": 100,
         "remark": null,
         "parentId": "",
-        "sequence": 1100
+        "sort": 1100
       },
       {
         "categoryId": 50,
         "categoryName": "早午晚餐",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 39
       },
       {
@@ -1084,7 +1084,7 @@
         "categoryName": "烟酒茶",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 39
       },
       {
@@ -1092,7 +1092,7 @@
         "categoryName": "水果零食",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 39
       },
       {
@@ -1100,7 +1100,7 @@
         "categoryName": "日常用品",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 40
       },
       {
@@ -1108,7 +1108,7 @@
         "categoryName": "水电煤气",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 40
       },
       {
@@ -1116,7 +1116,7 @@
         "categoryName": "房租",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 40
       },
       {
@@ -1124,7 +1124,7 @@
         "categoryName": "物业管理",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 40
       },
       {
@@ -1132,7 +1132,7 @@
         "categoryName": "维修保养",
         "type": 100,
         "remark": null,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 40
       },
       {
@@ -1140,7 +1140,7 @@
         "categoryName": "衣服裤子",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 41
       },
       {
@@ -1148,7 +1148,7 @@
         "categoryName": "鞋帽包包",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 41
       },
       {
@@ -1156,7 +1156,7 @@
         "categoryName": "化妆饰品",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 41
       },
       {
@@ -1164,7 +1164,7 @@
         "categoryName": "公共交通",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 42
       },
       {
@@ -1172,7 +1172,7 @@
         "categoryName": "打车租车",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 42
       },
       {
@@ -1180,7 +1180,7 @@
         "categoryName": "私家车费用",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 42
       },
       {
@@ -1188,7 +1188,7 @@
         "categoryName": "座机费",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 43
       },
       {
@@ -1196,7 +1196,7 @@
         "categoryName": "手机费",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 43
       },
       {
@@ -1204,7 +1204,7 @@
         "categoryName": "上网费",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 43
       },
       {
@@ -1212,7 +1212,7 @@
         "categoryName": "邮寄费",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 43
       },
       {
@@ -1220,7 +1220,7 @@
         "categoryName": "运动健身",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 44
       },
       {
@@ -1228,7 +1228,7 @@
         "categoryName": "腐败聚会",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 44
       },
       {
@@ -1236,7 +1236,7 @@
         "categoryName": "休闲玩乐",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 44
       },
       {
@@ -1244,7 +1244,7 @@
         "categoryName": "宠物宝贝",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 44
       },
       {
@@ -1252,7 +1252,7 @@
         "categoryName": "旅游度假",
         "type": 100,
         "remark": null,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 44
       },
       {
@@ -1260,7 +1260,7 @@
         "categoryName": "数码装备",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 45
       },
       {
@@ -1268,7 +1268,7 @@
         "categoryName": "书报杂志",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 45
       },
       {
@@ -1276,7 +1276,7 @@
         "categoryName": "培训进修",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 45
       },
       {
@@ -1284,7 +1284,7 @@
         "categoryName": "送礼请客",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 46
       },
       {
@@ -1292,7 +1292,7 @@
         "categoryName": "孝敬家长",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 46
       },
       {
@@ -1300,7 +1300,7 @@
         "categoryName": "还人钱物",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 46
       },
       {
@@ -1308,7 +1308,7 @@
         "categoryName": "慈善捐助",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 46
       },
       {
@@ -1316,7 +1316,7 @@
         "categoryName": "药品费",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 47
       },
       {
@@ -1324,7 +1324,7 @@
         "categoryName": "保健费",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 47
       },
       {
@@ -1332,7 +1332,7 @@
         "categoryName": "美容费",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 47
       },
       {
@@ -1340,7 +1340,7 @@
         "categoryName": "治疗费",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 47
       },
       {
@@ -1348,7 +1348,7 @@
         "categoryName": "银行手续",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 48
       },
       {
@@ -1356,7 +1356,7 @@
         "categoryName": "投资亏损",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 48
       },
       {
@@ -1364,7 +1364,7 @@
         "categoryName": "按揭还款",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 48
       },
       {
@@ -1372,7 +1372,7 @@
         "categoryName": "消费税收",
         "type": 100,
         "remark": null,
-        "sequence": 400,
+        "sort": 400,
         "parentId": 48
       },
       {
@@ -1380,7 +1380,7 @@
         "categoryName": "利息支出",
         "type": 100,
         "remark": null,
-        "sequence": 500,
+        "sort": 500,
         "parentId": 48
       },
       {
@@ -1388,7 +1388,7 @@
         "categoryName": "赔偿罚款",
         "type": 100,
         "remark": null,
-        "sequence": 600,
+        "sort": 600,
         "parentId": 48
       },
       {
@@ -1396,7 +1396,7 @@
         "categoryName": "其他支出",
         "type": 100,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 49
       },
       {
@@ -1404,7 +1404,7 @@
         "categoryName": "意外丢失",
         "type": 100,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 49
       },
       {
@@ -1412,7 +1412,7 @@
         "categoryName": "烂账损失",
         "type": 100,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 49
       },
       {
@@ -1421,7 +1421,7 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 100
+        "sort": 100
       },
       {
         "categoryId": 94,
@@ -1429,7 +1429,7 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 200
+        "sort": 200
       },
       {
         "categoryId": 95,
@@ -1437,14 +1437,14 @@
         "type": 200,
         "remark": null,
         "parentId": "",
-        "sequence": 300
+        "sort": 300
       },
       {
         "categoryId": 96,
         "categoryName": "工资",
         "type": 200,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 93
       },
       {
@@ -1452,7 +1452,7 @@
         "categoryName": "兼职",
         "type": 200,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 93
       },
       {
@@ -1460,7 +1460,7 @@
         "categoryName": "羊毛",
         "type": 200,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 93
       },
       {
@@ -1468,7 +1468,7 @@
         "categoryName": "租金",
         "type": 200,
         "remark": null,
-        "sequence": 100,
+        "sort": 100,
         "parentId": 94
       },
       {
@@ -1476,7 +1476,7 @@
         "categoryName": "利息",
         "type": 200,
         "remark": null,
-        "sequence": 200,
+        "sort": 200,
         "parentId": 94
       },
       {
@@ -1484,7 +1484,7 @@
         "categoryName": "理财",
         "type": 200,
         "remark": null,
-        "sequence": 300,
+        "sort": 300,
         "parentId": 94
       }
     ],
@@ -1495,7 +1495,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 100
+        "sort": 100
       },
       {
         "payeeId": 12,
@@ -1503,7 +1503,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 200
+        "sort": 200
       },
       {
         "payeeId": 13,
@@ -1511,7 +1511,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 300
+        "sort": 300
       },
       {
         "payeeId": 14,
@@ -1519,7 +1519,7 @@
         "remark": null,
         "canExpense": true,
         "canIncome": false,
-        "sequence": 400
+        "sort": 400
       }
     ]
   }
