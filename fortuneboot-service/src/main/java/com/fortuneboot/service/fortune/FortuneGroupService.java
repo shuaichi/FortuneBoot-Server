@@ -12,7 +12,7 @@ import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
-import com.fortuneboot.domain.query.fortune.GroupQuery;
+import com.fortuneboot.domain.query.fortune.FortuneGroupQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneGroupVo;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.FortuneUserGroupRelationFactory;
@@ -22,6 +22,7 @@ import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -101,26 +102,31 @@ public class FortuneGroupService {
         fortuneUserGroupRelationRepository.removeByGroupId(groupId);
     }
 
-    public PageDTO<FortuneGroupVo> getFortuneGroupPage(GroupQuery query) {
+    public PageDTO<FortuneGroupVo> getFortuneGroupPage(FortuneGroupQuery query) {
         List<FortuneUserGroupRelationEntity> relationEntityList = fortuneUserGroupRelationRepository.getByUserId();
         if (CollectionUtils.isEmpty(relationEntityList)) {
             return new PageDTO<>(new ArrayList<>(), 0L);
         }
         List<Long> groupIdList = relationEntityList.stream().map(FortuneUserGroupRelationEntity::getGroupId).collect(Collectors.toList());
-        LambdaQueryWrapper<FortuneGroupEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneGroupEntity.class);
+        LambdaQueryWrapper<FortuneGroupEntity> queryWrapper = query.addQueryCondition();
         queryWrapper.in(FortuneGroupEntity::getGroupId, groupIdList);
         Page<FortuneGroupEntity> page = fortuneGroupRepository.page(query.toPage(), queryWrapper);
         List<Long> bookIdList = page.getRecords().stream().map(FortuneGroupEntity::getDefaultBookId).toList();
         List<FortuneBookEntity> bookEntities = fortuneBookRepository.listByIds(bookIdList);
         Map<Long, FortuneBookEntity> idMapBook = bookEntities.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
         Map<Long, FortuneUserGroupRelationEntity> idMapRelation = relationEntityList.stream().collect(Collectors.toMap(FortuneUserGroupRelationEntity::getGroupId, Function.identity(), (k1, k2) -> k2));
-        List<FortuneGroupVo> records = page.getRecords().stream().map(FortuneGroupVo::new).map(item -> {
+        List<FortuneGroupVo> records = page.getRecords().stream().map(FortuneGroupVo::new).peek(item -> {
             if (ObjectUtil.isNotEmpty(item.getDefaultBookId())) {
                 item.setDefaultBookName(idMapBook.get(item.getDefaultBookId()).getBookName());
             }
             item.setRoleTypeDesc(Objects.requireNonNull(RoleTypeEnum.getByValue(idMapRelation.get(item.getGroupId()).getRoleType())).getDescription());
-            return item;
         }).collect(Collectors.toList());
         return new PageDTO<>(records, page.getTotal());
+    }
+
+    public void setDefaultBook(Long groupId, Long bookId) {
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
+        fortuneGroupModel.setDefaultBookId(bookId);
+        fortuneGroupModel.updateById();
     }
 }

@@ -25,7 +25,7 @@ public class FortuneUserGroupRelationFactory {
     public FortuneUserGroupRelationModel loadById(Long userGroupRelationId) {
         FortuneUserGroupRelationEntity userGroupRelationEntity = fortuneUserGroupRelationRepository.getById(userGroupRelationId);
         if (Objects.isNull(userGroupRelationEntity)) {
-            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, userGroupRelationId, "分组");
+            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, userGroupRelationId, "分组关系");
         }
         return new FortuneUserGroupRelationModel(userGroupRelationEntity, fortuneUserGroupRelationRepository);
     }

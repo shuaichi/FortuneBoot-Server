@@ -185,6 +185,12 @@ public enum ErrorCode implements ErrorCodeInterface {
         // ---------------------------------- GROUP -----------------------------------------------
 
         GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001,"不能删除默认分组","Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
+
+        // ---------------------------------- BOOK -----------------------------------------------
+
+        BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002,"请先移出回收站","Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
+
+        BOOK_NOT_MATCH_GROUP(22001,"账本与分组不匹配","Business.BOOK_NOT_MATCH_GROUP"),
         ;
 
 

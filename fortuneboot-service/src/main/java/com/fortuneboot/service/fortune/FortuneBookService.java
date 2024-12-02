@@ -1,12 +1,22 @@
 package com.fortuneboot.service.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBookAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneBookModifyCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
+import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * 账本service
@@ -23,9 +33,40 @@ public class FortuneBookService {
 
     private final FortuneBookRepository fortuneBookRepository;
 
+    public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
+        return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
+    }
+
     public void addFortuneBook(FortuneBookAddCommand bookAddCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.create();
         fortuneBookModel.loadAddCommand(bookAddCommand);
         fortuneBookModel.insert();
+    }
+
+    public void modifyFortuneBook(FortuneBookModifyCommand bookModifyCommand) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookModifyCommand.getBookId());
+        fortuneBookModel.loadModifyCommand(bookModifyCommand);
+        fortuneBookModel.checkNotInRecycleBin();
+        fortuneBookModel.updateById();
+    }
+
+    public void removeFortuneBook(Long groupId, Long bookId) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        fortuneBookModel.checkGroupId(groupId);
+        fortuneBookModel.deleteById();
+    }
+
+    public void moveToRecycleBin(Long groupId, Long bookId) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        fortuneBookModel.checkGroupId(groupId);
+        fortuneBookModel.setRecycleBin(Boolean.TRUE);
+        fortuneBookModel.updateById();
+    }
+
+    public void putBack(Long groupId, Long bookId) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        fortuneBookModel.checkGroupId(groupId);
+        fortuneBookModel.setRecycleBin(Boolean.FALSE);
+        fortuneBookModel.updateById();
     }
 }

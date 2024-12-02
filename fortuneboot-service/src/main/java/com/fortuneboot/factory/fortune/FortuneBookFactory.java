@@ -25,7 +25,7 @@ public class FortuneBookFactory {
     public FortuneBookModel loadById(Long bookId) {
         FortuneBookEntity fortuneBookEntity = fortuneBookRepository.getById(bookId);
         if (Objects.isNull(fortuneBookEntity)) {
-            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, bookId, "分组");
+            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, bookId, "账本");
         }
         return new FortuneBookModel(fortuneBookEntity,fortuneBookRepository);
     }
