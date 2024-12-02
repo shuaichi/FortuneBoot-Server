@@ -1,6 +1,8 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBookAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBookModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
@@ -42,5 +44,17 @@ public class FortuneBookModel extends FortuneBookEntity {
             return;
         }
         this.loadAddCommand(command);
+    }
+
+    public void checkGroupId(Long groupId) {
+        if (!Objects.equals(this.getGroupId(), groupId)){
+            throw new ApiException(ErrorCode.Business.BOOK_NOT_MATCH_GROUP);
+        }
+    }
+
+    public void checkNotInRecycleBin(){
+        if (this.getRecycleBin()){
+            throw new ApiException(ErrorCode.Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST);
+        }
     }
 }

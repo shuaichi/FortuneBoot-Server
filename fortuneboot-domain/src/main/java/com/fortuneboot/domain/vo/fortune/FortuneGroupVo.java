@@ -14,6 +14,11 @@ import lombok.Data;
 @Data
 public class FortuneGroupVo {
 
+    /**
+     * 构造方法
+     *
+     * @param entity
+     */
     public FortuneGroupVo(FortuneGroupEntity entity) {
         if (ObjectUtil.isNotEmpty(entity)) {
             BeanUtil.copyProperties(entity, this);

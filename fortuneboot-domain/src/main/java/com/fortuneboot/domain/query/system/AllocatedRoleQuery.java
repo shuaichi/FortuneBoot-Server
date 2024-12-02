@@ -10,8 +10,8 @@ import lombok.EqualsAndHashCode;
 /**
  * @author valarchie
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class AllocatedRoleQuery extends AbstractPageQuery<SysUserEntity> {
 
     private Long roleId;
