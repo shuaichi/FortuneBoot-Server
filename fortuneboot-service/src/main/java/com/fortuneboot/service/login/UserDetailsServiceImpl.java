@@ -2,6 +2,7 @@ package com.fortuneboot.service.login;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.customize.config.SecurityConfig;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.infrastructure.user.web.RoleInfo;
 import com.fortuneboot.infrastructure.user.web.DataScopeEnum;
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Service;
  * 自定义加载用户信息通过用户名
  * 用于SpringSecurity 登录流程
  * 没有办法把这个类 放进loginService中  会在SecurityConfig中造成循环依赖
- * @see com.fortuneboot.infrastructure.config.SecurityConfig#filterChain(HttpSecurity)
+ * @see SecurityConfig#filterChain(HttpSecurity)
  * @author valarchie
  */
 @Service
@@ -68,7 +69,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         loginUser.fillLoginInfo();
         loginUser.setAutoRefreshCacheTime(loginUser.getLoginInfo().getLoginTime()
             + TimeUnit.MINUTES.toMillis(tokenService.getAutoRefreshTime()));
-        return (UserDetails) loginUser;
+        return loginUser;
     }
 
     public RoleInfo getRoleInfo(Long roleId, boolean isAdmin) {
