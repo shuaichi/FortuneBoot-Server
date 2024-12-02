@@ -12,13 +12,13 @@ import com.fortuneboot.service.cache.RedisCacheService;
 import com.fortuneboot.infrastructure.thread.ThreadPoolManager;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.LoginStatusEnum;
+import com.fortuneboot.service.login.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-//import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +34,8 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Objects;
+
 /**
  * 主要配置登录流程逻辑涉及以下几个类
  *
@@ -46,7 +48,6 @@ import org.springframework.web.filter.CorsFilter;
  */
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -91,7 +92,7 @@ public class SecurityConfig {
     public LogoutSuccessHandler logOutSuccessHandler() {
         return (request, response, authentication) -> {
             SystemLoginUser loginUser = tokenService.getLoginUser(request);
-            if (loginUser != null) {
+            if (Objects.nonNull(loginUser)) {
                 String userName = loginUser.getUsername();
                 // 删除用户缓存记录
                 redisCache.loginUserCache.delete(loginUser.getCachedKey());
@@ -119,11 +120,11 @@ public class SecurityConfig {
      */
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder())
-                .and()
-                .build();
+                .passwordEncoder(bCryptPasswordEncoder());
+        return authenticationManagerBuilder.build();
     }
 
 
@@ -161,7 +162,6 @@ public class SecurityConfig {
         // 添加CORS filter
         httpSecurity.addFilterBefore(corsFilter, JwtAuthenticationTokenFilter.class);
         httpSecurity.addFilterBefore(corsFilter, LogoutFilter.class);
-
         return httpSecurity.build();
     }
 
