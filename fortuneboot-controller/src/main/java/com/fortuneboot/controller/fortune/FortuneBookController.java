@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/fortune/book/")
+@RequestMapping("/fortune/book/base")
 @Tag(name = "账本API", description = "账本相关的增删查改")
 public class FortuneBookController {
 
@@ -92,4 +92,6 @@ public class FortuneBookController {
         fortuneGroupService.setDefaultBook(groupId, bookId);
         return ResponseDTO.ok();
     }
+
+    // TODO 导出账单、复制账本
 }

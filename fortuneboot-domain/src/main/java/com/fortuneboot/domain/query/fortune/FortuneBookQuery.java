@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity> {
 
     /**
-     * 分组ID
+     * 分组ID(必传)
      */
     private Long groupId;
 
@@ -28,11 +28,17 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
      */
     private String bookName;
 
+    /**
+     * 是否回收站(必传)
+     */
+    private Boolean recycleBin;
+
     @Override
     public LambdaQueryWrapper<FortuneBookEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneBookEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBookEntity.class);
-        queryWrapper.eq(FortuneBookEntity::getGroupId,groupId)
-        .eq(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
+        queryWrapper.eq(FortuneBookEntity::getGroupId, groupId)
+                .eq(FortuneBookEntity::getRecycleBin, recycleBin)
+                .eq(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
         return queryWrapper;
     }
 }

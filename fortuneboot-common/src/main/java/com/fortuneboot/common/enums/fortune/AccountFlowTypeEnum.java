@@ -1,5 +1,6 @@
 package com.fortuneboot.common.enums.fortune;
 
+import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Getter;
  * @Date 2024/6/3 23:21
  **/
 @Getter
-public enum AccountFlowTypeEnum {
+public enum AccountFlowTypeEnum implements BasicEnum<Integer> {
     INCOME(1, "收入"),
     EXPENSE(2, "支出"),
     TRANSFER(3, "转账"),

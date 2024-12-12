@@ -191,6 +191,8 @@ public enum ErrorCode implements ErrorCodeInterface {
         BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002,"请先移出回收站","Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
 
         BOOK_NOT_MATCH_GROUP(22001,"账本与分组不匹配","Business.BOOK_NOT_MATCH_GROUP"),
+
+        BOOK_DEFAULT_CAN_NOT_REMOVE(22002,"默认账本不能移入回收站","Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
         ;
 
 

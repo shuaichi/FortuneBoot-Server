@@ -2,9 +2,11 @@ package com.fortuneboot.service.permission;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
+import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class FortunePermissionService {
     private final FortuneGroupRepository fortuneGroupRepository;
 
     private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+
+    private final FortuneBookRepository fortuneBookRepository;
 
     /**
      * 验证是否是登录用户
@@ -74,5 +78,14 @@ public class FortunePermissionService {
     public Boolean groupOwnerPermissionByRelationId(Long relationId) {
         FortuneUserGroupRelationEntity userGroupRelation = fortuneUserGroupRelationRepository.getById(relationId);
         return this.groupOwnerPermission(userGroupRelation.getGroupId());
+    }
+
+    public Boolean bookOwnerPermission(Long bookId) {
+        FortuneBookEntity book = fortuneBookRepository.getById(bookId);
+        // 未查找账本，则说明没权限
+        if (ObjectUtil.isEmpty(book)) {
+            return Boolean.FALSE;
+        }
+        return this.groupOwnerPermission(book.getGroupId());
     }
 }
