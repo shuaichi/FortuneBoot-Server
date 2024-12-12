@@ -1,5 +1,6 @@
 package com.fortuneboot.common.enums.fortune;
 
+import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
 /**
@@ -9,7 +10,7 @@ import lombok.Getter;
  * @date 2024年06月03日 22:24:17
  */
 @Getter
-public enum AccountTypeEnum {
+public enum AccountTypeEnum implements BasicEnum<Integer> {
     CURRENT(1, "活期"),
     CREDIT(2, "信用"),
     ASSET(3, "资产"),

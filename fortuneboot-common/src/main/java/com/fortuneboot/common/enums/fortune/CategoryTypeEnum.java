@@ -1,5 +1,6 @@
 package com.fortuneboot.common.enums.fortune;
 
+import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
 /**
@@ -9,7 +10,7 @@ import lombok.Getter;
  * @Date 2024/6/4 23:19
  **/
 @Getter
-public enum CategoryTypeEnum {
+public enum CategoryTypeEnum implements BasicEnum<Integer> {
 
     EXPENSE(1, "支出分类"),
     INCOME(2, "收入分类");

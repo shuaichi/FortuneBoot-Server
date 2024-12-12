@@ -52,6 +52,12 @@ public class FortuneBookModel extends FortuneBookEntity {
         }
     }
 
+    public void checkDefault(FortuneGroupModel fortuneGroupModel) {
+        if (Objects.equals(fortuneGroupModel.getGroupId(), this.getGroupId())) {
+            throw new ApiException(ErrorCode.Business.BOOK_DEFAULT_CAN_NOT_REMOVE);
+        }
+    }
+
     public void checkNotInRecycleBin(){
         if (this.getRecycleBin()){
             throw new ApiException(ErrorCode.Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST);

@@ -1,6 +1,7 @@
 package com.fortuneboot.common.enums.fortune;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
 /**
@@ -10,7 +11,7 @@ import lombok.Getter;
  * @Date 2024/6/5 23:43
  **/
 @Getter
-public enum RoleTypeEnum {
+public enum RoleTypeEnum implements BasicEnum<Integer> {
     OWNER(1, "管理员"),
     ACTOR(2, "协作者"),
     VISITOR(3, "访客"),
