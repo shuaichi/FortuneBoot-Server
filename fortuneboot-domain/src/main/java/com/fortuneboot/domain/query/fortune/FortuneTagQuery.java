@@ -38,16 +38,10 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
      */
     private Boolean recycleBin;
 
-    /**
-     * 标签类型
-     */
-    private Integer type;
-
     @Override
     public LambdaQueryWrapper<FortuneTagEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId, bookId)
-                .eq(FortuneTagEntity::getType, type)
                 .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName)
                 .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
                 .eq(Objects.nonNull(recycleBin), FortuneTagEntity::getRecycleBin, recycleBin);

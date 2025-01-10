@@ -32,33 +32,33 @@ public class FortuneBookConfigController {
 
     private final FortuneTagService fortuneTagService;
 
-    @Operation(summary = "查询账本标签")
+    @Operation(summary = "查询标签")
     @GetMapping("/tag/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
     public ResponseDTO<List<FortuneTagVo>> getTagList(FortuneTagQuery query) {
-        List<FortuneTagEntity> list = fortuneTagService.getTagList(query);
+        List<FortuneTagEntity> list = fortuneTagService.getList(query);
         List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
         List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);
         return ResponseDTO.ok(treeNodes);
     }
 
-    @Operation(summary = "新增账本标签")
+    @Operation(summary = "新增标签")
     @PostMapping("/tag/add")
     @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId)")
     public ResponseDTO<Void> addTag(@Valid @RequestBody FortuneTagAddCommand addCommand) {
-        fortuneTagService.addTag(addCommand);
+        fortuneTagService.add(addCommand);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "修改账本标签")
+    @Operation(summary = "修改标签")
     @PutMapping("/tag/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId)")
     public ResponseDTO<Void> modifyTag(@Valid @RequestBody FortuneTagModifyCommand modifyCommand) {
-        fortuneTagService.modifyTag(modifyCommand);
+        fortuneTagService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "账本标签移入回收站")
+    @Operation(summary = "标签移入回收站")
     @PutMapping("/tag/moveToRecycleBin/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
@@ -66,19 +66,20 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "删除账本标签")
+    @Operation(summary = "删除标签")
     @PutMapping("/tag/delete/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> deleteTag(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.deleteTag(bookId, tagId);
+        fortuneTagService.delete(bookId, tagId);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "放回原处")
+    @Operation(summary = "标签放回原处")
     @PutMapping("/tag/putBack/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+    public ResponseDTO<Void> putBackTag(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
         fortuneTagService.putBack(bookId,tagId);
         return ResponseDTO.ok();
     }
+
 }

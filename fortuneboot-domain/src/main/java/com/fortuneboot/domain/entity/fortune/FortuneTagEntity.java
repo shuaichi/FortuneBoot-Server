@@ -61,14 +61,6 @@ public class FortuneTagEntity extends BaseEntity<FortuneTagEntity> {
     @TableField("remark")
     private String remark;
 
-    /**
-     * 分类类型
-     * @See
-     */
-    @Schema(description = "分类类型")
-    @TableField("type")
-    private Integer type;
-
     @Schema(description = "回收站")
     @TableField("recycleBin")
     private Boolean recycleBin;

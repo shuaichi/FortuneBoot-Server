@@ -28,18 +28,18 @@ public class FortuneTagService {
 
     private final FortuneTagFactory fortuneTagFactory;
 
-    public List<FortuneTagEntity> getTagList(FortuneTagQuery query) {
+    public List<FortuneTagEntity> getList(FortuneTagQuery query) {
         return fortuneTagRepository.list(query.addQueryCondition());
     }
 
-    public void addTag(FortuneTagAddCommand addCommand) {
+    public void add(FortuneTagAddCommand addCommand) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.create();
         fortuneTagModel.loadAddCommand(addCommand);
         fortuneTagModel.checkTagExist();
         fortuneTagModel.insert();
     }
 
-    public void modifyTag(FortuneTagModifyCommand modifyCommand) {
+    public void modify(FortuneTagModifyCommand modifyCommand) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(modifyCommand.getTagId());
         fortuneTagModel.loadModifyCommand(modifyCommand);
         fortuneTagModel.checkTagExist();
@@ -53,7 +53,7 @@ public class FortuneTagService {
         fortuneTagModel.updateById();
     }
 
-    public void deleteTag(Long bookId, Long tagId) {
+    public void delete(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.deleteById();

@@ -23,6 +23,4 @@ public enum CategoryTypeEnum implements BasicEnum<Integer> {
         this.value = value;
         this.description = description;
     }
-
-
 }
