@@ -41,6 +41,7 @@ public class FortunePayeeService {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(modifyCommand.getPayeeId());
         fortunePayeeModel.loadModifyCommand(modifyCommand);
         fortunePayeeModel.checkPayeeExist();
+        fortunePayeeModel.checkBookId(modifyCommand.getBookId());
         fortunePayeeModel.updateById();
     }
 
