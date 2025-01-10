@@ -1,8 +1,11 @@
 package com.fortuneboot.service.fortune;
 
+import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneTagModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
 import com.fortuneboot.factory.fortune.FortuneTagFactory;
+import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,5 +30,40 @@ public class FortuneTagService {
 
     public List<FortuneTagEntity> getTagList(FortuneTagQuery query) {
         return fortuneTagRepository.list(query.addQueryCondition());
+    }
+
+    public void addTag(FortuneTagAddCommand addCommand) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.create();
+        fortuneTagModel.loadAddCommand(addCommand);
+        fortuneTagModel.checkTagExist();
+        fortuneTagModel.insert();
+    }
+
+    public void modifyTag(FortuneTagModifyCommand modifyCommand) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(modifyCommand.getTagId());
+        fortuneTagModel.loadModifyCommand(modifyCommand);
+        fortuneTagModel.checkTagExist();
+        fortuneTagModel.updateById();
+    }
+
+    public void moveToRecycleBin(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.setRecycleBin(Boolean.TRUE);
+        fortuneTagModel.updateById();
+    }
+
+    public void deleteTag(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.deleteById();
+    }
+
+
+    public void putBack(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.setRecycleBin(Boolean.FALSE);
+        fortuneTagModel.updateById();
     }
 }

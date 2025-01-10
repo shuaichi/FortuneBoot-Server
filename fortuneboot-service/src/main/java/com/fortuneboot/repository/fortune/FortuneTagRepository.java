@@ -5,8 +5,15 @@ import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 
 /**
  * 交易标签
+ *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/5 23:31
  **/
 public interface FortuneTagRepository extends IService<FortuneTagEntity> {
+    /**
+     * 根据账本id和名称查询
+     *
+     * @return
+     */
+    FortuneTagEntity getByBookIdAndName(Long bookId,String tagName);
 }

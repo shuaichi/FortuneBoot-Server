@@ -29,4 +29,8 @@ public class FortuneTagFactory {
         }
         return new FortuneTagModel(entity, fortuneTagRepository);
     }
+
+    public FortuneTagModel create() {
+        return new FortuneTagModel(fortuneTagRepository);
+    }
 }
