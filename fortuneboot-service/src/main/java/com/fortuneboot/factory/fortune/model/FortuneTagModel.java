@@ -66,4 +66,8 @@ public class FortuneTagModel extends FortuneTagEntity {
             throw new ApiException(ErrorCode.Business.TAG_NOT_MATCH_BOOK);
         }
     }
+
+    public void checkHeight() {
+        // TODO 检查标签高度
+    }
 }

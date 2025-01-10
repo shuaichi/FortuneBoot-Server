@@ -209,6 +209,10 @@ public enum ErrorCode implements ErrorCodeInterface {
         PAYEE_ADD_EXIST_IN_RECYCLE_BIN(24002,"交易对象{}在回收站中，请从回收站删除后再试","Business.PAYEE_ADD_EXIST_IN_RECYCLE_BIN"),
 
         PAYEE_NOT_MATCH_BOOK(24003,"交易对象与账本不匹配","Business.PAYEE_NOT_MATCH_BOOK"),
+
+        // ---------------------------------- CATEGORY -----------------------------------------------
+
+        CATEGORY_NOT_MATCH_BOOK(25003,"交易对象与账本不匹配","Business.CATEGORY_NOT_MATCH_BOOK"),
         ;
 
 

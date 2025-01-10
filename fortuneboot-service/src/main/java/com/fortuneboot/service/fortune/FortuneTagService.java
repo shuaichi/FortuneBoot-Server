@@ -36,6 +36,7 @@ public class FortuneTagService {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.create();
         fortuneTagModel.loadAddCommand(addCommand);
         fortuneTagModel.checkTagExist();
+        fortuneTagModel.checkHeight();
         fortuneTagModel.insert();
     }
 
@@ -43,6 +44,7 @@ public class FortuneTagService {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(modifyCommand.getTagId());
         fortuneTagModel.loadModifyCommand(modifyCommand);
         fortuneTagModel.checkTagExist();
+        fortuneTagModel.checkBookId(modifyCommand.getBookId());
         fortuneTagModel.updateById();
     }
 
@@ -50,12 +52,14 @@ public class FortuneTagService {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.setRecycleBin(Boolean.TRUE);
+        // TODO 子级一起移入回收站
         fortuneTagModel.updateById();
     }
 
     public void delete(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
+        // TODO 子级一起删除
         fortuneTagModel.deleteById();
     }
 
@@ -64,6 +68,7 @@ public class FortuneTagService {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.setRecycleBin(Boolean.FALSE);
+        // TODO 校验父级是否在回收站
         fortuneTagModel.updateById();
     }
 }

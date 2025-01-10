@@ -2,16 +2,17 @@ package com.fortuneboot.controller.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.utils.tree.TreeUtil;
-import com.fortuneboot.domain.command.fortune.FortunePayeeAddCommand;
-import com.fortuneboot.domain.command.fortune.FortunePayeeModifyCommand;
-import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
-import com.fortuneboot.domain.command.fortune.FortuneTagModifyCommand;
+import com.fortuneboot.domain.command.fortune.*;
+import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
+import com.fortuneboot.domain.query.fortune.FortuneCategoryQuery;
 import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
 import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
+import com.fortuneboot.domain.vo.fortune.FortuneCategoryVo;
 import com.fortuneboot.domain.vo.fortune.FortunePayeeVo;
 import com.fortuneboot.domain.vo.fortune.FortuneTagVo;
+import com.fortuneboot.service.fortune.FortuneCategoryService;
 import com.fortuneboot.service.fortune.FortunePayeeService;
 import com.fortuneboot.service.fortune.FortuneTagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,6 +40,8 @@ public class FortuneBookConfigController {
     private final FortuneTagService fortuneTagService;
 
     private final FortunePayeeService fortunePayeeService;
+
+    private final FortuneCategoryService fortuneCategoryService;
 
     @Operation(summary = "查询标签")
     @GetMapping("/tag/getList")
@@ -136,6 +139,56 @@ public class FortuneBookConfigController {
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBackPayee(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
         fortunePayeeService.putBack(bookId,payeeId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "查询分类")
+    @GetMapping("/category/getList")
+    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    public ResponseDTO<List<FortuneCategoryVo>> getCategoryList(@Valid @RequestBody FortuneCategoryQuery query) {
+        List<FortuneCategoryEntity> list = fortuneCategoryService.getList(query);
+        List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
+        List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
+        return ResponseDTO.ok(treeNodes);
+    }
+
+    @Operation(summary = "新增标签")
+    @PostMapping("/category/add")
+    @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId)")
+    public ResponseDTO<Void> addCategory(@Valid @RequestBody FortuneCategoryAddCommand addCommand) {
+        fortuneCategoryService.add(addCommand);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "修改标签")
+    @PutMapping("/category/modify")
+    @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId)")
+    public ResponseDTO<Void> modifyCategory(@Valid @RequestBody FortuneCategoryModifyCommand modifyCommand) {
+        fortuneCategoryService.modify(modifyCommand);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "标签移入回收站")
+    @PatchMapping("/category/moveToRecycleBin/{bookId}/{categoryId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> moveCategoryToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.moveToRecycleBin(bookId, categoryId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "删除标签")
+    @DeleteMapping("/category/delete/{bookId}/{categoryId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> deleteCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.delete(bookId, categoryId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "标签放回原处")
+    @PatchMapping("/category/putBack/{bookId}/{categoryId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> putBackCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.putBack(bookId,categoryId);
         return ResponseDTO.ok();
     }
 }
