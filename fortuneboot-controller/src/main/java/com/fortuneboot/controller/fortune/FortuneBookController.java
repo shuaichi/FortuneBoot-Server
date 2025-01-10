@@ -70,7 +70,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "移到回收站")
-    @PutMapping("/moveToRecycleBin/{groupId}/{bookId}")
+    @PatchMapping("/moveToRecycleBin/{groupId}/{bookId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneBookService.moveToRecycleBin(groupId, bookId);
@@ -78,7 +78,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "放回原处")
-    @PutMapping("/putBack/{groupId}/{bookId}")
+    @PatchMapping("/putBack/{groupId}/{bookId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneBookService.putBack(groupId, bookId);
@@ -86,7 +86,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "设置为默认账本")
-    @PutMapping("/setDefaultBook/{groupId}/{bookId}")
+    @PatchMapping("/setDefaultBook/{groupId}/{bookId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> setDefaultBook(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneGroupService.setDefaultBook(groupId, bookId);

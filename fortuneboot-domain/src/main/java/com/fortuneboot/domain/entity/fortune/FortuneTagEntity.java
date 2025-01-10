@@ -62,6 +62,6 @@ public class FortuneTagEntity extends BaseEntity<FortuneTagEntity> {
     private String remark;
 
     @Schema(description = "回收站")
-    @TableField("recycleBin")
+    @TableField("recycle_bin")
     private Boolean recycleBin;
 }

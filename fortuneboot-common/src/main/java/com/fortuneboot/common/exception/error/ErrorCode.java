@@ -202,6 +202,13 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         TAG_NOT_MATCH_BOOK(23003,"标签与账本不匹配","Business.TAG_NOT_MATCH_BOOK"),
 
+        // ---------------------------------- PAYEE -----------------------------------------------
+
+        PAYEE_ADD_EXIST(24001,"交易对象{}已存在，请勿重复添加","Business.PAYEE_ADD_EXIST"),
+
+        PAYEE_ADD_EXIST_IN_RECYCLE_BIN(24002,"交易对象{}在回收站中，请从回收站删除后再试","Business.PAYEE_ADD_EXIST_IN_RECYCLE_BIN"),
+
+        PAYEE_NOT_MATCH_BOOK(24003,"交易对象与账本不匹配","Business.PAYEE_NOT_MATCH_BOOK"),
         ;
 
 
