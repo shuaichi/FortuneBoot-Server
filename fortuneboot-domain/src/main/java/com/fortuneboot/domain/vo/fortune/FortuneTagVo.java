@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.utils.tree.AbstractTreeNode;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 标签Vo
@@ -13,6 +14,7 @@ import lombok.Data;
  * @date 2024/12/11 16:26
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class FortuneTagVo extends AbstractTreeNode {
 
     public FortuneTagVo(FortuneTagEntity entity) {

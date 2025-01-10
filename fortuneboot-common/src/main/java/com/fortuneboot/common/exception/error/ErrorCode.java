@@ -193,6 +193,15 @@ public enum ErrorCode implements ErrorCodeInterface {
         BOOK_NOT_MATCH_GROUP(22001,"账本与分组不匹配","Business.BOOK_NOT_MATCH_GROUP"),
 
         BOOK_DEFAULT_CAN_NOT_REMOVE(22002,"默认账本不能移入回收站","Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
+
+        // ---------------------------------- TAG -----------------------------------------------
+
+        TAG_ADD_EXIST(23001,"标签{}已存在，请勿重复添加","Business.TAG_ADD_EXIST"),
+
+        TAG_ADD_EXIST_IN_RECYCLE_BIN(23002,"标签{}在回收站中，请从回收站删除后再试","Business.TAG_ADD_EXIST_IN_RECYCLE_BIN"),
+
+        TAG_NOT_MATCH_BOOK(23003,"标签与账本不匹配","Business.TAG_NOT_MATCH_BOOK"),
+
         ;
 
 

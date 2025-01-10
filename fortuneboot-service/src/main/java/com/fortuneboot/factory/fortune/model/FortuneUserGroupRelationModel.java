@@ -35,7 +35,7 @@ public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntit
 
     public void loadAddCommand(FortuneUserGroupRelationAddCommand command) {
         if (Objects.nonNull(command)) {
-            BeanUtil.copyProperties(command, this, "groupId");
+            BeanUtil.copyProperties(command, this,"userGroupRelationId");
         }
     }
 

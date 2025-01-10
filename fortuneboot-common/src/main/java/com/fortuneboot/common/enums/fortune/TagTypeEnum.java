@@ -18,7 +18,7 @@ public enum TagTypeEnum implements BasicEnum<Integer> {
     INCOME(2, "收入标签"),
     ;
 
-    private final int value;
+    private final Integer value;
 
     private final String description;
 

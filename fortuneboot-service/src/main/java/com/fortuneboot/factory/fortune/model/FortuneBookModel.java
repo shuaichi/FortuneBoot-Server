@@ -35,7 +35,7 @@ public class FortuneBookModel extends FortuneBookEntity {
 
     public void loadAddCommand(FortuneBookAddCommand command) {
         if (Objects.nonNull(command)) {
-            BeanUtil.copyProperties(command, this,"groupId");
+            BeanUtil.copyProperties(command, this,"bookId");
         }
     }
 
