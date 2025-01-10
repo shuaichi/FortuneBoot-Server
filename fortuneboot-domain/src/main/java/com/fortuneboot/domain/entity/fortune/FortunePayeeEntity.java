@@ -24,6 +24,10 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
     @TableId(value = "payee_id", type = IdType.AUTO)
     private Long payeeId;
 
+    @Schema(description = "账本ID")
+    @TableField("book_id")
+    private Long bookId;
+
     @Schema(description = "交易对象名称")
     @TableField("payee_name")
     private String payeeName;
@@ -47,4 +51,8 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
     @Schema(description = "remark")
     @TableField("备注")
     private String remark;
+
+    @Schema(description = "回收站")
+    @TableField("recycle_bin")
+    private Boolean recycleBin;
 }

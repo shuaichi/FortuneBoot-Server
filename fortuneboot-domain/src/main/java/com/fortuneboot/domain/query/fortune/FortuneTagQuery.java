@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +23,8 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
     /**
      * 账本id(必传)
      */
+    @NotNull
+    @Positive
     private Long bookId;
 
     /**
@@ -34,17 +38,19 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
     private Boolean enable;
 
     /**
-     * 是否回收站
+     * 是否回收站(必传)
      */
+    @NotNull
+    @Positive
     private Boolean recycleBin;
 
     @Override
     public LambdaQueryWrapper<FortuneTagEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId, bookId)
-                .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName)
+                .eq( FortuneTagEntity::getRecycleBin, recycleBin)
                 .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
-                .eq(Objects.nonNull(recycleBin), FortuneTagEntity::getRecycleBin, recycleBin);
+                .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName);
         return queryWrapper;
     }
 }
