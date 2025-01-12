@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -77,5 +78,7 @@ public class FortuneBillAddCommand {
      *备注
      */
     private Boolean remark;
+
+    private List<FortuneTagAddCommand> tagList;
 
 }
