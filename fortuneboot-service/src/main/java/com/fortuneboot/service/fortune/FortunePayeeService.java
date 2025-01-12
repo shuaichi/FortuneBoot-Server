@@ -7,6 +7,7 @@ import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
 import com.fortuneboot.factory.fortune.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,27 @@ public class FortunePayeeService {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
         fortunePayeeModel.setRecycleBin(Boolean.FALSE);
+        fortunePayeeModel.updateById();
+    }
+
+    public void modifyCanExpense(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setCanExpense(!fortunePayeeModel.getCanExpense());
+        fortunePayeeModel.updateById();
+    }
+
+    public void modifyCanIncome(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setCanIncome(!fortunePayeeModel.getCanIncome());
+        fortunePayeeModel.updateById();
+    }
+
+    public void modifyEnable(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setEnable(!fortunePayeeModel.getEnable());
         fortunePayeeModel.updateById();
     }
 }
