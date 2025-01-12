@@ -54,4 +54,10 @@ public class FortuneAccountModel extends FortuneAccountEntity {
             case null, default -> throw new ApiException(ErrorCode.Business.ACCOUNT_TYPE_ERROR);
         }
     }
+
+    public void checkGroupId(Long groupId) {
+        if (!Objects.equals(groupId,this.getGroupId())){
+            throw new ApiException(ErrorCode.Business.ACCOUNT_NOT_MATCH_GROUP);
+        }
+    }
 }

@@ -218,6 +218,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_TYPE_ERROR(26001,"账户类型有误","Business.ACCOUNT_TYPE_ERROR"),
 
+        ACCOUNT_NOT_MATCH_GROUP(26002,"账户与分组不匹配","Business.ACCOUNT_NOT_MATCH_GROUP"),
+
         ;
 
 
