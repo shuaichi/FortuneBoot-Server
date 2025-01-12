@@ -89,15 +89,15 @@ public class FortuneBookConfigController {
     @PatchMapping("/tag/putBack/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBackTag(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.putBack(bookId,tagId);
+        fortuneTagService.putBack(bookId, tagId);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "修改是否可支出")
-    @PatchMapping("/tag/modifyTagCanExpense/{bookId}/{tagId}")
+    @PatchMapping("/tag/modifyCanExpense/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> modifyTagCanExpense(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.modifyCanExpense(bookId,tagId);
+        fortuneTagService.modifyCanExpense(bookId, tagId);
         return ResponseDTO.ok();
     }
 
@@ -105,7 +105,7 @@ public class FortuneBookConfigController {
     @PatchMapping("/tag/modifyCanIncome/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> modifyTagCanIncome(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.modifyCanIncome(bookId,tagId);
+        fortuneTagService.modifyCanIncome(bookId, tagId);
         return ResponseDTO.ok();
     }
 
@@ -113,7 +113,7 @@ public class FortuneBookConfigController {
     @PatchMapping("/tag/modifyCanTransfer/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> modifyTagCanTransfer(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.modifyCanTransfer(bookId,tagId);
+        fortuneTagService.modifyCanTransfer(bookId, tagId);
         return ResponseDTO.ok();
     }
 
@@ -121,14 +121,14 @@ public class FortuneBookConfigController {
     @PatchMapping("/tag/modifyEnable/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> modifyTagEnable(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.modifyEnable(bookId,tagId);
+        fortuneTagService.modifyEnable(bookId, tagId);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "查询交易对象")
     @GetMapping("/payee/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortunePayeeVo>> getPayeeList(@Valid @RequestBody FortunePayeeQuery query){
+    public ResponseDTO<List<FortunePayeeVo>> getPayeeList(@Valid @RequestBody FortunePayeeQuery query) {
         List<FortunePayeeEntity> list = fortunePayeeService.getList(query);
         List<FortunePayeeVo> result = list.stream().map(FortunePayeeVo::new).toList();
         return ResponseDTO.ok(result);
@@ -137,7 +137,7 @@ public class FortuneBookConfigController {
     @Operation(summary = "新增交易对象")
     @PostMapping("/payee/add")
     @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId)")
-    public ResponseDTO<Void> addPayee(@Valid @RequestBody FortunePayeeAddCommand addCommand){
+    public ResponseDTO<Void> addPayee(@Valid @RequestBody FortunePayeeAddCommand addCommand) {
         fortunePayeeService.add(addCommand);
         return ResponseDTO.ok();
     }
@@ -145,7 +145,7 @@ public class FortuneBookConfigController {
     @Operation(summary = "新增交易对象")
     @PutMapping("/payee/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId)")
-    public ResponseDTO<Void> modifyPayee(@RequestBody FortunePayeeModifyCommand modifyCommand){
+    public ResponseDTO<Void> modifyPayee(@RequestBody FortunePayeeModifyCommand modifyCommand) {
         fortunePayeeService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
@@ -154,7 +154,7 @@ public class FortuneBookConfigController {
     @PatchMapping("/payee/moveToRecycleBin/{bookId}/{payeeId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> movePayeeToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
-        fortunePayeeService.moveToRecycleBin(bookId,payeeId);
+        fortunePayeeService.moveToRecycleBin(bookId, payeeId);
         return ResponseDTO.ok();
     }
 
@@ -162,7 +162,7 @@ public class FortuneBookConfigController {
     @DeleteMapping("/payee/remove/{bookId}/{payeeId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> removePayee(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
-        fortunePayeeService.remove(bookId,payeeId);
+        fortunePayeeService.remove(bookId, payeeId);
         return ResponseDTO.ok();
     }
 
@@ -170,7 +170,31 @@ public class FortuneBookConfigController {
     @PatchMapping("/payee/putBack/{bookId}/{payeeId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBackPayee(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
-        fortunePayeeService.putBack(bookId,payeeId);
+        fortunePayeeService.putBack(bookId, payeeId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "交易对象是否可支出")
+    @PatchMapping("/payee/modifyCanExpense/{bookId}/{payeeId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyPayeeCanExpense(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
+        fortunePayeeService.modifyCanExpense(bookId, payeeId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "交易对象是否可收入")
+    @PatchMapping("/payee/modifyCanIncome/{bookId}/{payeeId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyPayeeCanInCome(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
+        fortunePayeeService.modifyCanIncome(bookId, payeeId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "交易对象是否可收入")
+    @PatchMapping("/payee/modifyEnable/{bookId}/{payeeId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyPayeeEnable(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
+        fortunePayeeService.modifyEnable(bookId, payeeId);
         return ResponseDTO.ok();
     }
 
@@ -184,7 +208,7 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok(treeNodes);
     }
 
-    @Operation(summary = "新增标签")
+    @Operation(summary = "新增分类")
     @PostMapping("/category/add")
     @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId)")
     public ResponseDTO<Void> addCategory(@Valid @RequestBody FortuneCategoryAddCommand addCommand) {
@@ -192,7 +216,7 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "修改标签")
+    @Operation(summary = "修改分类")
     @PutMapping("/category/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId)")
     public ResponseDTO<Void> modifyCategory(@Valid @RequestBody FortuneCategoryModifyCommand modifyCommand) {
@@ -200,7 +224,7 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "标签移入回收站")
+    @Operation(summary = "分类移入回收站")
     @PatchMapping("/category/moveToRecycleBin/{bookId}/{categoryId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> moveCategoryToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
@@ -208,7 +232,7 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "删除标签")
+    @Operation(summary = "分类标签")
     @DeleteMapping("/category/remove/{bookId}/{categoryId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> removeCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
@@ -216,11 +240,11 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "标签放回原处")
+    @Operation(summary = "分类放回原处")
     @PatchMapping("/category/putBack/{bookId}/{categoryId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBackCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
-        fortuneCategoryService.putBack(bookId,categoryId);
+        fortuneCategoryService.putBack(bookId, categoryId);
         return ResponseDTO.ok();
     }
 }

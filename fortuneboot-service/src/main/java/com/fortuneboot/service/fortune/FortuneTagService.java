@@ -76,28 +76,28 @@ public class FortuneTagService {
     public void modifyCanExpense(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
-        fortuneTagModel.modifyCanExpense();
+        fortuneTagModel.setCanExpense(!fortuneTagModel.getCanExpense());
         fortuneTagModel.updateById();
     }
 
     public void modifyCanIncome(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
-        fortuneTagModel.modifyCanIncome();
+        fortuneTagModel.setCanIncome(!fortuneTagModel.getCanIncome());
         fortuneTagModel.updateById();
     }
 
     public void modifyCanTransfer( Long bookId,  Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
-        fortuneTagModel.modifyCanTransfer();
+        fortuneTagModel.setCanTransfer(!fortuneTagModel.getCanTransfer());
         fortuneTagModel.updateById();
     }
 
     public void modifyEnable(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
-        fortuneTagModel.modifyEnable();
+        fortuneTagModel.setEnable(!fortuneTagModel.getEnable());
         fortuneTagModel.updateById();
     }
 
