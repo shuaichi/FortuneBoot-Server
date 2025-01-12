@@ -52,7 +52,7 @@ public class FortuneCategoryService {
         fortuneCategoryModel.updateById();
     }
 
-    public void delete(Long bookId, Long categoryId) {
+    public void remove(Long bookId, Long categoryId) {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
         fortuneCategoryModel.checkBookId(bookId);
         // TODO 子级一起删除

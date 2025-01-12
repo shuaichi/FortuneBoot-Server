@@ -94,7 +94,7 @@ public class FortuneAccountEntity extends BaseEntity<FortuneAccountEntity> {
     @TableField("account_type")
     private Integer accountType;
 
-    @Schema(description = "组id")
+    @Schema(description = "分组id")
     @TableField("group_id")
     private Long groupId;
 

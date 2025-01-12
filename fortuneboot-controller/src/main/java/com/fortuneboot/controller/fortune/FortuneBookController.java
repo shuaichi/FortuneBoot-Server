@@ -40,7 +40,7 @@ public class FortuneBookController {
     @Operation(summary = "分页查询账本")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.groupOwnerPermission(#query.getGroupId())")
-    public ResponseDTO<PageDTO<FortuneBookVo>> getPage(FortuneBookQuery query) {
+    public ResponseDTO<PageDTO<FortuneBookVo>> getPage(@Valid @RequestBody FortuneBookQuery query) {
         IPage<FortuneBookEntity> page = fortuneBookService.getPage(query);
         List<FortuneBookVo> records = page.getRecords().stream().map(FortuneBookVo::new).collect(Collectors.toList());
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
@@ -48,16 +48,16 @@ public class FortuneBookController {
 
     @Operation(summary = "新增账本")
     @PostMapping("/add")
-    public ResponseDTO<Void> addFortuneBook(@Valid @RequestBody FortuneBookAddCommand bookAddCommand) {
-        fortuneBookService.addFortuneBook(bookAddCommand);
+    public ResponseDTO<Void> add(@Valid @RequestBody FortuneBookAddCommand bookAddCommand) {
+        fortuneBookService.add(bookAddCommand);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "修改账本")
     @PutMapping("/modify")
     @PreAuthorize("@fortune.groupOwnerPermission(#bookModifyCommand.getGroupId())")
-    public ResponseDTO<Void> modifyFortuneBook(@Valid @RequestBody FortuneBookModifyCommand bookModifyCommand) {
-        fortuneBookService.modifyFortuneBook(bookModifyCommand);
+    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBookModifyCommand bookModifyCommand) {
+        fortuneBookService.modify(bookModifyCommand);
         return ResponseDTO.ok();
     }
 
@@ -65,7 +65,7 @@ public class FortuneBookController {
     @DeleteMapping("/remove/{groupId}/{bookId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> removeFortuneBook(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
-        fortuneBookService.removeFortuneBook(groupId, bookId);
+        fortuneBookService.remove(groupId, bookId);
         return ResponseDTO.ok();
     }
 

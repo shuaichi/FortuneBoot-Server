@@ -50,6 +50,7 @@ public abstract class AbstractLambdaPageQuery <T> extends AbstractLambdaQuery<T>
 
     @Max(MAX_PAGE_NUM)
     protected Integer pageNum;
+
     @Max(MAX_PAGE_SIZE)
     protected Integer pageSize;
 
