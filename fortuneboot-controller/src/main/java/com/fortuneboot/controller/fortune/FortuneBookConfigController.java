@@ -78,10 +78,10 @@ public class FortuneBookConfigController {
     }
 
     @Operation(summary = "删除标签")
-    @DeleteMapping("/tag/delete/{bookId}/{tagId}")
+    @DeleteMapping("/tag/remove/{bookId}/{tagId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> deleteTag(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
-        fortuneTagService.delete(bookId, tagId);
+    public ResponseDTO<Void> removeTag(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+        fortuneTagService.remove(bookId, tagId);
         return ResponseDTO.ok();
     }
 
@@ -127,10 +127,10 @@ public class FortuneBookConfigController {
     }
 
     @Operation(summary = "删除交易对象")
-    @DeleteMapping("/payee/delete/{bookId}/{payeeId}")
+    @DeleteMapping("/payee/remove/{bookId}/{payeeId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> deletePayee(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
-        fortunePayeeService.delete(bookId,payeeId);
+    public ResponseDTO<Void> removePayee(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {
+        fortunePayeeService.remove(bookId,payeeId);
         return ResponseDTO.ok();
     }
 
@@ -177,10 +177,10 @@ public class FortuneBookConfigController {
     }
 
     @Operation(summary = "删除标签")
-    @DeleteMapping("/category/delete/{bookId}/{categoryId}")
+    @DeleteMapping("/category/remove/{bookId}/{categoryId}")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> deleteCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
-        fortuneCategoryService.delete(bookId, categoryId);
+    public ResponseDTO<Void> removeCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.remove(bookId, categoryId);
         return ResponseDTO.ok();
     }
 

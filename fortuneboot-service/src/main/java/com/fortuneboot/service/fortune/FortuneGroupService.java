@@ -71,13 +71,13 @@ public class FortuneGroupService {
      */
     private final FortuneBookRepository fortuneBookRepository;
 
-    public FortuneGroupVo getFortuneGroupByUserId(Long groupId) {
+    public FortuneGroupVo getByUserId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
         return BeanUtil.copyProperties(fortuneGroupEntity, FortuneGroupVo.class);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addFortuneGroup(FortuneGroupAddCommand groupAddCommand) {
+    public void add(FortuneGroupAddCommand groupAddCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
         fortuneGroupModel.insert();
@@ -89,14 +89,14 @@ public class FortuneGroupService {
         relationModel.insert();
     }
 
-    public void modifyFortuneGroup(FortuneGroupModifyCommand groupModifyCommand) {
+    public void modify(FortuneGroupModifyCommand groupModifyCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupModifyCommand.getGroupId());
         fortuneGroupModel.loadModifyCommand(groupModifyCommand);
         fortuneGroupModel.updateById();
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void removeFortuneGroup(Long groupId) {
+    public void remove(Long groupId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.deleteById();
         fortuneUserGroupRelationRepository.removeByGroupId(groupId);

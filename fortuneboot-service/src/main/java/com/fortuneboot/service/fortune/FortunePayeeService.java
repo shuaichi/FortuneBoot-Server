@@ -52,7 +52,7 @@ public class FortunePayeeService {
         fortunePayeeModel.updateById();
     }
 
-    public void delete(Long bookId, Long payeeId) {
+    public void remove(Long bookId, Long payeeId) {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
         fortunePayeeModel.deleteById();

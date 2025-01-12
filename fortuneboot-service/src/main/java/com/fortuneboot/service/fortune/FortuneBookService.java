@@ -41,20 +41,20 @@ public class FortuneBookService {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
     }
 
-    public void addFortuneBook(FortuneBookAddCommand bookAddCommand) {
+    public void add(FortuneBookAddCommand bookAddCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.create();
         fortuneBookModel.loadAddCommand(bookAddCommand);
         fortuneBookModel.insert();
     }
 
-    public void modifyFortuneBook(FortuneBookModifyCommand bookModifyCommand) {
+    public void modify(FortuneBookModifyCommand bookModifyCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookModifyCommand.getBookId());
         fortuneBookModel.loadModifyCommand(bookModifyCommand);
         fortuneBookModel.checkNotInRecycleBin();
         fortuneBookModel.updateById();
     }
 
-    public void removeFortuneBook(Long groupId, Long bookId) {
+    public void remove(Long groupId, Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
         fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.deleteById();

@@ -213,6 +213,11 @@ public enum ErrorCode implements ErrorCodeInterface {
         // ---------------------------------- CATEGORY -----------------------------------------------
 
         CATEGORY_NOT_MATCH_BOOK(25003,"交易对象与账本不匹配","Business.CATEGORY_NOT_MATCH_BOOK"),
+
+        // ---------------------------------- ACCOUNT -----------------------------------------------
+
+        ACCOUNT_TYPE_ERROR(26001,"账户类型有误","Business.ACCOUNT_TYPE_ERROR"),
+
         ;
 
 

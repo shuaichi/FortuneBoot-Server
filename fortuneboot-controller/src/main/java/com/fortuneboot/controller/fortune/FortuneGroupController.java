@@ -45,7 +45,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "分页查询我的分组")
     @GetMapping("/getPage")
-    public ResponseDTO<PageDTO<FortuneGroupVo>> getFortuneGroupPage(FortuneGroupQuery query) {
+    public ResponseDTO<PageDTO<FortuneGroupVo>> getFortuneGroupPage(@Valid @RequestBody FortuneGroupQuery query) {
         PageDTO<FortuneGroupVo> pageDTO = fortuneGroupService.getFortuneGroupPage(query);
         return ResponseDTO.ok(pageDTO);
     }
@@ -53,8 +53,8 @@ public class FortuneGroupController {
     @Operation(summary = "通过分组id查看分组")
     @GetMapping("/getByUserId/{groupId}")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<FortuneGroupVo> getFortuneGroupByUserId(@PathVariable @NotNull(message = "分组id不能为空")  @Positive Long groupId) {
-        return ResponseDTO.ok(fortuneGroupService.getFortuneGroupByUserId(groupId));
+    public ResponseDTO<FortuneGroupVo> getByUserId(@PathVariable @NotNull(message = "分组id不能为空")  @Positive Long groupId) {
+        return ResponseDTO.ok(fortuneGroupService.getByUserId(groupId));
     }
 
     @Operation(summary = "获取账本模板")
@@ -85,24 +85,24 @@ public class FortuneGroupController {
 
     @Operation(summary = "新增分组")
     @PostMapping("/add")
-    public ResponseDTO<Void> addFortuneGroup(@Valid @RequestBody FortuneGroupAddCommand groupAddCommand) {
-        fortuneGroupService.addFortuneGroup(groupAddCommand);
+    public ResponseDTO<Void> add(@Valid @RequestBody FortuneGroupAddCommand groupAddCommand) {
+        fortuneGroupService.add(groupAddCommand);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "修改分组")
     @PutMapping("/modify")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupModifyCommand.groupId)")
-    public ResponseDTO<Void> modifyFortuneGroup(@Valid @RequestBody FortuneGroupModifyCommand groupModifyCommand) {
-        fortuneGroupService.modifyFortuneGroup(groupModifyCommand);
+    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneGroupModifyCommand groupModifyCommand) {
+        fortuneGroupService.modify(groupModifyCommand);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "删除分组")
     @DeleteMapping("/remove/{groupId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<Void> removeFortuneGroup(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
-        fortuneGroupService.removeFortuneGroup(groupId);
+    public ResponseDTO<Void> remove(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
+        fortuneGroupService.remove(groupId);
         return ResponseDTO.ok();
     }
 
@@ -131,7 +131,7 @@ public class FortuneGroupController {
     }
 
     @Operation(summary = "查询分组用户")
-    @GetMapping("/getUserGroupRelation/{groupId}")
+    @GetMapping("/userGroupRelation/getByGroupId/{groupId}")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<List<FortuneUserGroupRelationVo>> getUserGroupRelationByGroupId(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         return ResponseDTO.ok(fortuneUserGroupRelationService.getUserGroupRelationByGroupId(groupId));

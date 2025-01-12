@@ -56,7 +56,7 @@ public class FortuneTagService {
         fortuneTagModel.updateById();
     }
 
-    public void delete(Long bookId, Long tagId) {
+    public void remove(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         // TODO 子级一起删除
