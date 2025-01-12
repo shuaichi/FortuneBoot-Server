@@ -25,8 +25,8 @@ public class FortuneTagRelationEntity extends BaseEntity<FortuneTagRelationEntit
     private Long tagRelationId;
 
     @Schema(description = "账单流水ID")
-    @TableField("account_flow_id")
-    private Long accountFlowId;
+    @TableField("balance_flow_id")
+    private Long balanceFlowId;
 
     @Schema(description = "标签ID")
     @TableField("tag_id")
