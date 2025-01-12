@@ -19,13 +19,13 @@ import java.time.LocalDateTime;
  * @Date 2024/6/3 23:08
  **/
 @Data
-@TableName("fortune_account_flow")
+@TableName("fortune_bill_flow")
 @EqualsAndHashCode(callSuper = true)
-public class FortuneBalanceFlowEntity extends BaseEntity<FortuneBalanceFlowEntity> {
+public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
 
     @Schema(description = "主键")
-    @TableId(value = "balance_flow_id", type = IdType.AUTO)
-    private Long balanceFlowId;
+    @TableId(value = "bill_id", type = IdType.AUTO)
+    private Long billId;
 
     @Schema(description = "账本id")
     @TableField("book_id")
@@ -60,11 +60,11 @@ public class FortuneBalanceFlowEntity extends BaseEntity<FortuneBalanceFlowEntit
     private Long payeeId;
 
     /**
-     * com.fortuneboot.common.enums.fortune.BalanceFlowTypeEnum
+     * com.fortuneboot.common.enums.fortune.BillTypeEnum
      */
     @Schema(description = "流水类型")
-    @TableField("account_flow_type")
-    private Integer balanceFlowType;
+    @TableField("bill_type")
+    private Integer billType;
 
     @Schema(description = "转账到的账户")
     @TableField("to_account_id")

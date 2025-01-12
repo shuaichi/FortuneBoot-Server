@@ -22,15 +22,15 @@ public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntit
 
     private FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
 
-    public FortuneUserGroupRelationModel(FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository) {
-        this.fortuneUserGroupRelationRepository = fortuneUserGroupRelationRepository;
+    public FortuneUserGroupRelationModel(FortuneUserGroupRelationRepository repository) {
+        this.fortuneUserGroupRelationRepository = repository;
     }
 
-    public FortuneUserGroupRelationModel(FortuneUserGroupRelationEntity entity, FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository) {
+    public FortuneUserGroupRelationModel(FortuneUserGroupRelationEntity entity, FortuneUserGroupRelationRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneUserGroupRelationRepository = fortuneUserGroupRelationRepository;
+        this.fortuneUserGroupRelationRepository = repository;
     }
 
     public void loadAddCommand(FortuneUserGroupRelationAddCommand command) {

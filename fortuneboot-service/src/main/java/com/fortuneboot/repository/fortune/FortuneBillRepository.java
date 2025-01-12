@@ -1,7 +1,7 @@
 package com.fortuneboot.repository.fortune;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.fortuneboot.domain.entity.fortune.FortuneBalanceFlowEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 
 /**
  * 账单流水Repository
@@ -9,5 +9,5 @@ import com.fortuneboot.domain.entity.fortune.FortuneBalanceFlowEntity;
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/06/03 23:29
  */
-public interface FortuneBalanceFlowRepository extends IService<FortuneBalanceFlowEntity> {
+public interface FortuneBillRepository extends IService<FortuneBillEntity> {
 }

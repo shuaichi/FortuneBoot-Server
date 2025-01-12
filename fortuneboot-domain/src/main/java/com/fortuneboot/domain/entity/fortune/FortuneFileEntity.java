@@ -45,6 +45,6 @@ public class FortuneFileEntity extends BaseEntity<FortuneFileEntity> {
     private Long userId;
 
     @Schema(description = "账单流水ID")
-    @TableField("balance_flow_id")
-    private Long balanceFlowId;
+    @TableField("bill_id")
+    private Long billId;
 }

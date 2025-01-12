@@ -23,15 +23,15 @@ public class FortuneAccountModel extends FortuneAccountEntity {
 
     private FortuneAccountRepository fortuneAccountRepository;
 
-    public FortuneAccountModel(FortuneAccountRepository fortuneAccountRepository){
-        this.fortuneAccountRepository = fortuneAccountRepository;
+    public FortuneAccountModel(FortuneAccountRepository repository){
+        this.fortuneAccountRepository = repository;
     }
 
-    public FortuneAccountModel(FortuneAccountEntity entity,FortuneAccountRepository fortuneAccountRepository){
+    public FortuneAccountModel(FortuneAccountEntity entity,FortuneAccountRepository repository){
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneAccountRepository = fortuneAccountRepository;
+        this.fortuneAccountRepository = repository;
     }
 
     public void loadAddCommand(FortuneAccountAddCommand command) {
