@@ -93,6 +93,38 @@ public class FortuneBookConfigController {
         return ResponseDTO.ok();
     }
 
+    @Operation(summary = "修改是否可支出")
+    @PatchMapping("/tag/modifyTagCanExpense/{bookId}/{tagId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyTagCanExpense(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+        fortuneTagService.modifyCanExpense(bookId,tagId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "修改是否可收入")
+    @PatchMapping("/tag/modifyCanIncome/{bookId}/{tagId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyTagCanIncome(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+        fortuneTagService.modifyCanIncome(bookId,tagId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "修改是否可转账")
+    @PatchMapping("/tag/modifyCanTransfer/{bookId}/{tagId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyTagCanTransfer(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+        fortuneTagService.modifyCanTransfer(bookId,tagId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "修改是否启用")
+    @PatchMapping("/tag/modifyEnable/{bookId}/{tagId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> modifyTagEnable(@PathVariable @Positive Long bookId, @PathVariable @Positive Long tagId) {
+        fortuneTagService.modifyEnable(bookId,tagId);
+        return ResponseDTO.ok();
+    }
+
     @Operation(summary = "查询交易对象")
     @GetMapping("/payee/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")

@@ -70,4 +70,20 @@ public class FortuneTagModel extends FortuneTagEntity {
     public void checkHeight() {
         // TODO 检查标签高度
     }
+
+    public void modifyCanExpense() {
+        this.setCanExpense(!this.getCanExpense());
+    }
+
+    public void modifyCanIncome() {
+        this.setCanIncome(!this.getCanIncome());
+    }
+
+    public void modifyEnable() {
+        this.setEnable(!this.getEnable());
+    }
+
+    public void modifyCanTransfer() {
+        this.setCanTransfer(!this.getCanTransfer());
+    }
 }
