@@ -7,6 +7,7 @@ import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
 import com.fortuneboot.factory.fortune.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -71,4 +72,33 @@ public class FortuneTagService {
         // TODO 校验父级是否在回收站
         fortuneTagModel.updateById();
     }
+
+    public void modifyCanExpense(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.modifyCanExpense();
+        fortuneTagModel.updateById();
+    }
+
+    public void modifyCanIncome(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.modifyCanIncome();
+        fortuneTagModel.updateById();
+    }
+
+    public void modifyCanTransfer( Long bookId,  Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.modifyCanTransfer();
+        fortuneTagModel.updateById();
+    }
+
+    public void modifyEnable(Long bookId, Long tagId) {
+        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
+        fortuneTagModel.checkBookId(bookId);
+        fortuneTagModel.modifyEnable();
+        fortuneTagModel.updateById();
+    }
+
 }
