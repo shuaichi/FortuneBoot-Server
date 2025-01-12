@@ -22,15 +22,15 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
 
     private FortuneCategoryRepository fortuneCategoryRepository;
 
-    public FortuneCategoryModel(FortuneCategoryRepository fortuneCategoryRepository) {
-        this.fortuneCategoryRepository = fortuneCategoryRepository;
+    public FortuneCategoryModel(FortuneCategoryRepository repository) {
+        this.fortuneCategoryRepository = repository;
     }
 
-    public FortuneCategoryModel(FortuneCategoryEntity entity, FortuneCategoryRepository fortuneCategoryRepository) {
+    public FortuneCategoryModel(FortuneCategoryEntity entity, FortuneCategoryRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneCategoryRepository = fortuneCategoryRepository;
+        this.fortuneCategoryRepository = repository;
     }
 
 

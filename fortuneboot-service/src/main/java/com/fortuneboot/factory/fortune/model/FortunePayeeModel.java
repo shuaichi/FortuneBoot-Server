@@ -25,15 +25,15 @@ public class FortunePayeeModel extends FortunePayeeEntity {
 
     private FortunePayeeRepository fortunePayeeRepository;
 
-    public FortunePayeeModel(FortunePayeeRepository fortunePayeeRepository) {
-        this.fortunePayeeRepository = fortunePayeeRepository;
+    public FortunePayeeModel(FortunePayeeRepository repository) {
+        this.fortunePayeeRepository = repository;
     }
 
-    public FortunePayeeModel(FortunePayeeEntity entity, FortunePayeeRepository fortunePayeeRepository) {
+    public FortunePayeeModel(FortunePayeeEntity entity, FortunePayeeRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortunePayeeRepository = fortunePayeeRepository;
+        this.fortunePayeeRepository = repository;
     }
 
     public void loadAddCommand(FortunePayeeAddCommand command) {

@@ -22,15 +22,15 @@ public class FortuneBookModel extends FortuneBookEntity {
 
     private final FortuneBookRepository fortuneBookRepository;
 
-    public FortuneBookModel(FortuneBookRepository fortuneBookRepository) {
-        this.fortuneBookRepository = fortuneBookRepository;
+    public FortuneBookModel(FortuneBookRepository repository) {
+        this.fortuneBookRepository = repository;
     }
 
-    public FortuneBookModel(FortuneBookEntity entity,FortuneBookRepository fortuneBookRepository) {
+    public FortuneBookModel(FortuneBookEntity entity,FortuneBookRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneBookRepository = fortuneBookRepository;
+        this.fortuneBookRepository = repository;
     }
 
     public void loadAddCommand(FortuneBookAddCommand command) {

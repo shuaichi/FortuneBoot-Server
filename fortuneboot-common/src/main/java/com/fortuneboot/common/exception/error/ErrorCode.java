@@ -220,6 +220,10 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_NOT_MATCH_GROUP(26002,"账户与分组不匹配","Business.ACCOUNT_NOT_MATCH_GROUP"),
 
+        // ---------------------------------- BILL -----------------------------------------------
+
+        BILL_NOT_MATCH_BOOK(27001,"账单与账本不匹配","Business.BILL_NOT_MATCH_BOOK"),
+
         ;
 
 

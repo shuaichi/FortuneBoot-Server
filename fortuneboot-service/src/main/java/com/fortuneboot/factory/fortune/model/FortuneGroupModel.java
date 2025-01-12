@@ -22,15 +22,15 @@ public class FortuneGroupModel extends FortuneGroupEntity {
 
     private FortuneGroupRepository fortuneGroupRepository;
 
-    public FortuneGroupModel(FortuneGroupRepository fortuneGroupRepository) {
-        this.fortuneGroupRepository = fortuneGroupRepository;
+    public FortuneGroupModel(FortuneGroupRepository repository) {
+        this.fortuneGroupRepository = repository;
     }
 
-    public FortuneGroupModel(FortuneGroupEntity entity, FortuneGroupRepository fortuneGroupRepository) {
+    public FortuneGroupModel(FortuneGroupEntity entity, FortuneGroupRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneGroupRepository = fortuneGroupRepository;
+        this.fortuneGroupRepository = repository;
     }
 
     public void loadAddCommand(FortuneGroupAddCommand command) {

@@ -11,7 +11,7 @@ import lombok.Getter;
  * @Date 2024/6/3 23:21
  **/
 @Getter
-public enum BalanceFlowTypeEnum implements BasicEnum<Integer> {
+public enum BillTypeEnum implements BasicEnum<Integer> {
     INCOME(1, "收入"),
     EXPENSE(2, "支出"),
     TRANSFER(3, "转账"),
@@ -24,7 +24,7 @@ public enum BalanceFlowTypeEnum implements BasicEnum<Integer> {
 
     private final String description;
 
-    BalanceFlowTypeEnum(Integer value, String description) {
+    BillTypeEnum(Integer value, String description) {
         this.value = value;
         this.description = description;
     }

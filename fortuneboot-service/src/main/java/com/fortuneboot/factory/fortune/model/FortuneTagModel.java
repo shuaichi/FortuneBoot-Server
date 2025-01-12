@@ -24,15 +24,15 @@ public class FortuneTagModel extends FortuneTagEntity {
 
     private FortuneTagRepository fortuneTagRepository;
 
-    public FortuneTagModel(FortuneTagRepository fortuneTagRepository) {
-        this.fortuneTagRepository = fortuneTagRepository;
+    public FortuneTagModel(FortuneTagRepository repository) {
+        this.fortuneTagRepository = repository;
     }
 
-    public FortuneTagModel(FortuneTagEntity entity, FortuneTagRepository fortuneTagRepository) {
+    public FortuneTagModel(FortuneTagEntity entity, FortuneTagRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneTagRepository = fortuneTagRepository;
+        this.fortuneTagRepository = repository;
     }
 
     public void loadAddCommand(FortuneTagAddCommand command) {
