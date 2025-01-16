@@ -40,7 +40,7 @@ public class FortuneBookController {
     @Operation(summary = "分页查询账本")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.groupOwnerPermission(#query.getGroupId())")
-    public ResponseDTO<PageDTO<FortuneBookVo>> getPage(@Valid @RequestBody FortuneBookQuery query) {
+    public ResponseDTO<PageDTO<FortuneBookVo>> getPage(@Valid FortuneBookQuery query) {
         IPage<FortuneBookEntity> page = fortuneBookService.getPage(query);
         List<FortuneBookVo> records = page.getRecords().stream().map(FortuneBookVo::new).collect(Collectors.toList());
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));

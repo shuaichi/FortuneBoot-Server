@@ -46,7 +46,7 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询标签")
     @GetMapping("/tag/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortuneTagVo>> getTagList(@Valid @RequestBody FortuneTagQuery query) {
+    public ResponseDTO<List<FortuneTagVo>> getTagList(@Valid FortuneTagQuery query) {
         List<FortuneTagEntity> list = fortuneTagService.getList(query);
         List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
         List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);
@@ -128,7 +128,7 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询交易对象")
     @GetMapping("/payee/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortunePayeeVo>> getPayeeList(@Valid @RequestBody FortunePayeeQuery query) {
+    public ResponseDTO<List<FortunePayeeVo>> getPayeeList(@Valid FortunePayeeQuery query) {
         List<FortunePayeeEntity> list = fortunePayeeService.getList(query);
         List<FortunePayeeVo> result = list.stream().map(FortunePayeeVo::new).toList();
         return ResponseDTO.ok(result);
@@ -201,7 +201,7 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询分类")
     @GetMapping("/category/getList")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortuneCategoryVo>> getCategoryList(@Valid @RequestBody FortuneCategoryQuery query) {
+    public ResponseDTO<List<FortuneCategoryVo>> getCategoryList(@Valid FortuneCategoryQuery query) {
         List<FortuneCategoryEntity> list = fortuneCategoryService.getList(query);
         List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
         List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
