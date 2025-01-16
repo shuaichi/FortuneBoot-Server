@@ -34,7 +34,7 @@ public class FortuneAccountController {
     @Operation(summary = "分页查询账户")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.groupOwnerPermission(#query.getGroupId())")
-    public ResponseDTO<PageDTO<FortuneAccountVo>> getPage(@Valid @RequestBody FortuneAccountQuery query) {
+    public ResponseDTO<PageDTO<FortuneAccountVo>> getPage(@Valid FortuneAccountQuery query) {
         IPage<FortuneAccountEntity> page = fortuneAccountService.getPage(query);
         List<FortuneAccountVo> records = page.getRecords().stream().map(FortuneAccountVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
