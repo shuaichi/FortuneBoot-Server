@@ -224,9 +224,12 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_NOT_MATCH_BOOK(27001,"账单与账本不匹配","Business.BILL_NOT_MATCH_BOOK"),
 
-        BILL_TAG_NOT_EXIST(27002,"账单标签不存在","Business.BILL_TAG_NOT_EXIST"),
+        BILL_TAG_NOT_EXIST(27002,"账本标签不存在","Business.BILL_TAG_NOT_EXIST"),
 
-        BILL_PAYEE_NOT_EXIST(27003,"账单交易对象不存在","Business.BILL_PAYEE_NOT_EXIST"),
+        BILL_PAYEE_NOT_EXIST(27003,"账本交易对象不存在","Business.BILL_PAYEE_NOT_EXIST"),
+
+        BILL_CATEGORY_NOT_EXIST(27003,"账本分类不存在","Business.BILL_CATEGORY_NOT_EXIST"),
+
         ;
 
 

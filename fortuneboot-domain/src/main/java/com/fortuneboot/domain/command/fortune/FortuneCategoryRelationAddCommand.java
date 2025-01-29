@@ -4,14 +4,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
- * 标签关系表
+ * 分类账单关系
  *
  * @author zhangchi118
- * @date 2025/1/29 20:00
+ * @date 2025/1/29 23:48
  **/
 @Data
-public class FortuneTagRelationAddCommand {
+public class FortuneCategoryRelationAddCommand {
 
     /**
      * 账单id
@@ -21,9 +23,15 @@ public class FortuneTagRelationAddCommand {
     private Long billId;
 
     /**
-     * 标签id
+     * 分类id
      */
     @NotNull
     @Positive
-    private Long tagId;
+    private Long categoryId;
+
+    /**
+     * 金额
+     */
+    @NotNull
+    private BigDecimal amount;
 }
