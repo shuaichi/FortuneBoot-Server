@@ -13,6 +13,8 @@ import lombok.EqualsAndHashCode;
 import java.util.Objects;
 
 /**
+ * 分类
+ *
  * @author zhangchi118
  * @date 2025/1/10 19:50
  **/
@@ -32,7 +34,6 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
         }
         this.fortuneCategoryRepository = repository;
     }
-
 
     public void loadAddCommand(FortuneCategoryAddCommand command) {
         if (Objects.nonNull(command)) {

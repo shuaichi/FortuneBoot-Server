@@ -7,15 +7,13 @@ import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.CurrencyTemplateBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
-import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
-import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
-import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
+ * 账单service
+ *
  * @Author work.chi.zhang@gmail.com
  * @Date 2025/1/12 22:42
  **/
@@ -52,6 +52,8 @@ public class FortuneBillService {
 
     private final FortunePayeeFactory fortunePayeeFactory;
 
+    private final FortuneCategoryRelationService fortuneCategoryRelationService;
+
     public IPage<FortuneBillEntity> getPage(FortuneBillQuery query) {
         return fortuneBillRepository.page(query.toPage(), query.addQueryCondition());
     }
@@ -62,7 +64,7 @@ public class FortuneBillService {
         fortuneBillModel.loadAddCommand(addCommand);
         fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
         BigDecimal amount = addCommand.getCategoryList().stream().map(Pair::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (Objects.nonNull(addCommand.getAccountId())) {
+        if (Objects.nonNull(addCommand.getAccountId()) && addCommand.getConfirm()) {
             // 修改账户金额
             FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(addCommand.getAccountId());
             fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(amount));
@@ -104,9 +106,13 @@ public class FortuneBillService {
                 fortuneTagRelationService.add(fortuneTagRelationAddCommand);
             }
         }
-        for (Pair<Long,BigDecimal> category:addCommand.getCategoryList()){
+        for (Pair<Long, BigDecimal> category : addCommand.getCategoryList()) {
             Long billId = fortuneBillModel.getBillId();
-
+            FortuneCategoryRelationAddCommand fortuneCategoryRelationAddCommand = new FortuneCategoryRelationAddCommand();
+            fortuneCategoryRelationAddCommand.setBillId(billId);
+            fortuneCategoryRelationAddCommand.setCategoryId(category.getKey());
+            fortuneCategoryRelationAddCommand.setAmount(category.getValue());
+            fortuneCategoryRelationService.add(fortuneCategoryRelationAddCommand);
         }
     }
 
