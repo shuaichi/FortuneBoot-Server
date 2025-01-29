@@ -46,7 +46,7 @@ public class FortuneGroupController {
     @Operation(summary = "分页查询我的分组")
     @GetMapping("/getPage")
     public ResponseDTO<PageDTO<FortuneGroupVo>> getFortuneGroupPage(@Valid FortuneGroupQuery query) {
-        PageDTO<FortuneGroupVo> pageDTO = fortuneGroupService.getFortuneGroupPage(query);
+        var pageDTO = fortuneGroupService.getFortuneGroupPage(query);
         return ResponseDTO.ok(pageDTO);
     }
 
