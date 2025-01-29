@@ -22,10 +22,10 @@ public class FortunePayeeFactory {
 
     private final FortunePayeeRepository fortunePayeeRepository;
 
-    public FortunePayeeModel loadById(Long tagId) {
-        FortunePayeeEntity entity = fortunePayeeRepository.getById(tagId);
+    public FortunePayeeModel loadById(Long payeeId) {
+        FortunePayeeEntity entity = fortunePayeeRepository.getById(payeeId);
         if (Objects.isNull(entity)) {
-            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, tagId, "交易对象");
+            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, payeeId, "交易对象");
         }
         return new FortunePayeeModel(entity, fortunePayeeRepository);
     }

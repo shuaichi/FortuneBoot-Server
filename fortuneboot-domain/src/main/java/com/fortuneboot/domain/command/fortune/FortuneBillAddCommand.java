@@ -1,5 +1,7 @@
 package com.fortuneboot.domain.command.fortune;
 
+import cn.hutool.core.lang.Pair;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -34,9 +36,15 @@ public class FortuneBillAddCommand {
     private Long accountId;
 
     /**
+     * 转入账户id
+     * 注：转账用
+     */
+    private Long accountToId;
+
+    /**
      *分类id
      */
-    private Long categoryId;
+    private List<Pair<Long,BigDecimal>> categoryList;
 
     /**
      *金额
@@ -44,9 +52,9 @@ public class FortuneBillAddCommand {
     private BigDecimal amount;
 
     /**
-     *汇率转换后的金额
+     * 币种
      */
-    private BigDecimal convertedAmount;
+    private String currencyCode;
 
     /**
      *交易对象
@@ -55,7 +63,7 @@ public class FortuneBillAddCommand {
 
     /**
      * 流水类型
-     * com.fortuneboot.common.enums.fortune.BillTypeEnum
+     * @see BillTypeEnum
      */
     private Integer billType;
 
@@ -79,6 +87,9 @@ public class FortuneBillAddCommand {
      */
     private Boolean remark;
 
-    private List<FortuneTagAddCommand> tagList;
+    /**
+     * 标签id
+     */
+    private List<Long> tagIdList;
 
 }

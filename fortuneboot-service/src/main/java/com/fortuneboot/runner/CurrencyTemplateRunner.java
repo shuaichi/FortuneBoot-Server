@@ -12,6 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,8 @@ public class CurrencyTemplateRunner implements ApplicationRunner {
             });
         } catch (Exception e) {
             log.error("初始化货币失败：", e);
-            currencyDetailsList.add(new CurrencyTemplateBo(1L, "USD", 1.0));
-            currencyDetailsList.add(new CurrencyTemplateBo(2L, "CNY", 7.25));
+            currencyDetailsList.add(new CurrencyTemplateBo(1L, "USD", new BigDecimal("1.0")));
+            currencyDetailsList.add(new CurrencyTemplateBo(2L, "CNY", new BigDecimal("7.25")));
         }
         applicationScopeBo.setCurrencyTemplateBoList(currencyDetailsList);
     }

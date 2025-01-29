@@ -51,4 +51,10 @@ public class FortuneBillModel extends FortuneBillEntity {
             throw new ApiException(ErrorCode.Business.BILL_NOT_MATCH_BOOK);
         }
     }
+
+    public void checkPayeeExist(FortunePayeeModel fortunePayeeModel) {
+        if (Objects.isNull(fortunePayeeModel)) {
+            throw new ApiException(ErrorCode.Business.BILL_PAYEE_NOT_EXIST);
+        }
+    }
 }

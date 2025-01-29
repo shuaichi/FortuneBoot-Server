@@ -12,6 +12,7 @@ import com.fortuneboot.service.fortune.FortuneBillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,28 +31,36 @@ public class FortuneBillController {
 
     private final FortuneBillService fortuneBillService;
 
-    @Operation(summary = "分页查询账户")
+    @Operation(summary = "分页查询账单")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid @RequestBody FortuneBillQuery query){
+    public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid FortuneBillQuery query){
         IPage<FortuneBillEntity> page = fortuneBillService.getPage(query);
         List<FortuneBillVo> records = page.getRecords().stream().map(FortuneBillVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 
-    @Operation(summary = "分页查询账户")
+    @Operation(summary = "新增账单")
     @PostMapping("/add")
     @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId())")
-    public ResponseDTO<Void> add(FortuneBillAddCommand addCommand){
+    public ResponseDTO<Void> add(@Valid @RequestBody FortuneBillAddCommand addCommand){
         fortuneBillService.add(addCommand);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "分页查询账户")
+    @Operation(summary = "修改账单")
     @PutMapping("/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> add(FortuneBillModifyCommand modifyCommand){
+    public ResponseDTO<Void> add(@Valid @RequestBody FortuneBillModifyCommand modifyCommand){
         fortuneBillService.modify(modifyCommand);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "删除账单")
+    @DeleteMapping("/remove/{bookId}/{billId}")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> remove(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
+        fortuneBillService.remove(bookId,billId);
         return ResponseDTO.ok();
     }
 }

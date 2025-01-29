@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * 货币Template
  *
@@ -33,7 +35,7 @@ public class CurrencyTemplateBo {
     /**
      * 汇率
      */
-    private Double rate;
+    private BigDecimal rate;
 
     /**
      * 构造方法
@@ -42,7 +44,7 @@ public class CurrencyTemplateBo {
      * @param currencyName
      * @param rate
      */
-    public CurrencyTemplateBo(Long currencyId, String currencyName, Double rate) {
+    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal rate) {
         this.currencyId = currencyId;
         this.currencyName = currencyName;
         this.rate = rate;
