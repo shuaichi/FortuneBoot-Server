@@ -28,4 +28,13 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
         this.value = value;
         this.description = description;
     }
+
+    public static BillTypeEnum getByValue(Integer value) {
+        for (BillTypeEnum billTypeEnum : BillTypeEnum.values()) {
+            if (billTypeEnum.getValue().equals(value)) {
+                return billTypeEnum;
+            }
+        }
+        return null;
+    }
 }

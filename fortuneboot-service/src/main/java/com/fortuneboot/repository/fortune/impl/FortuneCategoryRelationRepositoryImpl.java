@@ -1,10 +1,14 @@
 package com.fortuneboot.repository.fortune.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneCategoryRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 分类账单关系
@@ -15,4 +19,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCategoryRelationMapper, FortuneCategoryRelationEntity> implements FortuneCategoryRelationRepository {
 
+    @Override
+    public List<FortuneCategoryRelationEntity> getByBillId(Long billId) {
+        LambdaQueryWrapper<FortuneCategoryRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
+        wrapper.eq(FortuneCategoryRelationEntity::getBillId, billId);
+        return this.list(wrapper);
+    }
 }

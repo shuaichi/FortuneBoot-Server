@@ -52,9 +52,9 @@ public class FortuneBillAddCommand {
     private BigDecimal amount;
 
     /**
-     * 币种
+     *汇率转换后的金额
      */
-    private String currencyCode;
+    private BigDecimal convertedAmount;
 
     /**
      *交易对象
