@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -64,34 +63,12 @@ public class FortuneBillService {
         fortuneBillModel.loadAddCommand(addCommand);
         fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
         BigDecimal amount = addCommand.getCategoryList().stream().map(Pair::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (Objects.nonNull(addCommand.getAccountId()) && addCommand.getConfirm()) {
-            // 修改账户金额
-            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(addCommand.getAccountId());
-            fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(amount));
-            fortuneAccountModel.updateById();
-        }
         if (Objects.equals(addCommand.getBillType(), BillTypeEnum.EXPENSE.getValue()) || Objects.equals(addCommand.getBillType(), BillTypeEnum.INCOME.getValue())) {
             fortuneBillModel.setAmount(amount);
-            //转换汇率
-            FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(addCommand.getBookId());
-            fortuneBillModel.setConvertedAmount(amount);
-            if (!StringUtils.equals(addCommand.getCurrencyCode(), fortuneBookModel.getDefaultCurrency())) {
-                List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
-                Optional<CurrencyTemplateBo> currency = currencyTemplateBoList.stream().filter(item -> StringUtils.equals(item.getCurrencyName(), fortuneBookModel.getDefaultCurrency())).findFirst();
-                currency.ifPresent(currencyTemplateBo -> fortuneBillModel.setConvertedAmount(amount.divide(currencyTemplateBo.getRate(), 2, RoundingMode.HALF_UP)));
-            }
             fortuneBillModel.setConvertedAmount(amount);
         }
-        if (Objects.equals(addCommand.getBillType(), BillTypeEnum.TRANSFER.getValue())) {
-            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(addCommand.getAccountToId());
-            fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(amount));
-            if (!StringUtils.equals(addCommand.getCurrencyCode(), fortuneAccountModel.getCurrencyCode())) {
-                List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
-                Optional<CurrencyTemplateBo> currency = currencyTemplateBoList.stream().filter(item -> StringUtils.equals(item.getCurrencyName(), fortuneAccountModel.getCurrencyCode())).findFirst();
-                currency.ifPresent(currencyTemplateBo -> fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(currencyTemplateBo.getRate())));
-            }
-            fortuneBillModel.updateById();
-        }
+        // 确认账单（修改账户资金）
+        this.confirmBalance(fortuneBillModel);
         if (Objects.nonNull(addCommand.getPayeeId())) {
             FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(addCommand.getPayeeId());
             fortuneBillModel.checkPayeeExist(fortunePayeeModel);
@@ -116,16 +93,90 @@ public class FortuneBillService {
         }
     }
 
+    // 修改的逻辑，删除旧的，新增一条新纪录
+    @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillModifyCommand modifyCommand) {
-        FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(modifyCommand.getBillId());
-        fortuneBillModel.loadModifyCommand(modifyCommand);
-        fortuneBillModel.checkBookId(modifyCommand.getBookId());
-        fortuneBillModel.updateById();
+        this.remove(modifyCommand.getBookId(), modifyCommand.getBillId());
+        this.add(modifyCommand);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        // 账户金额回滚
+        this.refundBalance(fortuneBillModel);
+        // 删除标签
+        fortuneTagRelationService.removeByBillId(billId);
+        // 删除分类
+        fortuneCategoryRelationService.removeByBillId(billId);
         fortuneBillModel.deleteById();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void confirmBalance(FortuneBillModel fortuneBillModel) {
+        if (fortuneBillModel.getConfirm() && Objects.nonNull(fortuneBillModel.getAccountId())) {
+            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+            BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
+            switch (billType) {
+                case INCOME:
+                case PROFIT:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                    break;
+                case EXPENSE:
+                case LOSS:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                    break;
+                case TRANSFER:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                    FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
+                    fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                    // 汇率转换
+                    if (!StringUtils.equals(fortuneAccountToModel.getCurrencyCode(), fortuneAccountModel.getCurrencyCode())) {
+                        List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
+                        Optional<CurrencyTemplateBo> currency = currencyTemplateBoList.stream().filter(item -> StringUtils.equals(item.getCurrencyName(), fortuneAccountModel.getCurrencyCode())).findFirst();
+                        if (currency.isPresent()) {
+                            CurrencyTemplateBo currencyTemplateBo = currency.get();
+                            BigDecimal convertedAmount = fortuneAccountModel.getBalance().multiply(currencyTemplateBo.getRate());
+                            fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(convertedAmount));
+                            fortuneBillModel.setConvertedAmount(convertedAmount);
+                        }
+                    }
+                    fortuneAccountToModel.updateById();
+                case ADJUST:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                case null, default:
+                    break;
+            }
+            fortuneAccountModel.updateById();
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void refundBalance(FortuneBillModel fortuneBillModel) {
+        if (fortuneBillModel.getConfirm() && Objects.nonNull(fortuneBillModel.getAccountId())) {
+            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+            BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
+            switch (billType) {
+                case INCOME:
+                case PROFIT:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                    break;
+                case EXPENSE:
+                case LOSS:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                    break;
+                case TRANSFER:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                    FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
+                    fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getConvertedAmount()));
+                    fortuneAccountToModel.updateById();
+                case ADJUST:
+                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                case null, default:
+                    break;
+            }
+            fortuneAccountModel.updateById();
+        }
     }
 }

@@ -3,6 +3,8 @@ package com.fortuneboot.repository.fortune;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
 
+import java.util.List;
+
 /**
  * 交易标签和账单的关系表
  *
@@ -10,4 +12,12 @@ import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
  * @Date 2024/6/5 23:36
  **/
 public interface FortuneTagRelationRepository extends IService<FortuneTagRelationEntity> {
+
+    /**
+     * 根据账单id批量查询
+     *
+     * @param billId
+     * @return
+     */
+    List<FortuneTagRelationEntity> getByBillId(Long billId);
 }
