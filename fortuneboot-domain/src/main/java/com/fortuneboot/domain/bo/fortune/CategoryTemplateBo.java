@@ -29,7 +29,7 @@ public class CategoryTemplateBo {
     /**
      * 类型
      */
-    private Integer type;
+    private Integer categoryType;
 
     /**
      * 排序

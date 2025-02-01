@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 交易对象
+ *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/5 23:21
  **/

@@ -48,8 +48,8 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
     @TableField("enable")
     private Boolean enable;
 
-    @Schema(description = "remark")
-    @TableField("备注")
+    @Schema(description = "备注")
+    @TableField("remark")
     private String remark;
 
     @Schema(description = "回收站")
