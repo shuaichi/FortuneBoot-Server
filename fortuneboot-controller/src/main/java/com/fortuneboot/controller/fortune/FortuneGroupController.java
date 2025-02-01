@@ -3,6 +3,8 @@ package com.fortuneboot.controller.fortune;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
+import com.fortuneboot.domain.bo.fortune.BookTemplateBo;
+import com.fortuneboot.domain.bo.fortune.CurrencyTemplateBo;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
@@ -46,7 +48,7 @@ public class FortuneGroupController {
     @Operation(summary = "分页查询我的分组")
     @GetMapping("/getPage")
     public ResponseDTO<PageDTO<FortuneGroupVo>> getFortuneGroupPage(@Valid FortuneGroupQuery query) {
-        var pageDTO = fortuneGroupService.getFortuneGroupPage(query);
+        PageDTO<FortuneGroupVo> pageDTO = fortuneGroupService.getFortuneGroupPage(query);
         return ResponseDTO.ok(pageDTO);
     }
 
@@ -60,8 +62,8 @@ public class FortuneGroupController {
     @Operation(summary = "获取账本模板")
     @GetMapping("/getBookTemplate")
     public ResponseDTO<List<SelectOptionsVo>> getBookTemplate() {
-        var bookTemplateBoList = applicationScopeBo.getBookTemplateBoList();
-        var result = bookTemplateBoList.stream().map(item -> {
+        List<BookTemplateBo> bookTemplateBoList = applicationScopeBo.getBookTemplateBoList();
+        List<SelectOptionsVo> result = bookTemplateBoList.stream().map(item -> {
             SelectOptionsVo selectOptionsVo = new SelectOptionsVo();
             selectOptionsVo.setValue(item.getBookTemplateId());
             selectOptionsVo.setLabel(item.getBookTemplateName());
@@ -73,8 +75,8 @@ public class FortuneGroupController {
     @Operation(summary = "获取货币模板")
     @GetMapping("/getCurrencyTemplate")
     public ResponseDTO<List<SelectOptionsVo>> getCurrencyTemplate() {
-        var currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
-        var result = currencyTemplateBoList.stream().map(item->{
+        List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
+        List<SelectOptionsVo> result = currencyTemplateBoList.stream().map(item->{
             SelectOptionsVo selectOptionsVo = new SelectOptionsVo();
             selectOptionsVo.setValue(item.getCurrencyId());
             selectOptionsVo.setLabel(item.getCurrencyName());
