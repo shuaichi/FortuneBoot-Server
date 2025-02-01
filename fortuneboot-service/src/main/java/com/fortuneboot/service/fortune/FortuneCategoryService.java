@@ -30,11 +30,12 @@ public class FortuneCategoryService {
         return fortuneCategoryRepository.list(query.addQueryCondition());
     }
 
-    public void add(FortuneCategoryAddCommand addCommand) {
+    public FortuneCategoryModel add(FortuneCategoryAddCommand addCommand) {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.create();
         fortuneCategoryModel.loadAddCommand(addCommand);
         fortuneCategoryModel.checkHeight();
         fortuneCategoryModel.insert();
+        return fortuneCategoryModel;
     }
 
     public void modify(FortuneCategoryModifyCommand modifyCommand) {
