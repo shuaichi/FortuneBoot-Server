@@ -6,23 +6,21 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
-import com.fortuneboot.common.utils.mybatis.WrapperUtil;
+import com.fortuneboot.domain.command.fortune.FortuneBookAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
+import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.domain.query.fortune.FortuneGroupQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneGroupVo;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
-import com.fortuneboot.factory.fortune.FortuneUserGroupRelationFactory;
+import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
-import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -64,12 +62,12 @@ public class FortuneGroupService {
     /**
      * 用户/分组关系工厂
      */
-    private final FortuneUserGroupRelationFactory fortuneUserGroupRelationFactory;
+    private final FortuneUserGroupRelationService fortuneUserGroupRelationService;
 
     /**
-     * 账本Repository
+     * 账本service
      */
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookService fortuneBookService;
 
     public FortuneGroupVo getByUserId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
@@ -80,13 +78,23 @@ public class FortuneGroupService {
     public void add(FortuneGroupAddCommand groupAddCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
+        fortuneGroupModel.setEnable(Boolean.TRUE);
         fortuneGroupModel.insert();
         // 设置权限
-        FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
-        relationModel.setGroupId(fortuneGroupModel.getGroupId());
-        relationModel.setUserId(AuthenticationUtils.getSystemLoginUser().getUserId());
-        relationModel.setRoleType(RoleTypeEnum.OWNER.getValue());
-        relationModel.insert();
+        FortuneUserGroupRelationAddCommand fortuneUserGroupRelationAddCommand = new FortuneUserGroupRelationAddCommand();
+        fortuneUserGroupRelationAddCommand.setGroupId(fortuneGroupModel.getGroupId());
+        fortuneUserGroupRelationAddCommand.setUserId(AuthenticationUtils.getSystemLoginUser().getUserId());
+        fortuneUserGroupRelationAddCommand.setRoleType(RoleTypeEnum.OWNER.getValue());
+        fortuneUserGroupRelationService.addFortuneUserGroupRelation(fortuneUserGroupRelationAddCommand);
+        // 新增账本
+        FortuneBookAddCommand fortuneBookAddCommand = new FortuneBookAddCommand();
+        fortuneBookAddCommand.setGroupId(fortuneGroupModel.getGroupId());
+        fortuneBookAddCommand.setBookName("默认账本");
+        fortuneBookAddCommand.setDefaultCurrency(groupAddCommand.getDefaultCurrency());
+        FortuneBookModel fortuneBookModel = fortuneBookService.add(fortuneBookAddCommand);
+        // 更新默认账本id
+        fortuneGroupModel.setDefaultBookId(fortuneBookModel.getBookId());
+        fortuneGroupModel.updateById();
     }
 
     public void modify(FortuneGroupModifyCommand groupModifyCommand) {
@@ -112,7 +120,7 @@ public class FortuneGroupService {
         queryWrapper.in(FortuneGroupEntity::getGroupId, groupIdList);
         Page<FortuneGroupEntity> page = fortuneGroupRepository.page(query.toPage(), queryWrapper);
         List<Long> bookIdList = page.getRecords().stream().map(FortuneGroupEntity::getDefaultBookId).toList();
-        List<FortuneBookEntity> bookEntities = fortuneBookRepository.listByIds(bookIdList);
+        List<FortuneBookEntity> bookEntities = fortuneBookService.getByIds(bookIdList);
         Map<Long, FortuneBookEntity> idMapBook = bookEntities.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
         Map<Long, FortuneUserGroupRelationEntity> idMapRelation = relationEntityList.stream().collect(Collectors.toMap(FortuneUserGroupRelationEntity::getGroupId, Function.identity(), (k1, k2) -> k2));
         List<FortuneGroupVo> records = page.getRecords().stream().map(FortuneGroupVo::new).peek(item -> {

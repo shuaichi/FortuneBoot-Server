@@ -93,5 +93,13 @@ public class FortuneBookController {
         return ResponseDTO.ok();
     }
 
+    @Operation(summary = "设置为默认账本")
+    @GetMapping("/getByGroupId/{groupId}")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<List<FortuneBookVo>> getByGroupId(@PathVariable @Positive Long groupId){
+        List<FortuneBookEntity> bookEntityList = fortuneBookService.getByGroupId(groupId);
+        List<FortuneBookVo> result = bookEntityList.stream().map(FortuneBookVo::new).collect(Collectors.toList());
+        return ResponseDTO.ok(result);
+    }
     // TODO 导出账单、复制账本
 }

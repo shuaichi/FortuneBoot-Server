@@ -10,15 +10,12 @@ import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
-import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.List;
 
 /**
  * 账本service
@@ -41,10 +38,12 @@ public class FortuneBookService {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
     }
 
-    public void add(FortuneBookAddCommand bookAddCommand) {
+    public FortuneBookModel add(FortuneBookAddCommand bookAddCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.create();
         fortuneBookModel.loadAddCommand(bookAddCommand);
+        fortuneBookModel.setEnable(Boolean.TRUE);
         fortuneBookModel.insert();
+        return fortuneBookModel;
     }
 
     public void modify(FortuneBookModifyCommand bookModifyCommand) {
@@ -73,5 +72,13 @@ public class FortuneBookService {
         fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.setRecycleBin(Boolean.FALSE);
         fortuneBookModel.updateById();
+    }
+
+    public List<FortuneBookEntity> getByIds(List<Long> bookIdList) {
+        return fortuneBookRepository.listByIds(bookIdList);
+    }
+
+    public List<FortuneBookEntity> getByGroupId(Long groupId) {
+        return fortuneBookRepository.getByGroupId(groupId);
     }
 }
