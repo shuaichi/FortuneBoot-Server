@@ -78,7 +78,6 @@ public class FortuneGroupService {
     public void add(FortuneGroupAddCommand groupAddCommand) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
-        fortuneGroupModel.setEnable(Boolean.TRUE);
         fortuneGroupModel.insert();
         // 设置权限
         FortuneUserGroupRelationAddCommand fortuneUserGroupRelationAddCommand = new FortuneUserGroupRelationAddCommand();
@@ -91,6 +90,7 @@ public class FortuneGroupService {
         fortuneBookAddCommand.setGroupId(fortuneGroupModel.getGroupId());
         fortuneBookAddCommand.setBookName("默认账本");
         fortuneBookAddCommand.setDefaultCurrency(groupAddCommand.getDefaultCurrency());
+        fortuneBookAddCommand.setBookTemplate(groupAddCommand.getBookTemplate());
         FortuneBookModel fortuneBookModel = fortuneBookService.add(fortuneBookAddCommand);
         // 更新默认账本id
         fortuneGroupModel.setDefaultBookId(fortuneBookModel.getBookId());

@@ -580,7 +580,7 @@
       {
         "categoryId": 1,
         "categoryName": "维持类",
-        "type": 100,
+        "categoryType": 1,
         "remark": "维持生活的必须开支，是无法节省的开支。",
         "parentId": "",
         "sort": 100
@@ -588,7 +588,7 @@
       {
         "categoryId": 2,
         "categoryName": "消费类",
-        "type": 100,
+        "categoryType": 1,
         "remark": "可以节省的开支，比如娱乐，旅游等。",
         "parentId": "",
         "sort": 200
@@ -596,7 +596,7 @@
       {
         "categoryId": 3,
         "categoryName": "提升类",
-        "type": 100,
+        "categoryType": 1,
         "remark": "提升自己的生存能力，比如买书，保险等消费。",
         "parentId": "",
         "sort": 300
@@ -604,7 +604,7 @@
       {
         "categoryId": 4,
         "categoryName": "社交类",
-        "type": 100,
+        "categoryType": 1,
         "remark": "社交类型的支出，比如请朋友吃饭，送礼等。",
         "parentId": "",
         "sort": 400
@@ -612,7 +612,7 @@
       {
         "categoryId": 5,
         "categoryName": "主动收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": "即劳动收入，指用时间来换取金钱，它最大的特点就是必须花费时间和精力去获得。",
         "parentId": "",
         "sort": 100
@@ -620,7 +620,7 @@
       {
         "categoryId": 6,
         "categoryName": "工资",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 5
@@ -628,7 +628,7 @@
       {
         "categoryId": 7,
         "categoryName": "兼职",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 5
@@ -636,7 +636,7 @@
       {
         "categoryId": 8,
         "categoryName": "薅羊毛",
-        "type": 200,
+        "categoryType": 1,
         "remark": "利用各种网络金融产品或红包活动推广下线抽成赚钱，比如外卖优惠券、减免优惠、送话费等。",
         "sort": 300,
         "parentId": 5
@@ -644,7 +644,7 @@
       {
         "categoryId": 9,
         "categoryName": "被动收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 200
@@ -652,7 +652,7 @@
       {
         "categoryId": 10,
         "categoryName": "理财",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 9
@@ -660,7 +660,7 @@
       {
         "categoryId": 11,
         "categoryName": "租金",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 9
@@ -668,7 +668,7 @@
       {
         "categoryId": 12,
         "categoryName": "社交收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": "比如收到的红包。",
         "parentId": "",
         "sort": 300
@@ -719,7 +719,7 @@
       {
         "categoryId": 13,
         "categoryName": "员工",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 300
@@ -727,7 +727,7 @@
       {
         "categoryId": 14,
         "categoryName": "原材料",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 100
@@ -735,7 +735,7 @@
       {
         "categoryId": 15,
         "categoryName": "设备",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 400
@@ -743,7 +743,7 @@
       {
         "categoryId": 16,
         "categoryName": "门店",
-        "type": 100,
+        "categoryType": 1,
         "remark": "门店租金，水电费。",
         "parentId": "",
         "sort": 200
@@ -751,7 +751,7 @@
       {
         "categoryId": 17,
         "categoryName": "营销",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 500
@@ -759,7 +759,7 @@
       {
         "categoryId": 18,
         "categoryName": "住宿",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 13
@@ -767,7 +767,7 @@
       {
         "categoryId": 19,
         "categoryName": "工资",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 13
@@ -775,7 +775,7 @@
       {
         "categoryId": 20,
         "categoryName": "福利",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 13
@@ -783,7 +783,7 @@
       {
         "categoryId": 21,
         "categoryName": "招聘",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 13
@@ -791,7 +791,7 @@
       {
         "categoryId": 22,
         "categoryName": "水费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 18
@@ -799,7 +799,7 @@
       {
         "categoryId": 23,
         "categoryName": "电费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 18
@@ -807,7 +807,7 @@
       {
         "categoryId": 24,
         "categoryName": "天然气",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 18
@@ -815,7 +815,7 @@
       {
         "categoryId": 25,
         "categoryName": "蔬菜",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 14
@@ -823,7 +823,7 @@
       {
         "categoryId": 26,
         "categoryName": "调料",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 14
@@ -831,7 +831,7 @@
       {
         "categoryId": 27,
         "categoryName": "干货",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 14
@@ -839,7 +839,7 @@
       {
         "categoryId": 28,
         "categoryName": "肉类",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 14
@@ -847,7 +847,7 @@
       {
         "categoryId": 29,
         "categoryName": "租金",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 16
@@ -855,7 +855,7 @@
       {
         "categoryId": 30,
         "categoryName": "水费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 16
@@ -863,7 +863,7 @@
       {
         "categoryId": 31,
         "categoryName": "电费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 16
@@ -871,7 +871,7 @@
       {
         "categoryId": 32,
         "categoryName": "燃料",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 16
@@ -879,7 +879,7 @@
       {
         "categoryId": 33,
         "categoryName": "物业费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 500,
         "parentId": 16
@@ -887,7 +887,7 @@
       {
         "categoryId": 34,
         "categoryName": "堂食",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 100
@@ -895,7 +895,7 @@
       {
         "categoryId": 35,
         "categoryName": "外卖",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 200
@@ -903,7 +903,7 @@
       {
         "categoryId": 36,
         "categoryName": "美团",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 35
@@ -911,7 +911,7 @@
       {
         "categoryId": 37,
         "categoryName": "饿了么",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 35
@@ -919,7 +919,7 @@
       {
         "categoryId": 38,
         "categoryName": "租金",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 18
@@ -986,7 +986,7 @@
       {
         "categoryId": 39,
         "categoryName": "食品酒水",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 100
@@ -994,7 +994,7 @@
       {
         "categoryId": 40,
         "categoryName": "居家物业",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 200
@@ -1002,7 +1002,7 @@
       {
         "categoryId": 41,
         "categoryName": "衣服饰品",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 300
@@ -1010,7 +1010,7 @@
       {
         "categoryId": 42,
         "categoryName": "行车交通",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 400
@@ -1018,7 +1018,7 @@
       {
         "categoryId": 43,
         "categoryName": "交流通讯",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 500
@@ -1026,7 +1026,7 @@
       {
         "categoryId": 44,
         "categoryName": "休闲娱乐",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 600
@@ -1034,7 +1034,7 @@
       {
         "categoryId": 45,
         "categoryName": "学习进修",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 700
@@ -1042,7 +1042,7 @@
       {
         "categoryId": 46,
         "categoryName": "人情往来",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 800
@@ -1050,7 +1050,7 @@
       {
         "categoryId": 47,
         "categoryName": "医疗保健",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 900
@@ -1058,7 +1058,7 @@
       {
         "categoryId": 48,
         "categoryName": "金融保险",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 1000
@@ -1066,7 +1066,7 @@
       {
         "categoryId": 49,
         "categoryName": "其他杂项",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 1100
@@ -1074,7 +1074,7 @@
       {
         "categoryId": 50,
         "categoryName": "早午晚餐",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 39
@@ -1082,7 +1082,7 @@
       {
         "categoryId": 51,
         "categoryName": "烟酒茶",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 39
@@ -1090,7 +1090,7 @@
       {
         "categoryId": 52,
         "categoryName": "水果零食",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 39
@@ -1098,7 +1098,7 @@
       {
         "categoryId": 53,
         "categoryName": "日常用品",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 40
@@ -1106,7 +1106,7 @@
       {
         "categoryId": 54,
         "categoryName": "水电煤气",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 40
@@ -1114,7 +1114,7 @@
       {
         "categoryId": 55,
         "categoryName": "房租",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 40
@@ -1122,7 +1122,7 @@
       {
         "categoryId": 56,
         "categoryName": "物业管理",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 40
@@ -1130,7 +1130,7 @@
       {
         "categoryId": 57,
         "categoryName": "维修保养",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 500,
         "parentId": 40
@@ -1138,7 +1138,7 @@
       {
         "categoryId": 58,
         "categoryName": "衣服裤子",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 41
@@ -1146,7 +1146,7 @@
       {
         "categoryId": 59,
         "categoryName": "鞋帽包包",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 41
@@ -1154,7 +1154,7 @@
       {
         "categoryId": 60,
         "categoryName": "化妆饰品",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 41
@@ -1162,7 +1162,7 @@
       {
         "categoryId": 61,
         "categoryName": "公共交通",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 42
@@ -1170,7 +1170,7 @@
       {
         "categoryId": 62,
         "categoryName": "打车租车",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 42
@@ -1178,7 +1178,7 @@
       {
         "categoryId": 63,
         "categoryName": "私家车费用",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 42
@@ -1186,7 +1186,7 @@
       {
         "categoryId": 64,
         "categoryName": "座机费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 43
@@ -1194,7 +1194,7 @@
       {
         "categoryId": 65,
         "categoryName": "手机费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 43
@@ -1202,7 +1202,7 @@
       {
         "categoryId": 66,
         "categoryName": "上网费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 43
@@ -1210,7 +1210,7 @@
       {
         "categoryId": 67,
         "categoryName": "邮寄费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 43
@@ -1218,7 +1218,7 @@
       {
         "categoryId": 68,
         "categoryName": "运动健身",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 44
@@ -1226,7 +1226,7 @@
       {
         "categoryId": 69,
         "categoryName": "腐败聚会",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 44
@@ -1234,7 +1234,7 @@
       {
         "categoryId": 70,
         "categoryName": "休闲玩乐",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 44
@@ -1242,7 +1242,7 @@
       {
         "categoryId": 71,
         "categoryName": "宠物宝贝",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 44
@@ -1250,7 +1250,7 @@
       {
         "categoryId": 72,
         "categoryName": "旅游度假",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 500,
         "parentId": 44
@@ -1258,7 +1258,7 @@
       {
         "categoryId": 73,
         "categoryName": "数码装备",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 45
@@ -1266,7 +1266,7 @@
       {
         "categoryId": 74,
         "categoryName": "书报杂志",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 45
@@ -1274,7 +1274,7 @@
       {
         "categoryId": 75,
         "categoryName": "培训进修",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 45
@@ -1282,7 +1282,7 @@
       {
         "categoryId": 76,
         "categoryName": "送礼请客",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 46
@@ -1290,7 +1290,7 @@
       {
         "categoryId": 77,
         "categoryName": "孝敬家长",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 46
@@ -1298,7 +1298,7 @@
       {
         "categoryId": 78,
         "categoryName": "还人钱物",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 46
@@ -1306,7 +1306,7 @@
       {
         "categoryId": 79,
         "categoryName": "慈善捐助",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 46
@@ -1314,7 +1314,7 @@
       {
         "categoryId": 80,
         "categoryName": "药品费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 47
@@ -1322,7 +1322,7 @@
       {
         "categoryId": 81,
         "categoryName": "保健费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 47
@@ -1330,7 +1330,7 @@
       {
         "categoryId": 82,
         "categoryName": "美容费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 47
@@ -1338,7 +1338,7 @@
       {
         "categoryId": 83,
         "categoryName": "治疗费",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 47
@@ -1346,7 +1346,7 @@
       {
         "categoryId": 84,
         "categoryName": "银行手续",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 48
@@ -1354,7 +1354,7 @@
       {
         "categoryId": 85,
         "categoryName": "投资亏损",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 48
@@ -1362,7 +1362,7 @@
       {
         "categoryId": 86,
         "categoryName": "按揭还款",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 48
@@ -1370,7 +1370,7 @@
       {
         "categoryId": 87,
         "categoryName": "消费税收",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 400,
         "parentId": 48
@@ -1378,7 +1378,7 @@
       {
         "categoryId": 88,
         "categoryName": "利息支出",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 500,
         "parentId": 48
@@ -1386,7 +1386,7 @@
       {
         "categoryId": 89,
         "categoryName": "赔偿罚款",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 600,
         "parentId": 48
@@ -1394,7 +1394,7 @@
       {
         "categoryId": 90,
         "categoryName": "其他支出",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 49
@@ -1402,7 +1402,7 @@
       {
         "categoryId": 91,
         "categoryName": "意外丢失",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 49
@@ -1410,7 +1410,7 @@
       {
         "categoryId": 92,
         "categoryName": "烂账损失",
-        "type": 100,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 49
@@ -1418,7 +1418,7 @@
       {
         "categoryId": 93,
         "categoryName": "主动收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 100
@@ -1426,7 +1426,7 @@
       {
         "categoryId": 94,
         "categoryName": "被动收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 200
@@ -1434,7 +1434,7 @@
       {
         "categoryId": 95,
         "categoryName": "社交收入",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "parentId": "",
         "sort": 300
@@ -1442,7 +1442,7 @@
       {
         "categoryId": 96,
         "categoryName": "工资",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 93
@@ -1450,7 +1450,7 @@
       {
         "categoryId": 97,
         "categoryName": "兼职",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 93
@@ -1458,7 +1458,7 @@
       {
         "categoryId": 99,
         "categoryName": "羊毛",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 93
@@ -1466,7 +1466,7 @@
       {
         "categoryId": 100,
         "categoryName": "租金",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 100,
         "parentId": 94
@@ -1474,7 +1474,7 @@
       {
         "categoryId": 101,
         "categoryName": "利息",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 200,
         "parentId": 94
@@ -1482,7 +1482,7 @@
       {
         "categoryId": 102,
         "categoryName": "理财",
-        "type": 200,
+        "categoryType": 1,
         "remark": null,
         "sort": 300,
         "parentId": 94
