@@ -7,7 +7,6 @@ import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
 import com.fortuneboot.factory.fortune.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,12 +32,13 @@ public class FortuneTagService {
         return fortuneTagRepository.list(query.addQueryCondition());
     }
 
-    public void add(FortuneTagAddCommand addCommand) {
+    public FortuneTagModel add(FortuneTagAddCommand addCommand) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.create();
         fortuneTagModel.loadAddCommand(addCommand);
         fortuneTagModel.checkTagExist();
         fortuneTagModel.checkHeight();
         fortuneTagModel.insert();
+        return fortuneTagModel;
     }
 
     public void modify(FortuneTagModifyCommand modifyCommand) {

@@ -2,8 +2,6 @@ package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.*;
 import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
@@ -11,16 +9,17 @@ import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
+import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
+import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 账本service
@@ -64,6 +63,8 @@ public class FortuneBookService {
         }
         BookTemplateBo bookTemplateBo = templateBo.get();
         List<TagTemplateBo> tagList = bookTemplateBo.getTagList();
+        Map<Long, String> tagMap = tagList.stream().collect(Collectors.toMap(TagTemplateBo::getTagId, TagTemplateBo::getTagName));
+        Map<String, Long> map = new HashMap<>();
         for (TagTemplateBo tagTemplateBo : tagList) {
             FortuneTagAddCommand tagCommand = new FortuneTagAddCommand();
             BeanUtil.copyProperties(tagTemplateBo, tagCommand);
@@ -71,10 +72,14 @@ public class FortuneBookService {
             tagCommand.setBookId(fortuneBookModel.getBookId());
             if (Objects.isNull(tagCommand.getParentId())) {
                 tagCommand.setParentId(-1L);
+            } else {
+                tagCommand.setParentId(map.get(tagMap.get(tagCommand.getParentId())));
             }
-            fortuneTagService.add(tagCommand);
+            FortuneTagModel tagModel = fortuneTagService.add(tagCommand);
+            map.put(tagCommand.getTagName(), tagModel.getTagId());
         }
         List<CategoryTemplateBo> categoryList = bookTemplateBo.getCategoryList();
+        Map<Long, String> categoryMap = categoryList.stream().collect(Collectors.toMap(CategoryTemplateBo::getCategoryId, CategoryTemplateBo::getCategoryName));
         for (CategoryTemplateBo categoryTemplateBo : categoryList) {
             FortuneCategoryAddCommand categoryCommand = new FortuneCategoryAddCommand();
             BeanUtil.copyProperties(categoryTemplateBo, categoryCommand);
@@ -82,8 +87,11 @@ public class FortuneBookService {
             categoryCommand.setBookId(fortuneBookModel.getBookId());
             if (Objects.isNull(categoryCommand.getParentId())) {
                 categoryCommand.setParentId(-1L);
+            } else {
+                categoryCommand.setParentId(map.get(categoryMap.get(categoryCommand.getParentId())));
             }
-            fortuneCategoryService.add(categoryCommand);
+            FortuneCategoryModel categoryModel = fortuneCategoryService.add(categoryCommand);
+            map.put(categoryModel.getCategoryName(), categoryModel.getCategoryId());
         }
         List<PayeeTemplateBo> payeeList = bookTemplateBo.getPayeeList();
         for (PayeeTemplateBo payeeTemplateBo : payeeList) {
@@ -92,6 +100,10 @@ public class FortuneBookService {
             payeeCommand.setEnable(Boolean.TRUE);
             payeeCommand.setBookId(fortuneBookModel.getBookId());
             fortunePayeeService.add(payeeCommand);
+        }
+        if (StringUtils.isBlank(fortuneBookModel.getRemark())) {
+            fortuneBookModel.setRemark(bookTemplateBo.getRemark());
+            fortuneBookModel.updateById();
         }
         return fortuneBookModel;
     }
