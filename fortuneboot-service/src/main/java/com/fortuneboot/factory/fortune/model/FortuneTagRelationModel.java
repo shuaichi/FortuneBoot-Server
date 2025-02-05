@@ -1,8 +1,6 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
@@ -37,13 +35,6 @@ public class FortuneTagRelationModel extends FortuneTagRelationEntity {
     public void loadAddCommand(FortuneTagRelationAddCommand command) {
         if (Objects.nonNull(command)) {
             BeanUtil.copyProperties(command, this, "tagRelationId");
-        }
-    }
-
-    public void checkTagIdExist(FortuneTagModel fortuneTagModel) {
-        if (Objects.isNull(fortuneTagModel)) {
-            ErrorCode.Business business = ErrorCode.Business.BILL_TAG_NOT_EXIST;
-            throw new ApiException(business);
         }
     }
 }

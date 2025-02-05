@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 账单service
@@ -43,8 +44,6 @@ public class FortuneBillService {
 
     private final FortuneAccountFactory fortuneAccountFactory;
 
-    private final FortuneBookFactory fortuneBookFactory;
-
     private final ApplicationScopeBo applicationScopeBo;
 
     private final FortuneTagRelationService fortuneTagRelationService;
@@ -59,38 +58,70 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public void add(FortuneBillAddCommand addCommand) {
+        // 参数校验前置
+        Objects.requireNonNull(addCommand, "addCommand不能为空");
+        if (CollectionUtils.isEmpty(addCommand.getCategoryList())) {
+            throw new IllegalArgumentException("categoryList不能为空");
+        }
+
+        // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
         fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
-        BigDecimal amount = addCommand.getCategoryList().stream().map(Pair::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (Objects.equals(addCommand.getBillType(), BillTypeEnum.EXPENSE.getValue()) || Objects.equals(addCommand.getBillType(), BillTypeEnum.INCOME.getValue())) {
+
+        // 收款人校验提前
+        if (Objects.nonNull(addCommand.getPayeeId())) {
+            FortunePayeeModel payee = fortunePayeeFactory.loadById(addCommand.getPayeeId());
+            fortuneBillModel.checkPayeeExist(payee);
+        }
+
+        // 金额计算优化
+        BigDecimal amount = addCommand.getCategoryList().stream()
+                .map(Pair::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // 使用枚举类型直接比较
+        BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
+        if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
             fortuneBillModel.setAmount(amount);
             fortuneBillModel.setConvertedAmount(amount);
         }
-        // 确认账单（修改账户资金）
+
+        // 资金操作
         this.confirmBalance(fortuneBillModel);
-        if (Objects.nonNull(addCommand.getPayeeId())) {
-            FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(addCommand.getPayeeId());
-            fortuneBillModel.checkPayeeExist(fortunePayeeModel);
-        }
+
+        // 持久化主记录
         fortuneBillModel.insert();
-        if (CollectionUtils.isNotEmpty(addCommand.getTagIdList())) {
-            for (Long tagId : addCommand.getTagIdList()) {
-                Long billId = fortuneBillModel.getBillId();
-                FortuneTagRelationAddCommand fortuneTagRelationAddCommand = new FortuneTagRelationAddCommand();
-                fortuneTagRelationAddCommand.setBillId(billId);
-                fortuneTagRelationAddCommand.setTagId(tagId);
-                fortuneTagRelationService.add(fortuneTagRelationAddCommand);
-            }
+        Long billId = fortuneBillModel.getBillId();  // 提前获取ID
+
+        // 批量标签处理
+        processTagRelations(addCommand.getTagIdList(), billId);
+
+        // 批量分类处理
+        processCategoryRelations(addCommand.getCategoryList(), billId);
+    }
+
+    /**
+     * 批量处理标签关联
+     */
+    private void processTagRelations(List<Long> tagIds, Long billId) {
+        if (CollectionUtils.isEmpty(tagIds)) {
+            return;
         }
-        for (Pair<Long, BigDecimal> category : addCommand.getCategoryList()) {
-            Long billId = fortuneBillModel.getBillId();
-            FortuneCategoryRelationAddCommand fortuneCategoryRelationAddCommand = new FortuneCategoryRelationAddCommand();
-            fortuneCategoryRelationAddCommand.setBillId(billId);
-            fortuneCategoryRelationAddCommand.setCategoryId(category.getKey());
-            fortuneCategoryRelationAddCommand.setAmount(category.getValue());
-            fortuneCategoryRelationService.add(fortuneCategoryRelationAddCommand);
-        }
+        List<FortuneTagRelationAddCommand> commands = tagIds.stream()
+                .map(tagId -> new FortuneTagRelationAddCommand(billId, tagId))
+                .collect(Collectors.toList());
+        fortuneTagRelationService.batchAdd(commands);  // 需要实现批量插入方法
+    }
+
+    /**
+     * 批量处理分类关联
+     */
+    private void processCategoryRelations(List<Pair<Long, BigDecimal>> categories, Long billId) {
+        List<FortuneCategoryRelationAddCommand> commands = categories.stream()
+                .map(pair -> new FortuneCategoryRelationAddCommand(billId, pair.getKey(), pair.getValue()))
+                .collect(Collectors.toList());
+        fortuneCategoryRelationService.batchAdd(commands);  // 需要实现批量插入方法
     }
 
     // 修改的逻辑，删除旧的，新增一条新纪录

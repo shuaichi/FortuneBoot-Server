@@ -13,6 +13,7 @@ import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,8 +35,7 @@ public class FortuneTagRelationService {
     public void add(FortuneTagRelationAddCommand addCommand) {
         FortuneTagRelationModel fortuneTagRelationModel = fortuneTagRelationFactory.create();
         fortuneTagRelationModel.loadAddCommand(addCommand);
-        FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(addCommand.getTagId());
-        fortuneTagRelationModel.checkTagIdExist(fortuneTagModel);
+        fortuneTagFactory.loadById(addCommand.getTagId());
         fortuneTagRelationModel.insert();
     }
 
@@ -43,5 +43,11 @@ public class FortuneTagRelationService {
         List<FortuneTagRelationEntity> list = fortuneTagRelationRepository.getByBillId(billId);
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagId).toList();
         fortuneTagRelationRepository.removeBatchByIds(ids);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAdd(List<FortuneTagRelationAddCommand> commands) {
+        // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
+        commands.forEach(this::add);
     }
 }
