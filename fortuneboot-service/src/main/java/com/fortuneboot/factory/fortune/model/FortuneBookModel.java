@@ -3,14 +3,13 @@ package com.fortuneboot.factory.fortune.model;
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.domain.command.fortune.FortuneBookAddCommand;
-import com.fortuneboot.domain.command.fortune.FortuneBookModifyCommand;
+import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author zhangchi118
@@ -26,7 +25,7 @@ public class FortuneBookModel extends FortuneBookEntity {
         this.fortuneBookRepository = repository;
     }
 
-    public FortuneBookModel(FortuneBookEntity entity,FortuneBookRepository repository) {
+    public FortuneBookModel(FortuneBookEntity entity, FortuneBookRepository repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
@@ -35,7 +34,7 @@ public class FortuneBookModel extends FortuneBookEntity {
 
     public void loadAddCommand(FortuneBookAddCommand command) {
         if (Objects.nonNull(command)) {
-            BeanUtil.copyProperties(command, this,"bookId");
+            BeanUtil.copyProperties(command, this, "bookId");
         }
     }
 
@@ -47,7 +46,7 @@ public class FortuneBookModel extends FortuneBookEntity {
     }
 
     public void checkGroupId(Long groupId) {
-        if (!Objects.equals(this.getGroupId(), groupId)){
+        if (!Objects.equals(this.getGroupId(), groupId)) {
             throw new ApiException(ErrorCode.Business.BOOK_NOT_MATCH_GROUP);
         }
     }
@@ -58,8 +57,8 @@ public class FortuneBookModel extends FortuneBookEntity {
         }
     }
 
-    public void checkNotInRecycleBin(){
-        if (this.getRecycleBin()){
+    public void checkNotInRecycleBin() {
+        if (this.getRecycleBin()) {
             throw new ApiException(ErrorCode.Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST);
         }
     }

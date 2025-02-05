@@ -39,7 +39,7 @@ public class TagTemplateBo {
     /**
      * 父级ID
      */
-    private Integer parentId;
+    private Long parentId;
 
     /**
      * 排序
