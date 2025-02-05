@@ -33,9 +33,8 @@ public class FortuneGroupAddCommand {
     private Boolean enable;
 
     /**
-     * 默认账本id
+     * 账本模板
      */
-    @NotNull(message = "账本模板不能为空")
     private Long bookTemplate;
 
     /**

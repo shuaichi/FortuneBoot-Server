@@ -16,5 +16,10 @@ public class FortuneGroupModifyCommand extends FortuneGroupAddCommand{
 
     @NotNull
     @Positive
-    protected Long groupId;
+    private Long groupId;
+
+    /**
+     * 默认账本
+     */
+    private Long defaultBookId;
 }
