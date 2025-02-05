@@ -1,6 +1,9 @@
 package com.fortuneboot.common.core.page;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.Data;
 
@@ -33,6 +36,10 @@ public class PageDTO<T> {
     public PageDTO(List<T> list, Long count) {
         this.rows = list;
         this.total = count;
+    }
+
+    public static <T> PageDTO<T> empty(){
+        return new PageDTO<>(Collections.emptyList());
     }
 
 }
