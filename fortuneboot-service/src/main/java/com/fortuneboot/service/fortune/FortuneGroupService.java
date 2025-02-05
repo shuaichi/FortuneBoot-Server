@@ -27,10 +27,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -111,25 +108,101 @@ public class FortuneGroupService {
     }
 
     public PageDTO<FortuneGroupVo> getFortuneGroupPage(FortuneGroupQuery query) {
-        List<FortuneUserGroupRelationEntity> relationEntityList = fortuneUserGroupRelationRepository.getByUserId();
-        if (CollectionUtils.isEmpty(relationEntityList)) {
-            return new PageDTO<>(new ArrayList<>(), 0L);
+        // 获取当前用户的组关系列表
+        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepository.getByUserId();
+        if (CollectionUtils.isEmpty(relationList)) {
+            return PageDTO.empty();
         }
-        List<Long> groupIdList = relationEntityList.stream().map(FortuneUserGroupRelationEntity::getGroupId).collect(Collectors.toList());
-        LambdaQueryWrapper<FortuneGroupEntity> queryWrapper = query.addQueryCondition();
-        queryWrapper.in(FortuneGroupEntity::getGroupId, groupIdList);
-        Page<FortuneGroupEntity> page = fortuneGroupRepository.page(query.toPage(), queryWrapper);
-        List<Long> bookIdList = page.getRecords().stream().map(FortuneGroupEntity::getDefaultBookId).toList();
-        List<FortuneBookEntity> bookEntities = fortuneBookService.getByIds(bookIdList);
-        Map<Long, FortuneBookEntity> idMapBook = bookEntities.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
-        Map<Long, FortuneUserGroupRelationEntity> idMapRelation = relationEntityList.stream().collect(Collectors.toMap(FortuneUserGroupRelationEntity::getGroupId, Function.identity(), (k1, k2) -> k2));
-        List<FortuneGroupVo> records = page.getRecords().stream().map(FortuneGroupVo::new).peek(item -> {
-            if (ObjectUtil.isNotEmpty(item.getDefaultBookId())) {
-                item.setDefaultBookName(idMapBook.get(item.getDefaultBookId()).getBookName());
-            }
-            item.setRoleTypeDesc(Objects.requireNonNull(RoleTypeEnum.getByValue(idMapRelation.get(item.getGroupId()).getRoleType())).getDescription());
-        }).collect(Collectors.toList());
-        return new PageDTO<>(records, page.getTotal());
+
+        // 提取用户有权限的组ID列表
+        List<Long> groupIds = extractGroupIds(relationList);
+
+        // 构建查询条件并执行分页查询
+        LambdaQueryWrapper<FortuneGroupEntity> queryWrapper = buildQueryWrapper(query, groupIds);
+        Page<FortuneGroupEntity> groupPage = fortuneGroupRepository.page(query.toPage(), queryWrapper);
+
+        // 提前返回空结果
+        if (CollectionUtils.isEmpty(groupPage.getRecords())) {
+            return PageDTO.empty();
+        }
+
+        // 批量获取关联数据并构建缓存MAP
+        Map<Long, FortuneBookEntity> bookMap = getBookMap(groupPage.getRecords());
+        Map<Long, FortuneUserGroupRelationEntity> relationMap = buildRelationMap(relationList);
+
+        // 转换VO对象
+        List<FortuneGroupVo> voList = convertToVoList(groupPage.getRecords(), bookMap, relationMap);
+
+        return new PageDTO<>(voList, groupPage.getTotal());
+    }
+
+    // 提取组ID列表（带注释的独立方法）
+    private List<Long> extractGroupIds(List<FortuneUserGroupRelationEntity> relations) {
+        return relations.stream()
+                .map(FortuneUserGroupRelationEntity::getGroupId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    // 构建查询条件（显式命名的查询条件构造）
+    private LambdaQueryWrapper<FortuneGroupEntity> buildQueryWrapper(FortuneGroupQuery query, List<Long> groupIds) {
+        LambdaQueryWrapper<FortuneGroupEntity> wrapper = query.addQueryCondition();
+        return wrapper.in(FortuneGroupEntity::getGroupId, groupIds);
+    }
+
+    // 批量获取账本数据（带空值过滤）
+    private Map<Long, FortuneBookEntity> getBookMap(List<FortuneGroupEntity> groups) {
+        List<Long> bookIds = groups.stream()
+                .map(FortuneGroupEntity::getDefaultBookId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return CollectionUtils.isEmpty(bookIds)
+                ? Collections.emptyMap()
+                : fortuneBookService.getByIds(bookIds).stream()
+                .collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
+    }
+
+    // 构建关系映射表（显式处理重复键）
+    private Map<Long, FortuneUserGroupRelationEntity> buildRelationMap(List<FortuneUserGroupRelationEntity> relations) {
+        return relations.stream()
+                .collect(Collectors.toMap(
+                        FortuneUserGroupRelationEntity::getGroupId,
+                        Function.identity(),
+                        (existing, replacement) -> replacement));
+    }
+
+    // VO转换（使用独立方法明确转换逻辑）
+    private List<FortuneGroupVo> convertToVoList(
+            List<FortuneGroupEntity> groups,
+            Map<Long, FortuneBookEntity> bookMap,
+            Map<Long, FortuneUserGroupRelationEntity> relationMap) {
+
+        return groups.stream()
+                .map(entity -> {
+                    FortuneGroupVo vo = new FortuneGroupVo(entity);
+                    bindAdditionalInfo(vo, bookMap, relationMap);
+                    return vo;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 绑定附加信息（安全处理空值）
+    private void bindAdditionalInfo(
+            FortuneGroupVo vo,
+            Map<Long, FortuneBookEntity> bookMap,
+            Map<Long, FortuneUserGroupRelationEntity> relationMap) {
+
+        // 处理账本名称
+        Optional.ofNullable(vo.getDefaultBookId())
+                .map(bookMap::get)
+                .ifPresent(book -> vo.setDefaultBookName(book.getBookName()));
+
+        // 处理角色类型描述
+        Optional.ofNullable(relationMap.get(vo.getGroupId()))
+                .map(FortuneUserGroupRelationEntity::getRoleType)
+                .map(RoleTypeEnum::getByValue)
+                .ifPresent(roleType -> vo.setRoleTypeDesc(roleType.getDescription()));
     }
 
     public void setDefaultBook(Long groupId, Long bookId) {
