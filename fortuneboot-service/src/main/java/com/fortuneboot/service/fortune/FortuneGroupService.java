@@ -21,6 +21,8 @@ import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -208,6 +210,18 @@ public class FortuneGroupService {
     public void setDefaultBook(Long groupId, Long bookId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.setDefaultBookId(bookId);
+        fortuneGroupModel.updateById();
+    }
+
+    public void enable(Long groupId) {
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
+        fortuneGroupModel.setEnable(Boolean.TRUE);
+        fortuneGroupModel.updateById();
+    }
+
+    public void disable(Long groupId) {
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
+        fortuneGroupModel.setEnable(Boolean.FALSE);
         fortuneGroupModel.updateById();
     }
 }

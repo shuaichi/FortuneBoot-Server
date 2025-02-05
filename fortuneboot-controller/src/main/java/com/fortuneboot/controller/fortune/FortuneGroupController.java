@@ -146,4 +146,20 @@ public class FortuneGroupController {
         fortuneUserGroupRelationService.setDefaultGroup(groupId);
         return ResponseDTO.ok();
     }
+
+    @Operation(summary = "启用分组")
+    @PutMapping("/enable/{groupId}")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> enable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
+        fortuneGroupService.enable(groupId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "禁用分组")
+    @PutMapping("/disable/{groupId}")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> disable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
+        fortuneGroupService.disable(groupId);
+        return ResponseDTO.ok();
+    }
 }
