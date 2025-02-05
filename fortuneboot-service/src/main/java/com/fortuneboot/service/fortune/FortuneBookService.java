@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -49,63 +50,141 @@ public class FortuneBookService {
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
     }
-
     @Transactional(rollbackFor = Exception.class)
     public FortuneBookModel add(FortuneBookAddCommand bookAddCommand) {
+        // 创建账本模型并插入
         FortuneBookModel fortuneBookModel = fortuneBookFactory.create();
         fortuneBookModel.loadAddCommand(bookAddCommand);
         fortuneBookModel.setEnable(Boolean.TRUE);
-        fortuneBookModel.insert();
-        List<BookTemplateBo> bookTemplateBoList = applicationScopeBo.getBookTemplateBoList();
-        Optional<BookTemplateBo> templateBo = bookTemplateBoList.stream().filter(item -> Objects.equals(item.getBookTemplateId(), bookAddCommand.getBookTemplate())).findAny();
-        if (templateBo.isEmpty()) {
-            return fortuneBookModel;
-        }
-        BookTemplateBo bookTemplateBo = templateBo.get();
-        List<TagTemplateBo> tagList = bookTemplateBo.getTagList();
-        Map<Long, String> tagMap = tagList.stream().collect(Collectors.toMap(TagTemplateBo::getTagId, TagTemplateBo::getTagName));
-        Map<String, Long> map = new HashMap<>();
-        for (TagTemplateBo tagTemplateBo : tagList) {
-            FortuneTagAddCommand tagCommand = new FortuneTagAddCommand();
-            BeanUtil.copyProperties(tagTemplateBo, tagCommand);
-            tagCommand.setEnable(Boolean.TRUE);
-            tagCommand.setBookId(fortuneBookModel.getBookId());
-            if (Objects.isNull(tagCommand.getParentId())) {
-                tagCommand.setParentId(-1L);
-            } else {
-                tagCommand.setParentId(map.get(tagMap.get(tagCommand.getParentId())));
-            }
-            FortuneTagModel tagModel = fortuneTagService.add(tagCommand);
-            map.put(tagCommand.getTagName(), tagModel.getTagId());
-        }
-        List<CategoryTemplateBo> categoryList = bookTemplateBo.getCategoryList();
-        Map<Long, String> categoryMap = categoryList.stream().collect(Collectors.toMap(CategoryTemplateBo::getCategoryId, CategoryTemplateBo::getCategoryName));
-        for (CategoryTemplateBo categoryTemplateBo : categoryList) {
-            FortuneCategoryAddCommand categoryCommand = new FortuneCategoryAddCommand();
-            BeanUtil.copyProperties(categoryTemplateBo, categoryCommand);
-            categoryCommand.setEnable(Boolean.TRUE);
-            categoryCommand.setBookId(fortuneBookModel.getBookId());
-            if (Objects.isNull(categoryCommand.getParentId())) {
-                categoryCommand.setParentId(-1L);
-            } else {
-                categoryCommand.setParentId(map.get(categoryMap.get(categoryCommand.getParentId())));
-            }
-            FortuneCategoryModel categoryModel = fortuneCategoryService.add(categoryCommand);
-            map.put(categoryModel.getCategoryName(), categoryModel.getCategoryId());
-        }
-        List<PayeeTemplateBo> payeeList = bookTemplateBo.getPayeeList();
-        for (PayeeTemplateBo payeeTemplateBo : payeeList) {
-            FortunePayeeAddCommand payeeCommand = new FortunePayeeAddCommand();
-            BeanUtil.copyProperties(payeeTemplateBo, payeeCommand);
-            payeeCommand.setEnable(Boolean.TRUE);
-            payeeCommand.setBookId(fortuneBookModel.getBookId());
-            fortunePayeeService.add(payeeCommand);
-        }
-        if (StringUtils.isBlank(fortuneBookModel.getRemark())) {
+
+        // 获取模板并提前处理备注
+        BookTemplateBo bookTemplateBo = getBookTemplate(bookAddCommand);
+        if (bookTemplateBo != null && StringUtils.isBlank(fortuneBookModel.getRemark())) {
             fortuneBookModel.setRemark(bookTemplateBo.getRemark());
-            fortuneBookModel.updateById();
         }
+        fortuneBookModel.insert();
+
+        // 处理模板数据（当模板存在时）
+        if (bookTemplateBo != null) {
+            processTagTemplates(fortuneBookModel, bookTemplateBo.getTagList());
+            processCategoryTemplates(fortuneBookModel, bookTemplateBo.getCategoryList());
+            processPayeeTemplates(fortuneBookModel, bookTemplateBo.getPayeeList());
+        }
+
         return fortuneBookModel;
+    }
+
+    private BookTemplateBo getBookTemplate(FortuneBookAddCommand command) {
+        return applicationScopeBo.getBookTemplateBoList().stream()
+                .filter(item -> Objects.equals(item.getBookTemplateId(), command.getBookTemplate()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void processTagTemplates(FortuneBookModel book, List<TagTemplateBo> tagTemplates) {
+        Map<String, Long> nameToIdMap = new HashMap<>();
+        sortByHierarchy(tagTemplates, TagTemplateBo::getParentId).forEach(template -> {
+            FortuneTagAddCommand command = new FortuneTagAddCommand();
+            BeanUtil.copyProperties(template, command);
+            command.setEnable(true);
+            command.setBookId(book.getBookId());
+            resolveParentId(command, template.getParentId(), nameToIdMap,
+                    id -> getTagNameById(tagTemplates, id));
+
+            FortuneTagModel model = fortuneTagService.add(command);
+            nameToIdMap.put(template.getTagName(), model.getTagId());
+        });
+    }
+
+    private void processCategoryTemplates(FortuneBookModel book, List<CategoryTemplateBo> categoryTemplates) {
+        Map<String, Long> nameToIdMap = new HashMap<>();
+        sortByHierarchy(categoryTemplates, CategoryTemplateBo::getParentId).forEach(template -> {
+            FortuneCategoryAddCommand command = new FortuneCategoryAddCommand();
+            BeanUtil.copyProperties(template, command);
+            command.setEnable(true);
+            command.setBookId(book.getBookId());
+            resolveParentId(command, template.getParentId(), nameToIdMap,
+                    id -> getCategoryNameById(categoryTemplates, id));
+
+            FortuneCategoryModel model = fortuneCategoryService.add(command);
+            nameToIdMap.put(template.getCategoryName(), model.getCategoryId());
+        });
+    }
+
+    private void processPayeeTemplates(FortuneBookModel book, List<PayeeTemplateBo> payeeTemplates) {
+        payeeTemplates.forEach(template -> {
+            FortunePayeeAddCommand command = new FortunePayeeAddCommand();
+            BeanUtil.copyProperties(template, command);
+            command.setEnable(true);
+            command.setBookId(book.getBookId());
+            fortunePayeeService.add(command);
+        });
+    }
+
+    private <T> void resolveParentId(Object command, Long originalParentId,
+                                     Map<String, Long> nameToIdMap,
+                                     Function<Long, String> nameResolver) {
+        try {
+            if (originalParentId == null) {
+                command.getClass().getMethod("setParentId", Long.class).invoke(command, -1L);
+            } else {
+                String parentName = nameResolver.apply(originalParentId);
+                Long newParentId = nameToIdMap.getOrDefault(parentName, -1L);
+                command.getClass().getMethod("setParentId", Long.class).invoke(command, newParentId);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting parent ID", e);
+        }
+    }
+
+    private String getTagNameById(List<TagTemplateBo> tags, Long id) {
+        return tags.stream()
+                .filter(t -> Objects.equals(t.getTagId(), id))
+                .findFirst()
+                .map(TagTemplateBo::getTagName)
+                .orElse(null);
+    }
+
+    private String getCategoryNameById(List<CategoryTemplateBo> categories, Long id) {
+        return categories.stream()
+                .filter(c -> Objects.equals(c.getCategoryId(), id))
+                .findFirst()
+                .map(CategoryTemplateBo::getCategoryName)
+                .orElse(null);
+    }
+
+    private <T> List<T> sortByHierarchy(List<T> items, Function<T, Long> parentIdExtractor) {
+        Map<Long, List<T>> parentIdToChildren = new HashMap<>();
+        List<T> roots = new ArrayList<>();
+
+        // 构建父子关系映射
+        Map<Long, T> idMap = items.stream().collect(Collectors.toMap(
+                item -> parentIdExtractor.apply(item) != null ? ((TagTemplateBo)item).getTagId() : ((CategoryTemplateBo)item).getCategoryId(),
+                Function.identity()
+        ));
+
+        for (T item : items) {
+            Long parentId = parentIdExtractor.apply(item);
+            if (parentId == null || !idMap.containsKey(parentId)) {
+                roots.add(item);
+            } else {
+                parentIdToChildren.computeIfAbsent(parentId, k -> new ArrayList<>()).add(item);
+            }
+        }
+
+        // 按层级排序
+        List<T> sorted = new ArrayList<>();
+        Queue<T> queue = new LinkedList<>(roots);
+        while (!queue.isEmpty()) {
+            T current = queue.poll();
+            sorted.add(current);
+            Long currentId = current instanceof TagTemplateBo
+                    ? ((TagTemplateBo) current).getTagId()
+                    : ((CategoryTemplateBo) current).getCategoryId();
+            parentIdToChildren.getOrDefault(currentId, Collections.emptyList())
+                    .forEach(queue::offer);
+        }
+        return sorted;
     }
 
     public void modify(FortuneBookModifyCommand bookModifyCommand) {
