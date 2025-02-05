@@ -80,6 +80,10 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         COMMON_FILE_NOT_ALLOWED_TO_DOWNLOAD(10004, "文件名称({})非法，不允许下载", "Business.FILE_NOT_ALLOWED_TO_DOWNLOAD"),
 
+        COMMON_TREE_DUPLICATE_NODE_ID(10005,"节点id {} 重复","Business.TREE_DUPLICATE_NODE_ID"),
+
+        COMMON_TREE_PARENT_NOT_EXIST(10006,"节点id {} 的父级id {} 不存在", "Business.TREE_PARENT_NOT_EXIST"),
+
         // ----------------------------- PERMISSION -----------------------------------
 
         PERMISSION_FORBIDDEN_TO_MODIFY_ADMIN(10101, "不允许修改管理员的信息", "Business.FORBIDDEN_TO_MODIFY_ADMIN"),
