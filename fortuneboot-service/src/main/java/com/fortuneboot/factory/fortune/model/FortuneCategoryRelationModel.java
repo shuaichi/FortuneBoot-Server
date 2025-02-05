@@ -39,11 +39,4 @@ public class FortuneCategoryRelationModel extends FortuneCategoryRelationEntity 
             BeanUtil.copyProperties(command, this,"categoryRelationId");
         }
     }
-
-    public void checkCategoryExist(FortuneCategoryModel fortuneCategoryModel) {
-        if (Objects.isNull(fortuneCategoryModel)) {
-            ErrorCode.Business business = ErrorCode.Business.BILL_TAG_NOT_EXIST;
-            throw new ApiException(business);
-        }
-    }
 }

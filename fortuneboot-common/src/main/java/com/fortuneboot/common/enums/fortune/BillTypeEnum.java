@@ -3,6 +3,9 @@ package com.fortuneboot.common.enums.fortune;
 import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * 账单流水类型枚举
  * 1、收入;2、支出;3、转账;4、余额调整;5、盈利;6、亏损
@@ -30,11 +33,9 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
     }
 
     public static BillTypeEnum getByValue(Integer value) {
-        for (BillTypeEnum billTypeEnum : BillTypeEnum.values()) {
-            if (billTypeEnum.getValue().equals(value)) {
-                return billTypeEnum;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("无效的账单类型"));
     }
 }

@@ -10,6 +10,7 @@ import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -34,14 +35,20 @@ public class FortuneCategoryRelationService {
     public void add(FortuneCategoryRelationAddCommand addCommand) {
         FortuneCategoryRelationModel fortuneCategoryRelationModel = fortuneCategoryRelationFactory.create();
         fortuneCategoryRelationModel.loadAddCommand(addCommand);
-        FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(addCommand.getCategoryId());
-        fortuneCategoryRelationModel.checkCategoryExist(fortuneCategoryModel);
-        fortuneCategoryModel.insert();
+        // 校验category是否存在，loadById中自带校验
+        fortuneCategoryFactory.loadById(addCommand.getCategoryId());
+        fortuneCategoryRelationModel.insert();
     }
 
     public void removeByBillId(Long billId) {
         List<FortuneCategoryRelationEntity> list = fortuneCategoryRelationRepository.getByBillId(billId);
         List<Long> ids = list.stream().map(FortuneCategoryRelationEntity::getCategoryId).toList();
         fortuneCategoryRelationRepository.removeBatchByIds(ids);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAdd(List<FortuneCategoryRelationAddCommand> commands) {
+        // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
+        commands.forEach(this::add);
     }
 }

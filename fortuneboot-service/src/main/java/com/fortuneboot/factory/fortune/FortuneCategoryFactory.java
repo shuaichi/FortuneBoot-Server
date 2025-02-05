@@ -6,8 +6,12 @@ import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
