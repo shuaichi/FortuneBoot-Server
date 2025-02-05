@@ -3,7 +3,6 @@ package com.fortuneboot.service.fortune;
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
@@ -11,11 +10,10 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.domain.vo.fortune.FortuneUserGroupRelationVo;
 import com.fortuneboot.factory.fortune.FortuneUserGroupRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
-import com.fortuneboot.infrastructure.user.AuthenticationUtils;
-import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
 import com.fortuneboot.repository.system.SysUserRepository;
-import com.fortuneboot.service.system.UserApplicationService;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,7 +54,7 @@ public class FortuneUserGroupRelationService {
 
     public void removeFortuneUserGroupRelation(Long userGroupRelationId) {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.loadById(userGroupRelationId);
-        if (relationModel.getDefaultGroup()){
+        if (relationModel.getDefaultGroup()) {
             throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP);
         }
         relationModel.deleteById();
@@ -67,7 +65,7 @@ public class FortuneUserGroupRelationService {
         List<Long> userIds = userGroupRelationEntityList.stream().map(FortuneUserGroupRelationEntity::getUserId).toList();
         List<SysUserEntity> userEntityList = userRepository.listByIds(userIds);
         Map<Long, String> userIdMapName = userEntityList.stream().collect(Collectors.toMap(SysUserEntity::getUserId, SysUserEntity::getUsername));
-        return userGroupRelationEntityList.stream().map(item->{
+        return userGroupRelationEntityList.stream().map(item -> {
             FortuneUserGroupRelationVo fortuneUserGroupRelationVo = BeanUtil.copyProperties(item, FortuneUserGroupRelationVo.class);
             fortuneUserGroupRelationVo.setUserName(userIdMapName.get(item.getUserId()));
             return fortuneUserGroupRelationVo;
@@ -79,7 +77,7 @@ public class FortuneUserGroupRelationService {
         for (FortuneUserGroupRelationEntity relationEntity : groupRelationList) {
             if (Objects.equals(groupId, relationEntity.getUserGroupRelationId())) {
                 relationEntity.setDefaultGroup(Boolean.TRUE);
-            }else {
+            } else {
                 relationEntity.setDefaultGroup(Boolean.FALSE);
             }
         }
