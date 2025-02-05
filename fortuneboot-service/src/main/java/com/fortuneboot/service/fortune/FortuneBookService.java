@@ -83,10 +83,10 @@ public class FortuneBookService {
 
     private void processTagTemplates(FortuneBookModel book, List<TagTemplateBo> tagTemplates) {
         Map<String, Long> nameToIdMap = new HashMap<>();
-        sortByHierarchy(tagTemplates, TagTemplateBo::getParentId).forEach(template -> {
+        tagTemplates.forEach(template -> {
             FortuneTagAddCommand command = new FortuneTagAddCommand();
             BeanUtil.copyProperties(template, command);
-            command.setEnable(true);
+            command.setEnable(Boolean.TRUE);
             command.setBookId(book.getBookId());
             resolveParentId(command, template.getParentId(), nameToIdMap,
                     id -> getTagNameById(tagTemplates, id));
@@ -98,10 +98,10 @@ public class FortuneBookService {
 
     private void processCategoryTemplates(FortuneBookModel book, List<CategoryTemplateBo> categoryTemplates) {
         Map<String, Long> nameToIdMap = new HashMap<>();
-        sortByHierarchy(categoryTemplates, CategoryTemplateBo::getParentId).forEach(template -> {
+        categoryTemplates.forEach(template -> {
             FortuneCategoryAddCommand command = new FortuneCategoryAddCommand();
             BeanUtil.copyProperties(template, command);
-            command.setEnable(true);
+            command.setEnable(Boolean.TRUE);
             command.setBookId(book.getBookId());
             resolveParentId(command, template.getParentId(), nameToIdMap,
                     id -> getCategoryNameById(categoryTemplates, id));
@@ -151,40 +151,6 @@ public class FortuneBookService {
                 .findFirst()
                 .map(CategoryTemplateBo::getCategoryName)
                 .orElse(null);
-    }
-
-    private <T> List<T> sortByHierarchy(List<T> items, Function<T, Long> parentIdExtractor) {
-        Map<Long, List<T>> parentIdToChildren = new HashMap<>();
-        List<T> roots = new ArrayList<>();
-
-        // 构建父子关系映射
-        Map<Long, T> idMap = items.stream().collect(Collectors.toMap(
-                item -> parentIdExtractor.apply(item) != null ? ((TagTemplateBo)item).getTagId() : ((CategoryTemplateBo)item).getCategoryId(),
-                Function.identity()
-        ));
-
-        for (T item : items) {
-            Long parentId = parentIdExtractor.apply(item);
-            if (parentId == null || !idMap.containsKey(parentId)) {
-                roots.add(item);
-            } else {
-                parentIdToChildren.computeIfAbsent(parentId, k -> new ArrayList<>()).add(item);
-            }
-        }
-
-        // 按层级排序
-        List<T> sorted = new ArrayList<>();
-        Queue<T> queue = new LinkedList<>(roots);
-        while (!queue.isEmpty()) {
-            T current = queue.poll();
-            sorted.add(current);
-            Long currentId = current instanceof TagTemplateBo
-                    ? ((TagTemplateBo) current).getTagId()
-                    : ((CategoryTemplateBo) current).getCategoryId();
-            parentIdToChildren.getOrDefault(currentId, Collections.emptyList())
-                    .forEach(queue::offer);
-        }
-        return sorted;
     }
 
     public void modify(FortuneBookModifyCommand bookModifyCommand) {
