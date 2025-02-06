@@ -2,7 +2,10 @@ package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.enums.fortune.BalanceOperationEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.CurrencyTemplateBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -144,70 +148,132 @@ public class FortuneBillService {
         fortuneBillModel.deleteById();
     }
 
+    /**
+     * 确认余额
+     */
     @Transactional(rollbackFor = Exception.class)
     public void confirmBalance(FortuneBillModel fortuneBillModel) {
-        if (fortuneBillModel.getConfirm() && Objects.nonNull(fortuneBillModel.getAccountId())) {
-            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-            BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
-            switch (billType) {
-                case INCOME:
-                case PROFIT:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
-                    break;
-                case EXPENSE:
-                case LOSS:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                    break;
-                case TRANSFER:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
-                    FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
-                    fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                    // 汇率转换
-                    if (!StringUtils.equals(fortuneAccountToModel.getCurrencyCode(), fortuneAccountModel.getCurrencyCode())) {
-                        List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
-                        Optional<CurrencyTemplateBo> currency = currencyTemplateBoList.stream().filter(item -> StringUtils.equals(item.getCurrencyName(), fortuneAccountModel.getCurrencyCode())).findFirst();
-                        if (currency.isPresent()) {
-                            CurrencyTemplateBo currencyTemplateBo = currency.get();
-                            BigDecimal convertedAmount = fortuneAccountModel.getBalance().multiply(currencyTemplateBo.getRate());
-                            fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(convertedAmount));
-                            fortuneBillModel.setConvertedAmount(convertedAmount);
-                        }
-                    }
-                    fortuneAccountToModel.updateById();
-                case ADJUST:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
-                case null, default:
-                    break;
-            }
-            fortuneAccountModel.updateById();
+        if (!fortuneBillModel.getConfirm() || Objects.isNull(fortuneBillModel.getAccountId())) {
+            return;
         }
+        // 加载源账户并获取账单类型
+        FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+        BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
+
+        // 根据账单类型处理账户余额
+        switch (billType) {
+            case INCOME, PROFIT, ADJUST:
+                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.ADD);
+                break;
+            case EXPENSE:
+            case LOSS:
+                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.SUBTRACT);
+                break;
+            case TRANSFER:
+                this.handleTransferOperation(sourceAccount, fortuneBillModel);
+                break;
+            case null, default:
+                log.warn("Unsupported bill type: {}", billType);
+                break;
+        }
+
+        // 更新源账户信息
+        sourceAccount.updateById();
+    }
+
+    /**
+     * 辅助方法：调整账户余额
+     */
+    private void adjustBalance(FortuneAccountModel account, BigDecimal amount, BalanceOperationEnum operation) {
+        if (account == null || amount == null) return;
+
+        BigDecimal newBalance = operation == BalanceOperationEnum.ADD ?
+                account.getBalance().add(amount) :
+                account.getBalance().subtract(amount);
+        account.setBalance(newBalance);
+    }
+
+    /**
+     * 辅助方法：处理转账操作
+     */
+    private void handleTransferOperation(FortuneAccountModel sourceAccount, FortuneBillModel bill) {
+        // 验证目标账户是否存在
+        if (Objects.isNull(bill.getToAccountId())) {
+            log.error("Missing target account for transfer operation");
+            return;
+        }
+
+        // 调整源账户余额
+        adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
+
+        // 加载目标账户并转换金额
+        FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
+        BigDecimal convertedAmount = convertCurrency(
+                bill.getAmount(),
+                sourceAccount.getCurrencyCode(),
+                targetAccount.getCurrencyCode(),
+                applicationScopeBo.getCurrencyTemplateBoList()
+        );
+
+        // 调整目标账户余额
+        adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
+
+        // 更新目标账户并记录转换金额
+        targetAccount.updateById();
+        bill.setConvertedAmount(convertedAmount);
+    }
+
+    /**
+     * 辅助方法：货币转换
+     */
+    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> rates) {
+        if (sourceCurrency.equals(targetCurrency)) {
+            return amount;
+        }
+
+        // 获取 sourceCurrency 对人民币的汇率
+        BigDecimal rateSourceToRMB = rates.stream()
+                .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
+                .findFirst()
+                .map(CurrencyTemplateBo::getRate)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.RATE_NOT_FOUND, sourceCurrency, " -> 人民币"));
+
+        // 获取 targetCurrency 对人民币的汇率
+        BigDecimal rateTargetToRMB = rates.stream()
+                .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
+                .findFirst()
+                .map(CurrencyTemplateBo::getRate)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.RATE_NOT_FOUND, "人民币", targetCurrency));
+
+        // 计算目标货币金额
+        return amount.multiply(rateSourceToRMB)
+                .divide(rateTargetToRMB, 10, RoundingMode.HALF_UP);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void refundBalance(FortuneBillModel fortuneBillModel) {
-        if (fortuneBillModel.getConfirm() && Objects.nonNull(fortuneBillModel.getAccountId())) {
-            FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-            BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
-            switch (billType) {
-                case INCOME:
-                case PROFIT:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                    break;
-                case EXPENSE:
-                case LOSS:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
-                    break;
-                case TRANSFER:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                    FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
-                    fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getConvertedAmount()));
-                    fortuneAccountToModel.updateById();
-                case ADJUST:
-                    fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                case null, default:
-                    break;
-            }
-            fortuneAccountModel.updateById();
+        if (!fortuneBillModel.getConfirm() || Objects.isNull(fortuneBillModel.getAccountId())) {
+            return;
         }
+        FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+        BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
+        switch (billType) {
+            case INCOME, PROFIT, ADJUST:
+                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                break;
+            case EXPENSE, LOSS:
+                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                break;
+            case TRANSFER:
+                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
+                fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getConvertedAmount()));
+                fortuneAccountToModel.updateById();
+                break;
+            case null, default:
+                log.warn("Unsupported bill type: {}", billType);
+                break;
+        }
+        fortuneAccountModel.updateById();
     }
 }
