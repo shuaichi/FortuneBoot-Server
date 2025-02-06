@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +23,8 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
     /**
      * 分组ID(必传)
      */
+    @NotNull
+    @Positive
     private Long groupId;
 
     /**
@@ -29,8 +33,14 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
     private String bookName;
 
     /**
+     * 是否启用
+     */
+    private String enable;
+
+    /**
      * 是否回收站(必传)
      */
+    @NotNull
     private Boolean recycleBin;
 
     @Override
@@ -38,6 +48,7 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
         LambdaQueryWrapper<FortuneBookEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBookEntity.class);
         queryWrapper.eq(FortuneBookEntity::getGroupId, groupId)
                 .eq(FortuneBookEntity::getRecycleBin, recycleBin)
+                .eq(StringUtils.isNotBlank(enable), FortuneBookEntity::getEnable, enable)
                 .eq(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
         return queryWrapper;
     }

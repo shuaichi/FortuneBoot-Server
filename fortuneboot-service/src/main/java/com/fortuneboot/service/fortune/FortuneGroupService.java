@@ -138,6 +138,29 @@ public class FortuneGroupService {
         return new PageDTO<>(voList, groupPage.getTotal());
     }
 
+
+    public List<FortuneGroupVo> getEnableGroupList() {
+        // 获取当前用户的组关系列表
+        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepository.getByUserId();
+        if (CollectionUtils.isEmpty(relationList)) {
+            return Collections.emptyList();
+        }
+        // 提取用户有权限的组ID列表
+        List<Long> groupIds = extractGroupIds(relationList);
+        List<FortuneGroupEntity> list = fortuneGroupRepository.getEnableByGroupIds(groupIds);
+
+        // 提前返回空结果
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.emptyList();
+        }
+        // 批量获取关联数据并构建缓存MAP
+        Map<Long, FortuneBookEntity> bookMap = getBookMap(list);
+        Map<Long, FortuneUserGroupRelationEntity> relationMap = buildRelationMap(relationList);
+
+        // 转换VO对象
+        return convertToVoList(list, bookMap, relationMap);
+    }
+
     // 提取组ID列表（带注释的独立方法）
     private List<Long> extractGroupIds(List<FortuneUserGroupRelationEntity> relations) {
         return relations.stream()

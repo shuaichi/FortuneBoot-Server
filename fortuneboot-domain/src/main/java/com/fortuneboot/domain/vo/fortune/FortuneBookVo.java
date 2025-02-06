@@ -29,37 +29,37 @@ public class FortuneBookVo {
     private Long bookId;
 
     /**
-     *
+     * 分组id
      */
     private Long groupId;
 
     /**
-     *
+     * 账本名称
      */
     private String bookName;
 
     /**
-     *
+     * 默认币种
      */
     private String defaultCurrency;
 
     /**
-     *
+     * 默认支出账户id
      */
     private Long defaultExpenseAccountId;
 
     /**
-     *
+     * 默认收入账户id
      */
     private Long defaultIncomeAccountId;
 
     /**
-     *
+     * 默认转出账户id
      */
     private Long defaultTransferOutAccountId;
 
     /**
-     *
+     * 默认转入账户id
      */
     private Long defaultTransferInAccountId;
 

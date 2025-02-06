@@ -52,6 +52,13 @@ public class FortuneGroupController {
         return ResponseDTO.ok(pageDTO);
     }
 
+    @Operation(summary = "查询我的启用分组")
+    @GetMapping("/getEnableGroupList")
+    public ResponseDTO<List<FortuneGroupVo>> getEnableGroupList(){
+        List<FortuneGroupVo> result = fortuneGroupService.getEnableGroupList();
+        return ResponseDTO.ok(result);
+    }
+
     @Operation(summary = "通过分组id查看分组")
     @GetMapping("/getByUserId/{groupId}")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")

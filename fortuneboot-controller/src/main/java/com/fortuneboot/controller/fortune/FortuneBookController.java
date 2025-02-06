@@ -62,7 +62,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "删除账本")
-    @DeleteMapping("/remove/{groupId}/{bookId}")
+    @DeleteMapping("/{groupId}/{bookId}/remove")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> removeFortuneBook(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneBookService.remove(groupId, bookId);
@@ -70,7 +70,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "移到回收站")
-    @PatchMapping("/moveToRecycleBin/{groupId}/{bookId}")
+    @PatchMapping("/{groupId}/{bookId}/moveToRecycleBin")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneBookService.moveToRecycleBin(groupId, bookId);
@@ -78,7 +78,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "放回原处")
-    @PatchMapping("/putBack/{groupId}/{bookId}")
+    @PatchMapping("/{groupId}/{bookId}/putBack")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneBookService.putBack(groupId, bookId);
@@ -86,15 +86,15 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "设置为默认账本")
-    @PatchMapping("/setDefaultBook/{groupId}/{bookId}")
+    @PatchMapping("/{groupId}/{bookId}/setDefaultBook")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> setDefaultBook(@PathVariable @Positive Long groupId, @PathVariable @Positive Long bookId) {
         fortuneGroupService.setDefaultBook(groupId, bookId);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "设置为默认账本")
-    @GetMapping("/getByGroupId/{groupId}")
+    @Operation(summary = "通过分组id查询")
+    @GetMapping("/{groupId}/getByGroupId")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<List<FortuneBookVo>> getByGroupId(@PathVariable @Positive Long groupId){
         List<FortuneBookEntity> bookEntityList = fortuneBookService.getByGroupId(groupId);
