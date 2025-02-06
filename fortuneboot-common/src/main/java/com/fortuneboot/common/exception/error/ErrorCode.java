@@ -234,6 +234,9 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_CATEGORY_NOT_EXIST(27003,"账本分类不存在","Business.BILL_CATEGORY_NOT_EXIST"),
 
+        // ---------------------------------- RATE -----------------------------------------------
+        RATE_NOT_FOUND(28001, "汇率没有找到: {} -> {}","Business.RATE_NOT_FOUND"),
+
         ;
 
 
