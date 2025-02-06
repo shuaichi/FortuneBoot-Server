@@ -20,7 +20,6 @@ import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -251,29 +249,63 @@ public class FortuneBillService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void refundBalance(FortuneBillModel fortuneBillModel) {
-        if (!fortuneBillModel.getConfirm() || Objects.isNull(fortuneBillModel.getAccountId())) {
+    public void refundBalance(FortuneBillModel bill) {
+        // 验证退款基本条件
+        if (!isValidRefundRequest(bill)) {
+            log.warn("Invalid refund request for bill: {}", bill.getBillId());
             return;
         }
-        FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-        BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
+
+        // 加载账户并处理退款
+        FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(bill.getAccountId());
+        BillTypeEnum billType = BillTypeEnum.getByValue(bill.getBillType());
+        processRefundByType(sourceAccount, bill, billType);
+    }
+
+    /**
+     * 条件验证方法
+     */
+    private boolean isValidRefundRequest(FortuneBillModel bill) {
+        return bill.getConfirm() && Objects.nonNull(bill.getAccountId())
+                && Objects.nonNull(bill.getAmount()) && bill.getAmount().compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     * 退款处理核心逻辑
+     */
+    private void processRefundByType(FortuneAccountModel sourceAccount, FortuneBillModel bill, BillTypeEnum billType) {
         switch (billType) {
             case INCOME, PROFIT, ADJUST:
-                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
+                this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
                 break;
             case EXPENSE, LOSS:
-                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getAmount()));
+                this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
                 break;
             case TRANSFER:
-                fortuneAccountModel.setBalance(fortuneAccountModel.getBalance().subtract(fortuneBillModel.getAmount()));
-                FortuneAccountModel fortuneAccountToModel = fortuneAccountFactory.loadById(fortuneBillModel.getToAccountId());
-                fortuneAccountToModel.setBalance(fortuneAccountModel.getBalance().add(fortuneBillModel.getConvertedAmount()));
-                fortuneAccountToModel.updateById();
+                this.handleTransferRefund(sourceAccount, bill);
                 break;
-            case null, default:
-                log.warn("Unsupported bill type: {}", billType);
+            default:
+                log.warn("Unsupported refund type: {}", billType);
                 break;
         }
-        fortuneAccountModel.updateById();
+        sourceAccount.updateById();
+    }
+
+    /**
+     * 处理转账退款
+     */
+    private void handleTransferRefund(FortuneAccountModel sourceAccount, FortuneBillModel bill) {
+        // 验证转账必要参数
+        if (Objects.isNull(bill.getToAccountId()) || Objects.isNull(bill.getConvertedAmount())) {
+            throw new ApiException(ErrorCode.Business.BILL_TRANSFER_PARAMETER_ERROR);
+        }
+
+        // 逆向处理源账户
+        adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
+
+        // 处理目标账户
+        FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
+        adjustBalance(targetAccount, bill.getConvertedAmount(), BalanceOperationEnum.SUBTRACT);
+        targetAccount.updateById();
     }
 }
