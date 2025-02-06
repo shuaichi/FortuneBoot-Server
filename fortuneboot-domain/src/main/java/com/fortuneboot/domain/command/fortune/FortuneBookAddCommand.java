@@ -67,4 +67,9 @@ public class FortuneBookAddCommand {
      * 账本模板
      */
     private Long bookTemplate;
+
+    /**
+     * 是否启用
+     */
+    private Boolean enable;
 }
