@@ -50,6 +50,7 @@ public class FortuneBookService {
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
     }
+
     @Transactional(rollbackFor = Exception.class)
     public FortuneBookModel add(FortuneBookAddCommand bookAddCommand) {
         // 创建账本模型并插入
@@ -57,15 +58,20 @@ public class FortuneBookService {
         fortuneBookModel.loadAddCommand(bookAddCommand);
         fortuneBookModel.setEnable(Boolean.TRUE);
 
+        // 校验是否使用模板
+        if (Objects.isNull(bookAddCommand.getBookTemplate())) {
+            fortuneBookModel.insert();
+            return fortuneBookModel;
+        }
         // 获取模板并提前处理备注
         BookTemplateBo bookTemplateBo = getBookTemplate(bookAddCommand);
-        if (bookTemplateBo != null && StringUtils.isBlank(fortuneBookModel.getRemark())) {
+        if (Objects.nonNull(bookTemplateBo) && StringUtils.isBlank(fortuneBookModel.getRemark())) {
             fortuneBookModel.setRemark(bookTemplateBo.getRemark());
         }
         fortuneBookModel.insert();
 
         // 处理模板数据（当模板存在时）
-        if (bookTemplateBo != null) {
+        if (Objects.nonNull(bookTemplateBo)) {
             processTagTemplates(fortuneBookModel, bookTemplateBo.getTagList());
             processCategoryTemplates(fortuneBookModel, bookTemplateBo.getCategoryList());
             processPayeeTemplates(fortuneBookModel, bookTemplateBo.getPayeeList());
