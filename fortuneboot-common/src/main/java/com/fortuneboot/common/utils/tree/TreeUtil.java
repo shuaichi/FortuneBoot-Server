@@ -15,7 +15,7 @@ public class TreeUtil {
 
     private static final Long ROOT_PARENT_ID = -1L;
 
-    public static <T extends AbstractTreeNode> List<T> buildForest(List<? extends AbstractTreeNode> dataList, Class<T> clazz) {
+    public static <T extends AbstractTreeNode> List<T> buildForest(List<T> dataList, Class<T> clazz) {
         // 参数校验
         if (Objects.isNull(clazz)) {
             throw new IllegalArgumentException("clazz must not be null");
@@ -36,13 +36,7 @@ public class TreeUtil {
         for (AbstractTreeNode node : dataList) {
             Long parentId = node.getParentId();
             if (Objects.equals(parentId, ROOT_PARENT_ID)) {
-                // 根节点类型检查
-                if (clazz.isInstance(node)) {
-                    roots.add(clazz.cast(node));
-                } else {
-                    // 可根据需求抛出异常或记录日志
-                    throw new IllegalArgumentException("Root node " + node.getId() + " is not of type " + clazz.getSimpleName());
-                }
+                roots.add(clazz.cast(node));
             } else {
                 AbstractTreeNode parentNode = nodeMap.get(parentId);
                 if (Objects.nonNull(parentNode)) {
