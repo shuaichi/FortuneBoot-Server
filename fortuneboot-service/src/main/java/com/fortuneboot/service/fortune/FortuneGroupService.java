@@ -1,7 +1,6 @@
 package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
@@ -21,8 +20,6 @@ import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -107,6 +104,7 @@ public class FortuneGroupService {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.deleteById();
         fortuneUserGroupRelationRepository.removeByGroupId(groupId);
+        // TODO 删除账本、账单、分类、交易对象、标签、分类关系、标签关系等数据.
     }
 
     public PageDTO<FortuneGroupVo> getFortuneGroupPage(FortuneGroupQuery query) {

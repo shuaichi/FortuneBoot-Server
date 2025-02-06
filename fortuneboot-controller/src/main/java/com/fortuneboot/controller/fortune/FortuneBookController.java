@@ -13,6 +13,7 @@ import com.fortuneboot.service.fortune.FortuneGroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -96,10 +97,26 @@ public class FortuneBookController {
     @Operation(summary = "通过分组id查询")
     @GetMapping("/{groupId}/getByGroupId")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<List<FortuneBookVo>> getByGroupId(@PathVariable @Positive Long groupId){
+    public ResponseDTO<List<FortuneBookVo>> getByGroupId(@PathVariable @Positive Long groupId) {
         List<FortuneBookEntity> bookEntityList = fortuneBookService.getByGroupId(groupId);
         List<FortuneBookVo> result = bookEntityList.stream().map(FortuneBookVo::new).collect(Collectors.toList());
         return ResponseDTO.ok(result);
+    }
+
+    @Operation(summary = "启用账本")
+    @PatchMapping("/{groupId}/{bookId}/enable")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> enable(@PathVariable @NotNull @Positive Long groupId, @PathVariable @NotNull @Positive Long bookId) {
+        fortuneBookService.enable(groupId, bookId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "停用账本")
+    @PatchMapping("/{groupId}/{bookId}/disable")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> disable(@PathVariable @NotNull @Positive Long groupId, @PathVariable @NotNull @Positive Long bookId) {
+        fortuneBookService.disable(groupId,bookId);
+        return ResponseDTO.ok();
     }
     // TODO 导出账单、复制账本
 }

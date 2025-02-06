@@ -10,6 +10,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 /**
  * 账本查询
  *
@@ -35,7 +37,7 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
     /**
      * 是否启用
      */
-    private String enable;
+    private Boolean enable;
 
     /**
      * 是否回收站(必传)
@@ -48,8 +50,8 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
         LambdaQueryWrapper<FortuneBookEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBookEntity.class);
         queryWrapper.eq(FortuneBookEntity::getGroupId, groupId)
                 .eq(FortuneBookEntity::getRecycleBin, recycleBin)
-                .eq(StringUtils.isNotBlank(enable), FortuneBookEntity::getEnable, enable)
-                .eq(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
+                .eq(Objects.nonNull(enable), FortuneBookEntity::getEnable, enable)
+                .like(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
         return queryWrapper;
     }
 }
