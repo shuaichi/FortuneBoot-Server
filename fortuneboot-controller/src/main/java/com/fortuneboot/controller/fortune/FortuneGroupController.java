@@ -108,7 +108,7 @@ public class FortuneGroupController {
     }
 
     @Operation(summary = "删除分组")
-    @DeleteMapping("/remove/{groupId}")
+    @DeleteMapping("/{groupId}/remove")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> remove(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneGroupService.remove(groupId);
@@ -155,15 +155,15 @@ public class FortuneGroupController {
     }
 
     @Operation(summary = "启用分组")
-    @PutMapping("/enable/{groupId}")
+    @PatchMapping("/{groupId}/enable")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> enable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
         fortuneGroupService.enable(groupId);
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "禁用分组")
-    @PutMapping("/disable/{groupId}")
+    @Operation(summary = "停用分组")
+    @PatchMapping("/{groupId}/disable")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> disable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
         fortuneGroupService.disable(groupId);

@@ -52,7 +52,7 @@ public class FortuneBookModel extends FortuneBookEntity {
     }
 
     public void checkDefault(FortuneGroupModel fortuneGroupModel) {
-        if (Objects.equals(fortuneGroupModel.getGroupId(), this.getGroupId())) {
+        if (Objects.equals(fortuneGroupModel.getDefaultBookId(), this.getBookId())) {
             throw new ApiException(ErrorCode.Business.BOOK_DEFAULT_CAN_NOT_REMOVE);
         }
     }

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 账本service
@@ -193,5 +192,19 @@ public class FortuneBookService {
 
     public List<FortuneBookEntity> getByGroupId(Long groupId) {
         return fortuneBookRepository.getByGroupId(groupId);
+    }
+
+    public void enable(Long groupId,Long bookId) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        fortuneBookModel.checkGroupId(groupId);
+        fortuneBookModel.setEnable(Boolean.TRUE);
+        fortuneBookModel.updateById();
+    }
+
+    public void disable(Long groupId,Long bookId) {
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        fortuneBookModel.checkGroupId(groupId);
+        fortuneBookModel.setEnable(Boolean.FALSE);
+        fortuneBookModel.updateById();
     }
 }
