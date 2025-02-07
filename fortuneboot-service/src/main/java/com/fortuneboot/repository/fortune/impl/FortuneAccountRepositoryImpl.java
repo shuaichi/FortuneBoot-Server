@@ -1,10 +1,14 @@
 package com.fortuneboot.repository.fortune.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneAccountMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 账户
@@ -14,4 +18,12 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapper, FortuneAccountEntity> implements FortuneAccountRepository {
+    @Override
+    public List<FortuneAccountEntity> getEnableList(Long groupId) {
+        LambdaQueryWrapper<FortuneAccountEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
+        lambdaQueryWrapper.eq(FortuneAccountEntity::getGroupId,groupId)
+                .eq(FortuneAccountEntity::getEnable,Boolean.TRUE)
+                .eq(FortuneAccountEntity::getRecycleBin,Boolean.FALSE);
+        return this.list(lambdaQueryWrapper);
+    }
 }

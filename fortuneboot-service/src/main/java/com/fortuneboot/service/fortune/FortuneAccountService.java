@@ -8,10 +8,11 @@ import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
 import com.fortuneboot.factory.fortune.FortuneAccountFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -28,6 +29,10 @@ public class FortuneAccountService {
 
     public IPage<FortuneAccountEntity> getPage(FortuneAccountQuery query) {
         return fortuneAccountRepository.page(query.toPage(), query.addQueryCondition());
+    }
+
+    public List<FortuneAccountEntity> getEnableList(Long groupId) {
+        return fortuneAccountRepository.getEnableList(groupId);
     }
 
     public void add(FortuneAccountAddCommand addCommand) {
@@ -147,4 +152,5 @@ public class FortuneAccountService {
         fortuneAccountModel.setEnable(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
+
 }
