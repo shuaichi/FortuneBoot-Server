@@ -57,7 +57,7 @@ public class FortuneAccountController {
     }
 
     @Operation(summary = "移入回收站")
-    @PatchMapping("/moveToRecycleBin/{groupId}/{accountId}}")
+    @PatchMapping("/{groupId}/{accountId}/moveToRecycleBin")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
         fortuneAccountService.moveToRecycleBin(groupId,accountId);
@@ -65,7 +65,7 @@ public class FortuneAccountController {
     }
 
     @Operation(summary = "删除账户")
-    @DeleteMapping("/remove/{groupId}/{accountId}}")
+    @DeleteMapping("/{groupId}/{accountId}/remove")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> remove(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
         fortuneAccountService.remove(groupId,accountId);
@@ -73,10 +73,106 @@ public class FortuneAccountController {
     }
 
     @Operation(summary = "删除账户")
-    @PatchMapping("/putBack/{groupId}/{accountId}}")
+    @PatchMapping("/{groupId}/{accountId}/putBack")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
         fortuneAccountService.putBack(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "可支出")
+    @PatchMapping("/{groupId}/{accountId}/canExpense")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> canExpense(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.canExpense(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "不可支出")
+    @PatchMapping("/{groupId}/{accountId}/cannotExpense")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> cannotExpense(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.cannotExpense(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "可收入")
+    @PatchMapping("/{groupId}/{accountId}/canIncome")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> canIncome(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.canIncome(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "不可收入")
+    @PatchMapping("/{groupId}/{accountId}/cannotIncome")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> cannotIncome(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.cannotIncome(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "可转出")
+    @PatchMapping("/{groupId}/{accountId}/canTransferOut")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> canTransferOut(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.canTransferOut(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "不可转出")
+    @PatchMapping("/{groupId}/{accountId}/cannotTransferOut")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> cannotTransferOut(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.cannotTransferOut(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "可转入")
+    @PatchMapping("/{groupId}/{accountId}/canTransferIn")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> canTransferIn(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.canTransferIn(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "不可转入")
+    @PatchMapping("/{groupId}/{accountId}/cannotTransferIn")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> cannotTransferIn(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.cannotTransferIn(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "计入净资产")
+    @PatchMapping("/{groupId}/{accountId}/includeAccount")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> includeAccount(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.includeAccount(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "不计入净资产")
+    @PatchMapping("/{groupId}/{accountId}/excludeAccount")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> excludeAccount(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.excludeAccount(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "启用")
+    @PatchMapping("/{groupId}/{accountId}/enable")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> enable(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.enable(groupId,accountId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "停用")
+    @PatchMapping("/{groupId}/{accountId}/disable")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<Void> disable(@PathVariable @Positive Long groupId, @PathVariable @Positive Long accountId){
+        fortuneAccountService.disable(groupId,accountId);
         return ResponseDTO.ok();
     }
 }

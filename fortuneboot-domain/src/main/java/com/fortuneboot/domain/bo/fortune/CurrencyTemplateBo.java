@@ -35,18 +35,18 @@ public class CurrencyTemplateBo {
     /**
      * 汇率
      */
-    private BigDecimal rate;
+    private BigDecimal apr;
 
     /**
      * 构造方法
      *
      * @param currencyId
      * @param currencyName
-     * @param rate
+     * @param apr
      */
-    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal rate) {
+    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal apr) {
         this.currencyId = currencyId;
         this.currencyName = currencyName;
-        this.rate = rate;
+        this.apr = apr;
     }
 }

@@ -224,28 +224,28 @@ public class FortuneBillService {
     /**
      * 辅助方法：货币转换
      */
-    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> rates) {
+    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> aprList) {
         if (sourceCurrency.equals(targetCurrency)) {
             return amount;
         }
 
         // 获取 sourceCurrency 对人民币的汇率
-        BigDecimal rateSourceToRMB = rates.stream()
-                .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
+        BigDecimal aprSourceToRMB = aprList.stream()
+                .filter(apr -> apr.getCurrencyName().equals(sourceCurrency))
                 .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.RATE_NOT_FOUND, sourceCurrency, " -> 人民币"));
+                .map(CurrencyTemplateBo::getApr)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 人民币"));
 
         // 获取 targetCurrency 对人民币的汇率
-        BigDecimal rateTargetToRMB = rates.stream()
-                .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
+        BigDecimal aprTargetToRMB = aprList.stream()
+                .filter(apr -> apr.getCurrencyName().equals(targetCurrency))
                 .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.RATE_NOT_FOUND, "人民币", targetCurrency));
+                .map(CurrencyTemplateBo::getApr)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "人民币", targetCurrency));
 
         // 计算目标货币金额
-        return amount.multiply(rateSourceToRMB)
-                .divide(rateTargetToRMB, 10, RoundingMode.HALF_UP);
+        return amount.multiply(aprSourceToRMB)
+                .divide(aprTargetToRMB, 10, RoundingMode.HALF_UP);
     }
 
     @Transactional(rollbackFor = Exception.class)
