@@ -12,6 +12,7 @@ import com.fortuneboot.service.fortune.FortuneAccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +39,15 @@ public class FortuneAccountController {
         IPage<FortuneAccountEntity> page = fortuneAccountService.getPage(query);
         List<FortuneAccountVo> records = page.getRecords().stream().map(FortuneAccountVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
+    }
+
+    @Operation(summary = "查询启用的账户")
+    @GetMapping("/{groupId}/getEnableList")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<List<FortuneAccountVo>> getEnableList(@PathVariable @NotNull @Positive Long groupId){
+        List<FortuneAccountEntity> list = fortuneAccountService.getEnableList(groupId);
+        List<FortuneAccountVo> result = list.stream().map(FortuneAccountVo::new).toList();
+        return ResponseDTO.ok(result);
     }
 
     @Operation(summary = "新增账户")
