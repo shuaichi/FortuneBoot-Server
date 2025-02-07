@@ -1,9 +1,6 @@
 package com.fortuneboot.domain.command.fortune;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fortuneboot.common.enums.fortune.AccountTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -95,7 +92,7 @@ public class FortuneAccountAddCommand {
 
     /**
      * 账户类型
-     * com.fortuneboot.common.enums.fortune.AccountTypeEnum
+     * @see AccountTypeEnum
      */
     private Integer accountType;
 

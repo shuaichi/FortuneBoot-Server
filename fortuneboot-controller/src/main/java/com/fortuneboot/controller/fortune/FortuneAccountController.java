@@ -49,7 +49,7 @@ public class FortuneAccountController {
     }
 
     @Operation(summary = "修改账户")
-    @PostMapping("/modify")
+    @PutMapping("/modify")
     @PreAuthorize("@fortune.groupOwnerPermission(#modifyCommand.getGroupId())")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneAccountModifyCommand modifyCommand) {
         fortuneAccountService.modify(modifyCommand);

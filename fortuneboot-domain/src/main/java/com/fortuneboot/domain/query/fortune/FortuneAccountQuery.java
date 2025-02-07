@@ -82,12 +82,18 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
      */
     private Boolean canTransferIn;
 
+    /**
+     * 回收站
+     */
+    private Boolean recycleBin;
+
 
     @Override
     public LambdaQueryWrapper<FortuneAccountEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneAccountEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         lambdaQueryWrapper.eq(FortuneAccountEntity::getGroupId,groupId)
                 .eq(FortuneAccountEntity::getAccountType, accountType)
+                .eq(FortuneAccountEntity::getRecycleBin,recycleBin)
                 .like(StringUtils.isNotBlank(accountName), FortuneAccountEntity::getAccountName, accountName)
                 .ge(Objects.nonNull(lowerBalance), FortuneAccountEntity::getBalance, lowerBalance)
                 .le(Objects.nonNull(limitBalance), FortuneAccountEntity::getBalance, limitBalance)
