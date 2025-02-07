@@ -1,8 +1,10 @@
 package com.fortuneboot.common.enums.fortune;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * 权限类型枚举
@@ -33,12 +35,10 @@ public enum RoleTypeEnum implements BasicEnum<Integer> {
      * @return
      */
     public static RoleTypeEnum getByValue(Integer value) {
-        for (RoleTypeEnum typeEnum : RoleTypeEnum.values()) {
-            if (ObjectUtil.equal(value, typeEnum.getValue())) {
-                return typeEnum;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("无效的角色类型"));
     }
 
 }

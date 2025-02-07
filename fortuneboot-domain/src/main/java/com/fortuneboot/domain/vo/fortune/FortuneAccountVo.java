@@ -2,6 +2,7 @@ package com.fortuneboot.domain.vo.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.common.enums.fortune.AccountTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import lombok.Data;
 
@@ -103,7 +104,7 @@ public class FortuneAccountVo {
 
     /**
      * 账户类型
-     * com.fortuneboot.common.enums.fortune.AccountTypeEnum
+     * @see AccountTypeEnum
      */
     private Integer accountType;
 

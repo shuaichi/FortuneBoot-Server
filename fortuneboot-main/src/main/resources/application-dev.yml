@@ -50,7 +50,7 @@ spring:
             datasource:
                 # 主库数据源
                 master:
-                    url: jdbc:mysql://tencent.mysql:30306/fortune_boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                    url: jdbc:mysql://tencent.mysql:30306/fortune_boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
                     username: root
                     password: zC@Mysql123
                 # 从库数据源

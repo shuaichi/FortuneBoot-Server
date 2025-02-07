@@ -3,6 +3,7 @@ package com.fortuneboot.common.enums.fortune;
 import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -28,11 +29,9 @@ public enum AccountTypeEnum implements BasicEnum<Integer> {
     }
 
     public static AccountTypeEnum getEnumByValue(Integer value){
-        for(AccountTypeEnum accountTypeEnum:AccountTypeEnum.values()){
-            if (Objects.equals(value,accountTypeEnum.value)){
-                return accountTypeEnum;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("无效的账户类型"));
     }
 }
