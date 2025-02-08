@@ -15,8 +15,8 @@ import java.util.Objects;
  **/
 @Getter
 public enum BillTypeEnum implements BasicEnum<Integer> {
-    INCOME(1, "收入"),
-    EXPENSE(2, "支出"),
+    EXPENSE(1, "支出"),
+    INCOME(2, "收入"),
     TRANSFER(3, "转账"),
     ADJUST(4, "余额调整"),
     PROFIT(5, "盈利"),

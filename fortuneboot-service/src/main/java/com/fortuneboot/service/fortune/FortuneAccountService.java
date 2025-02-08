@@ -31,8 +31,8 @@ public class FortuneAccountService {
         return fortuneAccountRepository.page(query.toPage(), query.addQueryCondition());
     }
 
-    public List<FortuneAccountEntity> getEnableList(Long groupId) {
-        return fortuneAccountRepository.getEnableList(groupId);
+    public List<FortuneAccountEntity> getEnableAccountList(Long groupId) {
+        return fortuneAccountRepository.getEnableAccountList(groupId);
     }
 
     public void add(FortuneAccountAddCommand addCommand) {

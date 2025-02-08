@@ -20,4 +20,13 @@ public interface FortuneCategoryRepository extends IService<FortuneCategoryEntit
      * @return
      */
     List<FortuneCategoryEntity> getByIds(List<Long> categoryIds);
+
+    /**
+     * 查询启用的账本
+     *
+     * @param bookId
+     * @param billType
+     * @return
+     */
+    List<FortuneCategoryEntity> getEnableCategoryList(Long bookId,Integer billType);
 }

@@ -25,4 +25,13 @@ public class FortuneBookRepositoryImpl extends ServiceImpl<FortuneBookMapper, Fo
         lambdaQueryWrapper.eq(FortuneBookEntity::getGroupId, groupId);
         return this.list(lambdaQueryWrapper);
     }
+
+    @Override
+    public List<FortuneBookEntity> getEnableBookList(Long groupId) {
+        LambdaQueryWrapper<FortuneBookEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBookEntity.class);
+        lambdaQueryWrapper.eq(FortuneBookEntity::getGroupId, groupId)
+                .eq(FortuneBookEntity::getEnable,Boolean.TRUE)
+                .eq(FortuneBookEntity::getRecycleBin,Boolean.FALSE);
+        return this.list(lambdaQueryWrapper);
+    }
 }

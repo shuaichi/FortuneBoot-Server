@@ -1,5 +1,6 @@
 package com.fortuneboot.service.fortune;
 
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +32,18 @@ public class FortuneTagService {
 
     public List<FortuneTagEntity> getList(FortuneTagQuery query) {
         return fortuneTagRepository.list(query.addQueryCondition());
+    }
+
+    public List<FortuneTagEntity> getEnableTagList(Long bookId, Integer billType) {
+        BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
+        switch (billTypeEnum) {
+            case EXPENSE, INCOME,TRANSFER -> {
+                return fortuneTagRepository.getEnableTagList(bookId, billType);
+            }
+            case null, default -> {
+                return Collections.emptyList();
+            }
+        }
     }
 
     public FortuneTagModel add(FortuneTagAddCommand addCommand) {
@@ -87,7 +101,7 @@ public class FortuneTagService {
         fortuneTagModel.updateById();
     }
 
-    public void modifyCanTransfer( Long bookId,  Long tagId) {
+    public void modifyCanTransfer(Long bookId, Long tagId) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.setCanTransfer(!fortuneTagModel.getCanTransfer());

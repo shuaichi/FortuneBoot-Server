@@ -1,8 +1,11 @@
 package com.fortuneboot.repository.fortune;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
+
+import java.util.List;
 
 /**
  * 交易对象
@@ -18,4 +21,12 @@ public interface FortunePayeeRepository extends IService<FortunePayeeEntity> {
      * @return
      */
     FortunePayeeEntity getByBookIdAndName(Long bookId, String payeeName);
+
+    /**
+     * 启用的交易对象
+     * @param bookId
+     * @param billTypeEnum
+     * @return
+     */
+    List<FortunePayeeEntity> getEnablePayeeList(Long bookId, BillTypeEnum billTypeEnum);
 }

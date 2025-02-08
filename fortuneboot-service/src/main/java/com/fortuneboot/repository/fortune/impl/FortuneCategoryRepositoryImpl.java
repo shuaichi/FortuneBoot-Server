@@ -24,4 +24,15 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
         lambdaQueryWrapper.in(FortuneCategoryEntity::getCategoryId, categoryIds);
         return this.list(lambdaQueryWrapper);
     }
+
+    @Override
+    public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId,Integer billType) {
+        LambdaQueryWrapper<FortuneCategoryEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
+        lambdaQueryWrapper.eq(FortuneCategoryEntity::getBookId, bookId)
+                .eq(FortuneCategoryEntity::getEnable, Boolean.TRUE)
+                .eq(FortuneCategoryEntity::getRecycleBin,Boolean.FALSE)
+                .eq(FortuneCategoryEntity::getCategoryType,billType)
+                .orderByAsc(FortuneCategoryEntity::getSort);
+        return this.list(lambdaQueryWrapper);
+    }
 }

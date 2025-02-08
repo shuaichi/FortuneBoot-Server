@@ -3,6 +3,8 @@ package com.fortuneboot.repository.fortune;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 
+import java.util.List;
+
 /**
  * 交易标签
  *
@@ -15,5 +17,14 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      *
      * @return
      */
-    FortuneTagEntity getByBookIdAndName(Long bookId,String tagName);
+    FortuneTagEntity getByBookIdAndName(Long bookId, String tagName);
+
+    /**
+     * 查询启用的标签
+     *
+     * @param bookId
+     * @param billType
+     * @return
+     */
+    List<FortuneTagEntity> getEnableTagList(Long bookId, Integer billType);
 }

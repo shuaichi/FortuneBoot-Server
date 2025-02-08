@@ -15,7 +15,16 @@ public interface FortuneBookRepository extends IService<FortuneBookEntity> {
 
     /**
      * 根据分组id查询
+     *
      * @return
      */
     List<FortuneBookEntity> getByGroupId(Long groupId);
+
+    /**
+     * 查询启用的账本
+     *
+     * @param groupId
+     * @return
+     */
+    List<FortuneBookEntity> getEnableBookList(Long groupId);
 }

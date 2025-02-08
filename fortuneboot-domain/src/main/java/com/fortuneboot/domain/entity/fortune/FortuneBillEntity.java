@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
  * @Date 2024/6/3 23:08
  **/
 @Data
-@TableName("fortune_bill_flow")
+@TableName("fortune_bill")
 @EqualsAndHashCode(callSuper = true)
 public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
 

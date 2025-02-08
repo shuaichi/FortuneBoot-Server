@@ -3,6 +3,9 @@ package com.fortuneboot.common.enums.fortune;
 import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * 分类枚举
  *
@@ -22,5 +25,12 @@ public enum CategoryTypeEnum implements BasicEnum<Integer> {
     CategoryTypeEnum(Integer value, String description) {
         this.value = value;
         this.description = description;
+    }
+
+    public static CategoryTypeEnum getByValue(Integer value){
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst()
+                .orElse(null);
     }
 }

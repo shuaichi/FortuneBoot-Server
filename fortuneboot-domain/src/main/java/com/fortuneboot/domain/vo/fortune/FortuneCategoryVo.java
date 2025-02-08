@@ -2,6 +2,7 @@ package com.fortuneboot.domain.vo.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.utils.tree.AbstractTreeNode;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import lombok.Data;
@@ -33,7 +34,7 @@ public class FortuneCategoryVo extends AbstractTreeNode {
 
     /**
      * 类型
-     * com.fortuneboot.common.enums.fortune.CategoryTypeEnum
+     * @see CategoryTypeEnum
      */
     private Integer categoryType;
 
