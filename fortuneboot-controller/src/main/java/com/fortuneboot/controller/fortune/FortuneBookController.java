@@ -43,8 +43,17 @@ public class FortuneBookController {
     @PreAuthorize("@fortune.groupOwnerPermission(#query.getGroupId())")
     public ResponseDTO<PageDTO<FortuneBookVo>> getPage(@Valid FortuneBookQuery query) {
         IPage<FortuneBookEntity> page = fortuneBookService.getPage(query);
-        List<FortuneBookVo> records = page.getRecords().stream().map(FortuneBookVo::new).collect(Collectors.toList());
+        List<FortuneBookVo> records = page.getRecords().stream().map(FortuneBookVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
+    }
+
+    @Operation(summary = "查询启用的账本")
+    @GetMapping("/{groupId}/getEnableBookList")
+    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    public ResponseDTO<List<FortuneBookVo>> getEnableBookList(@PathVariable @NotNull @Positive Long groupId){
+        List<FortuneBookEntity> list = fortuneBookService.getEnableBookList(groupId);
+        List<FortuneBookVo> result = list.stream().map(FortuneBookVo::new).toList();
+        return ResponseDTO.ok(result);
     }
 
     @Operation(summary = "新增账本")

@@ -1,5 +1,6 @@
 package com.fortuneboot.service.fortune;
 
+import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
@@ -9,8 +10,10 @@ import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,6 +31,18 @@ public class FortuneCategoryService {
 
     public List<FortuneCategoryEntity> getList(FortuneCategoryQuery query) {
         return fortuneCategoryRepository.list(query.addQueryCondition());
+    }
+
+    public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId, Integer billType) {
+        CategoryTypeEnum categoryTypeEnum = CategoryTypeEnum.getByValue(billType);
+        switch (categoryTypeEnum) {
+            case INCOME, EXPENSE -> {
+                return fortuneCategoryRepository.getEnableCategoryList(bookId, billType);
+            }
+            case null, default -> {
+                return Collections.emptyList();
+            }
+        }
     }
 
     public FortuneCategoryModel add(FortuneCategoryAddCommand addCommand) {
@@ -67,4 +82,6 @@ public class FortuneCategoryService {
         // TODO 校验父级是否在回收站
         fortuneCategoryModel.updateById();
     }
+
+
 }

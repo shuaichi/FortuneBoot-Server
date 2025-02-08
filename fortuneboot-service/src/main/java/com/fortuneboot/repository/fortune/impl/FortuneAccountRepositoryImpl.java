@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapper, FortuneAccountEntity> implements FortuneAccountRepository {
     @Override
-    public List<FortuneAccountEntity> getEnableList(Long groupId) {
+    public List<FortuneAccountEntity> getEnableAccountList(Long groupId) {
         LambdaQueryWrapper<FortuneAccountEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         lambdaQueryWrapper.eq(FortuneAccountEntity::getGroupId,groupId)
                 .eq(FortuneAccountEntity::getEnable,Boolean.TRUE)

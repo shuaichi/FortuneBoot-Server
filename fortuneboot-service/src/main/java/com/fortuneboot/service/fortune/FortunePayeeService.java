@@ -1,5 +1,6 @@
 package com.fortuneboot.service.fortune;
 
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.command.fortune.FortunePayeeAddCommand;
 import com.fortuneboot.domain.command.fortune.FortunePayeeModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +31,18 @@ public class FortunePayeeService {
 
     public List<FortunePayeeEntity> getList(FortunePayeeQuery query) {
         return fortunePayeeRepository.list(query.addQueryCondition());
+    }
+
+    public List<FortunePayeeEntity> getEnablePayeeList(Long bookId, Integer billType) {
+        BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
+        switch (billTypeEnum){
+            case INCOME, EXPENSE-> {
+                return fortunePayeeRepository.getEnablePayeeList(bookId,billTypeEnum);
+            }
+            case null, default -> {
+                return Collections.emptyList();
+            }
+        }
     }
 
     public void add(FortunePayeeAddCommand addCommand) {

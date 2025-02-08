@@ -25,7 +25,7 @@ import java.util.List;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/fortune/balance/flow")
+@RequestMapping("/fortune/bill")
 @Tag(name = "账单API", description = "账单相关的增删查改")
 public class FortuneBillController {
 

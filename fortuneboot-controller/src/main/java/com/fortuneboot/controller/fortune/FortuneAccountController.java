@@ -44,8 +44,8 @@ public class FortuneAccountController {
     @Operation(summary = "查询启用的账户")
     @GetMapping("/{groupId}/getEnableList")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<List<FortuneAccountVo>> getEnableList(@PathVariable @NotNull @Positive Long groupId){
-        List<FortuneAccountEntity> list = fortuneAccountService.getEnableList(groupId);
+    public ResponseDTO<List<FortuneAccountVo>> getEnableAccountList(@PathVariable @NotNull @Positive Long groupId){
+        List<FortuneAccountEntity> list = fortuneAccountService.getEnableAccountList(groupId);
         List<FortuneAccountVo> result = list.stream().map(FortuneAccountVo::new).toList();
         return ResponseDTO.ok(result);
     }

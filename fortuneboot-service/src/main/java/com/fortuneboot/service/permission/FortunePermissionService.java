@@ -9,6 +9,8 @@ import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -57,7 +59,7 @@ public class FortunePermissionService {
         return Boolean.FALSE;
     }
 
-    public Boolean groupOwnerPermission(Long groupId) {
+    public Boolean groupOwnerPermission(@NotNull(message = "分组不能为空") @Positive(message = "分组必须是正数")Long groupId) {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
         List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepository.getByGroupId(groupId);
         // 未根据分组id查到分组关系，说明没有权限
@@ -80,7 +82,7 @@ public class FortunePermissionService {
         return this.groupOwnerPermission(userGroupRelation.getGroupId());
     }
 
-    public Boolean bookOwnerPermission(Long bookId) {
+    public Boolean bookOwnerPermission(@NotNull(message = "账本不能为空") @Positive(message = "账本必须是正数") Long bookId) {
         FortuneBookEntity book = fortuneBookRepository.getById(bookId);
         // 未查找账本，则说明没权限
         if (ObjectUtil.isEmpty(book)) {

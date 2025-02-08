@@ -19,5 +19,5 @@ public interface FortuneAccountRepository extends IService<FortuneAccountEntity>
      * @param groupId
      * @return
      */
-    List<FortuneAccountEntity> getEnableList(Long groupId);
+    List<FortuneAccountEntity> getEnableAccountList(Long groupId);
 }
