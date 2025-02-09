@@ -10,8 +10,10 @@ import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -153,4 +155,10 @@ public class FortuneAccountService {
         fortuneAccountModel.updateById();
     }
 
+    public List<FortuneAccountEntity> getByIds(List<Long> accountIdList) {
+        if (CollectionUtils.isEmpty(accountIdList)){
+            return Collections.emptyList();
+        }
+        return fortuneAccountRepository.getByIds(accountIdList);
+    }
 }

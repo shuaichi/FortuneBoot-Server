@@ -84,4 +84,10 @@ public class FortuneCategoryService {
     }
 
 
+    public List<FortuneCategoryEntity>  getByCategoryIdList(List<Long> categoryList) {
+        if (CollectionUtils.isEmpty(categoryList)){
+            return Collections.emptyList();
+        }
+        return fortuneCategoryRepository.getByIds(categoryList);
+    }
 }

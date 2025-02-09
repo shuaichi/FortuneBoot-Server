@@ -3,6 +3,7 @@ package com.fortuneboot.controller.fortune;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -35,8 +36,8 @@ public class FortuneBillController {
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid FortuneBillQuery query){
-        IPage<FortuneBillEntity> page = fortuneBillService.getPage(query);
-        List<FortuneBillVo> records = page.getRecords().stream().map(FortuneBillVo::new).toList();
+        PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
+        List<FortuneBillVo> records = page.getRows().stream().map(FortuneBillVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 

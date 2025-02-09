@@ -27,4 +27,12 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      * @return
      */
     List<FortuneTagEntity> getEnableTagList(Long bookId, Integer billType);
+
+    /**
+     * 根据id批量查询
+     *
+     * @param tagIds
+     * @return
+     */
+    List<FortuneTagEntity> getByIds(List<Long> tagIds);
 }

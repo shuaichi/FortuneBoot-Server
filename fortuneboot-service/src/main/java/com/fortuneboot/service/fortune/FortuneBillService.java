@@ -2,17 +2,19 @@ package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.BalanceOperationEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
-import com.fortuneboot.domain.bo.fortune.CurrencyTemplateBo;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
+import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
-import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
@@ -25,8 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,14 +50,97 @@ public class FortuneBillService {
 
     private final ApplicationScopeBo applicationScopeBo;
 
+    private final FortuneTagService fortuneTagService;
+
     private final FortuneTagRelationService fortuneTagRelationService;
 
     private final FortunePayeeFactory fortunePayeeFactory;
 
-    private final FortuneCategoryRelationService fortuneCategoryRelationService;
+    private final FortuneCategoryService fortuneCategoryService;
 
-    public IPage<FortuneBillEntity> getPage(FortuneBillQuery query) {
-        return fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
+    private final FortuneCategoryRelationService fortuneCategoryRelationService;
+    private final FortunePayeeService fortunePayeeService;
+    private final FortuneBookService fortuneBookService;
+    private final FortuneAccountService fortuneAccountService;
+
+    public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
+        IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
+        List<FortuneBillBo> list = page.getRecords().stream().map(FortuneBillBo::new).toList();
+        if (CollectionUtils.isEmpty(list)) {
+            return new PageDTO<>(Collections.emptyList());
+        }
+        this.fillAccount(list);
+        this.fillBook(list);
+        this.fillCategory(list);
+        this.fillTag(list);
+        this.fillPayee(list);
+        return new PageDTO<>(list, page.getTotal());
+    }
+
+    private void fillCategory(List<FortuneBillBo> list) {
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).toList();
+        Map<Long, List<FortuneCategoryRelationEntity>> map = fortuneCategoryRelationService.getByBillIdList(billIdList);
+        List<Long> categoryIdList = map.values().stream().flatMap(List::stream).map(FortuneCategoryRelationEntity::getCategoryId).distinct().toList();
+        List<FortuneCategoryEntity> categoryList = fortuneCategoryService.getByCategoryIdList(categoryIdList);
+        Map<Long, FortuneCategoryEntity> categoryMap = categoryList.stream().collect(Collectors.toMap(FortuneCategoryEntity::getCategoryId, Function.identity()));
+        for (FortuneBillBo billBo : list) {
+            List<FortuneCategoryRelationEntity> relationList = map.get(billBo.getBillId());
+            if (CollectionUtils.isEmpty(relationList)) {
+                continue;
+            }
+            billBo.setCategoryList(new ArrayList<>(relationList.size()));
+            for (FortuneCategoryRelationEntity relation : relationList) {
+                billBo.getCategoryList().add(categoryMap.get(relation.getCategoryId()));
+            }
+        }
+    }
+
+    private void fillTag(List<FortuneBillBo> list) {
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).toList();
+        Map<Long, List<FortuneTagRelationEntity>> map = fortuneTagRelationService.getByBillIdList(billIdList);
+        List<Long> tagIdList = map.values().stream().flatMap(List::stream).map(FortuneTagRelationEntity::getTagId).distinct().toList();
+        List<FortuneTagEntity> categoryList = fortuneTagService.getByTagIdList(tagIdList);
+        Map<Long, FortuneTagEntity> categoryMap = categoryList.stream().collect(Collectors.toMap(FortuneTagEntity::getTagId, Function.identity()));
+        for (FortuneBillBo billBo : list) {
+            List<FortuneTagRelationEntity> relationList = map.get(billBo.getBillId());
+            if (CollectionUtils.isEmpty(relationList)) {
+                continue;
+            }
+            billBo.setTagList(new ArrayList<>(relationList.size()));
+            for (FortuneTagRelationEntity relation : relationList) {
+                billBo.getTagList().add(categoryMap.get(relation.getTagId()));
+            }
+        }
+    }
+
+    private void fillPayee(List<FortuneBillBo> list) {
+        List<Long> payeeIdList = list.stream().map(FortuneBillBo::getPayeeId).toList();
+        List<FortunePayeeEntity> payeeList = fortunePayeeService.getByIdList(payeeIdList);
+        Map<Long, String> map = payeeList.stream().collect(Collectors.toMap(FortunePayeeEntity::getPayeeId, FortunePayeeEntity::getPayeeName));
+        for (FortuneBillBo billBo : list) {
+            billBo.setPayeeName(map.get(billBo.getPayeeId()));
+        }
+    }
+
+    private void fillBook(List<FortuneBillBo> list) {
+        List<Long> bookIdList = list.stream().map(FortuneBillBo::getBookId).toList();
+        List<FortuneBookEntity> bookList = fortuneBookService.getByIds(bookIdList);
+        Map<Long, String> map = bookList.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, FortuneBookEntity::getBookName));
+        for (FortuneBillBo billBo : list) {
+            billBo.setBookName(map.get(billBo.getBookId()));
+        }
+    }
+
+    private void fillAccount(List<FortuneBillBo> list){
+        List<Long> accountIdList = new ArrayList<>(list.stream().map(FortuneBillBo::getAccountId).toList());
+        List<Long> toAccountIdList = list.stream().map(FortuneBillBo::getToAccountId).toList();
+        accountIdList.addAll(toAccountIdList);
+        List<FortuneAccountEntity> accountList = fortuneAccountService.getByIds(accountIdList);
+        Map<Long, String> map = accountList.stream().collect(Collectors.toMap(FortuneAccountEntity::getAccountId, FortuneAccountEntity::getAccountName));
+        for (FortuneBillBo billBo : list) {
+            billBo.setAccountName(map.get(billBo.getAccountId()));
+            billBo.setToAccountName(map.get(billBo.getToAccountId()));
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)

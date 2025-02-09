@@ -18,6 +18,7 @@ import java.util.List;
  **/
 @Service
 public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapper, FortuneAccountEntity> implements FortuneAccountRepository {
+
     @Override
     public List<FortuneAccountEntity> getEnableAccountList(Long groupId) {
         LambdaQueryWrapper<FortuneAccountEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
@@ -25,5 +26,12 @@ public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapp
                 .eq(FortuneAccountEntity::getEnable,Boolean.TRUE)
                 .eq(FortuneAccountEntity::getRecycleBin,Boolean.FALSE);
         return this.list(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<FortuneAccountEntity> getByIds(List<Long> accountIdList) {
+        LambdaQueryWrapper<FortuneAccountEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
+        queryWrapper.in(FortuneAccountEntity::getAccountId,accountIdList);
+        return this.list(queryWrapper);
     }
 }

@@ -10,6 +10,7 @@ import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -115,4 +116,10 @@ public class FortuneTagService {
         fortuneTagModel.updateById();
     }
 
+    public List<FortuneTagEntity> getByTagIdList(List<Long> tagIdList) {
+        if (CollectionUtils.isEmpty(tagIdList)){
+            return Collections.emptyList();
+        }
+        return fortuneTagRepository.getByIds(tagIdList);
+    }
 }

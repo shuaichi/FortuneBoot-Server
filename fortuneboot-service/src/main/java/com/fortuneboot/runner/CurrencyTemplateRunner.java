@@ -3,7 +3,7 @@ package com.fortuneboot.runner;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
-import com.fortuneboot.domain.bo.fortune.CurrencyTemplateBo;
+import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

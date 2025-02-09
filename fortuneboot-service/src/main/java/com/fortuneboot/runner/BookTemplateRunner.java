@@ -2,7 +2,7 @@ package com.fortuneboot.runner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
-import com.fortuneboot.domain.bo.fortune.BookTemplateBo;
+import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
