@@ -1,12 +1,19 @@
 package com.fortuneboot.domain.command.fortune;
 
 import cn.hutool.core.lang.Pair;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.serializer.CategoryAmountPairDeserializer;
+import com.fortuneboot.common.serializer.CategoryAmountPairSerializer;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -28,6 +35,7 @@ public class FortuneBillAddCommand {
     /**
      *交易时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime tradeTime;
 
     /**
@@ -44,7 +52,9 @@ public class FortuneBillAddCommand {
     /**
      *分类id
      */
-    private List<Pair<Long,BigDecimal>> categoryList;
+    @JsonDeserialize(using = CategoryAmountPairDeserializer.class)
+    @JsonSerialize(using = CategoryAmountPairSerializer.class)
+    private List<Pair<Long,BigDecimal>> categoryAmountPair;
 
     /**
      *金额

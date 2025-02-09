@@ -53,7 +53,7 @@ public class FortuneGroupController {
     }
 
     @Operation(summary = "查询我的启用分组")
-    @GetMapping("/getEnableGroupList")
+    @GetMapping("/getEnableList")
     public ResponseDTO<List<FortuneGroupVo>> getEnableGroupList(){
         List<FortuneGroupVo> result = fortuneGroupService.getEnableGroupList();
         return ResponseDTO.ok(result);

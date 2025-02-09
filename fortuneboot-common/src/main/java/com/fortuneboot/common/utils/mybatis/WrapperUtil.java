@@ -24,6 +24,13 @@ public class WrapperUtil {
         return queryWrapper;
     }
 
+    public static <T extends BaseEntity<?>> QueryWrapper<T> getQueryWrapper(Class<T> clazz,Boolean deleted) {
+        QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntityClass(clazz);
+        queryWrapper.eq(deleted,"deleted",DeleteEnum.VALID.getValue());
+        return queryWrapper;
+    }
+
     public static <T extends BaseEntity<?>> LambdaQueryWrapper<T> getLambdaQueryWrapper(Class<T> clazz) {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
         queryWrapper.setEntityClass(clazz);

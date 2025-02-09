@@ -55,14 +55,14 @@ public class FortuneBillService {
     private final FortuneCategoryRelationService fortuneCategoryRelationService;
 
     public IPage<FortuneBillEntity> getPage(FortuneBillQuery query) {
-        return fortuneBillRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void add(FortuneBillAddCommand addCommand) {
         // 参数校验前置
         Objects.requireNonNull(addCommand, "addCommand不能为空");
-        if (CollectionUtils.isEmpty(addCommand.getCategoryList())) {
+        if (CollectionUtils.isEmpty(addCommand.getCategoryAmountPair())) {
             throw new IllegalArgumentException("categoryList不能为空");
         }
 
@@ -78,7 +78,7 @@ public class FortuneBillService {
         }
 
         // 金额计算优化
-        BigDecimal amount = addCommand.getCategoryList().stream()
+        BigDecimal amount = addCommand.getCategoryAmountPair().stream()
                 .map(Pair::getValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -100,7 +100,7 @@ public class FortuneBillService {
         processTagRelations(addCommand.getTagIdList(), billId);
 
         // 批量分类处理
-        processCategoryRelations(addCommand.getCategoryList(), billId);
+        processCategoryRelations(addCommand.getCategoryAmountPair(), billId);
     }
 
     /**

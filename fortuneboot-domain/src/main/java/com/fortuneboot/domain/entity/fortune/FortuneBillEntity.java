@@ -43,10 +43,6 @@ public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
     @TableField("account_id")
     private Long accountId;
 
-    @Schema(description = "分类id")
-    @TableField("category_id")
-    private Long categoryId;
-
     @Schema(description = "金额")
     @TableField("amount")
     private BigDecimal amount;
