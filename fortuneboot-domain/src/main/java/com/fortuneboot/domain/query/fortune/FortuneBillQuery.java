@@ -1,6 +1,8 @@
 package com.fortuneboot.domain.query.fortune;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -8,8 +10,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -24,12 +31,7 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
      */
     @NotNull(message = "账本id不能为空")
     @Positive
-    private String bookId;
-
-    /**
-     * 账本类型
-     */
-    private Integer bookType;
+    private Long bookId;
 
     /**
      * 账户id
@@ -49,11 +51,13 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     /**
      * 交易开始时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String tradeTimeStartTime;
 
     /**
      * 交易结束时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private String tradeTimeEndTime;
 
     /**
@@ -93,6 +97,7 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
 
     /**
      * 是否有文件
+     * TODO 待开发
      */
     private Boolean fileInclude;
 
@@ -103,9 +108,21 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
 
     @Override
     public LambdaQueryWrapper<FortuneBillEntity> addQueryCondition() {
-        LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
-        queryWrapper.eq(FortuneBillEntity::getBookId, bookId)
-        ;
-        return queryWrapper;
+        QueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getQueryWrapper(FortuneBillEntity.class, Boolean.FALSE);
+        queryWrapper.eq(Objects.nonNull(bookId), "bill.book_id", bookId)
+                .eq(Objects.nonNull(billType), "bill.bill_type", billType)
+                .eq(Objects.nonNull(accountId), "bill.account_id", accountId)
+                .like(StringUtils.isNotBlank(title), "bill.title", title)
+                .ge(StringUtils.isNotBlank(tradeTimeStartTime), "bill.trade_time", tradeTimeStartTime + " 00:00:00")
+                .le(StringUtils.isNotBlank(tradeTimeEndTime), "bill.trade_time", tradeTimeEndTime + " 23:59:59")
+                .ge(Objects.nonNull(amountMin), "bill.amount", amountMin)
+                .le(Objects.nonNull(amountMax), "bill.amount", amountMax)
+                .in(CollectionUtils.isNotEmpty(categoryIds), "fcr.category_id", categoryIds)
+                .in(CollectionUtils.isNotEmpty(tagIds), "ftr.tag_id", tagIds)
+                .eq(Objects.nonNull(payeeId), "bill.payee_id", payeeId)
+                .eq(Objects.nonNull(confirm), "bill.confirm", confirm)
+                .eq(Objects.nonNull(include), "bill.include", include)
+                .like(StringUtils.isNotBlank(remark), "bill.remark", remark);
+        return queryWrapper.lambda();
     }
 }

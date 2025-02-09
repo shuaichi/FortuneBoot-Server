@@ -48,7 +48,7 @@ public class FortuneBookController {
     }
 
     @Operation(summary = "查询启用的账本")
-    @GetMapping("/{groupId}/getEnableBookList")
+    @GetMapping("/{groupId}/getEnableList")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<List<FortuneBookVo>> getEnableBookList(@PathVariable @NotNull @Positive Long groupId){
         List<FortuneBookEntity> list = fortuneBookService.getEnableBookList(groupId);
