@@ -1,4 +1,4 @@
-package com.fortuneboot.domain.bo.fortune;
+package com.fortuneboot.domain.bo.fortune.tenplate;
 
 import lombok.Data;
 

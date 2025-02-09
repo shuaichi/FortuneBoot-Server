@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类账单关系
@@ -20,4 +21,12 @@ public interface FortuneCategoryRelationRepository extends IService<FortuneCateg
      * @return
      */
     List<FortuneCategoryRelationEntity> getByBillId(Long billId);
+
+    /**
+     * 根据账单idList批量查询
+     *
+     * @param billIdList
+     * @return
+     */
+    Map<Long, List<FortuneCategoryRelationEntity>> getByBillIdList(List<Long> billIdList);
 }

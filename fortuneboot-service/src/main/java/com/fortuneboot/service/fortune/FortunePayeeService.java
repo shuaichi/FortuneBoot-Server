@@ -11,6 +11,7 @@ import com.fortuneboot.repository.fortune.FortunePayeeRepository;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -99,5 +100,12 @@ public class FortunePayeeService {
         fortunePayeeModel.checkBookId(bookId);
         fortunePayeeModel.setEnable(!fortunePayeeModel.getEnable());
         fortunePayeeModel.updateById();
+    }
+
+    public List<FortunePayeeEntity> getByIdList(List<Long> payeeIdList) {
+        if (CollectionUtils.isEmpty(payeeIdList)){
+            return Collections.emptyList();
+        }
+        return fortunePayeeRepository.getByIdList(payeeIdList);
     }
 }

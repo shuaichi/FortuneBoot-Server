@@ -1,5 +1,6 @@
 package com.fortuneboot.service.fortune;
 
+import cn.hutool.core.map.MapUtil;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
@@ -12,10 +13,12 @@ import com.fortuneboot.factory.fortune.model.FortuneTagRelationModel;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -49,5 +52,12 @@ public class FortuneTagRelationService {
     public void batchAdd(List<FortuneTagRelationAddCommand> commands) {
         // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
         commands.forEach(this::add);
+    }
+
+    public Map<Long, List<FortuneTagRelationEntity>> getByBillIdList(List<Long> billIdList) {
+        if (CollectionUtils.isEmpty(billIdList)){
+            return MapUtil.empty();
+        }
+        return fortuneTagRelationRepository.getByBillIdList(billIdList);
     }
 }

@@ -10,6 +10,8 @@ import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 交易标签和账单的关系表
@@ -25,5 +27,13 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
         LambdaQueryWrapper<FortuneTagRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         wrapper.eq(FortuneTagRelationEntity::getBillId, billId);
         return this.list(wrapper);
+    }
+
+    @Override
+    public Map<Long, List<FortuneTagRelationEntity>> getByBillIdList(List<Long> billIdList) {
+        LambdaQueryWrapper<FortuneTagRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
+        wrapper.in(FortuneTagRelationEntity::getBillId, billIdList);
+        List<FortuneTagRelationEntity> list = this.list(wrapper);
+        return list.stream().collect(Collectors.groupingBy(FortuneTagRelationEntity::getBillId));
     }
 }

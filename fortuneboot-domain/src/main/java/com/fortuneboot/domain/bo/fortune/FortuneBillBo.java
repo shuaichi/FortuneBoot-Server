@@ -1,11 +1,11 @@
-package com.fortuneboot.domain.vo.fortune;
+package com.fortuneboot.domain.bo.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import lombok.Data;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,28 +13,14 @@ import java.util.List;
 
 /**
  * @Author work.chi.zhang@gmail.com
- * @Date 2025/1/12 23:01
+ * @Date 2025/2/9 21:51
  **/
 @Data
-public class FortuneBillVo {
+public class FortuneBillBo {
 
-    public FortuneBillVo(FortuneBillEntity entity){
+    public FortuneBillBo(FortuneBillEntity entity) {
         if (ObjectUtil.isNotEmpty(entity)) {
             BeanUtil.copyProperties(entity, this);
-        }
-    }
-
-    public FortuneBillVo(FortuneBillBo bo){
-        if (ObjectUtil.isNotEmpty(bo)){
-            BeanUtil.copyProperties(bo,this);
-        }
-        if (CollectionUtils.isNotEmpty(bo.getCategoryList())){
-            List<FortuneCategoryVo> categoryList = bo.getCategoryList().stream().map(FortuneCategoryVo::new).toList();
-            this.setCategoryList(categoryList);
-        }
-        if (CollectionUtils.isNotEmpty(bo.getTagList())){
-            List<FortuneTagVo> tagList = bo.getTagList().stream().map(FortuneTagVo::new).toList();
-            this.setTagList(tagList);
         }
     }
 
@@ -54,37 +40,37 @@ public class FortuneBillVo {
     private String bookName;
 
     /**
-     *标题
+     * 标题
      */
     private String title;
 
     /**
-     *交易时间
+     * 交易时间
      */
     private LocalDateTime tradeTime;
 
     /**
-     *账户id
+     * 账户id
      */
     private Long accountId;
 
     /**
-     * 账户名称
+     * 账户
      */
     private String accountName;
 
     /**
-     *金额
+     * 金额
      */
     private BigDecimal amount;
 
     /**
-     *汇率转换后的金额
+     * 汇率转换后的金额
      */
     private BigDecimal convertedAmount;
 
     /**
-     *交易对象
+     * 交易对象
      */
     private Long payeeId;
 
@@ -100,7 +86,7 @@ public class FortuneBillVo {
     private Integer billType;
 
     /**
-     *转账到的账户
+     * 转账到的账户
      */
     private Long toAccountId;
 
@@ -110,27 +96,28 @@ public class FortuneBillVo {
     private String toAccountName;
 
     /**
-     *是否确认
+     * 是否确认
      */
     private Boolean confirm;
 
     /**
-     *是否统计
+     * 是否统计
      */
     private Boolean include;
 
     /**
-     *备注
+     * 备注
      */
     private Boolean remark;
 
     /**
      * 分类
      */
-    private List<FortuneCategoryVo> categoryList;
+    private List<FortuneCategoryEntity> categoryList;
 
     /**
      * 标签
      */
-    private List<FortuneTagVo> tagList;
+    private List<FortuneTagEntity> tagList;
+
 }

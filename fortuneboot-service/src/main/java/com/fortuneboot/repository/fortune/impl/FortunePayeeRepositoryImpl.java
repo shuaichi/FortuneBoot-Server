@@ -40,4 +40,11 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
                 .orderByAsc(FortunePayeeEntity::getSort);
         return this.list(queryWrapper);
     }
+
+    @Override
+    public List<FortunePayeeEntity> getByIdList(List<Long> payeeIdList) {
+        LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
+        queryWrapper.in(FortunePayeeEntity::getPayeeId,payeeIdList);
+        return this.list(queryWrapper);
+    }
 }

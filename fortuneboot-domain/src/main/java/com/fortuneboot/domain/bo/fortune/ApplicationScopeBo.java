@@ -1,5 +1,7 @@
 package com.fortuneboot.domain.bo.fortune;
 
+import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
+import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.ApplicationScope;

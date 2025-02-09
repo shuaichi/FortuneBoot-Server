@@ -20,4 +20,12 @@ public interface FortuneAccountRepository extends IService<FortuneAccountEntity>
      * @return
      */
     List<FortuneAccountEntity> getEnableAccountList(Long groupId);
+
+    /**
+     * 根据idList批量查询
+     *
+     * @param accountIdList
+     * @return
+     */
+    List<FortuneAccountEntity> getByIds(List<Long> accountIdList);
 }

@@ -20,6 +20,7 @@ import java.util.Objects;
  **/
 @Service
 public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, FortuneTagEntity> implements FortuneTagRepository {
+
     @Override
     public FortuneTagEntity getByBookIdAndName(Long bookId, String tagName) {
         LambdaQueryWrapper<FortuneTagEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
@@ -39,5 +40,12 @@ public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, Fort
                 .eq(FortuneTagEntity::getRecycleBin, Boolean.FALSE)
                 .orderByAsc(FortuneTagEntity::getSort);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public List<FortuneTagEntity> getByIds(List<Long> tagIds) {
+        LambdaQueryWrapper<FortuneTagEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
+        lambdaQueryWrapper.in(FortuneTagEntity::getTagId,tagIds);
+        return this.list(lambdaQueryWrapper);
     }
 }
