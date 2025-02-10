@@ -56,8 +56,8 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询启用的标签")
     @GetMapping("/tag/{bookId}/{billType}/getEnableList")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<List<FortuneTagVo>> getEnableTagList(@PathVariable Long bookId,@PathVariable Integer billType){
-        List<FortuneTagEntity> list = fortuneTagService.getEnableTagList(bookId,billType);
+    public ResponseDTO<List<FortuneTagVo>> getEnableTagList(@PathVariable Long bookId, @PathVariable Integer billType) {
+        List<FortuneTagEntity> list = fortuneTagService.getEnableTagList(bookId, billType);
         List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
         List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);
         return ResponseDTO.ok(treeNodes);
@@ -147,8 +147,8 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询启用的交易对象")
     @GetMapping("/payee/{bookId}/{billType}/getEnableList")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<List<FortunePayeeVo>> getEnablePayeeList(@PathVariable Long bookId,@PathVariable Integer billType){
-        List<FortunePayeeEntity> list = fortunePayeeService.getEnablePayeeList(bookId,billType);
+    public ResponseDTO<List<FortunePayeeVo>> getEnablePayeeList(@PathVariable Long bookId, @PathVariable Integer billType) {
+        List<FortunePayeeEntity> list = fortunePayeeService.getEnablePayeeList(bookId, billType);
         List<FortunePayeeVo> result = list.stream().map(FortunePayeeVo::new).toList();
         return ResponseDTO.ok(result);
     }
@@ -230,8 +230,8 @@ public class FortuneBookConfigController {
     @Operation(summary = "查询启用的分类")
     @GetMapping("/category/{bookId}/{billType}/getEnableList")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<List<FortuneCategoryVo>> getEnableCategoryList(@PathVariable Long bookId,@PathVariable Integer billType){
-        List<FortuneCategoryEntity> list = fortuneCategoryService.getEnableCategoryList(bookId,billType);
+    public ResponseDTO<List<FortuneCategoryVo>> getEnableCategoryList(@PathVariable Long bookId, @PathVariable Integer billType) {
+        List<FortuneCategoryEntity> list = fortuneCategoryService.getEnableCategoryList(bookId, billType);
         List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
         List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
         return ResponseDTO.ok(treeNodes);

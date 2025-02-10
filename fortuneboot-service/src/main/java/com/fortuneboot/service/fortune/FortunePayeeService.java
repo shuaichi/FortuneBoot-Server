@@ -38,7 +38,7 @@ public class FortunePayeeService {
         BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
         switch (billTypeEnum){
             case INCOME, EXPENSE-> {
-                return fortunePayeeRepository.getEnablePayeeList(bookId,billTypeEnum);
+                return fortunePayeeRepository.getEnablePayeeList(bookId,billType);
             }
             case null, default -> {
                 return Collections.emptyList();
