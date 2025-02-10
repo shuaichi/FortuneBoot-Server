@@ -3,7 +3,7 @@
     "bookTemplateId": 1,
     "bookTemplateName": "生活账本1",
     "remark": "用于个人生活记账。将支出分为维持类，消费类，提升类，社交类4个大类，收入分为主动收入，被动收入，社交收入3个大类。",
-    "previewUrl": "http://tpl.moneywhere.com/生活账本1.png",
+    "previewUrl": "/api/v1/生活账本1.png",
     "tagList": [
       {
         "tagId": 1,
@@ -12,8 +12,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "tagId": 2,
@@ -22,8 +22,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "tagId": 3,
@@ -32,8 +32,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       },
       {
         "tagId": 4,
@@ -42,8 +42,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 400
+        "sort": 400,
+        "parentId": -1
       },
       {
         "tagId": 5,
@@ -52,8 +52,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 500
+        "sort": 500,
+        "parentId": -1
       },
       {
         "tagId": 6,
@@ -62,8 +62,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 600
+        "sort": 600,
+        "parentId": -1
       },
       {
         "tagId": 7,
@@ -72,8 +72,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 700
+        "sort": 700,
+        "parentId": -1
       },
       {
         "tagId": 8,
@@ -82,8 +82,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 800
+        "sort": 800,
+        "parentId": -1
       },
       {
         "tagId": 9,
@@ -92,8 +92,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 900
+        "sort": 900,
+        "parentId": -1
       },
       {
         "tagId": 10,
@@ -102,8 +102,8 @@
         "canExpense": true,
         "canIncome": false,
         "canTransfer": false,
-        "parentId": "",
-        "sort": 1000
+        "sort": 1000,
+        "parentId": -1
       },
       {
         "tagId": 11,
@@ -582,45 +582,45 @@
         "categoryName": "维持类",
         "categoryType": 1,
         "remark": "维持生活的必须开支，是无法节省的开支。",
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 2,
         "categoryName": "消费类",
         "categoryType": 1,
         "remark": "可以节省的开支，比如娱乐，旅游等。",
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 3,
         "categoryName": "提升类",
         "categoryType": 1,
         "remark": "提升自己的生存能力，比如买书，保险等消费。",
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       },
       {
         "categoryId": 4,
         "categoryName": "社交类",
         "categoryType": 1,
         "remark": "社交类型的支出，比如请朋友吃饭，送礼等。",
-        "parentId": "",
-        "sort": 400
+        "sort": 400,
+        "parentId": -1
       },
       {
         "categoryId": 5,
         "categoryName": "主动收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": "即劳动收入，指用时间来换取金钱，它最大的特点就是必须花费时间和精力去获得。",
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 6,
         "categoryName": "工资",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 100,
         "parentId": 5
@@ -628,7 +628,7 @@
       {
         "categoryId": 7,
         "categoryName": "兼职",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 200,
         "parentId": 5
@@ -636,7 +636,7 @@
       {
         "categoryId": 8,
         "categoryName": "薅羊毛",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": "利用各种网络金融产品或红包活动推广下线抽成赚钱，比如外卖优惠券、减免优惠、送话费等。",
         "sort": 300,
         "parentId": 5
@@ -644,15 +644,15 @@
       {
         "categoryId": 9,
         "categoryName": "被动收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 10,
         "categoryName": "理财",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 100,
         "parentId": 9
@@ -660,7 +660,7 @@
       {
         "categoryId": 11,
         "categoryName": "租金",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 200,
         "parentId": 9
@@ -668,10 +668,10 @@
       {
         "categoryId": 12,
         "categoryName": "社交收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": "比如收到的红包。",
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       }
     ],
     "payeeList": [
@@ -713,7 +713,7 @@
     "bookTemplateId": 2,
     "bookTemplateName": "餐饮店账本",
     "remark": "用于开餐饮店记录收支情况。",
-    "previewUrl": "http://tpl.moneywhere.com/餐饮店账本1.png",
+    "previewUrl": "/api/v1/餐饮店账本1.png",
     "tagList": [],
     "categoryList": [
       {
@@ -721,40 +721,40 @@
         "categoryName": "员工",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       },
       {
         "categoryId": 14,
         "categoryName": "原材料",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 15,
         "categoryName": "设备",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 400
+        "sort": 400,
+        "parentId": -1
       },
       {
         "categoryId": 16,
         "categoryName": "门店",
         "categoryType": 1,
         "remark": "门店租金，水电费。",
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 17,
         "categoryName": "营销",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 500
+        "sort": 500,
+        "parentId": -1
       },
       {
         "categoryId": 18,
@@ -887,23 +887,23 @@
       {
         "categoryId": 34,
         "categoryName": "堂食",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 35,
         "categoryName": "外卖",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 36,
         "categoryName": "美团",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 100,
         "parentId": 35
@@ -911,7 +911,7 @@
       {
         "categoryId": 37,
         "categoryName": "饿了么",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 200,
         "parentId": 35
@@ -980,7 +980,7 @@
     "bookTemplateId": 3,
     "bookTemplateName": "生活账本2",
     "remark": "参考随手记",
-    "previewUrl": "http://tpl.moneywhere.com/生活账本2.png",
+    "previewUrl": "/api/v1/生活账本2.png",
     "tagList": [],
     "categoryList": [
       {
@@ -988,88 +988,88 @@
         "categoryName": "食品酒水",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 40,
         "categoryName": "居家物业",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 41,
         "categoryName": "衣服饰品",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       },
       {
         "categoryId": 42,
         "categoryName": "行车交通",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 400
+        "sort": 400,
+        "parentId": -1
       },
       {
         "categoryId": 43,
         "categoryName": "交流通讯",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 500
+        "sort": 500,
+        "parentId": -1
       },
       {
         "categoryId": 44,
         "categoryName": "休闲娱乐",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 600
+        "sort": 600,
+        "parentId": -1
       },
       {
         "categoryId": 45,
         "categoryName": "学习进修",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 700
+        "sort": 700,
+        "parentId": -1
       },
       {
         "categoryId": 46,
         "categoryName": "人情往来",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 800
+        "sort": 800,
+        "parentId": -1
       },
       {
         "categoryId": 47,
         "categoryName": "医疗保健",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 900
+        "sort": 900,
+        "parentId": -1
       },
       {
         "categoryId": 48,
         "categoryName": "金融保险",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 1000
+        "sort": 1000,
+        "parentId": -1
       },
       {
         "categoryId": 49,
         "categoryName": "其他杂项",
         "categoryType": 1,
         "remark": null,
-        "parentId": "",
-        "sort": 1100
+        "sort": 1100,
+        "parentId": -1
       },
       {
         "categoryId": 50,
@@ -1418,31 +1418,31 @@
       {
         "categoryId": 93,
         "categoryName": "主动收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 100
+        "sort": 100,
+        "parentId": -1
       },
       {
         "categoryId": 94,
         "categoryName": "被动收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 200
+        "sort": 200,
+        "parentId": -1
       },
       {
         "categoryId": 95,
         "categoryName": "社交收入",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
-        "parentId": "",
-        "sort": 300
+        "sort": 300,
+        "parentId": -1
       },
       {
         "categoryId": 96,
         "categoryName": "工资",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 100,
         "parentId": 93
@@ -1450,7 +1450,7 @@
       {
         "categoryId": 97,
         "categoryName": "兼职",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 200,
         "parentId": 93
@@ -1458,7 +1458,7 @@
       {
         "categoryId": 99,
         "categoryName": "羊毛",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 300,
         "parentId": 93
@@ -1466,7 +1466,7 @@
       {
         "categoryId": 100,
         "categoryName": "租金",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 100,
         "parentId": 94
@@ -1474,7 +1474,7 @@
       {
         "categoryId": 101,
         "categoryName": "利息",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 200,
         "parentId": 94
@@ -1482,7 +1482,7 @@
       {
         "categoryId": 102,
         "categoryName": "理财",
-        "categoryType": 1,
+        "categoryType": 2,
         "remark": null,
         "sort": 300,
         "parentId": 94
