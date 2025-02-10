@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
+import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -65,6 +66,11 @@ public class FortuneBillBo {
     private BigDecimal amount;
 
     /**
+     * 币种
+     */
+    private String currencyCode;
+
+    /**
      * 汇率转换后的金额
      */
     private BigDecimal convertedAmount;
@@ -108,12 +114,12 @@ public class FortuneBillBo {
     /**
      * 备注
      */
-    private Boolean remark;
+    private String remark;
 
     /**
      * 分类
      */
-    private List<FortuneCategoryEntity> categoryList;
+    private List<BillCategoryAmountVo> categoryAmountPair;
 
     /**
      * 标签

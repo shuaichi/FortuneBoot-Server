@@ -1,9 +1,11 @@
-package com.fortuneboot.domain.vo.fortune;
+package com.fortuneboot.domain.vo.fortune.bill;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.vo.fortune.FortuneCategoryVo;
+import com.fortuneboot.domain.vo.fortune.FortuneTagVo;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -27,10 +29,6 @@ public class FortuneBillVo {
     public FortuneBillVo(FortuneBillBo bo){
         if (ObjectUtil.isNotEmpty(bo)){
             BeanUtil.copyProperties(bo,this);
-        }
-        if (CollectionUtils.isNotEmpty(bo.getCategoryList())){
-            List<FortuneCategoryVo> categoryList = bo.getCategoryList().stream().map(FortuneCategoryVo::new).toList();
-            this.setCategoryList(categoryList);
         }
         if (CollectionUtils.isNotEmpty(bo.getTagList())){
             List<FortuneTagVo> tagList = bo.getTagList().stream().map(FortuneTagVo::new).toList();
@@ -79,6 +77,11 @@ public class FortuneBillVo {
     private BigDecimal amount;
 
     /**
+     * 币种
+     */
+    private String currencyCode;
+
+    /**
      *汇率转换后的金额
      */
     private BigDecimal convertedAmount;
@@ -122,12 +125,12 @@ public class FortuneBillVo {
     /**
      *备注
      */
-    private Boolean remark;
+    private String remark;
 
     /**
      * 分类
      */
-    private List<FortuneCategoryVo> categoryList;
+    private List<BillCategoryAmountVo> categoryAmountPair;
 
     /**
      * 标签

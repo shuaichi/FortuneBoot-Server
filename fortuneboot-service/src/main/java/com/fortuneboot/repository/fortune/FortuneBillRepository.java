@@ -5,10 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.FortuneBillVo;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 账单流水Repository

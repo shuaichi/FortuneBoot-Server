@@ -16,6 +16,7 @@ import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
+import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
@@ -88,9 +89,14 @@ public class FortuneBillService {
             if (CollectionUtils.isEmpty(relationList)) {
                 continue;
             }
-            billBo.setCategoryList(new ArrayList<>(relationList.size()));
+            billBo.setCategoryAmountPair(new ArrayList<>(relationList.size()));
             for (FortuneCategoryRelationEntity relation : relationList) {
-                billBo.getCategoryList().add(categoryMap.get(relation.getCategoryId()));
+                FortuneCategoryEntity fortuneCategoryEntity = categoryMap.get(relation.getCategoryId());
+                BillCategoryAmountVo vo = new BillCategoryAmountVo();
+                vo.setCategoryId(fortuneCategoryEntity.getCategoryId());
+                vo.setCategoryName(fortuneCategoryEntity.getCategoryName());
+                vo.setAmount(relation.getAmount());
+                billBo.getCategoryAmountPair().add(vo);
             }
         }
     }
@@ -125,9 +131,11 @@ public class FortuneBillService {
     private void fillBook(List<FortuneBillBo> list) {
         List<Long> bookIdList = list.stream().map(FortuneBillBo::getBookId).toList();
         List<FortuneBookEntity> bookList = fortuneBookService.getByIds(bookIdList);
-        Map<Long, String> map = bookList.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, FortuneBookEntity::getBookName));
+        Map<Long, FortuneBookEntity> map = bookList.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
         for (FortuneBillBo billBo : list) {
-            billBo.setBookName(map.get(billBo.getBookId()));
+            FortuneBookEntity fortuneBookEntity = map.get(billBo.getBookId());
+            billBo.setBookName(fortuneBookEntity.getBookName());
+            billBo.setCurrencyCode(fortuneBookEntity.getDefaultCurrency());
         }
     }
 
@@ -145,12 +153,6 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public void add(FortuneBillAddCommand addCommand) {
-        // 参数校验前置
-        Objects.requireNonNull(addCommand, "addCommand不能为空");
-        if (CollectionUtils.isEmpty(addCommand.getCategoryAmountPair())) {
-            throw new IllegalArgumentException("categoryList不能为空");
-        }
-
         // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
@@ -162,14 +164,13 @@ public class FortuneBillService {
             fortuneBillModel.checkPayeeExist(payee);
         }
 
-        // 金额计算优化
-        BigDecimal amount = addCommand.getCategoryAmountPair().stream()
-                .map(Pair::getValue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         // 使用枚举类型直接比较
         BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
         if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
+            // 金额计算优化
+            BigDecimal amount = addCommand.getCategoryAmountPair().stream()
+                    .map(Pair::getValue)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             fortuneBillModel.setAmount(amount);
             fortuneBillModel.setConvertedAmount(amount);
         }
