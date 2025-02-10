@@ -1,14 +1,12 @@
 package com.fortuneboot.controller.fortune;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
-import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
-import com.fortuneboot.domain.vo.fortune.FortuneBillVo;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillVo;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
