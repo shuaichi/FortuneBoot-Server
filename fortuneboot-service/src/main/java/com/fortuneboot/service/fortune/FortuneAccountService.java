@@ -154,11 +154,4 @@ public class FortuneAccountService {
         fortuneAccountModel.setEnable(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
-
-    public List<FortuneAccountEntity> getByIds(List<Long> accountIdList) {
-        if (CollectionUtils.isEmpty(accountIdList)){
-            return Collections.emptyList();
-        }
-        return fortuneAccountRepository.getByIds(accountIdList);
-    }
 }

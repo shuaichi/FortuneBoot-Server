@@ -15,7 +15,7 @@ import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
+import com.fortuneboot.repository.fortune.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,9 +46,17 @@ public class FortuneBookService {
 
     private final FortuneTagService fortuneTagService;
 
+    private final FortuneTagRepository fortuneTagRepository;
+
     private final FortuneCategoryService fortuneCategoryService;
 
     private final FortunePayeeService fortunePayeeService;
+
+    private final FortuneCategoryRepository fortuneCategoryRepository;
+
+    private final FortunePayeeRepository fortunePayeeRepository;
+
+    private final FortuneBillService fortuneBillService;
 
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
@@ -173,46 +181,53 @@ public class FortuneBookService {
         fortuneBookModel.updateById();
     }
 
-    public void remove(Long groupId, Long bookId) {
+    @Transactional(rollbackFor = Exception.class)
+    public void remove(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.deleteById();
+        fortuneTagRepository.removeByBookId(bookId);
+        fortuneCategoryRepository.removeByBookId(bookId);
+        fortunePayeeRepository.removeByBookId(bookId);
+        fortuneBillService.removeByBookId(bookId);
     }
 
-    public void moveToRecycleBin(Long groupId, Long bookId) {
+    public void moveToRecycleBin(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkGroupId(groupId);
-        fortuneBookModel.checkDefault(fortuneGroupFactory.loadById(groupId));
+        fortuneBookModel.checkDefault(fortuneGroupFactory.loadById(fortuneBookModel.getGroupId()));
         fortuneBookModel.setRecycleBin(Boolean.TRUE);
         fortuneBookModel.updateById();
     }
 
-    public void putBack(Long groupId, Long bookId) {
+    public void putBack(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.setRecycleBin(Boolean.FALSE);
         fortuneBookModel.updateById();
-    }
-
-    public List<FortuneBookEntity> getByIds(List<Long> bookIdList) {
-        return fortuneBookRepository.listByIds(bookIdList);
     }
 
     public List<FortuneBookEntity> getByGroupId(Long groupId) {
         return fortuneBookRepository.getByGroupId(groupId);
     }
 
-    public void enable(Long groupId,Long bookId) {
+    public void enable(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.setEnable(Boolean.TRUE);
         fortuneBookModel.updateById();
     }
 
-    public void disable(Long groupId,Long bookId) {
+    public void disable(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkGroupId(groupId);
         fortuneBookModel.setEnable(Boolean.FALSE);
         fortuneBookModel.updateById();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removeByGroupId(Long groupId) {
+        List<FortuneBookEntity> bookList = this.getByGroupId(groupId);
+        List<Long> bookIds = bookList.stream().map(FortuneBookEntity::getBookId).toList();
+        fortuneBookRepository.removeBatchByIds(bookIds);
+        fortuneTagRepository.removeByBookIds(bookIds);
+        fortuneCategoryRepository.removeByBookIds(bookIds);
+        fortunePayeeRepository.removeByBookIds(bookIds);
+        fortuneBillService.removeByBookIds(bookIds);
     }
 }

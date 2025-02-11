@@ -53,11 +53,4 @@ public class FortuneTagRelationService {
         // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
         commands.forEach(this::add);
     }
-
-    public Map<Long, List<FortuneTagRelationEntity>> getByBillIdList(List<Long> billIdList) {
-        if (CollectionUtils.isEmpty(billIdList)){
-            return MapUtil.empty();
-        }
-        return fortuneTagRelationRepository.getByBillIdList(billIdList);
-    }
 }

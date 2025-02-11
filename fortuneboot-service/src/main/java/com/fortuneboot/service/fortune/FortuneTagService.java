@@ -115,11 +115,4 @@ public class FortuneTagService {
         fortuneTagModel.setEnable(!fortuneTagModel.getEnable());
         fortuneTagModel.updateById();
     }
-
-    public List<FortuneTagEntity> getByTagIdList(List<Long> tagIdList) {
-        if (CollectionUtils.isEmpty(tagIdList)){
-            return Collections.emptyList();
-        }
-        return fortuneTagRepository.getByIds(tagIdList);
-    }
 }

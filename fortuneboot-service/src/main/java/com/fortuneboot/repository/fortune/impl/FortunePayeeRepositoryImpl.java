@@ -21,6 +21,7 @@ import java.util.Objects;
  **/
 @Service
 public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, FortunePayeeEntity> implements FortunePayeeRepository {
+
     @Override
     public FortunePayeeEntity getByBookIdAndName(Long bookId, String payeeName) {
         LambdaQueryWrapper<FortunePayeeEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
@@ -46,5 +47,19 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.in(FortunePayeeEntity::getPayeeId,payeeIdList);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public void removeByBookId(Long bookId) {
+        LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
+        queryWrapper.eq(FortunePayeeEntity::getBookId,bookId);
+        this.remove(queryWrapper);
+    }
+
+    @Override
+    public void removeByBookIds(List<Long> bookIds) {
+        LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
+        queryWrapper.in(FortunePayeeEntity::getBookId,bookIds);
+        this.remove(queryWrapper);
     }
 }

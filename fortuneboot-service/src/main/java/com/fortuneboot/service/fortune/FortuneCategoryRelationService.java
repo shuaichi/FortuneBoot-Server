@@ -43,22 +43,9 @@ public class FortuneCategoryRelationService {
         fortuneCategoryRelationModel.insert();
     }
 
-    public void removeByBillId(Long billId) {
-        List<FortuneCategoryRelationEntity> list = fortuneCategoryRelationRepository.getByBillId(billId);
-        List<Long> ids = list.stream().map(FortuneCategoryRelationEntity::getCategoryId).toList();
-        fortuneCategoryRelationRepository.removeBatchByIds(ids);
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public void batchAdd(List<FortuneCategoryRelationAddCommand> commands) {
         // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
         commands.forEach(this::add);
-    }
-
-    public Map<Long,List<FortuneCategoryRelationEntity>> getByBillIdList(List<Long> billIdList) {
-        if (CollectionUtils.isEmpty(billIdList)){
-            return MapUtil.empty();
-        }
-        return fortuneCategoryRelationRepository.getByBillIdList(billIdList);
     }
 }

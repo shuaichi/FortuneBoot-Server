@@ -5,10 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.FortuneBillVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 账单流水Repository
@@ -27,4 +25,19 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
     IPage<FortuneBillEntity> getPage(Page<FortuneBillEntity> page, LambdaQueryWrapper<FortuneBillEntity> wrapper);
 
 
+    /**
+     * 根据账本id查询账单
+     *
+     * @param bookId
+     * @return
+     */
+    List<FortuneBillEntity> getByBookId(Long bookId);
+
+    /**
+     * 根据账本idList查询账单
+     *
+     * @param bookIds
+     * @return
+     */
+    List<FortuneBillEntity> getByBookIds(List<Long> bookIds);
 }
