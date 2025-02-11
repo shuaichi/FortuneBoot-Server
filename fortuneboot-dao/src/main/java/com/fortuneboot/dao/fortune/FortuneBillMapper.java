@@ -22,7 +22,8 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             "FROM fortune_bill AS bill\n" +
             "LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id\n" +
             "LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id\n" +
-            " ${ew.customSqlSegment}" +
-            "GROUP BY bill.bill_id ")
+            " ${ew.customSqlSegment}\n" +
+            "GROUP BY bill.bill_id\n" +
+            "ORDER BY bill.trade_time DESC, bill.create_time DESC")
     IPage<FortuneBillEntity> getPage(Page<FortuneBillEntity> page, @Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
 }

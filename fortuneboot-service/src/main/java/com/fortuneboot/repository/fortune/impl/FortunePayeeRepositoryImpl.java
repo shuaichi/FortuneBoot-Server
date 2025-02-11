@@ -31,13 +31,13 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
     }
 
     @Override
-    public List<FortunePayeeEntity> getEnablePayeeList(Long bookId, BillTypeEnum billTypeEnum) {
+    public List<FortunePayeeEntity> getEnablePayeeList(Long bookId, Integer billType) {
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.eq(FortunePayeeEntity::getBookId, bookId)
-                .eq(Objects.equals(billTypeEnum.getValue(),BillTypeEnum.EXPENSE.getValue()),FortunePayeeEntity::getCanExpense, Boolean.TRUE)
-                .eq(Objects.equals(billTypeEnum.getValue(),BillTypeEnum.INCOME.getValue()),FortunePayeeEntity::getCanIncome, Boolean.TRUE)
+                .eq(Objects.equals(billType,BillTypeEnum.EXPENSE.getValue()),FortunePayeeEntity::getCanExpense, Boolean.TRUE)
+                .eq(Objects.equals(billType,BillTypeEnum.INCOME.getValue()),FortunePayeeEntity::getCanIncome, Boolean.TRUE)
                 .eq(FortunePayeeEntity::getEnable,Boolean.TRUE)
-                .eq(FortunePayeeEntity::getRecycleBin,Boolean.TRUE)
+                .eq(FortunePayeeEntity::getRecycleBin,Boolean.FALSE)
                 .orderByAsc(FortunePayeeEntity::getSort);
         return this.list(queryWrapper);
     }

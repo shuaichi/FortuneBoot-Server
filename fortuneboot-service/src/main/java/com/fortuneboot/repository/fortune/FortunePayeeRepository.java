@@ -25,10 +25,10 @@ public interface FortunePayeeRepository extends IService<FortunePayeeEntity> {
      * 启用的交易对象
      *
      * @param bookId
-     * @param billTypeEnum
+     * @param billType
      * @return
      */
-    List<FortunePayeeEntity> getEnablePayeeList(Long bookId, BillTypeEnum billTypeEnum);
+    List<FortunePayeeEntity> getEnablePayeeList(Long bookId, Integer billType);
 
     /**
      * 根据idList批量查询

@@ -76,7 +76,7 @@ public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
 
     @Schema(description = "备注")
     @TableField("remark")
-    private Boolean remark;
+    private String remark;
 
     @Schema(description = "回收站")
     @TableField("recycle_bin")
