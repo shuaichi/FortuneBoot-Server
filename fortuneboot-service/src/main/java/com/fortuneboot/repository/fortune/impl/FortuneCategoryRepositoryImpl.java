@@ -35,4 +35,18 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
                 .orderByAsc(FortuneCategoryEntity::getSort);
         return this.list(lambdaQueryWrapper);
     }
+
+    @Override
+    public void removeByBookId(Long bookId) {
+        LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
+        queryWrapper.eq(FortuneCategoryEntity::getBookId,bookId);
+        this.remove(queryWrapper);
+    }
+
+    @Override
+    public void removeByBookIds(List<Long> bookIds) {
+        LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
+        queryWrapper.in(FortuneCategoryEntity::getBookId,bookIds);
+        this.remove(queryWrapper);
+    }
 }

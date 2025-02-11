@@ -29,4 +29,11 @@ public interface FortuneTagRelationRepository extends IService<FortuneTagRelatio
      * @return
      */
     Map<Long, List<FortuneTagRelationEntity>> getByBillIdList(List<Long> billIdList);
+
+    /**
+     * 根据账单id批量删除
+     *
+     * @param billIds
+     */
+    void removeByBillIds(List<Long> billIds);
 }

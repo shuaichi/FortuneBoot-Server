@@ -8,7 +8,6 @@ import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
 import com.fortuneboot.factory.fortune.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -100,12 +99,5 @@ public class FortunePayeeService {
         fortunePayeeModel.checkBookId(bookId);
         fortunePayeeModel.setEnable(!fortunePayeeModel.getEnable());
         fortunePayeeModel.updateById();
-    }
-
-    public List<FortunePayeeEntity> getByIdList(List<Long> payeeIdList) {
-        if (CollectionUtils.isEmpty(payeeIdList)){
-            return Collections.emptyList();
-        }
-        return fortunePayeeRepository.getByIdList(payeeIdList);
     }
 }

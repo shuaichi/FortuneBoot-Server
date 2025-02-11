@@ -82,12 +82,4 @@ public class FortuneCategoryService {
         // TODO 校验父级是否在回收站
         fortuneCategoryModel.updateById();
     }
-
-
-    public List<FortuneCategoryEntity>  getByCategoryIdList(List<Long> categoryList) {
-        if (CollectionUtils.isEmpty(categoryList)){
-            return Collections.emptyList();
-        }
-        return fortuneCategoryRepository.getByIds(categoryList);
-    }
 }

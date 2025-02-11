@@ -45,12 +45,6 @@ public class FortuneBookModel extends FortuneBookEntity {
         this.loadAddCommand(command);
     }
 
-    public void checkGroupId(Long groupId) {
-        if (!Objects.equals(this.getGroupId(), groupId)) {
-            throw new ApiException(ErrorCode.Business.BOOK_NOT_MATCH_GROUP);
-        }
-    }
-
     public void checkDefault(FortuneGroupModel fortuneGroupModel) {
         if (Objects.equals(fortuneGroupModel.getDefaultBookId(), this.getBookId())) {
             throw new ApiException(ErrorCode.Business.BOOK_DEFAULT_CAN_NOT_REMOVE);

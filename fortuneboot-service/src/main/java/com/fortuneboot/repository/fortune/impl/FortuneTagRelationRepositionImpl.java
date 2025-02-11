@@ -36,4 +36,11 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
         List<FortuneTagRelationEntity> list = this.list(wrapper);
         return list.stream().collect(Collectors.groupingBy(FortuneTagRelationEntity::getBillId));
     }
+
+    @Override
+    public void removeByBillIds(List<Long> billIds) {
+        LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
+        queryWrapper.in(FortuneTagRelationEntity::getBillId,billIds);
+        this.remove(queryWrapper);
+    }
 }

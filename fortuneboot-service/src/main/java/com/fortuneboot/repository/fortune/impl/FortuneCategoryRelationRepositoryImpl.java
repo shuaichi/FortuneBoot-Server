@@ -35,4 +35,11 @@ public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCa
         List<FortuneCategoryRelationEntity> list = this.list(wrapper);
         return list.stream().collect(Collectors.groupingBy(FortuneCategoryRelationEntity::getBillId));
     }
+
+    @Override
+    public void removeByBillIds(List<Long> billIds) {
+        LambdaQueryWrapper<FortuneCategoryRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
+        queryWrapper.in(FortuneCategoryRelationEntity::getBillId,billIds);
+        this.remove(queryWrapper);
+    }
 }

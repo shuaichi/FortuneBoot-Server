@@ -35,4 +35,18 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      * @return
      */
     List<FortuneTagEntity> getByIds(List<Long> tagIds);
+
+    /**
+     * 根据账本id查询
+     *
+     * @param bookId
+     * @return
+     */
+    void removeByBookId(Long bookId);
+
+    /**
+     *
+     * @param bookIds
+     */
+    void removeByBookIds(List<Long> bookIds);
 }

@@ -18,6 +18,7 @@ import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
+import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,10 @@ public class FortuneGroupService {
      * 账本service
      */
     private final FortuneBookService fortuneBookService;
+    /**
+     * 账本repo
+     */
+    private final FortuneBookRepository fortuneBookRepository;
 
     public FortuneGroupVo getByUserId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
@@ -104,7 +109,7 @@ public class FortuneGroupService {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.deleteById();
         fortuneUserGroupRelationRepository.removeByGroupId(groupId);
-        // TODO 删除账本、账单、分类、交易对象、标签、分类关系、标签关系等数据.
+        fortuneBookService.removeByGroupId(groupId);
     }
 
     public PageDTO<FortuneGroupVo> getFortuneGroupPage(FortuneGroupQuery query) {
@@ -182,7 +187,7 @@ public class FortuneGroupService {
 
         return CollectionUtils.isEmpty(bookIds)
                 ? Collections.emptyMap()
-                : fortuneBookService.getByIds(bookIds).stream()
+                : fortuneBookRepository.listByIds(bookIds).stream()
                 .collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
     }
 
@@ -228,8 +233,9 @@ public class FortuneGroupService {
                 .ifPresent(roleType -> vo.setRoleTypeDesc(roleType.getDescription()));
     }
 
-    public void setDefaultBook(Long groupId, Long bookId) {
-        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
+    public void setDefaultBook(Long bookId) {
+        FortuneBookEntity bookEntity = fortuneBookRepository.getById(bookId);
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(bookEntity.getGroupId());
         fortuneGroupModel.setDefaultBookId(bookId);
         fortuneGroupModel.updateById();
     }
