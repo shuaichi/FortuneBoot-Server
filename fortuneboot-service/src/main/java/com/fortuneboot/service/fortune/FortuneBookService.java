@@ -136,17 +136,17 @@ public class FortuneBookService {
         payeeTemplates.forEach(template -> {
             FortunePayeeAddCommand command = new FortunePayeeAddCommand();
             BeanUtil.copyProperties(template, command);
-            command.setEnable(true);
+            command.setEnable(Boolean.TRUE);
             command.setBookId(book.getBookId());
             fortunePayeeService.add(command);
         });
     }
 
-    private <T> void resolveParentId(Object command, Long originalParentId,
-                                     Map<String, Long> nameToIdMap,
-                                     Function<Long, String> nameResolver) {
+    private void resolveParentId(Object command, Long originalParentId,
+                                 Map<String, Long> nameToIdMap,
+                                 Function<Long, String> nameResolver) {
         try {
-            if (originalParentId == null) {
+            if (Objects.isNull(originalParentId)) {
                 command.getClass().getMethod("setParentId", Long.class).invoke(command, -1L);
             } else {
                 String parentName = nameResolver.apply(originalParentId);
