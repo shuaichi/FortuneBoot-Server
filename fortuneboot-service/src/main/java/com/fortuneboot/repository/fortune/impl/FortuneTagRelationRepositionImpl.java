@@ -40,7 +40,14 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
     @Override
     public void removeByBillIds(List<Long> billIds) {
         LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
-        queryWrapper.in(FortuneTagRelationEntity::getBillId,billIds);
+        queryWrapper.in(FortuneTagRelationEntity::getBillId, billIds);
         this.remove(queryWrapper);
+    }
+
+    @Override
+    public Boolean existByTagId(Long tagId) {
+        LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
+        queryWrapper.eq(FortuneTagRelationEntity::getTagId, tagId);
+        return this.exists(queryWrapper);
     }
 }

@@ -36,4 +36,12 @@ public interface FortuneTagRelationRepository extends IService<FortuneTagRelatio
      * @param billIds
      */
     void removeByBillIds(List<Long> billIds);
+
+    /**
+     * 根据标签id查询标签是否被使用
+     *
+     * @param tagId
+     * @return
+     */
+    Boolean existByTagId(Long tagId);
 }

@@ -80,9 +80,9 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         COMMON_FILE_NOT_ALLOWED_TO_DOWNLOAD(10004, "文件名称({})非法，不允许下载", "Business.FILE_NOT_ALLOWED_TO_DOWNLOAD"),
 
-        COMMON_TREE_DUPLICATE_NODE_ID(10005,"节点id {} 重复","Business.TREE_DUPLICATE_NODE_ID"),
+        COMMON_TREE_DUPLICATE_NODE_ID(10005, "节点id {} 重复", "Business.TREE_DUPLICATE_NODE_ID"),
 
-        COMMON_TREE_PARENT_NOT_EXIST(10006,"节点id {} 的父级id {} 不存在", "Business.TREE_PARENT_NOT_EXIST"),
+        COMMON_TREE_PARENT_NOT_EXIST(10006, "节点id {} 的父级id {} 不存在", "Business.TREE_PARENT_NOT_EXIST"),
 
         // ----------------------------- PERMISSION -----------------------------------
 
@@ -182,62 +182,68 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         USER_ADMIN_CAN_NOT_BE_MODIFY(10515, "管理员不允许做任何修改", "Business.USER_ADMIN_CAN_NOT_BE_MODIFY"),
 
-        USER_ROLE_NOT_ALLOW_REGISTER(10516,"角色不允许被创建","Business.USER_ROLE_NOT_ALLOW_REGISTER"),
+        USER_ROLE_NOT_ALLOW_REGISTER(10516, "角色不允许被创建", "Business.USER_ROLE_NOT_ALLOW_REGISTER"),
 
-        USER_ADD_SOURCE_ILLEGALITY(10517,"角色来源不合法","Business.USER_ADD_SOURCE_ILLEGALITY"),
+        USER_ADD_SOURCE_ILLEGALITY(10517, "角色来源不合法", "Business.USER_ADD_SOURCE_ILLEGALITY"),
 
         // ---------------------------------- GROUP -----------------------------------------------
 
-        GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001,"不能删除默认分组","Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
+        GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001, "不能删除默认分组", "Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
 
         // ---------------------------------- BOOK -----------------------------------------------
 
-        BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002,"请先移出回收站","Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
+        BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002, "请先移出回收站", "Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
 
-        BOOK_NOT_MATCH_GROUP(22001,"账本与分组不匹配","Business.BOOK_NOT_MATCH_GROUP"),
+        BOOK_NOT_MATCH_GROUP(22001, "账本与分组不匹配", "Business.BOOK_NOT_MATCH_GROUP"),
 
-        BOOK_DEFAULT_CAN_NOT_REMOVE(22002,"默认账本不能移入回收站","Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
+        BOOK_DEFAULT_CAN_NOT_REMOVE(22002, "默认账本不能移入回收站", "Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
 
         // ---------------------------------- TAG -----------------------------------------------
 
-        TAG_ADD_EXIST(23001,"标签{}已存在，请勿重复添加","Business.TAG_ADD_EXIST"),
+        TAG_ADD_EXIST(23001, "标签{}已存在，请勿重复添加", "Business.TAG_ADD_EXIST"),
 
-        TAG_ADD_EXIST_IN_RECYCLE_BIN(23002,"标签{}在回收站中，请从回收站删除后再试","Business.TAG_ADD_EXIST_IN_RECYCLE_BIN"),
+        TAG_ADD_EXIST_IN_RECYCLE_BIN(23002, "标签{}在回收站中，请从回收站删除后再试", "Business.TAG_ADD_EXIST_IN_RECYCLE_BIN"),
 
-        TAG_NOT_MATCH_BOOK(23003,"标签与账本不匹配","Business.TAG_NOT_MATCH_BOOK"),
+        TAG_NOT_MATCH_BOOK(23003, "标签与账本不匹配", "Business.TAG_NOT_MATCH_BOOK"),
+
+        TAG_ALREADY_USED(23004, "标签或其子标签已被使用，请删除账单后再试", "Business.TAG_ALREADY_USED"),
 
         // ---------------------------------- PAYEE -----------------------------------------------
 
-        PAYEE_ADD_EXIST(24001,"交易对象{}已存在，请勿重复添加","Business.PAYEE_ADD_EXIST"),
+        PAYEE_ADD_EXIST(24001, "交易对象{}已存在，请勿重复添加", "Business.PAYEE_ADD_EXIST"),
 
-        PAYEE_ADD_EXIST_IN_RECYCLE_BIN(24002,"交易对象{}在回收站中，请从回收站删除后再试","Business.PAYEE_ADD_EXIST_IN_RECYCLE_BIN"),
+        PAYEE_ADD_EXIST_IN_RECYCLE_BIN(24002, "交易对象{}在回收站中，请从回收站删除后再试", "Business.PAYEE_ADD_EXIST_IN_RECYCLE_BIN"),
 
-        PAYEE_NOT_MATCH_BOOK(24003,"交易对象与账本不匹配","Business.PAYEE_NOT_MATCH_BOOK"),
+        PAYEE_NOT_MATCH_BOOK(24003, "交易对象与账本不匹配", "Business.PAYEE_NOT_MATCH_BOOK"),
+
+        PAYEE_ALREADY_USED(24004, "交易对象已被使用，不能删除，请删除账单后再试", "Business.PAYEE_ALREADY_USED"),
 
         // ---------------------------------- CATEGORY -----------------------------------------------
 
-        CATEGORY_NOT_MATCH_BOOK(25003,"交易对象与账本不匹配","Business.CATEGORY_NOT_MATCH_BOOK"),
+        CATEGORY_NOT_MATCH_BOOK(25003, "交易对象与账本不匹配", "Business.CATEGORY_NOT_MATCH_BOOK"),
+
+        CATEGORY_ALREADY_USED(25004, "分类或其子分类已被使用，不能删除，请删除账单后再试", "Business.CATEGORY_ALREADY_USED"),
 
         // ---------------------------------- ACCOUNT -----------------------------------------------
 
-        ACCOUNT_TYPE_ERROR(26001,"账户类型有误","Business.ACCOUNT_TYPE_ERROR"),
+        ACCOUNT_TYPE_ERROR(26001, "账户类型有误", "Business.ACCOUNT_TYPE_ERROR"),
 
-        ACCOUNT_NOT_MATCH_GROUP(26002,"账户与分组不匹配","Business.ACCOUNT_NOT_MATCH_GROUP"),
+        ACCOUNT_NOT_MATCH_GROUP(26002, "账户与分组不匹配", "Business.ACCOUNT_NOT_MATCH_GROUP"),
 
         // ---------------------------------- BILL -----------------------------------------------
 
-        BILL_NOT_MATCH_BOOK(27001,"账单与账本不匹配","Business.BILL_NOT_MATCH_BOOK"),
+        BILL_NOT_MATCH_BOOK(27001, "账单与账本不匹配", "Business.BILL_NOT_MATCH_BOOK"),
 
-        BILL_TAG_NOT_EXIST(27002,"账本标签不存在","Business.BILL_TAG_NOT_EXIST"),
+        BILL_TAG_NOT_EXIST(27002, "账本标签不存在", "Business.BILL_TAG_NOT_EXIST"),
 
-        BILL_PAYEE_NOT_EXIST(27003,"账本交易对象不存在","Business.BILL_PAYEE_NOT_EXIST"),
+        BILL_PAYEE_NOT_EXIST(27003, "账本交易对象不存在", "Business.BILL_PAYEE_NOT_EXIST"),
 
-        BILL_CATEGORY_NOT_EXIST(27003,"账本分类不存在","Business.BILL_CATEGORY_NOT_EXIST"),
+        BILL_CATEGORY_NOT_EXIST(27003, "账本分类不存在", "Business.BILL_CATEGORY_NOT_EXIST"),
 
-        BILL_TRANSFER_PARAMETER_ERROR(27004,"转账入参有误","Business.BILL_TRANSFER_PARAMETER_ERROR"),
+        BILL_TRANSFER_PARAMETER_ERROR(27004, "转账入参有误", "Business.BILL_TRANSFER_PARAMETER_ERROR"),
 
         // ---------------------------------- RATE -----------------------------------------------
-        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}","Business.APR_NOT_FOUND"),
+        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
 
         ;
 
@@ -249,11 +255,11 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         Business(int code, String msg, String i18nKey) {
             Assert.isTrue(code > 10000 && code < 99999,
-                "错误码code值定义失败，Business错误码code值范围在10000~99099之间，请查看ErrorCode.Business类，当前错误码码为" + name());
+                    "错误码code值定义失败，Business错误码code值范围在10000~99099之间，请查看ErrorCode.Business类，当前错误码码为" + name());
 
             String errorTypeName = this.getClass().getSimpleName();
             Assert.isTrue(i18nKey != null && i18nKey.startsWith(errorTypeName),
-                String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
+                    String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
             this.code = code;
             this.msg = msg;
             this.i18nKey = i18nKey;
@@ -294,11 +300,11 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         External(int code, String msg, String i18nKey) {
             Assert.isTrue(code > 1000 && code < 9999,
-                "错误码code值定义失败，External错误码code值范围在1000~9999之间，请查看ErrorCode.External类，当前错误码码为" + name());
+                    "错误码code值定义失败，External错误码code值范围在1000~9999之间，请查看ErrorCode.External类，当前错误码码为" + name());
 
             String errorTypeName = this.getClass().getSimpleName();
             Assert.isTrue(i18nKey != null && i18nKey.startsWith(errorTypeName),
-                String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
+                    String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
             this.code = code;
             this.msg = msg;
             this.i18nKey = i18nKey;
@@ -354,11 +360,11 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         Client(int code, String msg, String i18nKey) {
             Assert.isTrue(code > 100 && code < 999,
-                "错误码code值定义失败，Client错误码code值范围在100~999之间，请查看ErrorCode.Client类，当前错误码码为" + name());
+                    "错误码code值定义失败，Client错误码code值范围在100~999之间，请查看ErrorCode.Client类，当前错误码码为" + name());
 
             String errorTypeName = this.getClass().getSimpleName();
             Assert.isTrue(i18nKey != null && i18nKey.startsWith(errorTypeName),
-                String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
+                    String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
             this.code = code;
             this.msg = msg;
             this.i18nKey = i18nKey;
@@ -415,11 +421,11 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         Internal(int code, String msg, String i18nKey) {
             Assert.isTrue(code < 100,
-                "错误码code值定义失败，Internal错误码code值范围在100~999之间，请查看ErrorCode.Internal类，当前错误码码为" + name());
+                    "错误码code值定义失败，Internal错误码code值范围在100~999之间，请查看ErrorCode.Internal类，当前错误码码为" + name());
 
             String errorTypeName = this.getClass().getSimpleName();
             Assert.isTrue(i18nKey != null && i18nKey.startsWith(errorTypeName),
-                String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
+                    String.format("错误码i18nKey值定义失败，%s错误码i18nKey值必须以%s开头，当前错误码为%s", errorTypeName, errorTypeName, name()));
             this.code = code;
             this.msg = msg;
             this.i18nKey = i18nKey;

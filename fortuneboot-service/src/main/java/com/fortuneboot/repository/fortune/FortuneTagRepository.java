@@ -49,4 +49,12 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      * @param bookIds
      */
     void removeByBookIds(List<Long> bookIds);
+
+    /**
+     * 根据父级id查询子级
+     *
+     * @param parentId
+     * @return
+     */
+    List<FortuneTagEntity> getByParentId(Long parentId);
 }

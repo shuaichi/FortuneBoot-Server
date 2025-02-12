@@ -62,4 +62,11 @@ public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, Fort
         queryWrapper.in(FortuneTagEntity::getBookId,bookIds);
         this.remove(queryWrapper);
     }
+
+    @Override
+    public List<FortuneTagEntity> getByParentId(Long parentId) {
+        LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
+        queryWrapper.eq(FortuneTagEntity::getParentId,parentId);
+        return this.list(queryWrapper);
+    }
 }
