@@ -40,4 +40,12 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      * @return
      */
     List<FortuneBillEntity> getByBookIds(List<Long> bookIds);
+
+    /**
+     * 根据交易对象id判断是否已被使用
+     *
+     * @param payeeId
+     * @return
+     */
+    Boolean existByPayeeId(Long payeeId);
 }

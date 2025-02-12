@@ -44,4 +44,12 @@ public interface FortuneCategoryRepository extends IService<FortuneCategoryEntit
      * @param bookIds
      */
     void removeByBookIds(List<Long> bookIds);
+
+    /**
+     * 根据父级编码查询
+     *
+     * @param parentId
+     * @return
+     */
+    List<FortuneCategoryEntity> getByParentId(Long parentId);
 }

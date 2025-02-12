@@ -42,4 +42,11 @@ public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCa
         queryWrapper.in(FortuneCategoryRelationEntity::getBillId,billIds);
         this.remove(queryWrapper);
     }
+
+    @Override
+    public Boolean existByCategoryId(Long categoryId) {
+        LambdaQueryWrapper<FortuneCategoryRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
+        queryWrapper.eq(FortuneCategoryRelationEntity::getCategoryId,categoryId);
+        return this.exists(queryWrapper);
+    }
 }

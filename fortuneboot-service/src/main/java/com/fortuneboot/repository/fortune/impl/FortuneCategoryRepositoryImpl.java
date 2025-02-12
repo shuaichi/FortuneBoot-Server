@@ -49,4 +49,11 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
         queryWrapper.in(FortuneCategoryEntity::getBookId,bookIds);
         this.remove(queryWrapper);
     }
+
+    @Override
+    public List<FortuneCategoryEntity> getByParentId(Long parentId) {
+        LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
+        queryWrapper.eq(FortuneCategoryEntity::getParentId,parentId);
+        return this.list(queryWrapper);
+    }
 }

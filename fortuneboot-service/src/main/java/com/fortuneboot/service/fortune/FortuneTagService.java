@@ -1,17 +1,20 @@
 package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
 import com.fortuneboot.factory.fortune.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +34,8 @@ public class FortuneTagService {
 
     private final FortuneTagFactory fortuneTagFactory;
 
+    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+
     public List<FortuneTagEntity> getList(FortuneTagQuery query) {
         return fortuneTagRepository.list(query.addQueryCondition());
     }
@@ -38,7 +43,7 @@ public class FortuneTagService {
     public List<FortuneTagEntity> getEnableTagList(Long bookId, Integer billType) {
         BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
         switch (billTypeEnum) {
-            case EXPENSE, INCOME,TRANSFER -> {
+            case EXPENSE, INCOME, TRANSFER -> {
                 return fortuneTagRepository.getEnableTagList(bookId, billType);
             }
             case null, default -> {
@@ -72,11 +77,20 @@ public class FortuneTagService {
         fortuneTagModel.updateById();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long tagId) {
+        Boolean used = fortuneTagRelationRepository.existByTagId(tagId);
+        if (used) {
+            throw new ApiException(ErrorCode.Business.TAG_ALREADY_USED);
+        }
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
-        // TODO 子级一起删除
         fortuneTagModel.deleteById();
+        // 递归删除子级标签
+        List<FortuneTagEntity> children = fortuneTagRepository.getByParentId(tagId);
+        for (FortuneTagEntity child : children) {
+            this.remove(bookId, child.getTagId());
+        }
     }
 
 

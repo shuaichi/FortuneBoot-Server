@@ -36,4 +36,12 @@ public interface FortuneCategoryRelationRepository extends IService<FortuneCateg
      * @param billIds
      */
     void removeByBillIds(List<Long> billIds);
+
+    /**
+     * 根据分类id查询是否分类已被使用
+     *
+     * @param categoryId
+     * @return
+     */
+    Boolean existByCategoryId(Long categoryId);
 }

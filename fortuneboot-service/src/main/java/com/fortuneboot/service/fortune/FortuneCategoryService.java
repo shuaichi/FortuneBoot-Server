@@ -1,17 +1,20 @@
 package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.query.fortune.FortuneCategoryQuery;
 import com.fortuneboot.factory.fortune.FortuneCategoryFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,8 @@ public class FortuneCategoryService {
     private final FortuneCategoryRepository fortuneCategoryRepository;
 
     private final FortuneCategoryFactory fortuneCategoryFactory;
+
+    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
 
     public List<FortuneCategoryEntity> getList(FortuneCategoryQuery query) {
         return fortuneCategoryRepository.list(query.addQueryCondition());
@@ -68,11 +73,19 @@ public class FortuneCategoryService {
         fortuneCategoryModel.updateById();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long categoryId) {
+        Boolean used = fortuneCategoryRelationRepository.existByCategoryId(categoryId);
+        if (used) {
+            throw new ApiException(ErrorCode.Business.CATEGORY_ALREADY_USED);
+        }
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
         fortuneCategoryModel.checkBookId(bookId);
-        // TODO 子级一起删除
         fortuneCategoryModel.deleteById();
+        List<FortuneCategoryEntity> children = fortuneCategoryRepository.getByParentId(categoryId);
+        for (FortuneCategoryEntity child : children) {
+            this.remove(bookId, child.getCategoryId());
+        }
     }
 
     public void putBack(Long bookId, Long categoryId) {
