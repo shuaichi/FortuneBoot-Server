@@ -95,7 +95,7 @@ public class FortuneBillAddCommand {
     /**
      *备注
      */
-    private Boolean remark;
+    private String remark;
 
     /**
      * 标签id

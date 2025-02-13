@@ -31,7 +31,6 @@ public class FortunePayeeQuery extends AbstractLambdaPageQuery<FortunePayeeEntit
      * 是否回收站(必传)
      */
     @NotNull
-    @Positive
     private Boolean recycleBin;
 
     /**
@@ -63,7 +62,8 @@ public class FortunePayeeQuery extends AbstractLambdaPageQuery<FortunePayeeEntit
                 .eq(Objects.nonNull(enable), FortunePayeeEntity::getEnable, enable)
                 .eq(Objects.nonNull(canExpense), FortunePayeeEntity::getCanExpense, canExpense)
                 .eq(Objects.nonNull(canIncome), FortunePayeeEntity::getCanIncome, canIncome)
-                .like(StringUtils.isNotBlank(payeeName), FortunePayeeEntity::getPayeeName, payeeName);
+                .like(StringUtils.isNotBlank(payeeName), FortunePayeeEntity::getPayeeName, payeeName)
+                .orderByAsc(FortunePayeeEntity::getSort);
         return queryWrapper;
     }
 }

@@ -85,6 +85,7 @@ public class FortuneTagService {
         }
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
+        // TODO 子级一起删除
         fortuneTagModel.deleteById();
         // 递归删除子级标签
         List<FortuneTagEntity> children = fortuneTagRepository.getByParentId(tagId);

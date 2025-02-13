@@ -24,7 +24,6 @@ public class FortunePayeeAddCommand {
      * 名称
      */
     @NotNull
-    @Positive
     private String payeeName;
 
     /**
