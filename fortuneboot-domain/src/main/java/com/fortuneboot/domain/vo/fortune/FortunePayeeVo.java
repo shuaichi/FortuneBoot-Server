@@ -25,6 +25,11 @@ public class FortunePayeeVo {
     private Long payeeId;
 
     /**
+     * 账本id
+     */
+    private Long bookId;
+
+    /**
      * 交易对象名称
      */
     private String payeeName;

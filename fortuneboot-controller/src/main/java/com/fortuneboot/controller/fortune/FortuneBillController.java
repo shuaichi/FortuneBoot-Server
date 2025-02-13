@@ -50,7 +50,7 @@ public class FortuneBillController {
     @Operation(summary = "修改账单")
     @PutMapping("/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> add(@Valid @RequestBody FortuneBillModifyCommand modifyCommand){
+    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBillModifyCommand modifyCommand){
         fortuneBillService.modify(modifyCommand);
         return ResponseDTO.ok();
     }

@@ -1,6 +1,7 @@
 package com.fortuneboot.repository.fortune.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
@@ -68,5 +69,12 @@ public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, Fort
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getParentId,parentId);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public Boolean existsByTagId(Long tagId) {
+        LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
+        queryWrapper.eq(FortuneTagEntity::getTagId,tagId);
+        return this.exists(queryWrapper);
     }
 }

@@ -11,6 +11,7 @@ import com.fortuneboot.factory.fortune.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,11 +38,11 @@ public class FortunePayeeService {
         return fortunePayeeRepository.list(query.addQueryCondition());
     }
 
-    public List<FortunePayeeEntity> getEnablePayeeList(Long bookId, Integer billType) {
+    public List<FortunePayeeEntity> getEnableList(Long bookId, Integer billType) {
         BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
-        switch (billTypeEnum){
-            case INCOME, EXPENSE-> {
-                return fortunePayeeRepository.getEnablePayeeList(bookId,billType);
+        switch (billTypeEnum) {
+            case INCOME, EXPENSE -> {
+                return fortunePayeeRepository.getEnablePayeeList(bookId, billType);
             }
             case null, default -> {
                 return Collections.emptyList();
@@ -73,7 +74,7 @@ public class FortunePayeeService {
 
     public void remove(Long bookId, Long payeeId) {
         Boolean used = fortuneBillRepository.existByPayeeId(payeeId);
-        if (used){
+        if (used) {
             throw new ApiException(ErrorCode.Business.PAYEE_ALREADY_USED);
         }
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
@@ -88,24 +89,45 @@ public class FortunePayeeService {
         fortunePayeeModel.updateById();
     }
 
-    public void modifyCanExpense(Long bookId, Long payeeId) {
+    public void canExpense(Long bookId, Long payeeId) {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
-        fortunePayeeModel.setCanExpense(!fortunePayeeModel.getCanExpense());
+        fortunePayeeModel.setCanExpense(Boolean.TRUE);
         fortunePayeeModel.updateById();
     }
 
-    public void modifyCanIncome(Long bookId, Long payeeId) {
+    public void cannotExpense(Long bookId, Long payeeId) {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
-        fortunePayeeModel.setCanIncome(!fortunePayeeModel.getCanIncome());
+        fortunePayeeModel.setCanExpense(Boolean.FALSE);
         fortunePayeeModel.updateById();
     }
 
-    public void modifyEnable(Long bookId, Long payeeId) {
+    public void canIncome(Long bookId, Long payeeId) {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
-        fortunePayeeModel.setEnable(!fortunePayeeModel.getEnable());
+        fortunePayeeModel.setCanIncome(Boolean.TRUE);
+        fortunePayeeModel.updateById();
+    }
+
+    public void cannotIncome(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setCanIncome(Boolean.FALSE);
+        fortunePayeeModel.updateById();
+    }
+
+    public void enable(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setEnable(Boolean.TRUE);
+        fortunePayeeModel.updateById();
+    }
+
+    public void disable(Long bookId, Long payeeId) {
+        FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
+        fortunePayeeModel.checkBookId(bookId);
+        fortunePayeeModel.setEnable(Boolean.FALSE);
         fortunePayeeModel.updateById();
     }
 }

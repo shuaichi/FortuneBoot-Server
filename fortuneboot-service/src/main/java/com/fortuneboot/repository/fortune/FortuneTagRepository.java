@@ -57,4 +57,12 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      * @return
      */
     List<FortuneTagEntity> getByParentId(Long parentId);
+
+    /**
+     * 通过tagId查询是否已存在数据
+     *
+     * @param tagId
+     * @return
+     */
+    Boolean existsByTagId(Long tagId);
 }

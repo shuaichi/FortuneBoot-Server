@@ -2,6 +2,8 @@ package com.fortuneboot.controller.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
@@ -94,6 +96,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "新增分组")
     @PostMapping("/add")
+    @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.ADD)
     public ResponseDTO<Void> add(@Valid @RequestBody FortuneGroupAddCommand groupAddCommand) {
         fortuneGroupService.add(groupAddCommand);
         return ResponseDTO.ok();
@@ -101,6 +104,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "修改分组")
     @PutMapping("/modify")
+    @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.groupOwnerPermission(#groupModifyCommand.groupId)")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneGroupModifyCommand groupModifyCommand) {
         fortuneGroupService.modify(groupModifyCommand);
@@ -109,6 +113,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "删除分组")
     @DeleteMapping("/{groupId}/remove")
+    @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> remove(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneGroupService.remove(groupId);
@@ -117,6 +122,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "邀请用户")
     @PostMapping("/inviteUser")
+    @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.GRANT)
     @PreAuthorize("@fortune.groupOwnerPermission(#relationAddCommand.groupId)")
     public ResponseDTO<Void> inviteUser(@RequestBody @Valid FortuneUserGroupRelationAddCommand relationAddCommand) {
         fortuneUserGroupRelationService.addFortuneUserGroupRelation(relationAddCommand);
@@ -125,6 +131,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "修改用户")
     @PutMapping("/modifyUser")
+    @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.groupOwnerPermission(#relationModifyCommand.groupId)")
     public ResponseDTO<Void> modifyUser(@RequestBody @Valid FortuneUserGroupRelationModifyCommand relationModifyCommand) {
         fortuneUserGroupRelationService.modifyFortuneUserGroupRelation(relationModifyCommand);
@@ -133,6 +140,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "删除用户")
     @DeleteMapping("/removeUser/{relationId}")
+    @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.groupOwnerPermissionByRelationId(#relationId)")
     public ResponseDTO<Void> removeUser(@PathVariable @NotNull(message = "被删除的用户id不能为空") @Positive Long relationId) {
         fortuneUserGroupRelationService.removeFortuneUserGroupRelation(relationId);

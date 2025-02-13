@@ -50,10 +50,18 @@ public class FortuneBookController {
     @Operation(summary = "查询启用的账本")
     @GetMapping("/{groupId}/getEnableList")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<List<FortuneBookVo>> getEnableBookList(@PathVariable @NotNull @Positive Long groupId) {
+    public ResponseDTO<List<FortuneBookVo>> getEnableBookList(@PathVariable @Positive Long groupId) {
         List<FortuneBookEntity> list = fortuneBookService.getEnableBookList(groupId);
         List<FortuneBookVo> result = list.stream().map(FortuneBookVo::new).toList();
         return ResponseDTO.ok(result);
+    }
+
+    @Operation(summary = "根据账本id查询")
+    @GetMapping("/{bookId}/getBookById")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<FortuneBookVo> getBookById(@PathVariable @Positive Long bookId){
+        FortuneBookEntity book = fortuneBookService.getBookById(bookId);
+        return ResponseDTO.ok(new FortuneBookVo(book));
     }
 
     @Operation(summary = "新增账本")
