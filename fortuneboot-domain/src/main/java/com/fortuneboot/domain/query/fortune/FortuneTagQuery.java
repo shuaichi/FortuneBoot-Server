@@ -33,6 +33,21 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
     private String tagName;
 
     /**
+     * 可支出
+     */
+    private Boolean canExpense;
+
+    /**
+     * 可收入
+     */
+    private Boolean canIncome;
+
+    /**
+     * 可转账
+     */
+    private Boolean canTransfer;
+
+    /**
      * 是否启用
      */
     private Boolean enable;
@@ -41,16 +56,20 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
      * 是否回收站(必传)
      */
     @NotNull
-    @Positive
     private Boolean recycleBin;
 
     @Override
     public LambdaQueryWrapper<FortuneTagEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId, bookId)
-                .eq( FortuneTagEntity::getRecycleBin, recycleBin)
+                .eq(FortuneTagEntity::getRecycleBin, recycleBin)
+                .eq(FortuneTagEntity::getParentId, -1L)
+                .eq(Objects.nonNull(canExpense), FortuneTagEntity::getCanExpense, canExpense)
+                .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canExpense)
+                .eq(Objects.nonNull(canTransfer), FortuneTagEntity::getCanTransfer, canTransfer)
                 .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
-                .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName);
+                .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName)
+                .orderByAsc(FortuneTagEntity::getSort);
         return queryWrapper;
     }
 }
