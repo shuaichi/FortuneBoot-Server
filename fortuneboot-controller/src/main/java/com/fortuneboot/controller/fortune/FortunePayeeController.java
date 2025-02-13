@@ -1,6 +1,8 @@
 package com.fortuneboot.controller.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
+import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.command.fortune.FortunePayeeAddCommand;
 import com.fortuneboot.domain.command.fortune.FortunePayeeModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
@@ -32,12 +34,12 @@ public class FortunePayeeController {
     private final FortunePayeeService fortunePayeeService;
 
     @Operation(summary = "查询交易对象")
-    @GetMapping("/getList")
+    @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortunePayeeVo>> getPayeeList(@Valid FortunePayeeQuery query) {
-        List<FortunePayeeEntity> list = fortunePayeeService.getList(query);
-        List<FortunePayeeVo> result = list.stream().map(FortunePayeeVo::new).toList();
-        return ResponseDTO.ok(result);
+    public ResponseDTO<PageDTO<FortunePayeeVo>> getPage(@Valid FortunePayeeQuery query) {
+        IPage<FortunePayeeEntity> page = fortunePayeeService.getPage(query);
+        List<FortunePayeeVo> record = page.getRecords().stream().map(FortunePayeeVo::new).toList();
+        return ResponseDTO.ok(new PageDTO<>(record, page.getTotal()));
     }
 
     @Operation(summary = "查询启用的交易对象")
@@ -81,7 +83,7 @@ public class FortunePayeeController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "交易对象放回原处")
+    @Operation(summary = "交易对象移出回收站")
     @PatchMapping("/{bookId}/{payeeId}/putBack")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId, @PathVariable @Positive Long payeeId) {

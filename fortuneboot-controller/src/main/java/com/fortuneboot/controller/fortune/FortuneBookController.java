@@ -96,7 +96,7 @@ public class FortuneBookController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "放回原处")
+    @Operation(summary = "账本移出回收站")
     @PatchMapping("/{bookId}/putBack")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId) {

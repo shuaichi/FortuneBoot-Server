@@ -1,5 +1,6 @@
 package com.fortuneboot.service.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
@@ -11,7 +12,6 @@ import com.fortuneboot.factory.fortune.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,8 +34,8 @@ public class FortunePayeeService {
 
     private final FortuneBillRepository fortuneBillRepository;
 
-    public List<FortunePayeeEntity> getList(FortunePayeeQuery query) {
-        return fortunePayeeRepository.list(query.addQueryCondition());
+    public IPage<FortunePayeeEntity> getPage(FortunePayeeQuery query) {
+        return fortunePayeeRepository.page(query.toPage(),query.addQueryCondition());
     }
 
     public List<FortunePayeeEntity> getEnableList(Long bookId, Integer billType) {

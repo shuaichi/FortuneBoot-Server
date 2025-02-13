@@ -136,8 +136,7 @@ public class LoginController {
         return ResponseDTO.ok(roleDTOList);
     }
 
-
-    @Operation(summary = "注册接口", description = "暂未实现")
+    @Operation(summary = "注册接口", description = "注册功能")
     @PostMapping("/register")
     public ResponseDTO<Void> register(@RequestBody AddUserCommand command) {
         command.setSource(UserSourceEnum.REGISTER.getValue());

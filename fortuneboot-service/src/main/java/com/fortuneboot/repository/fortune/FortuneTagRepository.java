@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 交易标签
@@ -45,7 +46,6 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
     void removeByBookId(Long bookId);
 
     /**
-     *
      * @param bookIds
      */
     void removeByBookIds(List<Long> bookIds);
@@ -65,4 +65,12 @@ public interface FortuneTagRepository extends IService<FortuneTagEntity> {
      * @return
      */
     Boolean existsByTagId(Long tagId);
+
+    /**
+     * 根据父级编码查询
+     *
+     * @param parentIds
+     * @return
+     */
+    Map<Long, List<FortuneTagEntity>> getByParentIds(List<Long> parentIds);
 }

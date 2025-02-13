@@ -34,6 +34,11 @@ public class FortuneTagVo extends AbstractTreeNode {
     private String tagName;
 
     /**
+     * 账本id
+     */
+    private Long bookId;
+
+    /**
      * 父级ID
      */
     private Long parentId;

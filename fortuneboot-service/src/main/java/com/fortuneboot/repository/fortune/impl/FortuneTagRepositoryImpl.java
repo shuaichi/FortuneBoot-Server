@@ -11,7 +11,9 @@ import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 交易标签
@@ -76,5 +78,13 @@ public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, Fort
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getTagId,tagId);
         return this.exists(queryWrapper);
+    }
+
+    @Override
+    public Map<Long, List<FortuneTagEntity>> getByParentIds(List<Long> parentIds) {
+        LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
+        queryWrapper.in(FortuneTagEntity::getParentId,parentIds);
+        List<FortuneTagEntity> list = this.list(queryWrapper);
+        return list.stream().collect(Collectors.groupingBy(FortuneTagEntity::getParentId));
     }
 }

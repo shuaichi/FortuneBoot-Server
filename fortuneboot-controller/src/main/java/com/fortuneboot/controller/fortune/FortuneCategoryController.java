@@ -84,7 +84,7 @@ public class FortuneCategoryController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "分类放回原处")
+    @Operation(summary = "分类移出回收站")
     @PatchMapping("/{bookId}/{categoryId}/putBack")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBackCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
