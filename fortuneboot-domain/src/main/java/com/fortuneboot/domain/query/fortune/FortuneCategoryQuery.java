@@ -40,10 +40,14 @@ public class FortuneCategoryQuery extends AbstractLambdaPageQuery<FortuneCategor
     private Boolean enable;
 
     /**
+     * 分类类型
+     */
+    private Integer categoryType;
+
+    /**
      * 是否回收站(必传)
      */
     @NotNull
-    @Positive
     private Boolean recycleBin;
 
     @Override
@@ -51,6 +55,8 @@ public class FortuneCategoryQuery extends AbstractLambdaPageQuery<FortuneCategor
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getBookId, bookId)
                 .eq( FortuneCategoryEntity::getRecycleBin, recycleBin)
+                .eq(FortuneCategoryEntity::getParentId, -1L)
+                .eq(Objects.nonNull(categoryType), FortuneCategoryEntity::getCategoryType, categoryType)
                 .eq(Objects.nonNull(enable), FortuneCategoryEntity::getEnable, enable)
                 .like(StringUtils.isNotBlank(categoryName), FortuneCategoryEntity::getCategoryName, categoryName);
         return queryWrapper;

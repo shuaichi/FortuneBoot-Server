@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 分类
@@ -52,4 +53,12 @@ public interface FortuneCategoryRepository extends IService<FortuneCategoryEntit
      * @return
      */
     List<FortuneCategoryEntity> getByParentId(Long parentId);
+
+    /**
+     * 根据父级编码查询
+     *
+     * @param parentIds
+     * @return
+     */
+    Map<Long, List<FortuneCategoryEntity>> getByParentIds(List<Long> parentIds);
 }

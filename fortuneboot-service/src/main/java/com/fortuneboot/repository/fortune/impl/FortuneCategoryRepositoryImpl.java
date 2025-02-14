@@ -9,6 +9,8 @@ import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 分类
@@ -55,5 +57,13 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getParentId,parentId);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public Map<Long, List<FortuneCategoryEntity>> getByParentIds(List<Long> parentIds) {
+        LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
+        queryWrapper.in(FortuneCategoryEntity::getParentId,parentIds);
+        List<FortuneCategoryEntity> list = this.list(queryWrapper);
+        return list.stream().collect(Collectors.groupingBy(FortuneCategoryEntity::getParentId));
     }
 }
