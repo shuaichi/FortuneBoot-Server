@@ -2,6 +2,8 @@ package com.fortuneboot.service.system;
 
 import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.common.StatusEnum;
+import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.factory.system.UserModelFactory;
@@ -34,8 +36,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fortuneboot.service.fortune.FortuneGroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author valarchie
@@ -186,6 +190,8 @@ public class UserApplicationService {
         String configValue = sysConfigRepository.getConfigValueByKey("sys.account.registerUser");
         boolean registerUser = Boolean.parseBoolean(configValue);
         if (registerUser) {
+            command.setSource(UserSourceEnum.REGISTER.getValue());
+            command.setStatus(StatusEnum.ENABLE.getValue());
             this.addUser(command);
         } else {
             throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
@@ -193,8 +199,12 @@ public class UserApplicationService {
     }
 
     public List<RoleDTO> getAllowRegisterRoles() {
-        List<SysRoleEntity> roleEntityList = roleRepository.getAllowRegisterRoles();
-        return roleEntityList.stream().map(RoleDTO::new).collect(Collectors.toList());
-
+        String configValue = sysConfigRepository.getConfigValueByKey("sys.account.registerUser");
+        boolean registerUser = Boolean.parseBoolean(configValue);
+        if (registerUser) {
+            List<SysRoleEntity> roleEntityList = roleRepository.getAllowRegisterRoles();
+            return roleEntityList.stream().map(RoleDTO::new).collect(Collectors.toList());
+        }
+        throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
     }
 }

@@ -69,7 +69,6 @@ public class FortuneCategoryService {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
         fortuneCategoryModel.checkBookId(bookId);
         fortuneCategoryModel.setRecycleBin(Boolean.TRUE);
-        // TODO 子级一起移入回收站
         fortuneCategoryModel.updateById();
     }
 
