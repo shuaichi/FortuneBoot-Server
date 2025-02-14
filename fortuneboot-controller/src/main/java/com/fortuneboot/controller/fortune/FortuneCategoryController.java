@@ -1,6 +1,7 @@
 package com.fortuneboot.controller.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
+import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.utils.tree.TreeUtil;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryModifyCommand;
@@ -33,13 +34,10 @@ public class FortuneCategoryController {
     private final FortuneCategoryService fortuneCategoryService;
 
     @Operation(summary = "查询分类")
-    @GetMapping("/getList")
+    @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
-    public ResponseDTO<List<FortuneCategoryVo>> getCategoryList(@Valid FortuneCategoryQuery query) {
-        List<FortuneCategoryEntity> list = fortuneCategoryService.getList(query);
-        List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
-        List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
-        return ResponseDTO.ok(treeNodes);
+    public ResponseDTO<PageDTO<FortuneCategoryVo>> getPage(@Valid FortuneCategoryQuery query) {
+        return ResponseDTO.ok(fortuneCategoryService.getPage(query));
     }
 
     @Operation(summary = "查询启用的分类")
@@ -55,7 +53,7 @@ public class FortuneCategoryController {
     @Operation(summary = "新增分类")
     @PostMapping("/add")
     @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId)")
-    public ResponseDTO<Void> addCategory(@Valid @RequestBody FortuneCategoryAddCommand addCommand) {
+    public ResponseDTO<Void> add(@Valid @RequestBody FortuneCategoryAddCommand addCommand) {
         fortuneCategoryService.add(addCommand);
         return ResponseDTO.ok();
     }
@@ -63,7 +61,7 @@ public class FortuneCategoryController {
     @Operation(summary = "修改分类")
     @PutMapping("/modify")
     @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId)")
-    public ResponseDTO<Void> modifyCategory(@Valid @RequestBody FortuneCategoryModifyCommand modifyCommand) {
+    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneCategoryModifyCommand modifyCommand) {
         fortuneCategoryService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
@@ -71,7 +69,7 @@ public class FortuneCategoryController {
     @Operation(summary = "分类移入回收站")
     @PatchMapping("/{bookId}/{categoryId}/moveToRecycleBin")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> moveCategoryToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+    public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
         fortuneCategoryService.moveToRecycleBin(bookId, categoryId);
         return ResponseDTO.ok();
     }
@@ -79,7 +77,7 @@ public class FortuneCategoryController {
     @Operation(summary = "分类标签")
     @DeleteMapping("/{bookId}/{categoryId}/remove")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> removeCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+    public ResponseDTO<Void> remove(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
         fortuneCategoryService.remove(bookId, categoryId);
         return ResponseDTO.ok();
     }
@@ -87,7 +85,7 @@ public class FortuneCategoryController {
     @Operation(summary = "分类移出回收站")
     @PatchMapping("/{bookId}/{categoryId}/putBack")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
-    public ResponseDTO<Void> putBackCategory(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+    public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
         fortuneCategoryService.putBack(bookId, categoryId);
         return ResponseDTO.ok();
     }
