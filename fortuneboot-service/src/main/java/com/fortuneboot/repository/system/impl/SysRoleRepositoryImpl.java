@@ -60,7 +60,9 @@ public class SysRoleRepositoryImpl extends ServiceImpl<SysRoleMapper, SysRoleEnt
     @Override
     public List<SysRoleEntity> getAllowRegisterRoles() {
         LambdaQueryWrapper<SysRoleEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(SysRoleEntity.class);
-        queryWrapper.eq(SysRoleEntity::getAllowRegister,Boolean.TRUE);
+        queryWrapper.eq(SysRoleEntity::getAllowRegister,Boolean.TRUE)
+                .eq(SysRoleEntity::getStatus,1)
+                .orderByAsc(SysRoleEntity::getRoleSort);
         return this.list(queryWrapper);
     }
 

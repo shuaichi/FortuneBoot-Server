@@ -103,7 +103,6 @@ public class FortuneTagService {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(tagId);
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.setRecycleBin(Boolean.TRUE);
-        // TODO 子级一起移入回收站
         fortuneTagModel.updateById();
     }
 

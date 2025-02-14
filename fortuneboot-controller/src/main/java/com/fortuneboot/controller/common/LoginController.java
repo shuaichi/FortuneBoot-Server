@@ -139,7 +139,6 @@ public class LoginController {
     @Operation(summary = "注册接口", description = "注册功能")
     @PostMapping("/register")
     public ResponseDTO<Void> register(@RequestBody AddUserCommand command) {
-        command.setSource(UserSourceEnum.REGISTER.getValue());
         userApplicationService.register(command);
         return ResponseDTO.ok();
     }
