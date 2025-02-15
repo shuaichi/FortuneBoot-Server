@@ -47,4 +47,12 @@ public class FortuneUserGroupRelationRepositoryImpl extends ServiceImpl<FortuneU
         queryWrapper.eq(FortuneUserGroupRelationEntity::getUserId,loginUser.getUserId());
         return this.list(queryWrapper);
     }
+
+    @Override
+    public FortuneUserGroupRelationEntity getByGroupAndUser(Long groupId, Long userId) {
+        LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
+        queryWrapper.eq(FortuneUserGroupRelationEntity::getGroupId, groupId)
+                .eq(FortuneUserGroupRelationEntity::getUserId, userId);
+        return this.getOne(queryWrapper);
+    }
 }

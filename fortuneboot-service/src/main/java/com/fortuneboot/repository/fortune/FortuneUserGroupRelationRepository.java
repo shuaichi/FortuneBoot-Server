@@ -35,4 +35,13 @@ public interface FortuneUserGroupRelationRepository extends IService<FortuneUser
      * @return
      */
     List<FortuneUserGroupRelationEntity> getByUserId();
+
+    /**
+     * 根据分组id和用户id查询
+     *
+     * @param groupId
+     * @param userId
+     * @return
+     */
+    FortuneUserGroupRelationEntity getByGroupAndUser(Long groupId, Long userId);
 }

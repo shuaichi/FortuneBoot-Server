@@ -1,5 +1,7 @@
 package com.fortuneboot.domain.vo.fortune;
 
+import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+
 import lombok.Data;
 
 /**
@@ -16,10 +18,15 @@ public class FortuneUserGroupRelationVo {
     private Long userGroupRelationId;
 
     /**
-     * com.fortuneboot.common.enums.fortune.RoleTypeEnum
-     * 权限
+     * @see RoleTypeEnum
+     * 角色
      */
     private Integer roleType;
+
+    /**
+     * 角色描述
+     */
+    private String roleTypeDesc;
 
     /**
      * 分组id
@@ -27,12 +34,12 @@ public class FortuneUserGroupRelationVo {
     private Long groupId;
 
     /**
-     * 用户
-     */
-    private Long userId;
-
-    /**
      * 用户姓名
      */
-    private String userName;
+    private String username;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
 }

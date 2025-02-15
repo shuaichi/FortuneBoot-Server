@@ -85,7 +85,7 @@ public class FortuneGroupService {
         fortuneUserGroupRelationAddCommand.setGroupId(fortuneGroupModel.getGroupId());
         fortuneUserGroupRelationAddCommand.setUserId(AuthenticationUtils.getSystemLoginUser().getUserId());
         fortuneUserGroupRelationAddCommand.setRoleType(RoleTypeEnum.OWNER.getValue());
-        fortuneUserGroupRelationService.addFortuneUserGroupRelation(fortuneUserGroupRelationAddCommand);
+        fortuneUserGroupRelationService.add(fortuneUserGroupRelationAddCommand);
         // 新增账本
         FortuneBookAddCommand fortuneBookAddCommand = new FortuneBookAddCommand();
         fortuneBookAddCommand.setGroupId(fortuneGroupModel.getGroupId());

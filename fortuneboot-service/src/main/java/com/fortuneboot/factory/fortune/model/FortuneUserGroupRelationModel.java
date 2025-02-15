@@ -1,7 +1,10 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationInviteCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
@@ -35,7 +38,13 @@ public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntit
 
     public void loadAddCommand(FortuneUserGroupRelationAddCommand command) {
         if (Objects.nonNull(command)) {
-            BeanUtil.copyProperties(command, this,"userGroupRelationId");
+            BeanUtil.copyProperties(command, this, "userGroupRelationId");
+        }
+    }
+
+    public void loadInviteCommand(FortuneUserGroupRelationInviteCommand command) {
+        if (Objects.nonNull(command)) {
+            BeanUtil.copyProperties(command, this, "userGroupRelationId");
         }
     }
 
@@ -44,5 +53,19 @@ public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntit
             return;
         }
         this.loadAddCommand(command);
+    }
+
+    public void checkRepeat(String username) {
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getByGroupAndUser(this.getGroupId(), this.getUserId());
+        if (Objects.nonNull(entity)) {
+            throw new ApiException(ErrorCode.Business.GROUP_USER_ALREADY_EXIST, username);
+        }
+    }
+
+    public void checkRepeat(Long userId) {
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getByGroupAndUser(this.getGroupId(), userId);
+        if (Objects.nonNull(entity)) {
+            throw new ApiException(ErrorCode.Business.GROUP_USER_ALREADY_EXIST, entity.getUserId());
+        }
     }
 }

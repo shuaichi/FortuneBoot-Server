@@ -2,6 +2,7 @@ package com.fortuneboot.domain.command.fortune;
 
 
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import lombok.Data;
  * @Date 2024/6/11 23:09
  **/
 @Data
-public class FortuneUserGroupRelationAddCommand {
+public class FortuneUserGroupRelationInviteCommand {
 
     /**
      * 权限类型
@@ -28,9 +29,9 @@ public class FortuneUserGroupRelationAddCommand {
     private Long groupId;
 
     /**
-     * 用户id
+     * 用户名
      */
-    @NotNull
-    private Long userId;
+    @NotBlank
+    private String username;
 
 }

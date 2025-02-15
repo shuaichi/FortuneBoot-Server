@@ -3,14 +3,12 @@ package com.fortuneboot.controller.fortune;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
-import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
-import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
-import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
-import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationModifyCommand;
+import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.common.vo.SelectOptionsVo;
 import com.fortuneboot.domain.query.fortune.FortuneGroupQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneGroupVo;
@@ -26,7 +24,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 分组Controller
@@ -120,42 +121,39 @@ public class FortuneGroupController {
         return ResponseDTO.ok();
     }
 
+    @Operation(summary = "查询分组角色枚举")
+    @GetMapping("/getRoleTypes")
+    public ResponseDTO<Map<Integer,String>> getRoleTypes() {
+        return ResponseDTO.ok(Arrays.stream(RoleTypeEnum.values()).collect(Collectors.toMap(RoleTypeEnum::getValue,RoleTypeEnum::getDescription)));
+    }
+
     @Operation(summary = "邀请用户")
     @PostMapping("/inviteUser")
     @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.GRANT)
-    @PreAuthorize("@fortune.groupOwnerPermission(#relationAddCommand.groupId)")
-    public ResponseDTO<Void> inviteUser(@RequestBody @Valid FortuneUserGroupRelationAddCommand relationAddCommand) {
-        fortuneUserGroupRelationService.addFortuneUserGroupRelation(relationAddCommand);
-        return ResponseDTO.ok();
-    }
-
-    @Operation(summary = "修改用户")
-    @PutMapping("/modifyUser")
-    @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.MODIFY)
-    @PreAuthorize("@fortune.groupOwnerPermission(#relationModifyCommand.groupId)")
-    public ResponseDTO<Void> modifyUser(@RequestBody @Valid FortuneUserGroupRelationModifyCommand relationModifyCommand) {
-        fortuneUserGroupRelationService.modifyFortuneUserGroupRelation(relationModifyCommand);
+    @PreAuthorize("@fortune.groupOwnerPermission(#inviteCommand.groupId)")
+    public ResponseDTO<Void> inviteUser(@RequestBody @Valid FortuneUserGroupRelationInviteCommand inviteCommand) {
+        fortuneUserGroupRelationService.inviteUser(inviteCommand);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "删除用户")
-    @DeleteMapping("/removeUser/{relationId}")
+    @DeleteMapping("/{relationId}/removeGroupUser")
     @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.groupOwnerPermissionByRelationId(#relationId)")
-    public ResponseDTO<Void> removeUser(@PathVariable @NotNull(message = "被删除的用户id不能为空") @Positive Long relationId) {
-        fortuneUserGroupRelationService.removeFortuneUserGroupRelation(relationId);
+    public ResponseDTO<Void> removeGroupUser(@PathVariable @NotNull(message = "被删除的分组用户id不能为空") @Positive Long relationId) {
+        fortuneUserGroupRelationService.removeGroupUser(relationId);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "查询分组用户")
-    @GetMapping("/userGroupRelation/getByGroupId/{groupId}")
+    @GetMapping("/{groupId}/getGroupUser")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
-    public ResponseDTO<List<FortuneUserGroupRelationVo>> getUserGroupRelationByGroupId(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
-        return ResponseDTO.ok(fortuneUserGroupRelationService.getUserGroupRelationByGroupId(groupId));
+    public ResponseDTO<List<FortuneUserGroupRelationVo>> getGroupUser(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
+        return ResponseDTO.ok(fortuneUserGroupRelationService.getGroupUser(groupId));
     }
 
     @Operation(summary = "设置为默认分组")
-    @PutMapping("/setDefaultGroup/{groupId}")
+    @PutMapping("/{groupId}/setDefaultGroup")
     @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
     public ResponseDTO<Void> setDefaultGroup(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneUserGroupRelationService.setDefaultGroup(groupId);
