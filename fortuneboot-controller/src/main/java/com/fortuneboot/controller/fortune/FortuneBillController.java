@@ -62,4 +62,36 @@ public class FortuneBillController {
         fortuneBillService.remove(bookId,billId);
         return ResponseDTO.ok();
     }
+
+    @Operation(summary = "确认账单")
+    @PatchMapping("/{bookId}/{billId}/confirm")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseDTO<Void> confirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
+        fortuneBillService.confirm(bookId,billId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "取消确认账单")
+    @PatchMapping("/{bookId}/{billId}/unConfirm")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseDTO<Void> unConfirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
+        fortuneBillService.unConfirm(bookId,billId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "统计账单")
+    @PatchMapping("/{bookId}/{billId}/include")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseDTO<Void> include(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
+        fortuneBillService.include(bookId,billId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "取消统计账单")
+    @PatchMapping("/{bookId}/{billId}/exclude")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseDTO<Void> exclude(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
+        fortuneBillService.exclude(bookId,billId);
+        return ResponseDTO.ok();
+    }
 }

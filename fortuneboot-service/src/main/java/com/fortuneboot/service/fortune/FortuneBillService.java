@@ -20,6 +20,7 @@ import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -153,7 +154,7 @@ public class FortuneBillService {
         }
     }
 
-    private void fillAccount(List<FortuneBillBo> list){
+    private void fillAccount(List<FortuneBillBo> list) {
         List<Long> accountIdList = new ArrayList<>(list.stream().map(FortuneBillBo::getAccountId).toList());
         List<Long> toAccountIdList = list.stream().map(FortuneBillBo::getToAccountId).toList();
         accountIdList.addAll(toAccountIdList);
@@ -171,13 +172,11 @@ public class FortuneBillService {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
         fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
-
         // 收款人校验提前
         if (Objects.nonNull(addCommand.getPayeeId())) {
             FortunePayeeModel payee = fortunePayeeFactory.loadById(addCommand.getPayeeId());
             fortuneBillModel.checkPayeeExist(payee);
         }
-
         // 使用枚举类型直接比较
         BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
         if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
@@ -188,19 +187,15 @@ public class FortuneBillService {
             fortuneBillModel.setAmount(amount);
             fortuneBillModel.setConvertedAmount(amount);
         }
-
         // 资金操作
         this.confirmBalance(fortuneBillModel);
-
         // 持久化主记录
         fortuneBillModel.insert();
         Long billId = fortuneBillModel.getBillId();  // 提前获取ID
-
         // 批量标签处理
-        processTagRelations(addCommand.getTagIdList(), billId);
-
+        this.processTagRelations(addCommand.getTagIdList(), billId);
         // 批量分类处理
-        processCategoryRelations(addCommand.getCategoryAmountPair(), billId);
+        this.processCategoryRelations(addCommand.getCategoryAmountPair(), billId);
     }
 
     /**
@@ -257,7 +252,6 @@ public class FortuneBillService {
         // 加载源账户并获取账单类型
         FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
         BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
-
         // 根据账单类型处理账户余额
         switch (billType) {
             case INCOME, PROFIT, ADJUST:
@@ -300,10 +294,8 @@ public class FortuneBillService {
             log.error("Missing target account for transfer operation");
             return;
         }
-
         // 调整源账户余额
         adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
-
         // 加载目标账户并转换金额
         FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
         BigDecimal convertedAmount = convertCurrency(
@@ -312,10 +304,8 @@ public class FortuneBillService {
                 targetAccount.getCurrencyCode(),
                 applicationScopeBo.getCurrencyTemplateBoList()
         );
-
         // 调整目标账户余额
         adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
-
         // 更新目标账户并记录转换金额
         targetAccount.updateById();
         bill.setConvertedAmount(convertedAmount);
@@ -328,21 +318,18 @@ public class FortuneBillService {
         if (sourceCurrency.equals(targetCurrency)) {
             return amount;
         }
-
         // 获取 sourceCurrency 对人民币的汇率
         BigDecimal aprSourceToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(sourceCurrency))
                 .findFirst()
                 .map(CurrencyTemplateBo::getApr)
                 .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 人民币"));
-
         // 获取 targetCurrency 对人民币的汇率
         BigDecimal aprTargetToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(targetCurrency))
                 .findFirst()
                 .map(CurrencyTemplateBo::getApr)
                 .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "人民币", targetCurrency));
-
         // 计算目标货币金额
         return amount.multiply(aprSourceToRMB)
                 .divide(aprTargetToRMB, 10, RoundingMode.HALF_UP);
@@ -355,7 +342,6 @@ public class FortuneBillService {
             log.warn("Invalid refund request for bill: {}", bill.getBillId());
             return;
         }
-
         // 加载账户并处理退款
         FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(bill.getAccountId());
         BillTypeEnum billType = BillTypeEnum.getByValue(bill.getBillType());
@@ -399,10 +385,8 @@ public class FortuneBillService {
         if (Objects.isNull(bill.getToAccountId()) || Objects.isNull(bill.getConvertedAmount())) {
             throw new ApiException(ErrorCode.Business.BILL_TRANSFER_PARAMETER_ERROR);
         }
-
         // 逆向处理源账户
         adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
-
         // 处理目标账户
         FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
         adjustBalance(targetAccount, bill.getConvertedAmount(), BalanceOperationEnum.SUBTRACT);
@@ -426,4 +410,37 @@ public class FortuneBillService {
         fortuneCategoryRelationRepository.removeByBillIds(billIds);
         fortuneTagRelationRepository.removeByBillIds(billIds);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void confirm(Long bookId, Long billId) {
+        FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
+        fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.setConfirm(Boolean.TRUE);
+        this.confirmBalance(fortuneBillModel);
+        fortuneBillModel.updateById();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void unConfirm(Long bookId, Long billId) {
+        FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
+        fortuneBillModel.checkBookId(bookId);
+        this.refundBalance(fortuneBillModel);
+        fortuneBillModel.setConfirm(Boolean.FALSE);
+        fortuneBillModel.updateById();
+    }
+
+    public void include(Long bookId, Long billId) {
+        FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
+        fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.setInclude(Boolean.TRUE);
+        fortuneBillModel.updateById();
+    }
+
+    public void exclude(Long bookId, Long billId) {
+        FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
+        fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.setInclude(Boolean.FALSE);
+        fortuneBillModel.updateById();
+    }
+
 }
