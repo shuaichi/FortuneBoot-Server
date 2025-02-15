@@ -17,14 +17,19 @@ public class SpringDocConfig {
     @Bean
     public OpenAPI fortuneBootApi() {
         return new OpenAPI()
-            .info(new Info().title("FortuneBoot后台管理系统")
-                .description("FortuneBoot API 演示")
-                .version("v1.0.0")
-                .license(new License().name("MIT 3.0").url("https://gitea.shuai.com/")))
-            .externalDocs(new ExternalDocumentation()
-                .description("FortuneBoot后台管理系统接口文档")
+                .info(new Info().title("好记")
+                        .description("好记记账管理系统演示")
+                        .version("v0.0.1")
+                        .license(new License()
+                                .name("MIT 3.0")
+                                .url("http://gitea.fortuneboot.com:38576/")
+                        )
+                )
+//            .externalDocs(new ExternalDocumentation()
+//                .description("FortuneBoot后台管理系统接口文档")
                 //.url("https://juejin.cn/column/7159946528827080734"));
-                .url(""));
+//                .url(""))
+                ;
     }
 
 }
