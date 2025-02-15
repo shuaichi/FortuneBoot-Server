@@ -40,6 +40,16 @@ public class FortuneTagController {
         return ResponseDTO.ok(fortuneTagService.getPage(query));
     }
 
+    @Operation(summary = "查询标签")
+    @GetMapping("/getList")
+    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    public ResponseDTO<List<FortuneTagVo>> getList(@Valid FortuneTagQuery query) {
+        List<FortuneTagEntity> list = fortuneTagService.getList(query);
+        List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
+        List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);
+        return ResponseDTO.ok(treeNodes);
+    }
+
     @Operation(summary = "查询启用的标签")
     @GetMapping("/{bookId}/{billType}/getEnableList")
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")

@@ -57,4 +57,10 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
             throw new ApiException(ErrorCode.Business.CATEGORY_NOT_MATCH_BOOK);
         }
     }
+
+    public void checkParentId(Long parentId) {
+        if (!Objects.equals(this.getParentId(), parentId)) {
+            throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_NOT_SUPPORT_MODIFY);
+        }
+    }
 }

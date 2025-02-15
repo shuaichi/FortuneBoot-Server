@@ -55,10 +55,10 @@ public class FortuneCategoryQuery extends AbstractLambdaPageQuery<FortuneCategor
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getBookId, bookId)
                 .eq( FortuneCategoryEntity::getRecycleBin, recycleBin)
-                .eq(FortuneCategoryEntity::getParentId, -1L)
                 .eq(Objects.nonNull(categoryType), FortuneCategoryEntity::getCategoryType, categoryType)
                 .eq(Objects.nonNull(enable), FortuneCategoryEntity::getEnable, enable)
-                .like(StringUtils.isNotBlank(categoryName), FortuneCategoryEntity::getCategoryName, categoryName);
+                .like(StringUtils.isNotBlank(categoryName), FortuneCategoryEntity::getCategoryName, categoryName)
+                .orderByAsc(FortuneCategoryEntity::getSort);
         return queryWrapper;
     }
 }

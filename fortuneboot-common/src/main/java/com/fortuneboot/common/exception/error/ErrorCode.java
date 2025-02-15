@@ -208,6 +208,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         TAG_ALREADY_USED(23004, "标签或其子标签已被使用，请删除账单后再试", "Business.TAG_ALREADY_USED"),
 
+        TAG_PARENT_NOT_SUPPORT_MODIFY(23005, "标签父级不支持修改，如需修改请删除后新建", "Business.TAG_PARENT_NOT_SUPPORT_MODIFY"),
+
         // ---------------------------------- PAYEE -----------------------------------------------
 
         PAYEE_ADD_EXIST(24001, "交易对象{}已存在，请勿重复添加", "Business.PAYEE_ADD_EXIST"),
@@ -223,6 +225,8 @@ public enum ErrorCode implements ErrorCodeInterface {
         CATEGORY_NOT_MATCH_BOOK(25003, "交易对象与账本不匹配", "Business.CATEGORY_NOT_MATCH_BOOK"),
 
         CATEGORY_ALREADY_USED(25004, "分类或其子分类已被使用，不能删除，请删除账单后再试", "Business.CATEGORY_ALREADY_USED"),
+
+        CATEGORY_PARENT_NOT_SUPPORT_MODIFY(25005, "分类父级不支持修改，如需修改请删除后新建", "Business.CATEGORY_PARENT_NOT_SUPPORT_MODIFY"),
 
         // ---------------------------------- ACCOUNT -----------------------------------------------
 

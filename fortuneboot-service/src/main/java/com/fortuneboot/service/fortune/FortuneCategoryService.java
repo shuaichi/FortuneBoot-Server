@@ -41,7 +41,7 @@ public class FortuneCategoryService {
     private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
 
     public PageDTO<FortuneCategoryVo> getPage(FortuneCategoryQuery query) {
-        IPage<FortuneCategoryEntity> page = fortuneCategoryRepository.page(query.toPage(), query.addQueryCondition());
+        IPage<FortuneCategoryEntity> page = fortuneCategoryRepository.page(query.toPage(), query.addQueryCondition().eq(FortuneCategoryEntity::getParentId, -1L));
         List<FortuneCategoryVo> records = page.getRecords().stream().map(FortuneCategoryVo::new).toList();
         this.fillChildren(records);
         return new PageDTO<>(records, page.getTotal());
@@ -64,6 +64,10 @@ public class FortuneCategoryService {
             childrenVo.addAll(list);
         }
         this.fillChildren(childrenVo);
+    }
+
+    public List<FortuneCategoryEntity> getList(FortuneCategoryQuery query) {
+        return fortuneCategoryRepository.list(query.addQueryCondition());
     }
 
     public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId, Integer billType) {
@@ -90,6 +94,7 @@ public class FortuneCategoryService {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(modifyCommand.getCategoryId());
         fortuneCategoryModel.loadModifyCommand(modifyCommand);
         fortuneCategoryModel.checkBookId(modifyCommand.getBookId());
+        fortuneCategoryModel.checkParentId(modifyCommand.getParentId());
         fortuneCategoryModel.updateById();
     }
 
@@ -120,6 +125,20 @@ public class FortuneCategoryService {
         fortuneCategoryModel.checkBookId(bookId);
         fortuneCategoryModel.setRecycleBin(Boolean.FALSE);
         // TODO 校验父级是否在回收站
+        fortuneCategoryModel.updateById();
+    }
+
+    public void enable(Long bookId, Long categoryId) {
+        FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
+        fortuneCategoryModel.checkBookId(bookId);
+        fortuneCategoryModel.setEnable(Boolean.TRUE);
+        fortuneCategoryModel.updateById();
+    }
+
+    public void disable(Long bookId, Long categoryId) {
+        FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
+        fortuneCategoryModel.checkBookId(bookId);
+        fortuneCategoryModel.setEnable(Boolean.FALSE);
         fortuneCategoryModel.updateById();
     }
 }

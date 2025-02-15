@@ -71,4 +71,9 @@ public class FortuneTagModel extends FortuneTagEntity {
         // TODO 检查标签高度
     }
 
+    public void checkParentId(Long parentId) {
+        if (!Objects.equals(this.getParentId(), parentId)) {
+            throw new ApiException(ErrorCode.Business.TAG_NOT_MATCH_BOOK);
+        }
+    }
 }
