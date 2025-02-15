@@ -210,6 +210,10 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         TAG_PARENT_NOT_SUPPORT_MODIFY(23005, "标签父级不支持修改，如需修改请删除后新建", "Business.TAG_PARENT_NOT_SUPPORT_MODIFY"),
 
+        TAG_HEIGHT_EXCEEDS_THREE(23006, "标签最高三级", "Business.TAG_HEIGHT_EXCEEDS_THREE"),
+
+        TAG_PARENT_IN_RECYCLE(23007, "父级标签 {} 也在回收站中，请先将父级标签移出回收站", "Business.TAG_PARENT_IN_RECYCLE"),
+
         // ---------------------------------- PAYEE -----------------------------------------------
 
         PAYEE_ADD_EXIST(24001, "交易对象{}已存在，请勿重复添加", "Business.PAYEE_ADD_EXIST"),
@@ -228,6 +232,9 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         CATEGORY_PARENT_NOT_SUPPORT_MODIFY(25005, "分类父级不支持修改，如需修改请删除后新建", "Business.CATEGORY_PARENT_NOT_SUPPORT_MODIFY"),
 
+        CATEGORY_HEIGHT_EXCEEDS_THREE(23006, "分类最高三级", "Business.CATEGORY_HEIGHT_EXCEEDS_THREE"),
+
+        CATEGORY_PARENT_IN_RECYCLE(23007, "父级分类 {} 也在回收站中，请先将父级分类移出回收站", "Business.CATEGORY_PARENT_IN_RECYCLE"),
         // ---------------------------------- ACCOUNT -----------------------------------------------
 
         ACCOUNT_TYPE_ERROR(26001, "账户类型有误", "Business.ACCOUNT_TYPE_ERROR"),

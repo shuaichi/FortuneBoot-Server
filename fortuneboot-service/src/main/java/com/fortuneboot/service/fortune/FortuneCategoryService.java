@@ -123,8 +123,8 @@ public class FortuneCategoryService {
     public void putBack(Long bookId, Long categoryId) {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
         fortuneCategoryModel.checkBookId(bookId);
+        fortuneCategoryModel.checkParentInRecycleBin();
         fortuneCategoryModel.setRecycleBin(Boolean.FALSE);
-        // TODO 校验父级是否在回收站
         fortuneCategoryModel.updateById();
     }
 
