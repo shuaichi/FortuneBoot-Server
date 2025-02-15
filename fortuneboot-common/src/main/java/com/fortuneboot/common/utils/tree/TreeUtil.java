@@ -42,7 +42,8 @@ public class TreeUtil {
                 if (Objects.nonNull(parentNode)) {
                     parentNode.addChild(node);
                 } else {
-                    throw new ApiException(ErrorCode.Business.COMMON_TREE_PARENT_NOT_EXIST, node.getId(), parentId);
+                    // 当父节点不存在时，不处理这个节点
+                    //throw new ApiException(ErrorCode.Business.COMMON_TREE_PARENT_NOT_EXIST, node.getId(), parentId);
                 }
             }
         }

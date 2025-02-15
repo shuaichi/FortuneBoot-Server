@@ -190,6 +190,12 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001, "不能删除默认分组", "Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
 
+        GROUP_USER_NON_EXIST(21002,"被邀请用户：{} 不存在", "Business.GROUP_USER_NON_EXIST"),
+
+        GROUP_USER_ALREADY_EXIST(21003,"该分组中已存在：{} 用户，请勿重复添加","Business.GROUP_USER_ALREADY_EXIST"),
+
+        GROUP_CANNOT_DELETE_SELF(21004,"不能删除自己", "Business.GROUP_CANNOT_DELETE_SELF"),
+
         // ---------------------------------- BOOK -----------------------------------------------
 
         BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002, "请先移出回收站", "Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),

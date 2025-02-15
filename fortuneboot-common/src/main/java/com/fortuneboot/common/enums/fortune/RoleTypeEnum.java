@@ -41,4 +41,10 @@ public enum RoleTypeEnum implements BasicEnum<Integer> {
                 .orElseThrow(() -> new IllegalArgumentException("无效的角色类型"));
     }
 
+    public static String getDescByValue(Integer value) {
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst().map(RoleTypeEnum::getDescription).orElse(null);
+    }
+
 }
