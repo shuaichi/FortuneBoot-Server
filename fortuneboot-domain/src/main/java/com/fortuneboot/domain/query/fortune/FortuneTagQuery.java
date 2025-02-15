@@ -63,7 +63,6 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId, bookId)
                 .eq(FortuneTagEntity::getRecycleBin, recycleBin)
-                .eq(FortuneTagEntity::getParentId, -1L)
                 .eq(Objects.nonNull(canExpense), FortuneTagEntity::getCanExpense, canExpense)
                 .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canExpense)
                 .eq(Objects.nonNull(canTransfer), FortuneTagEntity::getCanTransfer, canTransfer)
@@ -72,4 +71,6 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
                 .orderByAsc(FortuneTagEntity::getSort);
         return queryWrapper;
     }
+
+    //public Boolean isNeedDi
 }

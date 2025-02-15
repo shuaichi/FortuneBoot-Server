@@ -14,6 +14,7 @@ import com.fortuneboot.factory.fortune.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class FortuneTagService {
     private final FortuneTagRelationRepository fortuneTagRelationRepository;
 
     public PageDTO<FortuneTagVo> getPage(FortuneTagQuery query) {
-        IPage<FortuneTagEntity> page = fortuneTagRepository.page(query.toPage(), query.addQueryCondition());
+        IPage<FortuneTagEntity> page = fortuneTagRepository.page(query.toPage(), query.addQueryCondition().eq(FortuneTagEntity::getParentId, -1L));
         List<FortuneTagVo> records = page.getRecords().stream().map(FortuneTagVo::new).toList();
         this.fillChildren(records);
         return new PageDTO<>(records, page.getTotal());
@@ -67,6 +68,10 @@ public class FortuneTagService {
             childrenVo.addAll(list);
         }
         this.fillChildren(childrenVo);
+    }
+
+    public List<FortuneTagEntity> getList(FortuneTagQuery query) {
+        return fortuneTagRepository.list(query.addQueryCondition());
     }
 
 
@@ -96,6 +101,7 @@ public class FortuneTagService {
         fortuneTagModel.loadModifyCommand(modifyCommand);
         fortuneTagModel.checkTagExist();
         fortuneTagModel.checkBookId(modifyCommand.getBookId());
+        fortuneTagModel.checkParentId(modifyCommand.getParentId());
         fortuneTagModel.updateById();
     }
 

@@ -33,11 +33,21 @@ public class FortuneCategoryController {
 
     private final FortuneCategoryService fortuneCategoryService;
 
-    @Operation(summary = "查询分类")
+    @Operation(summary = "分页查询分类")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortuneCategoryVo>> getPage(@Valid FortuneCategoryQuery query) {
         return ResponseDTO.ok(fortuneCategoryService.getPage(query));
+    }
+
+    @Operation(summary = "查询分类")
+    @GetMapping("/getList")
+    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    public ResponseDTO<List<FortuneCategoryVo>> getList(@Valid FortuneCategoryQuery query) {
+        List<FortuneCategoryEntity> list = fortuneCategoryService.getList(query);
+        List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
+        List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
+        return ResponseDTO.ok(treeNodes);
     }
 
     @Operation(summary = "查询启用的分类")
@@ -87,6 +97,22 @@ public class FortuneCategoryController {
     @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
         fortuneCategoryService.putBack(bookId, categoryId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "启用分类")
+    @PatchMapping("/{bookId}/{categoryId}/enable")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> enable(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.enable(bookId, categoryId);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "启用分类")
+    @PatchMapping("/{bookId}/{categoryId}/disable")
+    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    public ResponseDTO<Void> disable(@PathVariable @Positive Long bookId, @PathVariable @Positive Long categoryId) {
+        fortuneCategoryService.disable(bookId, categoryId);
         return ResponseDTO.ok();
     }
 }

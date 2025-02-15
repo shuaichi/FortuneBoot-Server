@@ -1,5 +1,6 @@
 package com.fortuneboot.domain.command.fortune;
 
+import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -22,7 +23,8 @@ public class FortuneCategoryAddCommand {
 
     /**
      * 类型
-     * com.fortuneboot.common.enums.fortune.CategoryTypeEnum
+     *
+     * @see CategoryTypeEnum
      */
     @NotNull
     @Positive
@@ -48,7 +50,7 @@ public class FortuneCategoryAddCommand {
     /**
      * 备注
      */
-    @Size(max = 512,message = "备注长度不能超过512个字符")
+    @Size(max = 512, message = "备注长度不能超过512个字符")
     private String remark;
 
     /**
