@@ -7,6 +7,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortunePayeeMapper;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,10 @@ import java.util.Objects;
  * @Date 2024/6/5 23:21
  **/
 @Service
+@AllArgsConstructor
 public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, FortunePayeeEntity> implements FortunePayeeRepository {
+
+    private final FortunePayeeMapper fortunePayeeMapper;
 
     @Override
     public FortunePayeeEntity getByBookIdAndName(Long bookId, String payeeName) {
@@ -53,13 +57,17 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
     public void removeByBookId(Long bookId) {
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.eq(FortunePayeeEntity::getBookId,bookId);
-        this.remove(queryWrapper);
+        List<FortunePayeeEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortunePayeeEntity::getPayeeId).toList();
+        fortunePayeeMapper.deleteBatchIds(ids);
     }
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.in(FortunePayeeEntity::getBookId,bookIds);
-        this.remove(queryWrapper);
+        List<FortunePayeeEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortunePayeeEntity::getPayeeId).toList();
+        fortunePayeeMapper.deleteBatchIds(ids);
     }
 }
