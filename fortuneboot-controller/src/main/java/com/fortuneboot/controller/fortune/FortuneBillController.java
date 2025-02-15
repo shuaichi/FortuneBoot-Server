@@ -32,7 +32,7 @@ public class FortuneBillController {
 
     @Operation(summary = "分页查询账单")
     @GetMapping("/getPage")
-    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid FortuneBillQuery query){
         PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
         List<FortuneBillVo> records = page.getRows().stream().map(FortuneBillVo::new).toList();
@@ -41,7 +41,7 @@ public class FortuneBillController {
 
     @Operation(summary = "新增账单")
     @PostMapping("/add")
-    @PreAuthorize("@fortune.bookOwnerPermission(#addCommand.getBookId())")
+    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@Valid @RequestBody FortuneBillAddCommand addCommand){
         fortuneBillService.add(addCommand);
         return ResponseDTO.ok();
@@ -49,15 +49,15 @@ public class FortuneBillController {
 
     @Operation(summary = "修改账单")
     @PutMapping("/modify")
-    @PreAuthorize("@fortune.bookOwnerPermission(#modifyCommand.getBookId())")
+    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBillModifyCommand modifyCommand){
         fortuneBillService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
 
     @Operation(summary = "删除账单")
-    @DeleteMapping("/remove/{bookId}/{billId}")
-    @PreAuthorize("@fortune.bookOwnerPermission(#bookId)")
+    @DeleteMapping("/{bookId}/{billId}/remove")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> remove(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
         fortuneBillService.remove(bookId,billId);
         return ResponseDTO.ok();

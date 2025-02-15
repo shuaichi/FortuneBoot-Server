@@ -6,6 +6,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneCategoryMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,11 @@ import java.util.stream.Collectors;
  * @Date 2024/6/4 23:27
  **/
 @Service
+@AllArgsConstructor
 public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMapper, FortuneCategoryEntity> implements FortuneCategoryRepository {
+
+    private final FortuneCategoryMapper fortuneCategoryMapper;
+
     @Override
     public List<FortuneCategoryEntity> getByIds(List<Long> categoryIds) {
         LambdaQueryWrapper<FortuneCategoryEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
@@ -42,14 +47,18 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
     public void removeByBookId(Long bookId) {
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getBookId,bookId);
-        this.remove(queryWrapper);
+        List<FortuneCategoryEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortuneCategoryEntity::getCategoryId).toList();
+        fortuneCategoryMapper.deleteBatchIds(ids);
     }
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.in(FortuneCategoryEntity::getBookId,bookIds);
-        this.remove(queryWrapper);
+        List<FortuneCategoryEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortuneCategoryEntity::getCategoryId).toList();
+        fortuneCategoryMapper.deleteBatchIds(ids);
     }
 
     @Override

@@ -122,7 +122,8 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .eq(Objects.nonNull(payeeId), "bill.payee_id", payeeId)
                 .eq(Objects.nonNull(confirm), "bill.confirm", confirm)
                 .eq(Objects.nonNull(include), "bill.include", include)
-                .like(StringUtils.isNotBlank(remark), "bill.remark", remark);
+                .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
+                .eq("bill.deleted", 0);
         return queryWrapper.lambda();
     }
 }

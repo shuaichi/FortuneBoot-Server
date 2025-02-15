@@ -38,6 +38,13 @@ public interface FortuneCategoryRelationRepository extends IService<FortuneCateg
     void removeByBillIds(List<Long> billIds);
 
     /**
+     * 根据id删除
+     *
+     * @param billId
+     */
+    void removeByBillId(Long billId);
+
+    /**
      * 根据分类id查询是否分类已被使用
      *
      * @param categoryId

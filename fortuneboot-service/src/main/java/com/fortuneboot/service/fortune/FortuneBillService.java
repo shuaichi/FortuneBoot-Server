@@ -23,6 +23,7 @@ import com.fortuneboot.repository.fortune.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,7 +87,7 @@ public class FortuneBillService {
     }
 
     private void fillCategory(List<FortuneBillBo> list) {
-        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).toList();
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
         Map<Long, List<FortuneCategoryRelationEntity>> map = fortuneCategoryRelationRepository.getByBillIdList(billIdList);
         List<Long> categoryIdList = map.values().stream().flatMap(List::stream).map(FortuneCategoryRelationEntity::getCategoryId).distinct().toList();
         List<FortuneCategoryEntity> categoryList = fortuneCategoryRepository.getByIds(categoryIdList);
@@ -109,8 +110,11 @@ public class FortuneBillService {
     }
 
     private void fillTag(List<FortuneBillBo> list) {
-        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).toList();
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
         Map<Long, List<FortuneTagRelationEntity>> map = fortuneTagRelationRepository.getByBillIdList(billIdList);
+        if (MapUtils.isEmpty(map)) {
+            return;
+        }
         List<Long> tagIdList = map.values().stream().flatMap(List::stream).map(FortuneTagRelationEntity::getTagId).distinct().toList();
         List<FortuneTagEntity> categoryList = fortuneTagRepository.getByIds(tagIdList);
         Map<Long, FortuneTagEntity> categoryMap = categoryList.stream().collect(Collectors.toMap(FortuneTagEntity::getTagId, Function.identity()));
@@ -127,7 +131,10 @@ public class FortuneBillService {
     }
 
     private void fillPayee(List<FortuneBillBo> list) {
-        List<Long> payeeIdList = list.stream().map(FortuneBillBo::getPayeeId).toList();
+        List<Long> payeeIdList = list.stream().map(FortuneBillBo::getPayeeId).filter(Objects::nonNull).toList();
+        if (CollectionUtils.isEmpty(payeeIdList)) {
+            return;
+        }
         List<FortunePayeeEntity> payeeList = fortunePayeeRepository.getByIdList(payeeIdList);
         Map<Long, String> map = payeeList.stream().collect(Collectors.toMap(FortunePayeeEntity::getPayeeId, FortunePayeeEntity::getPayeeName));
         for (FortuneBillBo billBo : list) {
@@ -233,9 +240,9 @@ public class FortuneBillService {
         // 账户金额回滚
         this.refundBalance(fortuneBillModel);
         // 删除标签
-        fortuneTagRelationService.removeByBillId(billId);
+        fortuneTagRelationRepository.removeByBillId(billId);
         // 删除分类
-        fortuneCategoryRelationRepository.removeByBillIds(Collections.singletonList(billId));
+        fortuneCategoryRelationRepository.removeByBillId(billId);
         fortuneBillModel.deleteById();
     }
 

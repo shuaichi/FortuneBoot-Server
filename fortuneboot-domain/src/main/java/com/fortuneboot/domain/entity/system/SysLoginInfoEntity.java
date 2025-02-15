@@ -67,7 +67,7 @@ public class SysLoginInfoEntity extends Model<SysLoginInfoEntity> {
 
     @Schema(description = "逻辑删除")
     @TableField("deleted")
-    @TableLogic
+//    @TableLogic
     private Boolean deleted;
 
 

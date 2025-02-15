@@ -7,6 +7,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneTagRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +21,10 @@ import java.util.stream.Collectors;
  * @Date 2024/6/5 23:37
  **/
 @Service
+@AllArgsConstructor
 public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRelationMapper, FortuneTagRelationEntity> implements FortuneTagRelationRepository {
+
+    private final FortuneTagRelationMapper fortuneTagRelationMapper;
 
     @Override
     public List<FortuneTagRelationEntity> getByBillId(Long billId) {
@@ -38,10 +42,21 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
     }
 
     @Override
+    public void removeByBillId(Long billId) {
+        LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
+        queryWrapper.eq(FortuneTagRelationEntity::getBillId, billId);
+        List<FortuneTagRelationEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
+        fortuneTagRelationMapper.deleteBatchIds(ids);
+    }
+
+    @Override
     public void removeByBillIds(List<Long> billIds) {
         LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         queryWrapper.in(FortuneTagRelationEntity::getBillId, billIds);
-        this.remove(queryWrapper);
+        List<FortuneTagRelationEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
+        fortuneTagRelationMapper.deleteBatchIds(ids);
     }
 
     @Override
