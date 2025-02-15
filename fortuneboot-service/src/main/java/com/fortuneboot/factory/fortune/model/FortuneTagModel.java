@@ -68,12 +68,32 @@ public class FortuneTagModel extends FortuneTagEntity {
     }
 
     public void checkHeight() {
-        // TODO 检查标签高度
+        Long parentId = this.getParentId();
+        int height = 1;
+        while (parentId != -1) {
+            if (height > 3) {
+                throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
+            }
+            FortuneTagEntity parent = fortuneTagRepository.getById(parentId);
+            parentId = parent.getParentId();
+            height++;
+        }
     }
 
     public void checkParentId(Long parentId) {
         if (!Objects.equals(this.getParentId(), parentId)) {
             throw new ApiException(ErrorCode.Business.TAG_NOT_MATCH_BOOK);
+        }
+    }
+
+    public void checkParentInRecycleBin() {
+        Long parentId = this.getParentId();
+        while (parentId != -1) {
+            FortuneTagEntity parent = fortuneTagRepository.getById(parentId);
+            if (parent.getRecycleBin()) {
+                throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_IN_RECYCLE, parent.getTagName());
+            }
+            parentId = parent.getParentId();
         }
     }
 }

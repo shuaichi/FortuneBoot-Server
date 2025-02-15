@@ -49,7 +49,16 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
     }
 
     public void checkHeight() {
-        // TODO 检查分类高度
+        Long parentId = this.getParentId();
+        int height = 1;
+        while (parentId != -1) {
+            if (height > 3) {
+                throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
+            }
+            FortuneCategoryEntity parent = fortuneCategoryRepository.getById(parentId);
+            parentId = parent.getParentId();
+            height++;
+        }
     }
 
     public void checkBookId(Long bookId) {
@@ -61,6 +70,17 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
     public void checkParentId(Long parentId) {
         if (!Objects.equals(this.getParentId(), parentId)) {
             throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_NOT_SUPPORT_MODIFY);
+        }
+    }
+
+    public void checkParentInRecycleBin() {
+        Long parentId = this.getParentId();
+        while (parentId != -1) {
+            FortuneCategoryEntity parent = fortuneCategoryRepository.getById(parentId);
+            if (parent.getRecycleBin()) {
+                throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_IN_RECYCLE,parent.getCategoryName());
+            }
+            parentId = parent.getParentId();
         }
     }
 }
