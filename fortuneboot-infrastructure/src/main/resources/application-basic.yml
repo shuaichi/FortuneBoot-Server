@@ -2,9 +2,9 @@
 # 项目相关配置
 fortuneboot:
   # 名称
-  name: FortuneBoot
+  name: 好记
   # 版本
-  version: 1.0.0
+  version: 0.0.1
   # 版权年份
   copyright-year: 2024
   # 实例演示开关

@@ -3,7 +3,6 @@ package com.fortuneboot.controller.common;
 import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.core.dto.ResponseDTO;
-import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.domain.common.dto.CurrentLoginUserDTO;
 import com.fortuneboot.domain.common.dto.TokenDTO;
 import com.fortuneboot.domain.dto.RoleDTO;
@@ -48,6 +47,12 @@ public class LoginController {
 
     private final FortuneBootConfig fortuneBootConfig;
 
+    @Operation(summary = "获取API版本号")
+    @GetMapping("/getApiVersion")
+    public ResponseDTO<String> getApiVersion(){
+        return ResponseDTO.ok(fortuneBootConfig.getVersion());
+    }
+
     /**
      * 访问首页，提示语
      */
@@ -56,7 +61,7 @@ public class LoginController {
     @RateLimit(key = RateLimitKey.TEST_KEY, time = 10, maxCount = 5, cacheType = CacheType.Map,
         limitType = LimitType.GLOBAL)
     public String index() {
-        return StrUtil.format("欢迎使用{}后台管理框架，当前版本：v{}，请通过前端地址访问。",
+        return StrUtil.format("欢迎使用{}，当前版本：v{}，请通过前端地址访问。",
             fortuneBootConfig.getName(), fortuneBootConfig.getVersion());
     }
 
