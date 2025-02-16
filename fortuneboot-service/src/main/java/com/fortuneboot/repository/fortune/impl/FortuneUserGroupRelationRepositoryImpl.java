@@ -1,6 +1,7 @@
 package com.fortuneboot.repository.fortune.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.enums.common.DeleteEnum;
@@ -34,10 +35,11 @@ public class FortuneUserGroupRelationRepositoryImpl extends ServiceImpl<FortuneU
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeByGroupId(Long groupId) {
-        LambdaUpdateWrapper<FortuneUserGroupRelationEntity> updateWrapper = WrapperUtil.getLambdaUpdateWrapper(FortuneUserGroupRelationEntity.class);
-        updateWrapper.eq(FortuneUserGroupRelationEntity::getGroupId,groupId)
-                .set(FortuneUserGroupRelationEntity::getDeleted, DeleteEnum.INVALID.getValue());
-        this.update(updateWrapper);
+        LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
+        queryWrapper.eq(FortuneUserGroupRelationEntity::getGroupId,groupId);
+        List<FortuneUserGroupRelationEntity> list = this.list(queryWrapper);
+        List<Long> ids = list.stream().map(FortuneUserGroupRelationEntity::getUserGroupRelationId).toList();
+        this.removeByIds(ids);
     }
 
     @Override
@@ -53,6 +55,21 @@ public class FortuneUserGroupRelationRepositoryImpl extends ServiceImpl<FortuneU
         LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
         queryWrapper.eq(FortuneUserGroupRelationEntity::getGroupId, groupId)
                 .eq(FortuneUserGroupRelationEntity::getUserId, userId);
+        return this.getOne(queryWrapper);
+    }
+
+    @Override
+    public Boolean existsByUserId(Long userId) {
+        LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
+        queryWrapper.eq(FortuneUserGroupRelationEntity::getUserId, userId);
+        return this.exists(queryWrapper);
+    }
+
+    @Override
+    public FortuneUserGroupRelationEntity getDefaultGroupByUser(Long userId) {
+        LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
+        queryWrapper.eq(FortuneUserGroupRelationEntity::getUserId, userId)
+                .eq(FortuneUserGroupRelationEntity::getDefaultGroup, Boolean.TRUE);
         return this.getOne(queryWrapper);
     }
 }

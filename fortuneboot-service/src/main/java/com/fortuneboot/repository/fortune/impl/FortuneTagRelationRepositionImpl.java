@@ -58,6 +58,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
         LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         queryWrapper.in(FortuneTagRelationEntity::getBillId, billIds);
         List<FortuneTagRelationEntity> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
         fortuneTagRelationMapper.deleteBatchIds(ids);
     }

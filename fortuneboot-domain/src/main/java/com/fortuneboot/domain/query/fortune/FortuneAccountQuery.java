@@ -33,7 +33,6 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
     /**
      * 账户类型
      */
-    @NotNull
     @Positive
     private Long accountType;
 
@@ -92,8 +91,8 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
     public LambdaQueryWrapper<FortuneAccountEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneAccountEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         lambdaQueryWrapper.eq(FortuneAccountEntity::getGroupId,groupId)
-                .eq(FortuneAccountEntity::getAccountType, accountType)
                 .eq(FortuneAccountEntity::getRecycleBin,recycleBin)
+                .eq(Objects.nonNull(accountType),FortuneAccountEntity::getAccountType, accountType)
                 .like(StringUtils.isNotBlank(accountName), FortuneAccountEntity::getAccountName, accountName)
                 .ge(Objects.nonNull(lowerBalance), FortuneAccountEntity::getBalance, lowerBalance)
                 .le(Objects.nonNull(limitBalance), FortuneAccountEntity::getBalance, limitBalance)

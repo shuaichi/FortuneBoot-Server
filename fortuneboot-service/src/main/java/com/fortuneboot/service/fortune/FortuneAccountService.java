@@ -1,6 +1,8 @@
 package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
@@ -8,6 +10,7 @@ import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
 import com.fortuneboot.factory.fortune.FortuneAccountFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
+import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,6 +31,8 @@ public class FortuneAccountService {
     private final FortuneAccountRepository fortuneAccountRepository;
 
     private final FortuneAccountFactory fortuneAccountFactory;
+
+    private final FortuneBillRepository fortuneBillRepository;
 
     public IPage<FortuneAccountEntity> getPage(FortuneAccountQuery query) {
         return fortuneAccountRepository.page(query.toPage(), query.addQueryCondition());
@@ -61,6 +66,10 @@ public class FortuneAccountService {
     public void remove(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
+        Boolean exist = fortuneBillRepository.existByAccount(accountId);
+        if (exist) {
+            throw new ApiException(ErrorCode.Business.ACCOUNT_USED_CANNOT_REMOVE, fortuneAccountModel.getAccountName());
+        }
         fortuneAccountModel.deleteById();
     }
 
@@ -71,84 +80,84 @@ public class FortuneAccountService {
         fortuneAccountModel.updateById();
     }
 
-    public void canExpense( Long groupId,  Long accountId) {
+    public void canExpense(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanExpense(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void cannotExpense( Long groupId,  Long accountId) {
+    public void cannotExpense(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanExpense(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
 
-    public void canIncome( Long groupId,  Long accountId) {
+    public void canIncome(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanIncome(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void cannotIncome( Long groupId,  Long accountId) {
+    public void cannotIncome(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanIncome(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
 
-    public void canTransferOut( Long groupId,  Long accountId) {
+    public void canTransferOut(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanTransferOut(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void cannotTransferOut( Long groupId,  Long accountId) {
+    public void cannotTransferOut(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanTransferOut(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
 
-    public void canTransferIn( Long groupId,  Long accountId) {
+    public void canTransferIn(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanTransferIn(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void cannotTransferIn( Long groupId,  Long accountId) {
+    public void cannotTransferIn(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setCanTransferIn(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
 
-    public void includeAccount( Long groupId,  Long accountId) {
+    public void includeAccount(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setInclude(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void excludeAccount( Long groupId,  Long accountId) {
+    public void excludeAccount(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setInclude(Boolean.FALSE);
         fortuneAccountModel.updateById();
     }
 
-    public void enable( Long groupId,  Long accountId) {
+    public void enable(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setEnable(Boolean.TRUE);
         fortuneAccountModel.updateById();
     }
 
-    public void disable( Long groupId,  Long accountId) {
+    public void disable(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setEnable(Boolean.FALSE);

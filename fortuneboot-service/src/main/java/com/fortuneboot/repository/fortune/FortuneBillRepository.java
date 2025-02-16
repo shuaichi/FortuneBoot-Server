@@ -48,4 +48,12 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      * @return
      */
     Boolean existByPayeeId(Long payeeId);
+
+    /**
+     * 根据账户查询是否存在
+     *
+     * @param accountId
+     * @return
+     */
+    Boolean existByAccount(Long accountId);
 }

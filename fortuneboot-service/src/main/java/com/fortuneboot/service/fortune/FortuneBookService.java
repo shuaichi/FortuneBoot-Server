@@ -58,6 +58,7 @@ public class FortuneBookService {
     private final FortunePayeeRepository fortunePayeeRepository;
 
     private final FortuneBillService fortuneBillService;
+    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
 
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());

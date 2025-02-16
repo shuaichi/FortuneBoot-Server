@@ -9,6 +9,7 @@ import com.fortuneboot.dao.fortune.FortuneTagMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,6 +62,9 @@ public class FortuneTagRepositoryImpl extends ServiceImpl<FortuneTagMapper, Fort
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId,bookId);
         List<FortuneTagEntity> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
         List<Long> ids = list.stream().map(FortuneTagEntity::getTagId).toList();
         fortuneTagMapper.deleteBatchIds(ids);
     }

@@ -396,6 +396,9 @@ public class FortuneBillService {
     @Transactional(rollbackFor = Exception.class)
     public void removeByBookId(Long bookId) {
         List<FortuneBillEntity> billList = fortuneBillRepository.getByBookId(bookId);
+        if (CollectionUtils.isEmpty(billList)) {
+            return;
+        }
         List<Long> billIds = billList.stream().map(FortuneBillEntity::getBillId).toList();
         fortuneBillRepository.removeBatchByIds(billIds);
         fortuneCategoryRelationRepository.removeByBillIds(billIds);

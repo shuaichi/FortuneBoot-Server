@@ -9,6 +9,7 @@ import com.fortuneboot.dao.fortune.FortuneCategoryRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,9 +47,12 @@ public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCa
     public void removeByBillIds(List<Long> billIds) {
         LambdaQueryWrapper<FortuneCategoryRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
         wrapper.in(FortuneCategoryRelationEntity::getBillId, billIds);
-        List<FortuneCategoryRelationEntity> relationList = this.list(wrapper);
-        List<Long> list = relationList.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
-        fortuneCategoryRelationMapper.deleteBatchIds(list);
+        List<FortuneCategoryRelationEntity> list = this.list(wrapper);
+        if (CollectionUtils.isEmpty(list)){
+            return;
+        }
+        List<Long> ids = list.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
+        fortuneCategoryRelationMapper.deleteBatchIds(ids);
     }
 
     @Override

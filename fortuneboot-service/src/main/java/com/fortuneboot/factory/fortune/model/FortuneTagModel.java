@@ -91,7 +91,7 @@ public class FortuneTagModel extends FortuneTagEntity {
         while (parentId != -1) {
             FortuneTagEntity parent = fortuneTagRepository.getById(parentId);
             if (parent.getRecycleBin()) {
-                throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_IN_RECYCLE, parent.getTagName());
+                throw new ApiException(ErrorCode.Business.TAG_PARENT_IN_RECYCLE, parent.getTagName());
             }
             parentId = parent.getParentId();
         }

@@ -48,4 +48,12 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
         queryWrapper.eq(FortuneBillEntity::getPayeeId,payeeId);
         return this.exists(queryWrapper);
     }
+
+    @Override
+    public Boolean existByAccount(Long accountId) {
+        LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
+        queryWrapper.eq(FortuneBillEntity::getAccountId,accountId)
+                .or().eq(FortuneBillEntity::getToAccountId,accountId);
+        return this.exists(queryWrapper);
+    }
 }

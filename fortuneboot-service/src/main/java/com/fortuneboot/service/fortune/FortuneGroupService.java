@@ -18,6 +18,7 @@ import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
+import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
@@ -89,7 +90,7 @@ public class FortuneGroupService {
         // 新增账本
         FortuneBookAddCommand fortuneBookAddCommand = new FortuneBookAddCommand();
         fortuneBookAddCommand.setGroupId(fortuneGroupModel.getGroupId());
-        fortuneBookAddCommand.setBookName("默认账本");
+        fortuneBookAddCommand.setBookName(groupAddCommand.getGroupName() + "的默认账本");
         fortuneBookAddCommand.setDefaultCurrency(groupAddCommand.getDefaultCurrency());
         fortuneBookAddCommand.setBookTemplate(groupAddCommand.getBookTemplate());
         FortuneBookModel fortuneBookModel = fortuneBookService.add(fortuneBookAddCommand);

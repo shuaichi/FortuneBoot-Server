@@ -1,5 +1,6 @@
 package com.fortuneboot.controller.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.utils.tree.TreeUtil;
@@ -48,6 +49,15 @@ public class FortuneCategoryController {
         List<FortuneCategoryVo> result = list.stream().map(FortuneCategoryVo::new).toList();
         List<FortuneCategoryVo> treeNodes = TreeUtil.buildForest(result, FortuneCategoryVo.class);
         return ResponseDTO.ok(treeNodes);
+    }
+
+    @Operation(summary = "分页查询分类（平铺）")
+    @GetMapping("/getListPage")
+    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    public ResponseDTO<PageDTO<FortuneCategoryVo>> getListPageApi(@Valid FortuneCategoryQuery query) {
+        IPage<FortuneCategoryEntity> page = fortuneCategoryService.getListPageApi(query);
+        List<FortuneCategoryVo> records = page.getRecords().stream().map(FortuneCategoryVo::new).toList();
+        return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 
     @Operation(summary = "查询启用的分类")

@@ -63,7 +63,7 @@ public class FortuneTagService {
             if (CollectionUtils.isEmpty(childrenEntity)) {
                 continue;
             }
-            List<FortuneTagVo> list = childrenEntity.stream().map(FortuneTagVo::new).toList();
+            List<FortuneTagVo> list = childrenEntity.stream().filter(item -> !item.getRecycleBin()).map(FortuneTagVo::new).toList();
             list.forEach(tagVo::addChild);
             childrenVo.addAll(list);
         }
@@ -72,6 +72,10 @@ public class FortuneTagService {
 
     public List<FortuneTagEntity> getList(FortuneTagQuery query) {
         return fortuneTagRepository.list(query.addQueryCondition());
+    }
+
+    public IPage<FortuneTagEntity> getListPage(FortuneTagQuery query) {
+        return fortuneTagRepository.page(query.toPage(), query.addQueryCondition());
     }
 
 

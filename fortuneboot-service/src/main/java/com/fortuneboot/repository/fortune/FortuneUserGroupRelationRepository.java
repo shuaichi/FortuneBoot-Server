@@ -44,4 +44,20 @@ public interface FortuneUserGroupRelationRepository extends IService<FortuneUser
      * @return
      */
     FortuneUserGroupRelationEntity getByGroupAndUser(Long groupId, Long userId);
+
+    /**
+     * 根据用户id查询是否存在分组
+     *
+     * @param userId
+     * @return
+     */
+    Boolean existsByUserId(Long userId);
+
+    /**
+     * 根据用户id查询默认分组
+     *
+     * @param userId
+     * @return
+     */
+    FortuneUserGroupRelationEntity getDefaultGroupByUser(Long userId);
 }

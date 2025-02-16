@@ -8,6 +8,7 @@ import com.fortuneboot.dao.fortune.FortunePayeeMapper;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +59,9 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.eq(FortunePayeeEntity::getBookId,bookId);
         List<FortunePayeeEntity> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)){
+            return;
+        }
         List<Long> ids = list.stream().map(FortunePayeeEntity::getPayeeId).toList();
         fortunePayeeMapper.deleteBatchIds(ids);
     }
