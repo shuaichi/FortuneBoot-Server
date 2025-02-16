@@ -14,6 +14,7 @@ import com.fortuneboot.factory.fortune.FortuneCategoryFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -59,7 +60,7 @@ public class FortuneCategoryService {
             if (CollectionUtils.isEmpty(childrenEntity)) {
                 continue;
             }
-            List<FortuneCategoryVo> list = childrenEntity.stream().map(FortuneCategoryVo::new).toList();
+            List<FortuneCategoryVo> list = childrenEntity.stream().filter(item-> !item.getRecycleBin()).map(FortuneCategoryVo::new).toList();
             list.forEach(tagVo::addChild);
             childrenVo.addAll(list);
         }
@@ -68,6 +69,10 @@ public class FortuneCategoryService {
 
     public List<FortuneCategoryEntity> getList(FortuneCategoryQuery query) {
         return fortuneCategoryRepository.list(query.addQueryCondition());
+    }
+
+    public IPage<FortuneCategoryEntity> getListPageApi(FortuneCategoryQuery query) {
+        return fortuneCategoryRepository.page(query.toPage(),query.addQueryCondition());
     }
 
     public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId, Integer billType) {

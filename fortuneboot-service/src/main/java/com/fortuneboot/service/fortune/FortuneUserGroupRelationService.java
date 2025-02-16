@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationInviteCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
@@ -46,6 +47,10 @@ public class FortuneUserGroupRelationService {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
         relationModel.loadAddCommand(addCommand);
         relationModel.checkRepeat(addCommand.getUserId());
+        SystemLoginUser user = AuthenticationUtils.getSystemLoginUser();
+        Boolean exists = fortuneUserGroupRelationRepository.existsByUserId(user.getUserId());
+        // 如果不存在分组，则将本分组设置为默认分组
+        relationModel.setDefaultGroup(!exists);
         relationModel.insert();
     }
 
@@ -67,7 +72,7 @@ public class FortuneUserGroupRelationService {
             throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP);
         }
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
-        if (Objects.equals(loginUser.getUserId(), relationModel.getUserId())){
+        if (Objects.equals(loginUser.getUserId(), relationModel.getUserId())) {
             throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DELETE_SELF);
         }
         relationModel.deleteById();
@@ -98,5 +103,11 @@ public class FortuneUserGroupRelationService {
             }
         }
         fortuneUserGroupRelationRepository.updateBatchById(groupRelationList);
+    }
+
+    public Long getDefaultGroupId() {
+        SystemLoginUser user = AuthenticationUtils.getSystemLoginUser();
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getDefaultGroupByUser(user.getUserId());
+        return Objects.isNull(entity)?null:entity.getGroupId();
     }
 }

@@ -1,5 +1,6 @@
 package com.fortuneboot.controller.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.utils.tree.TreeUtil;
@@ -33,7 +34,7 @@ public class FortuneTagController {
 
     private final FortuneTagService fortuneTagService;
 
-    @Operation(summary = "查询标签")
+    @Operation(summary = "分页查询标签")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortuneTagVo>> getPage(@Valid FortuneTagQuery query) {
@@ -48,6 +49,15 @@ public class FortuneTagController {
         List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
         List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);
         return ResponseDTO.ok(treeNodes);
+    }
+
+    @Operation(summary = "平铺查询标签")
+    @GetMapping("/getListPage")
+    @PreAuthorize("@fortune.bookOwnerPermission(#query.getBookId())")
+    public ResponseDTO<PageDTO<FortuneTagVo>> getListPage(@Valid FortuneTagQuery query) {
+        IPage<FortuneTagEntity> page = fortuneTagService.getListPage(query);
+        List<FortuneTagVo> records = page.getRecords().stream().map(FortuneTagVo::new).toList();
+        return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 
     @Operation(summary = "查询启用的标签")

@@ -45,11 +45,10 @@ public class FortuneGroupController {
 
     private final FortuneUserGroupRelationService fortuneUserGroupRelationService;
 
-
     private final ApplicationScopeBo applicationScopeBo;
 
-    @Operation(summary = "分页查询我的分组")
     @GetMapping("/getPage")
+    @Operation(summary = "分页查询我的分组")
     public ResponseDTO<PageDTO<FortuneGroupVo>> getFortuneGroupPage(@Valid FortuneGroupQuery query) {
         PageDTO<FortuneGroupVo> pageDTO = fortuneGroupService.getFortuneGroupPage(query);
         return ResponseDTO.ok(pageDTO);
@@ -93,6 +92,12 @@ public class FortuneGroupController {
             return selectOptionsVo;
         }).toList();
         return ResponseDTO.ok(result);
+    }
+
+    @Operation(summary = "查询用户的默认分组")
+    @GetMapping("/getDefaultGroupId")
+    public ResponseDTO<Long> getDefaultGroupId() {
+        return ResponseDTO.ok(fortuneUserGroupRelationService.getDefaultGroupId());
     }
 
     @Operation(summary = "新增分组")

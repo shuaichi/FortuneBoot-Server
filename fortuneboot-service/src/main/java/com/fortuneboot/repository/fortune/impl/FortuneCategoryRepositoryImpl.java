@@ -7,6 +7,7 @@ import com.fortuneboot.dao.fortune.FortuneCategoryMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +49,9 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getBookId,bookId);
         List<FortuneCategoryEntity> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
         List<Long> ids = list.stream().map(FortuneCategoryEntity::getCategoryId).toList();
         fortuneCategoryMapper.deleteBatchIds(ids);
     }
