@@ -1,13 +1,13 @@
 package com.fortuneboot.repository.fortune.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneTagRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,6 +46,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
         LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         queryWrapper.eq(FortuneTagRelationEntity::getBillId, billId);
         List<FortuneTagRelationEntity> list = this.list(queryWrapper);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
         fortuneTagRelationMapper.deleteBatchIds(ids);
     }
