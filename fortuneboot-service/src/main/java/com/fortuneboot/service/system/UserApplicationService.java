@@ -132,8 +132,8 @@ public class UserApplicationService {
 
     public void updateUser(UpdateUserCommand command) {
         UserModel model = userModelFactory.loadById(command.getUserId());
+        command.setSource(model.getSource());
         model.loadUpdateUserCommand(command);
-
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
         model.checkFieldRelatedEntityExist();
