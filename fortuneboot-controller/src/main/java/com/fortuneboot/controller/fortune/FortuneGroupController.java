@@ -111,7 +111,7 @@ public class FortuneGroupController {
     @Operation(summary = "修改分组")
     @PutMapping("/modify")
     @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.MODIFY)
-    @PreAuthorize("@fortune.groupOwnerPermission(#groupModifyCommand.groupId)")
+    @PreAuthorize("@fortune.groupActorPermission(#groupModifyCommand.groupId)")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneGroupModifyCommand groupModifyCommand) {
         fortuneGroupService.modify(groupModifyCommand);
         return ResponseDTO.ok();
@@ -152,14 +152,15 @@ public class FortuneGroupController {
 
     @Operation(summary = "查询分组用户")
     @GetMapping("/{groupId}/getGroupUser")
-    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<List<FortuneUserGroupRelationVo>> getGroupUser(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         return ResponseDTO.ok(fortuneUserGroupRelationService.getGroupUser(groupId));
     }
 
     @Operation(summary = "设置为默认分组")
     @PutMapping("/{groupId}/setDefaultGroup")
-    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    @AccessLog(title = "好记-分组管理-设置默认分组", businessType = BusinessTypeEnum.OTHER)
+    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
     public ResponseDTO<Void> setDefaultGroup(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneUserGroupRelationService.setDefaultGroup(groupId);
         return ResponseDTO.ok();
@@ -167,7 +168,8 @@ public class FortuneGroupController {
 
     @Operation(summary = "启用分组")
     @PatchMapping("/{groupId}/enable")
-    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.ENABLE)
+    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
     public ResponseDTO<Void> enable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
         fortuneGroupService.enable(groupId);
         return ResponseDTO.ok();
@@ -175,7 +177,8 @@ public class FortuneGroupController {
 
     @Operation(summary = "停用分组")
     @PatchMapping("/{groupId}/disable")
-    @PreAuthorize("@fortune.groupOwnerPermission(#groupId)")
+    @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.DISABLE)
+    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
     public ResponseDTO<Void> disable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
         fortuneGroupService.disable(groupId);
         return ResponseDTO.ok();

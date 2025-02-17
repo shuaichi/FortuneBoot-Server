@@ -24,6 +24,24 @@ public enum BusinessTypeEnum implements DictionaryEnum<Integer> {
     IMPORT(6, "导入", CssTag.WARNING),
     FORCE_LOGOUT(7, "强退", CssTag.DANGER),
     CLEAN(8, "清空", CssTag.DANGER),
+
+    // fortune 业务类型
+    MOVE_TO_RECYCLE_BIN(9, "移入回收站", CssTag.DANGER),
+    PUT_BACK(10, "移出回收站", CssTag.PRIMARY),
+    CAN_EXPENSE(11,"可支出", CssTag.PRIMARY),
+    CAN_NOT_EXPENSE(12,"不可支出", CssTag.PRIMARY),
+    CAN_INCOME(13,"可收入", CssTag.PRIMARY),
+    CAN_NOT_INCOME(14,"不可收入", CssTag.PRIMARY),
+    CAN_TRANSFER(15,"可转账", CssTag.PRIMARY),
+    CAN_NOT_TRANSFER(16,"不可转账", CssTag.PRIMARY),
+    CAN_TRANSFER_OUT(17,"可转出", CssTag.PRIMARY),
+    CAN_NOT_TRANSFER_OUT(18,"不可转出", CssTag.PRIMARY),
+    CAN_TRANSFER_IN(19,"可转入", CssTag.PRIMARY),
+    CAN_NOT_TRANSFER_IN(20,"不可转入", CssTag.PRIMARY),
+    ENABLE(21,"启用", CssTag.PRIMARY),
+    DISABLE(22,"停用", CssTag.PRIMARY),
+    INCLUDE(23,"统计", CssTag.PRIMARY),
+    EXCLUDE(24,"不统计", CssTag.PRIMARY),
     ;
 
     private final int value;
