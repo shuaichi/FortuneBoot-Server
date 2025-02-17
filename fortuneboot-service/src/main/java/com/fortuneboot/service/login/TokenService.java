@@ -33,9 +33,9 @@ import javax.crypto.SecretKey;
  *
  * @author valarchie
  */
-@Component
 @Slf4j
 @Data
+@Component
 @RequiredArgsConstructor
 public class TokenService {
 
@@ -52,9 +52,9 @@ public class TokenService {
     private String secret;
 
     /**
-     * 过期时间，60天
+     * 过期时间，30天
      */
-    private static final Long EXP_TIME = 24 * 60 * 60  * 60 * 60 * 1000L;
+    private static final Long EXP_TIME = 24 * 30  * 60 * 60 * 1000L;
 
     /**
      * 自动刷新token的时间，当过期时间不足autoRefreshTime的值的时候，会触发刷新用户登录缓存的时间

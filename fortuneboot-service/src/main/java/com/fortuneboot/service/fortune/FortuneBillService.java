@@ -318,18 +318,18 @@ public class FortuneBillService {
         if (sourceCurrency.equals(targetCurrency)) {
             return amount;
         }
-        // 获取 sourceCurrency 对人民币的汇率
+        // 获取 sourceCurrency 对美元的汇率
         BigDecimal aprSourceToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(sourceCurrency))
                 .findFirst()
                 .map(CurrencyTemplateBo::getApr)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 人民币"));
-        // 获取 targetCurrency 对人民币的汇率
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 美元"));
+        // 获取 targetCurrency 对美元的汇率
         BigDecimal aprTargetToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(targetCurrency))
                 .findFirst()
                 .map(CurrencyTemplateBo::getApr)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "人民币", targetCurrency));
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "美元", targetCurrency));
         // 计算目标货币金额
         return amount.multiply(aprSourceToRMB)
                 .divide(aprTargetToRMB, 10, RoundingMode.HALF_UP);

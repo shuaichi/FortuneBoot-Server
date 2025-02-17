@@ -32,11 +32,11 @@ public class RedisCacheService {
     @PostConstruct
     public void init() {
 
-        captchaCache = new RedisCacheTemplate<>(redisUtil, CacheKeyEnum.CAPTCHAT);
+        captchaCache = new RedisCacheTemplate<>(redisUtil, CacheKeyEnum.CAPTCHA);
 
-        loginUserCache = new RedisCacheTemplate<>(redisUtil, CacheKeyEnum.LOGIN_USER_KEY);
+        loginUserCache = new RedisCacheTemplate<>(redisUtil, CacheKeyEnum.LOGIN_USER);
 
-        userCache = new RedisCacheTemplate<SysUserEntity>(redisUtil, CacheKeyEnum.USER_ENTITY_KEY) {
+        userCache = new RedisCacheTemplate<SysUserEntity>(redisUtil, CacheKeyEnum.USER_ENTITY) {
             @Override
             public SysUserEntity getObjectFromDb(Object id) {
                 SysUserRepository userRepository = SpringUtil.getBean(SysUserRepository.class);
@@ -44,7 +44,7 @@ public class RedisCacheService {
             }
         };
 
-        roleCache = new RedisCacheTemplate<SysRoleEntity>(redisUtil, CacheKeyEnum.ROLE_ENTITY_KEY) {
+        roleCache = new RedisCacheTemplate<SysRoleEntity>(redisUtil, CacheKeyEnum.ROLE_ENTITY) {
             @Override
             public SysRoleEntity getObjectFromDb(Object id) {
                 SysRoleRepository roleRepository = SpringUtil.getBean(SysRoleRepository.class);
