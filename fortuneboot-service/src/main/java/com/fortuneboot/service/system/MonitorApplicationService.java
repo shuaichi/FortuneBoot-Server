@@ -62,7 +62,7 @@ public class MonitorApplicationService {
     }
 
     public List<OnlineUserDTO> getOnlineUserList(String username, String ipAddress) {
-        Collection<String> keys = redisTemplate.keys(CacheKeyEnum.LOGIN_USER_KEY.key() + "*");
+        Collection<String> keys = redisTemplate.keys(CacheKeyEnum.LOGIN_USER.key() + "*");
 
         Stream<OnlineUserDTO> onlineUserStream = keys.stream().map(o ->
                     CacheCenter.loginUserCache.getObjectOnlyInCacheByKey(o))

@@ -10,13 +10,12 @@ public enum CacheKeyEnum {
     /**
      * Redis各类缓存集合
      */
-    CAPTCHAT("captcha_codes:", 2, TimeUnit.MINUTES),
-    LOGIN_USER_KEY("login_tokens:", 30, TimeUnit.MINUTES),
-    RATE_LIMIT_KEY("rate_limit:", 60, TimeUnit.SECONDS),
-    USER_ENTITY_KEY("user_entity:", 60, TimeUnit.MINUTES),
-    ROLE_ENTITY_KEY("role_entity:", 60, TimeUnit.MINUTES),
-    ROLE_MODEL_INFO_KEY("role_model_info:", 60, TimeUnit.MINUTES),
-
+    CAPTCHA("captcha_codes:", 5, TimeUnit.MINUTES),
+    LOGIN_USER("login_tokens:", 30, TimeUnit.DAYS),
+    RATE_LIMIT("rate_limit:", 60, TimeUnit.SECONDS),
+    USER_ENTITY("user_entity:", 60, TimeUnit.MINUTES),
+    ROLE_ENTITY("role_entity:", 60, TimeUnit.MINUTES),
+    ROLE_MODEL_INFO("role_model_info:", 60, TimeUnit.MINUTES),
     ;
 
 
