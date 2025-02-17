@@ -14,9 +14,9 @@
 <p align="center">
 
 [//]: # (暂时注释logo)
-[//]: # (<img alt="logo" height="200" src="https://oscimg.oschina.net/oscnet/up-eda2a402cc061f1f5f40d9ac4c084f4c98c.png">)
+[//]: # (<img alt="logo" height="200" src="">)
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">AgileBoot V0.0.1 </h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V0.0.1 </h1>
 <h4 align="center">基于AgileBoot开发的记账管理软件</h4>
 <p align="center">
 </p>
@@ -27,7 +27,8 @@ FortuneBoot是一套开源的记账管理系统，毫无保留给个人及企业
 适合个人、家庭及开店使用。也可作为供初学者学习使用的案例。
 
 * 前端是基于优秀的开源项目[AgileBoot](https://github.com/valarchie/AgileBoot-Front-End)与[Pure-Admin](https://github.com/pure-admin/vue-pure-admin)开发而成。在此感谢 AgileBoot 和 Pure-Admin 作者。
-* 后端是基于优秀的开源项目[AgileBoot]()开发而成。再次敢接AgileBoot作者。
+* 后端是基于优秀的开源项目[AgileBoot](https://github.com/valarchie/AgileBoot-Back-End)开发而成。再次敢接AgileBoot作者。
+* 记账思路是基于优秀开源项目[monenote](https://github.com/getmoneynote/moneynote-api)提供，在此感谢moneynote作者。
 * ***有大量的单元测试，集成测试覆盖确保业务逻辑正确***。
 
 > 有任何问题或者建议，可以在 _Issues_ 中提给作者。
@@ -234,4 +235,4 @@ QQ 群： [![加入QQ群](https://img.shields.io/badge/1009576058-blue.svg)](htt
 如果觉得该项目对您有帮助，可以小额捐赠支持本项目演示网站服务器等费用~
 
 [//]: # (捐赠图片)
-[//]: # (<img alt="logo" height="200" src="https://oscimg.oschina.net/oscnet/up-28b63fdd7b3ce003bd30c25883f2276212b.png">)
+[//]: # (<img alt="logo" height="200" src="">)
