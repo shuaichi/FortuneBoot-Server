@@ -62,9 +62,9 @@ spring:
         # redis 配置
         redis:
             # 地址
-            host: localhost
+            host: tencent.mysql
             # 端口，默认为6379
-            port: 6379
+            port: 62963
             # 数据库索引
             database: 0
             # 连接超时时间
@@ -79,6 +79,7 @@ spring:
                     max-active: 8
                     # #连接池最大阻塞等待时间（使用负值表示没有限制）
                     max-wait: -1ms
+
 logging:
     file:
         path: logs/fortuneboot-dev
