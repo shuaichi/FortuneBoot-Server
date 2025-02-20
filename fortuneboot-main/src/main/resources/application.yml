@@ -28,7 +28,7 @@ spring:
 fortuneboot:
   embedded:
     mysql: false
-    redis: true
+    redis: false
 
 
 
