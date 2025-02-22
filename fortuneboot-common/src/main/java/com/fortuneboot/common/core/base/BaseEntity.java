@@ -42,7 +42,7 @@ public class BaseEntity<T extends Model<?>> extends Model<T> {
      */
     @Schema(description = "删除标志（0代表存在 1代表删除）")
     @TableField("deleted")
-    //@TableLogic
+    @TableLogic
     private Boolean deleted;
 
 }

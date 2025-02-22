@@ -30,10 +30,6 @@ public class FortuneCurrencyEntity extends BaseEntity<FortuneCurrencyEntity> {
     @TableField("currency_name")
     private String currencyName;
 
-    @Schema(description = "是否启用")
-    @TableField("enable")
-    private Boolean enable;
-
     @Schema(description = "汇率")
     @TableField("rate")
     private BigDecimal rate;

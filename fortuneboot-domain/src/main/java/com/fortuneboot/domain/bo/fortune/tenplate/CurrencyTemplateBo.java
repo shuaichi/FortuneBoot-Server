@@ -30,23 +30,23 @@ public class CurrencyTemplateBo {
     /**
      * 备注
      */
-    private String description;
+    private String remark;
 
     /**
      * 汇率
      */
-    private BigDecimal apr;
+    private BigDecimal rate;
 
     /**
      * 构造方法
      *
      * @param currencyId
      * @param currencyName
-     * @param apr
+     * @param rate
      */
-    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal apr) {
+    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal rate) {
         this.currencyId = currencyId;
         this.currencyName = currencyName;
-        this.apr = apr;
+        this.rate = rate;
     }
 }

@@ -1,10 +1,14 @@
 package com.fortuneboot.repository.fortune.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneCurrencyMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCurrencyEntity;
 import com.fortuneboot.repository.fortune.FortuneCurrencyRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 货币
@@ -14,4 +18,10 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class FortuneCurrencyRepositoryImpl extends ServiceImpl<FortuneCurrencyMapper, FortuneCurrencyEntity> implements FortuneCurrencyRepository {
+
+    @Override
+    public List<FortuneCurrencyEntity> getAll() {
+        LambdaQueryWrapper<FortuneCurrencyEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCurrencyEntity.class);
+        return this.list(queryWrapper);
+    }
 }
