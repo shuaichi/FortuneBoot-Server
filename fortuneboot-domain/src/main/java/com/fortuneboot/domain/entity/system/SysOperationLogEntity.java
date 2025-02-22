@@ -95,7 +95,7 @@ public class SysOperationLogEntity extends Model<SysOperationLogEntity> {
 
     @Schema(description = "逻辑删除")
     @TableField("deleted")
-//    @TableLogic
+    @TableLogic
     private Boolean deleted;
 
 

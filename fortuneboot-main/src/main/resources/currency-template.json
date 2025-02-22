@@ -2,1027 +2,1027 @@
   {
     "currencyId": 1,
     "currencyName": "AED",
-    "description": "United Arab Emirates Dirham",
-    "apr": 3.67
+    "remark": "United Arab Emirates Dirham",
+    "rate": 3.67
   },
   {
     "currencyId": 2,
     "currencyName": "AFN",
-    "description": "Afghan Afghani",
-    "apr": 89.63
+    "remark": "Afghan Afghani",
+    "rate": 89.63
   },
   {
     "currencyId": 3,
     "currencyName": "ALL",
-    "description": "Albanian Lek",
-    "apr": 114.56
+    "remark": "Albanian Lek",
+    "rate": 114.56
   },
   {
     "currencyId": 4,
     "currencyName": "AMD",
-    "description": "Armenian Dram",
-    "apr": 431.03
+    "remark": "Armenian Dram",
+    "rate": 431.03
   },
   {
     "currencyId": 5,
     "currencyName": "ANG",
-    "description": "Netherlands Antillean Guilder",
-    "apr": 1.82
+    "remark": "Netherlands Antillean Guilder",
+    "rate": 1.82
   },
   {
     "currencyId": 6,
     "currencyName": "AOA",
-    "description": "Angolan Kwanza",
-    "apr": 435.61
+    "remark": "Angolan Kwanza",
+    "rate": 435.61
   },
   {
     "currencyId": 7,
     "currencyName": "ARS",
-    "description": "Argentine Peso",
-    "apr": 122.7
+    "remark": "Argentine Peso",
+    "rate": 122.7
   },
   {
     "currencyId": 8,
     "currencyName": "AUD",
-    "description": "Australian Dollar",
-    "apr": 1.42
+    "remark": "Australian Dollar",
+    "rate": 1.42
   },
   {
     "currencyId": 9,
     "currencyName": "AWG",
-    "description": "Aruban Florin",
-    "apr": 1.8
+    "remark": "Aruban Florin",
+    "rate": 1.8
   },
   {
     "currencyId": 10,
     "currencyName": "AZN",
-    "description": "Azerbaijani Manat",
-    "apr": 1.7
+    "remark": "Azerbaijani Manat",
+    "rate": 1.7
   },
   {
     "currencyId": 11,
     "currencyName": "BAM",
-    "description": "Bosnia-Herzegovina Convertible Mark",
-    "apr": 1.87
+    "remark": "Bosnia-Herzegovina Convertible Mark",
+    "rate": 1.87
   },
   {
     "currencyId": 12,
     "currencyName": "BBD",
-    "description": "Barbadian Dollar",
-    "apr": 2
+    "remark": "Barbadian Dollar",
+    "rate": 2
   },
   {
     "currencyId": 13,
     "currencyName": "BDT",
-    "description": "Bangladeshi Taka",
-    "apr": 93.9
+    "remark": "Bangladeshi Taka",
+    "rate": 93.9
   },
   {
     "currencyId": 14,
     "currencyName": "BGN",
-    "description": "Bulgarian Lev",
-    "apr": 1.86
+    "remark": "Bulgarian Lev",
+    "rate": 1.86
   },
   {
     "currencyId": 15,
     "currencyName": "BHD",
-    "description": "Bahraini Dinar",
-    "apr": 0.38
+    "remark": "Bahraini Dinar",
+    "rate": 0.38
   },
   {
     "currencyId": 16,
     "currencyName": "BIF",
-    "description": "Burundian Franc",
-    "apr": 2076.58
+    "remark": "Burundian Franc",
+    "rate": 2076.58
   },
   {
     "currencyId": 17,
     "currencyName": "BMD",
-    "description": "Bermudan Dollar",
-    "apr": 1
+    "remark": "Bermudan Dollar",
+    "rate": 1
   },
   {
     "currencyId": 18,
     "currencyName": "BND",
-    "description": "Brunei Dollar",
-    "apr": 1.39
+    "remark": "Brunei Dollar",
+    "rate": 1.39
   },
   {
     "currencyId": 19,
     "currencyName": "BOB",
-    "description": "Bolivian Boliviano",
-    "apr": 6.95
+    "remark": "Bolivian Boliviano",
+    "rate": 6.95
   },
   {
     "currencyId": 20,
     "currencyName": "BRL",
-    "description": "Brazilian Real",
-    "apr": 4.98
+    "remark": "Brazilian Real",
+    "rate": 4.98
   },
   {
     "currencyId": 21,
     "currencyName": "BSD",
-    "description": "Bahamian Dollar",
-    "apr": 1
+    "remark": "Bahamian Dollar",
+    "rate": 1
   },
   {
     "currencyId": 22,
     "currencyName": "BTC",
-    "description": "Bitcoin",
-    "apr": 0
+    "remark": "Bitcoin",
+    "rate": 0
   },
   {
     "currencyId": 23,
     "currencyName": "BTN",
-    "description": "Bhutanese Ngultrum",
-    "apr": 78.56
+    "remark": "Bhutanese Ngultrum",
+    "rate": 78.56
   },
   {
     "currencyId": 24,
     "currencyName": "BWP",
-    "description": "Botswanan Pula",
-    "apr": 12.19
+    "remark": "Botswanan Pula",
+    "rate": 12.19
   },
   {
     "currencyId": 25,
     "currencyName": "BYN",
-    "description": "Belarusian Ruble",
-    "apr": 3.41
+    "remark": "Belarusian Ruble",
+    "rate": 3.41
   },
   {
     "currencyId": 26,
     "currencyName": "BZD",
-    "description": "Belize Dollar",
-    "apr": 2.04
+    "remark": "Belize Dollar",
+    "rate": 2.04
   },
   {
     "currencyId": 27,
     "currencyName": "CAD",
-    "description": "Canadian Dollar",
-    "apr": 1.28
+    "remark": "Canadian Dollar",
+    "rate": 1.28
   },
   {
     "currencyId": 28,
     "currencyName": "CDF",
-    "description": "Congolese Franc",
-    "apr": 2019.7
+    "remark": "Congolese Franc",
+    "rate": 2019.7
   },
   {
     "currencyId": 29,
     "currencyName": "CHF",
-    "description": "Swiss Franc",
-    "apr": 0.99
+    "remark": "Swiss Franc",
+    "rate": 0.99
   },
   {
     "currencyId": 30,
     "currencyName": "CLF",
-    "description": "Chilean Unit of Account (UF)",
-    "apr": 0.03
+    "remark": "Chilean Unit of Account (UF)",
+    "rate": 0.03
   },
   {
     "currencyId": 31,
     "currencyName": "CLP",
-    "description": "Chilean Peso",
-    "apr": 844.22
+    "remark": "Chilean Peso",
+    "rate": 844.22
   },
   {
     "currencyId": 32,
     "currencyName": "CNH",
-    "description": "Chinese Yuan (Offshore)",
-    "apr": 6.75
+    "remark": "Chinese Yuan (Offshore)",
+    "rate": 6.75
   },
   {
     "currencyId": 33,
     "currencyName": "CNY",
-    "description": "Chinese Yuan",
-    "apr": 6.73
+    "remark": "Chinese Yuan",
+    "rate": 6.73
   },
   {
     "currencyId": 34,
     "currencyName": "COP",
-    "description": "Colombian Peso",
-    "apr": 3887.61
+    "remark": "Colombian Peso",
+    "rate": 3887.61
   },
   {
     "currencyId": 35,
     "currencyName": "CRC",
-    "description": "Costa Rican Colón",
-    "apr": 693.32
+    "remark": "Costa Rican Colón",
+    "rate": 693.32
   },
   {
     "currencyId": 36,
     "currencyName": "CUC",
-    "description": "Cuban Convertible Peso",
-    "apr": 1
+    "remark": "Cuban Convertible Peso",
+    "rate": 1
   },
   {
     "currencyId": 37,
     "currencyName": "CUP",
-    "description": "Cuban Peso",
-    "apr": 25.74
+    "remark": "Cuban Peso",
+    "rate": 25.74
   },
   {
     "currencyId": 38,
     "currencyName": "CVE",
-    "description": "Cape Verdean Escudo",
-    "apr": 105.22
+    "remark": "Cape Verdean Escudo",
+    "rate": 105.22
   },
   {
     "currencyId": 39,
     "currencyName": "CZK",
-    "description": "Czech Republic Koruna",
-    "apr": 23.53
+    "remark": "Czech Republic Koruna",
+    "rate": 23.53
   },
   {
     "currencyId": 40,
     "currencyName": "DJF",
-    "description": "Djiboutian Franc",
-    "apr": 179.77
+    "remark": "Djiboutian Franc",
+    "rate": 179.77
   },
   {
     "currencyId": 41,
     "currencyName": "DKK",
-    "description": "Danish Krone",
-    "apr": 7.09
+    "remark": "Danish Krone",
+    "rate": 7.09
   },
   {
     "currencyId": 42,
     "currencyName": "DOP",
-    "description": "Dominican Peso",
-    "apr": 55.54
+    "remark": "Dominican Peso",
+    "rate": 55.54
   },
   {
     "currencyId": 43,
     "currencyName": "DZD",
-    "description": "Algerian Dinar",
-    "apr": 146.45
+    "remark": "Algerian Dinar",
+    "rate": 146.45
   },
   {
     "currencyId": 44,
     "currencyName": "EGP",
-    "description": "Egyptian Pound",
-    "apr": 18.88
+    "remark": "Egyptian Pound",
+    "rate": 18.88
   },
   {
     "currencyId": 45,
     "currencyName": "ERN",
-    "description": "Eritrean Nakfa",
-    "apr": 14.99
+    "remark": "Eritrean Nakfa",
+    "rate": 14.99
   },
   {
     "currencyId": 46,
     "currencyName": "ETB",
-    "description": "Ethiopian Birr",
-    "apr": 52.53
+    "remark": "Ethiopian Birr",
+    "rate": 52.53
   },
   {
     "currencyId": 47,
     "currencyName": "EUR",
-    "description": "Euro",
-    "apr": 0.95
+    "remark": "Euro",
+    "rate": 0.95
   },
   {
     "currencyId": 48,
     "currencyName": "FJD",
-    "description": "Fijian Dollar",
-    "apr": 2.18
+    "remark": "Fijian Dollar",
+    "rate": 2.18
   },
   {
     "currencyId": 49,
     "currencyName": "FKP",
-    "description": "Falkland Islands Pound",
-    "apr": 0.81
+    "remark": "Falkland Islands Pound",
+    "rate": 0.81
   },
   {
     "currencyId": 50,
     "currencyName": "GBP",
-    "description": "British Pound Sterling",
-    "apr": 0.81
+    "remark": "British Pound Sterling",
+    "rate": 0.81
   },
   {
     "currencyId": 51,
     "currencyName": "GEL",
-    "description": "Georgian Lari",
-    "apr": 2.91
+    "remark": "Georgian Lari",
+    "rate": 2.91
   },
   {
     "currencyId": 52,
     "currencyName": "GGP",
-    "description": "Guernsey Pound",
-    "apr": 0.81
+    "remark": "Guernsey Pound",
+    "rate": 0.81
   },
   {
     "currencyId": 53,
     "currencyName": "GHS",
-    "description": "Ghanaian Cedi",
-    "apr": 8
+    "remark": "Ghanaian Cedi",
+    "rate": 8
   },
   {
     "currencyId": 54,
     "currencyName": "GIP",
-    "description": "Gibraltar Pound",
-    "apr": 0.81
+    "remark": "Gibraltar Pound",
+    "rate": 0.81
   },
   {
     "currencyId": 55,
     "currencyName": "GMD",
-    "description": "Gambian Dalasi",
-    "apr": 54.02
+    "remark": "Gambian Dalasi",
+    "rate": 54.02
   },
   {
     "currencyId": 56,
     "currencyName": "GNF",
-    "description": "Guinean Franc",
-    "apr": 8938.62
+    "remark": "Guinean Franc",
+    "rate": 8938.62
   },
   {
     "currencyId": 57,
     "currencyName": "GTQ",
-    "description": "Guatemalan Quetzal",
-    "apr": 7.8
+    "remark": "Guatemalan Quetzal",
+    "rate": 7.8
   },
   {
     "currencyId": 58,
     "currencyName": "GYD",
-    "description": "Guyanaese Dollar",
-    "apr": 211.39
+    "remark": "Guyanaese Dollar",
+    "rate": 211.39
   },
   {
     "currencyId": 59,
     "currencyName": "HKD",
-    "description": "Hong Kong Dollar",
-    "apr": 7.85
+    "remark": "Hong Kong Dollar",
+    "rate": 7.85
   },
   {
     "currencyId": 60,
     "currencyName": "HNL",
-    "description": "Honduran Lempira",
-    "apr": 24.81
+    "remark": "Honduran Lempira",
+    "rate": 24.81
   },
   {
     "currencyId": 61,
     "currencyName": "HRK",
-    "description": "Croatian Kuna",
-    "apr": 7.17
+    "remark": "Croatian Kuna",
+    "rate": 7.17
   },
   {
     "currencyId": 62,
     "currencyName": "HTG",
-    "description": "Haitian Gourde",
-    "apr": 115.62
+    "remark": "Haitian Gourde",
+    "rate": 115.62
   },
   {
     "currencyId": 63,
     "currencyName": "HUF",
-    "description": "Hungarian Forint",
-    "apr": 379.32
+    "remark": "Hungarian Forint",
+    "rate": 379.32
   },
   {
     "currencyId": 64,
     "currencyName": "currencyIdR",
-    "description": "Indonesian Rupiah",
-    "apr": 14668.43
+    "remark": "Indonesian Rupiah",
+    "rate": 14668.43
   },
   {
     "currencyId": 65,
     "currencyName": "ILS",
-    "description": "Israeli New Sheqel",
-    "apr": 3.41
+    "remark": "Israeli New Sheqel",
+    "rate": 3.41
   },
   {
     "currencyId": 66,
     "currencyName": "IMP",
-    "description": "Manx pound",
-    "apr": 0.81
+    "remark": "Manx pound",
+    "rate": 0.81
   },
   {
     "currencyId": 67,
     "currencyName": "INR",
-    "description": "Indian Rupee",
-    "apr": 78.19
+    "remark": "Indian Rupee",
+    "rate": 78.19
   },
   {
     "currencyId": 68,
     "currencyName": "IQD",
-    "description": "Iraqi Dinar",
-    "apr": 1473.89
+    "remark": "Iraqi Dinar",
+    "rate": 1473.89
   },
   {
     "currencyId": 69,
     "currencyName": "IRR",
-    "description": "Iranian Rial",
-    "apr": 42329.25
+    "remark": "Iranian Rial",
+    "rate": 42329.25
   },
   {
     "currencyId": 70,
     "currencyName": "ISK",
-    "description": "Icelandic Króna",
-    "apr": 132.16
+    "remark": "Icelandic Króna",
+    "rate": 132.16
   },
   {
     "currencyId": 71,
     "currencyName": "JEP",
-    "description": "Jersey Pound",
-    "apr": 0.81
+    "remark": "Jersey Pound",
+    "rate": 0.81
   },
   {
     "currencyId": 72,
     "currencyName": "JMD",
-    "description": "Jamaican Dollar",
-    "apr": 154.87
+    "remark": "Jamaican Dollar",
+    "rate": 154.87
   },
   {
     "currencyId": 73,
     "currencyName": "JOD",
-    "description": "Jordanian Dinar",
-    "apr": 0.71
+    "remark": "Jordanian Dinar",
+    "rate": 0.71
   },
   {
     "currencyId": 74,
     "currencyName": "JPY",
-    "description": "Japanese Yen",
-    "apr": 134.95
+    "remark": "Japanese Yen",
+    "rate": 134.95
   },
   {
     "currencyId": 75,
     "currencyName": "KES",
-    "description": "Kenyan Shilling",
-    "apr": 118.2
+    "remark": "Kenyan Shilling",
+    "rate": 118.2
   },
   {
     "currencyId": 76,
     "currencyName": "KGS",
-    "description": "Kyrgystani Som",
-    "apr": 79.47
+    "remark": "Kyrgystani Som",
+    "rate": 79.47
   },
   {
     "currencyId": 77,
     "currencyName": "KHR",
-    "description": "Cambodian Riel",
-    "apr": 4101.51
+    "remark": "Cambodian Riel",
+    "rate": 4101.51
   },
   {
     "currencyId": 78,
     "currencyName": "KMF",
-    "description": "Comorian Franc",
-    "apr": 468.02
+    "remark": "Comorian Franc",
+    "rate": 468.02
   },
   {
     "currencyId": 79,
     "currencyName": "KPW",
-    "description": "North Korean Won",
-    "apr": 899.56
+    "remark": "North Korean Won",
+    "rate": 899.56
   },
   {
     "currencyId": 80,
     "currencyName": "KRW",
-    "description": "South Korean Won",
-    "apr": 1284.43
+    "remark": "South Korean Won",
+    "rate": 1284.43
   },
   {
     "currencyId": 81,
     "currencyName": "KWD",
-    "description": "Kuwaiti Dinar",
-    "apr": 0.31
+    "remark": "Kuwaiti Dinar",
+    "rate": 0.31
   },
   {
     "currencyId": 82,
     "currencyName": "KYD",
-    "description": "Cayman Islands Dollar",
-    "apr": 0.84
+    "remark": "Cayman Islands Dollar",
+    "rate": 0.84
   },
   {
     "currencyId": 83,
     "currencyName": "KZT",
-    "description": "Kazakhstani Tenge",
-    "apr": 440.52
+    "remark": "Kazakhstani Tenge",
+    "rate": 440.52
   },
   {
     "currencyId": 84,
     "currencyName": "LAK",
-    "description": "Laotian Kip",
-    "apr": 14536.13
+    "remark": "Laotian Kip",
+    "rate": 14536.13
   },
   {
     "currencyId": 85,
     "currencyName": "LBP",
-    "description": "Lebanese Pound",
-    "apr": 1526.93
+    "remark": "Lebanese Pound",
+    "rate": 1526.93
   },
   {
     "currencyId": 86,
     "currencyName": "LKR",
-    "description": "Sri Lankan Rupee",
-    "apr": 362.01
+    "remark": "Sri Lankan Rupee",
+    "rate": 362.01
   },
   {
     "currencyId": 87,
     "currencyName": "LRD",
-    "description": "Liberian Dollar",
-    "apr": 151.93
+    "remark": "Liberian Dollar",
+    "rate": 151.93
   },
   {
     "currencyId": 88,
     "currencyName": "LSL",
-    "description": "Lesotho Loti",
-    "apr": 15.75
+    "remark": "Lesotho Loti",
+    "rate": 15.75
   },
   {
     "currencyId": 89,
     "currencyName": "LYD",
-    "description": "Libyan Dinar",
-    "apr": 4.83
+    "remark": "Libyan Dinar",
+    "rate": 4.83
   },
   {
     "currencyId": 90,
     "currencyName": "MAD",
-    "description": "Moroccan Dirham",
-    "apr": 10.01
+    "remark": "Moroccan Dirham",
+    "rate": 10.01
   },
   {
     "currencyId": 91,
     "currencyName": "MDL",
-    "description": "Moldovan Leu",
-    "apr": 19.24
+    "remark": "Moldovan Leu",
+    "rate": 19.24
   },
   {
     "currencyId": 92,
     "currencyName": "MGA",
-    "description": "Malagasy Ariary",
-    "apr": 4093.55
+    "remark": "Malagasy Ariary",
+    "rate": 4093.55
   },
   {
     "currencyId": 93,
     "currencyName": "MKD",
-    "description": "Macedonian Denar",
-    "apr": 58.74
+    "remark": "Macedonian Denar",
+    "rate": 58.74
   },
   {
     "currencyId": 94,
     "currencyName": "MMK",
-    "description": "Myanma Kyat",
-    "apr": 1869.58
+    "remark": "Myanma Kyat",
+    "rate": 1869.58
   },
   {
     "currencyId": 95,
     "currencyName": "MNT",
-    "description": "Mongolian Tugrik",
-    "apr": 3101.86
+    "remark": "Mongolian Tugrik",
+    "rate": 3101.86
   },
   {
     "currencyId": 96,
     "currencyName": "MOP",
-    "description": "Macanese Pataca",
-    "apr": 8.16
+    "remark": "Macanese Pataca",
+    "rate": 8.16
   },
   {
     "currencyId": 97,
     "currencyName": "MRO",
-    "description": "Mauritanian Ouguiya (pre-2018)",
-    "apr": 6.8
+    "remark": "Mauritanian Ouguiya (pre-2018)",
+    "rate": 6.8
   },
   {
     "currencyId": 98,
     "currencyName": "MRU",
-    "description": "Mauritanian Ouguiya",
-    "apr": 36.78
+    "remark": "Mauritanian Ouguiya",
+    "rate": 36.78
   },
   {
     "currencyId": 99,
     "currencyName": "MUR",
-    "description": "Mauritian Rupee",
-    "apr": 44.23
+    "remark": "Mauritian Rupee",
+    "rate": 44.23
   },
   {
     "currencyId": 100,
     "currencyName": "MVR",
-    "description": "Maldivian Rufiyaa",
-    "apr": 15.85
+    "remark": "Maldivian Rufiyaa",
+    "rate": 15.85
   },
   {
     "currencyId": 101,
     "currencyName": "MWK",
-    "description": "Malawian Kwacha",
-    "apr": 1031.56
+    "remark": "Malawian Kwacha",
+    "rate": 1031.56
   },
   {
     "currencyId": 102,
     "currencyName": "MXN",
-    "description": "Mexican Peso",
-    "apr": 20.1
+    "remark": "Mexican Peso",
+    "rate": 20.1
   },
   {
     "currencyId": 103,
     "currencyName": "MYR",
-    "description": "Malaysian Ringgit",
-    "apr": 4.41
+    "remark": "Malaysian Ringgit",
+    "rate": 4.41
   },
   {
     "currencyId": 104,
     "currencyName": "MZN",
-    "description": "Mozambican Metical",
-    "apr": 63.87
+    "remark": "Mozambican Metical",
+    "rate": 63.87
   },
   {
     "currencyId": 105,
     "currencyName": "NAD",
-    "description": "Namibian Dollar",
-    "apr": 15.85
+    "remark": "Namibian Dollar",
+    "rate": 15.85
   },
   {
     "currencyId": 106,
     "currencyName": "NGN",
-    "description": "Nigerian Naira",
-    "apr": 414.93
+    "remark": "Nigerian Naira",
+    "rate": 414.93
   },
   {
     "currencyId": 107,
     "currencyName": "NIO",
-    "description": "Nicaraguan Córdoba",
-    "apr": 36.2
+    "remark": "Nicaraguan Córdoba",
+    "rate": 36.2
   },
   {
     "currencyId": 108,
     "currencyName": "NOK",
-    "description": "Norwegian Krone",
-    "apr": 9.77
+    "remark": "Norwegian Krone",
+    "rate": 9.77
   },
   {
     "currencyId": 109,
     "currencyName": "NPR",
-    "description": "Nepalese Rupee",
-    "apr": 125.69
+    "remark": "Nepalese Rupee",
+    "rate": 125.69
   },
   {
     "currencyId": 110,
     "currencyName": "NZD",
-    "description": "New Zealand Dollar",
-    "apr": 1.58
+    "remark": "New Zealand Dollar",
+    "rate": 1.58
   },
   {
     "currencyId": 111,
     "currencyName": "OMR",
-    "description": "Omani Rial",
-    "apr": 0.39
+    "remark": "Omani Rial",
+    "rate": 0.39
   },
   {
     "currencyId": 112,
     "currencyName": "PAB",
-    "description": "Panamanian Balboa",
-    "apr": 1
+    "remark": "Panamanian Balboa",
+    "rate": 1
   },
   {
     "currencyId": 113,
     "currencyName": "PEN",
-    "description": "Peruvian Nuevo Sol",
-    "apr": 3.8
+    "remark": "Peruvian Nuevo Sol",
+    "rate": 3.8
   },
   {
     "currencyId": 114,
     "currencyName": "PGK",
-    "description": "Papua New Guinean Kina",
-    "apr": 3.6
+    "remark": "Papua New Guinean Kina",
+    "rate": 3.6
   },
   {
     "currencyId": 115,
     "currencyName": "PHP",
-    "description": "Philippine Peso",
-    "apr": 53.22
+    "remark": "Philippine Peso",
+    "rate": 53.22
   },
   {
     "currencyId": 116,
     "currencyName": "PKR",
-    "description": "Pakistani Rupee",
-    "apr": 204.23
+    "remark": "Pakistani Rupee",
+    "rate": 204.23
   },
   {
     "currencyId": 117,
     "currencyName": "PLN",
-    "description": "Polish Zloty",
-    "apr": 4.4
+    "remark": "Polish Zloty",
+    "rate": 4.4
   },
   {
     "currencyId": 118,
     "currencyName": "PYG",
-    "description": "Paraguayan Guarani",
-    "apr": 6927.6
+    "remark": "Paraguayan Guarani",
+    "rate": 6927.6
   },
   {
     "currencyId": 119,
     "currencyName": "QAR",
-    "description": "Qatari Rial",
-    "apr": 3.69
+    "remark": "Qatari Rial",
+    "rate": 3.69
   },
   {
     "currencyId": 120,
     "currencyName": "RON",
-    "description": "Romanian Leu",
-    "apr": 4.7
+    "remark": "Romanian Leu",
+    "rate": 4.7
   },
   {
     "currencyId": 121,
     "currencyName": "RSD",
-    "description": "Serbian Dinar",
-    "apr": 111.51
+    "remark": "Serbian Dinar",
+    "rate": 111.51
   },
   {
     "currencyId": 122,
     "currencyName": "RUB",
-    "description": "Russian Ruble",
-    "apr": 57.07
+    "remark": "Russian Ruble",
+    "rate": 57.07
   },
   {
     "currencyId": 123,
     "currencyName": "RWF",
-    "description": "Rwandan Franc",
-    "apr": 1038.64
+    "remark": "Rwandan Franc",
+    "rate": 1038.64
   },
   {
     "currencyId": 124,
     "currencyName": "SAR",
-    "description": "Saudi Riyal",
-    "apr": 3.75
+    "remark": "Saudi Riyal",
+    "rate": 3.75
   },
   {
     "currencyId": 125,
     "currencyName": "SBD",
-    "description": "Solomon Islands Dollar",
-    "apr": 8.11
+    "remark": "Solomon Islands Dollar",
+    "rate": 8.11
   },
   {
     "currencyId": 126,
     "currencyName": "SCR",
-    "description": "Seychellois Rupee",
-    "apr": 14.24
+    "remark": "Seychellois Rupee",
+    "rate": 14.24
   },
   {
     "currencyId": 127,
     "currencyName": "SDG",
-    "description": "Sudanese Pound",
-    "apr": 456.28
+    "remark": "Sudanese Pound",
+    "rate": 456.28
   },
   {
     "currencyId": 128,
     "currencyName": "SEK",
-    "description": "Swedish Krona",
-    "apr": 10.06
+    "remark": "Swedish Krona",
+    "rate": 10.06
   },
   {
     "currencyId": 129,
     "currencyName": "SGD",
-    "description": "Singapore Dollar",
-    "apr": 1.39
+    "remark": "Singapore Dollar",
+    "rate": 1.39
   },
   {
     "currencyId": 130,
     "currencyName": "SHP",
-    "description": "Saint Helena Pound",
-    "apr": 0.81
+    "remark": "Saint Helena Pound",
+    "rate": 0.81
   },
   {
     "currencyId": 131,
     "currencyName": "SLL",
-    "description": "Sierra Leonean Leone",
-    "apr": 13123.57
+    "remark": "Sierra Leonean Leone",
+    "rate": 13123.57
   },
   {
     "currencyId": 132,
     "currencyName": "SOS",
-    "description": "Somali Shilling",
-    "apr": 584.12
+    "remark": "Somali Shilling",
+    "rate": 584.12
   },
   {
     "currencyId": 133,
     "currencyName": "SRD",
-    "description": "SuricurrencyNamese Dollar",
-    "apr": 21.76
+    "remark": "SuricurrencyNamese Dollar",
+    "rate": 21.76
   },
   {
     "currencyId": 134,
     "currencyName": "SSP",
-    "description": "South Sudanese Pound",
-    "apr": 130.2
+    "remark": "South Sudanese Pound",
+    "rate": 130.2
   },
   {
     "currencyId": 135,
     "currencyName": "STD",
-    "description": "São Tomé and Príncipe Dobra (pre-2018)",
-    "apr": 23251.6
+    "remark": "São Tomé and Príncipe Dobra (pre-2018)",
+    "rate": 23251.6
   },
   {
     "currencyId": 136,
     "currencyName": "STN",
-    "description": "São Tomé and Príncipe Dobra",
-    "apr": 23.49
+    "remark": "São Tomé and Príncipe Dobra",
+    "rate": 23.49
   },
   {
     "currencyId": 137,
     "currencyName": "SVC",
-    "description": "Salvadoran Colón",
-    "apr": 8.84
+    "remark": "Salvadoran Colón",
+    "rate": 8.84
   },
   {
     "currencyId": 138,
     "currencyName": "SYP",
-    "description": "Syrian Pound",
-    "apr": 2511.3
+    "remark": "Syrian Pound",
+    "rate": 2511.3
   },
   {
     "currencyId": 139,
     "currencyName": "SZL",
-    "description": "Swazi Lilangeni",
-    "apr": 15.75
+    "remark": "Swazi Lilangeni",
+    "rate": 15.75
   },
   {
     "currencyId": 140,
     "currencyName": "THB",
-    "description": "Thai Baht",
-    "apr": 34.78
+    "remark": "Thai Baht",
+    "rate": 34.78
   },
   {
     "currencyId": 141,
     "currencyName": "TJS",
-    "description": "Tajikistani Somoni",
-    "apr": 11.11
+    "remark": "Tajikistani Somoni",
+    "rate": 11.11
   },
   {
     "currencyId": 142,
     "currencyName": "TMT",
-    "description": "Turkmenistani Manat",
-    "apr": 3.5
+    "remark": "Turkmenistani Manat",
+    "rate": 3.5
   },
   {
     "currencyId": 143,
     "currencyName": "TND",
-    "description": "Tunisian Dinar",
-    "apr": 3.07
+    "remark": "Tunisian Dinar",
+    "rate": 3.07
   },
   {
     "currencyId": 144,
     "currencyName": "TOP",
-    "description": "Tongan Pa'anga",
-    "apr": 2.32
+    "remark": "Tongan Pa'anga",
+    "rate": 2.32
   },
   {
     "currencyId": 145,
     "currencyName": "TRY",
-    "description": "Turkish Lira",
-    "apr": 17.22
+    "remark": "Turkish Lira",
+    "rate": 17.22
   },
   {
     "currencyId": 146,
     "currencyName": "TTD",
-    "description": "TrincurrencyIdad and Tobago Dollar",
-    "apr": 6.86
+    "remark": "TrincurrencyIdad and Tobago Dollar",
+    "rate": 6.86
   },
   {
     "currencyId": 147,
     "currencyName": "TWD",
-    "description": "New Taiwan Dollar",
-    "apr": 29.73
+    "remark": "New Taiwan Dollar",
+    "rate": 29.73
   },
   {
     "currencyId": 148,
     "currencyName": "TZS",
-    "description": "Tanzanian Shilling",
-    "apr": 2352.7
+    "remark": "Tanzanian Shilling",
+    "rate": 2352.7
   },
   {
     "currencyId": 149,
     "currencyName": "UAH",
-    "description": "Ukrainian Hryvnia",
-    "apr": 29.84
+    "remark": "Ukrainian Hryvnia",
+    "rate": 29.84
   },
   {
     "currencyId": 150,
     "currencyName": "UGX",
-    "description": "Ugandan Shilling",
-    "apr": 3726.33
+    "remark": "Ugandan Shilling",
+    "rate": 3726.33
   },
   {
     "currencyId": 151,
     "currencyName": "USD",
-    "description": "United States Dollar",
-    "apr": 1
+    "remark": "United States Dollar",
+    "rate": 1
   },
   {
     "currencyId": 152,
     "currencyName": "UYU",
-    "description": "Uruguayan Peso",
-    "apr": 39.89
+    "remark": "Uruguayan Peso",
+    "rate": 39.89
   },
   {
     "currencyId": 153,
     "currencyName": "UZS",
-    "description": "Uzbekistan Som",
-    "apr": 11113.27
+    "remark": "Uzbekistan Som",
+    "rate": 11113.27
   },
   {
     "currencyId": 154,
     "currencyName": "VEF",
-    "description": "Venezuelan Bolívar Fuerte (Old)",
-    "apr": 6.8
+    "remark": "Venezuelan Bolívar Fuerte (Old)",
+    "rate": 6.8
   },
   {
     "currencyId": 155,
     "currencyName": "VES",
-    "description": "Venezuelan Bolívar Soberano",
-    "apr": 5.24
+    "remark": "Venezuelan Bolívar Soberano",
+    "rate": 5.24
   },
   {
     "currencyId": 156,
     "currencyName": "VND",
-    "description": "VietcurrencyNamese Dong",
-    "apr": 23198.56
+    "remark": "VietcurrencyNamese Dong",
+    "rate": 23198.56
   },
   {
     "currencyId": 157,
     "currencyName": "VUV",
-    "description": "Vanuatu Vatu",
-    "apr": 115
+    "remark": "Vanuatu Vatu",
+    "rate": 115
   },
   {
     "currencyId": 158,
     "currencyName": "WST",
-    "description": "Samoan Tala",
-    "apr": 2.62
+    "remark": "Samoan Tala",
+    "rate": 2.62
   },
   {
     "currencyId": 159,
     "currencyName": "XAF",
-    "description": "CFA Franc BEAC",
-    "apr": 624.89
+    "remark": "CFA Franc BEAC",
+    "rate": 624.89
   },
   {
     "currencyId": 160,
     "currencyName": "XAG",
-    "description": "Silver Ounce",
-    "apr": 0.05
+    "remark": "Silver Ounce",
+    "rate": 0.05
   },
   {
     "currencyId": 161,
     "currencyName": "XAU",
-    "description": "Gold Ounce",
-    "apr": 0
+    "remark": "Gold Ounce",
+    "rate": 0
   },
   {
     "currencyId": 162,
     "currencyName": "XCD",
-    "description": "East Caribbean Dollar",
-    "apr": 2.7
+    "remark": "East Caribbean Dollar",
+    "rate": 2.7
   },
   {
     "currencyId": 163,
     "currencyName": "XDR",
-    "description": "Special Drawing Rights",
-    "apr": 0.73
+    "remark": "Special Drawing Rights",
+    "rate": 0.73
   },
   {
     "currencyId": 164,
     "currencyName": "XOF",
-    "description": "CFA Franc BCEAO",
-    "apr": 624.89
+    "remark": "CFA Franc BCEAO",
+    "rate": 624.89
   },
   {
     "currencyId": 165,
     "currencyName": "XPD",
-    "description": "Palladium Ounce",
-    "apr": 0
+    "remark": "Palladium Ounce",
+    "rate": 0
   },
   {
     "currencyId": 166,
     "currencyName": "XPF",
-    "description": "CFP Franc",
-    "apr": 113.68
+    "remark": "CFP Franc",
+    "rate": 113.68
   },
   {
     "currencyId": 167,
     "currencyName": "XPT",
-    "description": "Platinum Ounce",
-    "apr": 0
+    "remark": "Platinum Ounce",
+    "rate": 0
   },
   {
     "currencyId": 168,
     "currencyName": "YER",
-    "description": "Yemeni Rial",
-    "apr": 250.13
+    "remark": "Yemeni Rial",
+    "rate": 250.13
   },
   {
     "currencyId": 169,
     "currencyName": "ZAR",
-    "description": "South African Rand",
-    "apr": 15.97
+    "remark": "South African Rand",
+    "rate": 15.97
   },
   {
     "currencyId": 170,
     "currencyName": "ZMW",
-    "description": "Zambian Kwacha",
-    "apr": 17.09
+    "remark": "Zambian Kwacha",
+    "rate": 17.09
   },
   {
     "currencyId": 171,
     "currencyName": "ZWL",
-    "description": "Zimbabwean Dollar",
-    "apr": 321.84
+    "remark": "Zimbabwean Dollar",
+    "rate": 321.84
   }
 ]

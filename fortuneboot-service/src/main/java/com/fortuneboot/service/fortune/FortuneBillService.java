@@ -20,7 +20,6 @@ import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -322,13 +321,13 @@ public class FortuneBillService {
         BigDecimal aprSourceToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(sourceCurrency))
                 .findFirst()
-                .map(CurrencyTemplateBo::getApr)
+                .map(CurrencyTemplateBo::getRate)
                 .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 美元"));
         // 获取 targetCurrency 对美元的汇率
         BigDecimal aprTargetToRMB = aprList.stream()
                 .filter(apr -> apr.getCurrencyName().equals(targetCurrency))
                 .findFirst()
-                .map(CurrencyTemplateBo::getApr)
+                .map(CurrencyTemplateBo::getRate)
                 .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "美元", targetCurrency));
         // 计算目标货币金额
         return amount.multiply(aprSourceToRMB)
