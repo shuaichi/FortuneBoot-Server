@@ -7,10 +7,13 @@ import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.FortuneAccountFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -162,5 +165,9 @@ public class FortuneAccountService {
         fortuneAccountModel.checkGroupId(groupId);
         fortuneAccountModel.setEnable(Boolean.FALSE);
         fortuneAccountModel.updateById();
+    }
+
+    public List<FortunePieVo> getTotalAssets(Long groupId) {
+        return fortuneAccountRepository.getTotalAssets(groupId);
     }
 }

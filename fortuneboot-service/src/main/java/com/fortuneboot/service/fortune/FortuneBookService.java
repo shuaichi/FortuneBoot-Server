@@ -10,7 +10,6 @@ import com.fortuneboot.domain.bo.fortune.tenplate.TagTemplateBo;
 import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
-import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
@@ -238,7 +237,4 @@ public class FortuneBookService {
         return fortuneBookRepository.getById(bookId);
     }
 
-    public BillStatisticsVo getBillStatistics(Long bookId) {
-        return fortuneBillRepository.getBillStatistics(bookId);
-    }
 }

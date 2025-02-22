@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneAccountMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +19,10 @@ import java.util.List;
  * @Date 2024/6/3 23:04
  **/
 @Service
+@AllArgsConstructor
 public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapper, FortuneAccountEntity> implements FortuneAccountRepository {
+
+    private final FortuneAccountMapper fortuneAccountMapper;
 
     @Override
     public List<FortuneAccountEntity> getEnableAccountList(Long groupId) {
@@ -33,5 +38,10 @@ public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapp
         LambdaQueryWrapper<FortuneAccountEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         queryWrapper.in(FortuneAccountEntity::getAccountId,accountIdList);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public List<FortunePieVo> getTotalAssets(Long groupId) {
+        return fortuneAccountMapper.getTotalAssets(groupId);
     }
 }

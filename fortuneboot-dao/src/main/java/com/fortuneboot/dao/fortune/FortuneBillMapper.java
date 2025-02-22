@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -33,6 +34,11 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             "    SUM(CASE WHEN bill_type = 2 THEN amount ELSE 0 END) AS expense,\n" +
             "    SUM(CASE WHEN bill_type = 1 THEN amount ELSE -amount END) AS surplus\n" +
             "FROM fortune_bill\n" +
-            "WHERE book_id = ${bookId};")
+            "WHERE book_id = ${bookId}\n" +
+            "   AND include = TRUE\n" +
+            "   AND deleted = FALSE;")
     BillStatisticsVo getBillStatistics(Long bookId);
+
+
+    FortunePieVo getIncomeInclude(Long bookId);
 }
