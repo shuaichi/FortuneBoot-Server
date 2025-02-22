@@ -10,6 +10,7 @@ import com.fortuneboot.domain.command.fortune.FortuneBookModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneBookVo;
+import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 import com.fortuneboot.service.fortune.FortuneBookService;
 import com.fortuneboot.service.fortune.FortuneGroupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -147,4 +148,12 @@ public class FortuneBookController {
         return ResponseDTO.ok();
     }
     // TODO 导出账单、复制账本
+
+    @Operation(summary = "统计支出收入")
+    @GetMapping("/{bookId}/getBillStatistics")
+    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
+    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @NotNull @Positive Long bookId) {
+        return ResponseDTO.ok(fortuneBookService.getBillStatistics(bookId));
+    }
 }
