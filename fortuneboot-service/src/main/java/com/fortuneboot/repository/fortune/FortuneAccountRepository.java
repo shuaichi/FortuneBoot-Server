@@ -2,6 +2,7 @@ package com.fortuneboot.repository.fortune;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 
 import java.util.List;
 
@@ -28,4 +29,12 @@ public interface FortuneAccountRepository extends IService<FortuneAccountEntity>
      * @return
      */
     List<FortuneAccountEntity> getByIds(List<Long> accountIdList);
+
+    /**
+     * 统计总资产
+     *
+     * @param groupId
+     * @return
+     */
+    List<FortunePieVo> getTotalAssets(Long groupId);
 }

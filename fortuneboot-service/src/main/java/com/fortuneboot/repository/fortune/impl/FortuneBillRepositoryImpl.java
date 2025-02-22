@@ -8,6 +8,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,10 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
     @Override
     public BillStatisticsVo getBillStatistics(Long bookId) {
         return fortuneBillMapper.getBillStatistics(bookId);
+    }
+
+    @Override
+    public FortunePieVo getIncomeInclude(Long bookId) {
+        return fortuneBillMapper.getIncomeInclude(bookId);
     }
 }
