@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 
 import java.util.List;
 
@@ -56,4 +57,12 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      * @return
      */
     Boolean existByAccount(Long accountId);
+
+    /**
+     * 统计收入支出
+     *
+     * @param bookId
+     * @return
+     */
+    BillStatisticsVo getBillStatistics(Long bookId);
 }

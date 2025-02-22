@@ -17,6 +17,7 @@ import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
+import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;

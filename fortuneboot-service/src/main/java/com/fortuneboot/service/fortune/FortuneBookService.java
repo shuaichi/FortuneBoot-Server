@@ -10,13 +10,13 @@ import com.fortuneboot.domain.bo.fortune.tenplate.TagTemplateBo;
 import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
+import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.*;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +58,8 @@ public class FortuneBookService {
     private final FortunePayeeRepository fortunePayeeRepository;
 
     private final FortuneBillService fortuneBillService;
-    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+
+    private final FortuneBillRepository fortuneBillRepository;
 
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
@@ -235,5 +236,9 @@ public class FortuneBookService {
 
     public FortuneBookEntity getBookById(Long bookId) {
         return fortuneBookRepository.getById(bookId);
+    }
+
+    public BillStatisticsVo getBillStatistics(Long bookId) {
+        return fortuneBillRepository.getBillStatistics(bookId);
     }
 }
