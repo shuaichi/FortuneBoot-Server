@@ -59,4 +59,12 @@ public class FortuneIncludeController {
     public ResponseDTO<List<FortunePieVo>> getTotalAssets(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalAssets(groupId));
     }
+
+    @Operation(summary = "统计总辐照")
+    @GetMapping("/{groupId}/getTotalLiabilities")
+    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
+    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
+    public ResponseDTO<List<FortunePieVo>> getTotalLiabilities(@PathVariable @NotNull @Positive Long groupId){
+        return ResponseDTO.ok(fortuneAccountService.getTotalLiabilities(groupId));
+    }
 }
