@@ -170,4 +170,8 @@ public class FortuneAccountService {
     public List<FortunePieVo> getTotalAssets(Long groupId) {
         return fortuneAccountRepository.getTotalAssets(groupId);
     }
+
+    public List<FortunePieVo> getTotalLiabilities(Long groupId) {
+        return fortuneAccountRepository.getTotalLiabilities(groupId);
+    }
 }

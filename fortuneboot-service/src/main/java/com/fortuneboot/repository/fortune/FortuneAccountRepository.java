@@ -37,4 +37,12 @@ public interface FortuneAccountRepository extends IService<FortuneAccountEntity>
      * @return
      */
     List<FortunePieVo> getTotalAssets(Long groupId);
+
+    /**
+     * 统计总负债
+     *
+     * @param groupId
+     * @return
+     */
+    List<FortunePieVo> getTotalLiabilities(Long groupId);
 }
