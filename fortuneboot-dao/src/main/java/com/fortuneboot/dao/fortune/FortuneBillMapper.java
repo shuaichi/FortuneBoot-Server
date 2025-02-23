@@ -7,9 +7,12 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * 账单流水Mapper
@@ -40,5 +43,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
     BillStatisticsVo getBillStatistics(Long bookId);
 
 
-    FortunePieVo getIncomeInclude(Long bookId);
+    List<FortuneLineVo> getExpenseTrends(Long bookId);
+
+    List<FortuneLineVo> getIncomeTrends(Long bookId);
 }

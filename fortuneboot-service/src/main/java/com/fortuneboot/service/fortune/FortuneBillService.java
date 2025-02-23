@@ -18,6 +18,7 @@ import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
@@ -451,7 +452,7 @@ public class FortuneBillService {
         return fortuneBillRepository.getBillStatistics(bookId);
     }
 
-    public FortunePieVo getIncomeInclude(Long bookId) {
-        return fortuneBillRepository.getIncomeInclude(bookId);
+    public List<FortuneLineVo> getExpenseTrends(Long bookId) {
+        return fortuneBillRepository.getExpenseTrends(bookId);
     }
 }
