@@ -5,13 +5,13 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 /**
- * 饼图
+ * 折线图
  *
- * @author zhangchi118
- * @date 2025/2/22 22:14
+ * @author work.chi.zhang@gmail.com
+ * @date 2025/2/23 15:48
  **/
 @Data
-public class FortunePieVo {
+public class FortuneLineVo {
 
     /**
      * 值
@@ -22,9 +22,4 @@ public class FortunePieVo {
      * 名称
      */
     private String name;
-
-    /**
-     * 百分比
-     */
-    private BigDecimal percent;
 }

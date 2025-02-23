@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 
 import java.util.List;
@@ -73,5 +74,13 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      * @param bookId
      * @return
      */
-    FortunePieVo getIncomeInclude(Long bookId);
+    List<FortuneLineVo> getExpenseTrends(Long bookId);
+
+    /**
+     * 统计收入趋势
+     *
+     * @param groupId
+     * @return
+     */
+    List<FortuneLineVo> getIncomeTrends(Long groupId);
 }

@@ -4,6 +4,7 @@ import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -39,32 +40,41 @@ public class FortuneIncludeController {
     @Operation(summary = "统计支出收入")
     @GetMapping("/{bookId}/getBillStatistics")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.groupVisitorPermission(#bookId)")
     public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @NotNull @Positive Long bookId) {
         return ResponseDTO.ok(fortuneBillService.getBillStatistics(bookId));
-    }
-
-    @Operation(summary = "统计支出收入")
-    @GetMapping("/{bookId}/getIncomeInclude")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
-    public ResponseDTO<FortunePieVo> getIncomeInclude(@PathVariable @NotNull @Positive Long bookId) {
-        return ResponseDTO.ok(fortuneBillService.getIncomeInclude(bookId));
     }
 
     @Operation(summary = "统计总资产")
     @GetMapping("/{groupId}/getTotalAssets")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
+    @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<List<FortunePieVo>> getTotalAssets(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalAssets(groupId));
     }
 
-    @Operation(summary = "统计总辐照")
+    @Operation(summary = "统计总负债")
     @GetMapping("/{groupId}/getTotalLiabilities")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.groupActorPermission(#groupId)")
+    @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<List<FortunePieVo>> getTotalLiabilities(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalLiabilities(groupId));
+    }
+
+
+    @Operation(summary = "统计收入折线图")
+    @GetMapping("/{bookId}/getIncomeTrends")
+    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<List<FortuneLineVo>> getIncomeTrends(@PathVariable @NotNull @Positive Long bookId){
+        return ResponseDTO.ok(fortuneAccountService.getIncomeTrends(bookId));
+    }
+
+    @Operation(summary = "统计支出折线图")
+    @GetMapping("/{bookId}/getIncomeInclude")
+    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@PathVariable @NotNull @Positive Long bookId) {
+        return ResponseDTO.ok(fortuneBillService.getExpenseTrends(bookId));
     }
 }
