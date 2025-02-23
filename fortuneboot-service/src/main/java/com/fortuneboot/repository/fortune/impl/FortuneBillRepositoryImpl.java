@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -67,11 +68,11 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
 
     @Override
     public List<FortuneLineVo> getExpenseTrends(Long bookId) {
-        return fortuneBillMapper.getExpenseTrends(bookId,1,LocalDateTimeUtil.now());
+        return fortuneBillMapper.getBillTrends(bookId, 1, LocalDateTimeUtil.now(),BillTypeEnum.EXPENSE.getValue());
     }
 
     @Override
     public List<FortuneLineVo> getIncomeTrends(Long bookId) {
-        return fortuneBillMapper.getIncomeTrends(bookId);
+        return fortuneBillMapper.getBillTrends(bookId, 1, LocalDateTimeUtil.now(), BillTypeEnum.INCOME.getValue());
     }
 }

@@ -71,7 +71,7 @@ public class FortuneIncludeController {
     }
 
     @Operation(summary = "统计支出折线图")
-    @GetMapping("/{bookId}/getIncomeInclude")
+    @GetMapping("/{bookId}/getExpenseTrends")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@PathVariable @NotNull @Positive Long bookId) {
