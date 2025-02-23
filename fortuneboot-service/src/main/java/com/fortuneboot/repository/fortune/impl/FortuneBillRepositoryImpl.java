@@ -1,5 +1,6 @@
 package com.fortuneboot.repository.fortune.impl;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,7 +10,6 @@ import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
-import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -67,7 +67,7 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
 
     @Override
     public List<FortuneLineVo> getExpenseTrends(Long bookId) {
-        return fortuneBillMapper.getExpenseTrends(bookId);
+        return fortuneBillMapper.getExpenseTrends(bookId,1,LocalDateTimeUtil.now());
     }
 
     @Override
