@@ -46,9 +46,9 @@ public interface FortuneAccountMapper extends BaseMapper<FortuneAccountEntity> {
 
     @Select("""
             SELECT
-                SUM(IF(balance > 0, balance, 0)) AS totalAssets,
-                ABS(SUM(IF(balance < 0, balance, 0))) AS totalLiabilities,
-                SUM(IF(balance > 0, balance, 0)) + SUM(IF(balance < 0, balance, 0)) AS netAssets
+                COALESCE(SUM(IF(balance > 0, balance, 0)), 0) AS totalAssets,
+                COALESCE(ABS(SUM(IF(balance < 0, balance, 0))), 0) AS totalLiabilities,
+                COALESCE(SUM(IF(balance > 0, balance, 0)) + SUM(IF(balance < 0, balance, 0)), 0) AS netAssets
             FROM
                 fortune_account
             WHERE deleted = FALSE
