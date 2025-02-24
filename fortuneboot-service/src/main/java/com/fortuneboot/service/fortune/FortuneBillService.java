@@ -23,8 +23,6 @@ import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,9 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 账单service
@@ -455,10 +459,66 @@ public class FortuneBillService {
     }
 
     public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {
-        return fortuneBillRepository.getExpenseTrends(billTrendsQuery);
+        List<FortuneLineVo> originData = fortuneBillRepository.getExpenseTrends(billTrendsQuery);
+        return this.completeTimeSeries(originData, billTrendsQuery.getTimeGranularity(), billTrendsQuery.getTimePoint());
     }
 
     public List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery) {
-        return fortuneBillRepository.getIncomeTrends(billTrendsQuery);
+        List<FortuneLineVo> originData = fortuneBillRepository.getIncomeTrends(billTrendsQuery);
+        return this.completeTimeSeries(originData, billTrendsQuery.getTimeGranularity(), billTrendsQuery.getTimePoint());
+    }
+
+    private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+    private final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
+
+    private List<FortuneLineVo> completeTimeSeries(List<FortuneLineVo> originData, int timeGranularity, LocalDateTime baseTime) {
+        // 参数校验
+        if (originData == null) originData = new ArrayList<>();
+        if (baseTime == null) baseTime = LocalDateTime.now();
+
+        // 根据粒度类型生成对应时间序列
+        List<String> timeKeys = generateTimeKeys(timeGranularity, baseTime, originData);
+
+        // 构建数据映射表
+        Map<String, FortuneLineVo> dataMap = originData.stream().filter(vo -> vo.getName() != null).collect(Collectors.toMap(FortuneLineVo::getName, Function.identity()));
+
+        // 补全缺失数据
+        return timeKeys.stream().map(key -> dataMap.containsKey(key) ? dataMap.get(key) : new FortuneLineVo(key, BigDecimal.ZERO)).toList();
+    }
+
+    private List<String> generateTimeKeys(int granularity, LocalDateTime baseTime, List<FortuneLineVo> data) {
+        LocalDate baseDate = baseTime.toLocalDate();
+
+        switch (granularity) {
+            case 1: // 过去7天（包含当天）
+                return IntStream.rangeClosed(0, 6).mapToObj(offset -> baseDate.minusDays(6 - offset)).map(DAY_FORMATTER::format).toList();
+            case 2: // 过去30天
+                return IntStream.rangeClosed(0, 29).mapToObj(offset -> baseDate.minusDays(29 - offset)).map(DAY_FORMATTER::format).toList();
+            case 3: { // 过去12个月（自然月）
+                YearMonth currentMonth = YearMonth.from(baseTime);
+                return IntStream.rangeClosed(0, 11).mapToObj(i -> currentMonth.minusMonths(11 - i)).map(month -> month.format(MONTH_FORMATTER)).toList();
+            }
+            case 4: { // 跨年补全
+                int currentYear = Year.now().getValue();
+                int minYear = data.stream()
+                        .filter(vo -> vo.getName() != null)
+                        .mapToInt(vo -> {
+                            try {
+                                return Year.parse(vo.getName(), YEAR_FORMATTER).getValue();
+                            } catch (Exception e) {
+                                // 无效数据按当前年处理
+                                return currentYear;
+                            }
+                        })
+                        .min()
+                        // 无数据时使用当前年
+                        .orElse(currentYear);
+                return IntStream.rangeClosed(minYear, currentYear).mapToObj(year -> Year.of(year).format(YEAR_FORMATTER)).toList();
+            }
+
+            default:
+                throw new IllegalArgumentException("Invalid time granularity: " + granularity);
+        }
     }
 }

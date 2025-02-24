@@ -1,6 +1,8 @@
 package com.fortuneboot.domain.vo.fortune.include;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -11,15 +13,17 @@ import java.math.BigDecimal;
  * @date 2025/2/23 15:48
  **/
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FortuneLineVo {
-
-    /**
-     * 值
-     */
-    private BigDecimal value;
 
     /**
      * 名称
      */
     private String name;
+
+    /**
+     * 值
+     */
+    private BigDecimal value;
 }
