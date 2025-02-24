@@ -3,7 +3,8 @@ package com.fortuneboot.controller.fortune;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
-import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.service.fortune.FortuneAccountService;
@@ -76,5 +77,13 @@ public class FortuneIncludeController {
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@PathVariable @NotNull @Positive Long bookId) {
         return ResponseDTO.ok(fortuneBillService.getExpenseTrends(bookId));
+    }
+
+    @Operation(summary = "")
+    @GetMapping("/{groupId}/getFortuneAssetsLiabilities")
+    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
+    @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
+    public ResponseDTO<FortuneAssetsLiabilitiesVo> getFortuneAssetsLiabilities(@PathVariable @NotNull @Positive Long groupId){
+        return ResponseDTO.ok(fortuneAccountService.getFortuneAssetsLiabilities(groupId));
     }
 }

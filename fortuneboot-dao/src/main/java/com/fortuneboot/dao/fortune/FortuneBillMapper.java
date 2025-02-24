@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

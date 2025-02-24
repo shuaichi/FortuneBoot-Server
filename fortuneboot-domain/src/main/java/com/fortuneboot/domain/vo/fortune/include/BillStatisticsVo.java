@@ -1,4 +1,4 @@
-package com.fortuneboot.domain.vo.fortune.bill;
+package com.fortuneboot.domain.vo.fortune.include;
 
 import lombok.Data;
 

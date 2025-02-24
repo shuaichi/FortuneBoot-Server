@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneAccountMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
+import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import lombok.AllArgsConstructor;
@@ -48,5 +49,10 @@ public class FortuneAccountRepositoryImpl extends ServiceImpl<FortuneAccountMapp
     @Override
     public List<FortunePieVo> getTotalLiabilities(Long groupId) {
         return fortuneAccountMapper.getTotalLiabilities(groupId);
+    }
+
+    @Override
+    public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
+        return fortuneAccountMapper.getFortuneAssetsLiabilities(groupId);
     }
 }

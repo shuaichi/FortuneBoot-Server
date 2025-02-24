@@ -9,7 +9,7 @@ import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.AllArgsConstructor;
