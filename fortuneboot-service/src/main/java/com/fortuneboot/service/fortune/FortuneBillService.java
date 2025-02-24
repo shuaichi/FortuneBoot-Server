@@ -18,10 +18,13 @@ import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillTrendsQuery;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -451,7 +454,11 @@ public class FortuneBillService {
         return fortuneBillRepository.getBillStatistics(bookId);
     }
 
-    public List<FortuneLineVo> getExpenseTrends(Long bookId) {
-        return fortuneBillRepository.getExpenseTrends(bookId);
+    public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {
+        return fortuneBillRepository.getExpenseTrends(billTrendsQuery);
+    }
+
+    public List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery) {
+        return fortuneBillRepository.getIncomeTrends(billTrendsQuery);
     }
 }

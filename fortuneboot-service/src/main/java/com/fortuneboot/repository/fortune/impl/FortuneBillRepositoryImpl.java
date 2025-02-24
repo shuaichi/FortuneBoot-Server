@@ -10,6 +10,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillTrendsQuery;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.AllArgsConstructor;
@@ -67,12 +68,12 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
     }
 
     @Override
-    public List<FortuneLineVo> getExpenseTrends(Long bookId) {
-        return fortuneBillMapper.getBillTrends(bookId, 1, LocalDateTimeUtil.now(),BillTypeEnum.EXPENSE.getValue());
+    public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {
+        return fortuneBillMapper.getBillTrends(billTrendsQuery);
     }
 
     @Override
-    public List<FortuneLineVo> getIncomeTrends(Long bookId) {
-        return fortuneBillMapper.getBillTrends(bookId, 1, LocalDateTimeUtil.now(), BillTypeEnum.INCOME.getValue());
+    public List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery) {
+        return fortuneBillMapper.getBillTrends(billTrendsQuery);
     }
 }

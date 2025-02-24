@@ -2,11 +2,9 @@ package com.fortuneboot.controller.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
-import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
-import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
-import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
-import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
+import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,19 +63,21 @@ public class FortuneIncludeController {
 
 
     @Operation(summary = "统计收入折线图")
-    @GetMapping("/{bookId}/getIncomeTrends")
+    @GetMapping("/getIncomeTrends")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<List<FortuneLineVo>> getIncomeTrends(@PathVariable @NotNull @Positive Long bookId){
-        return ResponseDTO.ok(fortuneAccountService.getIncomeTrends(bookId));
+    @PreAuthorize("@fortune.bookVisitorPermission(#billTrendsQuery.bookId)")
+    public ResponseDTO<List<FortuneLineVo>> getIncomeTrends(@Param("billTrendsQuery") BillTrendsQuery billTrendsQuery){
+        billTrendsQuery.setBillType(BillTypeEnum.INCOME.getValue());
+        return ResponseDTO.ok(fortuneBillService.getIncomeTrends(billTrendsQuery));
     }
 
     @Operation(summary = "统计支出折线图")
-    @GetMapping("/{bookId}/getExpenseTrends")
+    @GetMapping("/getExpenseTrends")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
-    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@PathVariable @NotNull @Positive Long bookId) {
-        return ResponseDTO.ok(fortuneBillService.getExpenseTrends(bookId));
+    @PreAuthorize("@fortune.bookVisitorPermission(#billTrendsQuery.bookId)")
+    public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@Param("billTrendsQuery") BillTrendsQuery billTrendsQuery){
+        billTrendsQuery.setBillType(BillTypeEnum.EXPENSE.getValue());
+        return ResponseDTO.ok(fortuneBillService.getExpenseTrends(billTrendsQuery));
     }
 
     @Operation(summary = "")

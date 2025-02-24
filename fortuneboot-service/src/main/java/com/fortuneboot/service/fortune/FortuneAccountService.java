@@ -177,10 +177,6 @@ public class FortuneAccountService {
         return fortuneAccountRepository.getTotalLiabilities(groupId);
     }
 
-    public List<FortuneLineVo> getIncomeTrends(Long bookId) {
-        return fortuneBillRepository.getIncomeTrends(bookId);
-    }
-
     public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
         return fortuneAccountRepository.getFortuneAssetsLiabilities(groupId);
     }
