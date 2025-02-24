@@ -7,6 +7,7 @@ import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
+import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.FortuneAccountFactory;
@@ -178,5 +179,9 @@ public class FortuneAccountService {
 
     public List<FortuneLineVo> getIncomeTrends(Long bookId) {
         return fortuneBillRepository.getIncomeTrends(bookId);
+    }
+
+    public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
+        return fortuneAccountRepository.getFortuneAssetsLiabilities(groupId);
     }
 }

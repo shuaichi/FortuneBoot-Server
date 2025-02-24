@@ -5,9 +5,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.bill.BillStatisticsVo;
+import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
-import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 
 import java.util.List;
 
