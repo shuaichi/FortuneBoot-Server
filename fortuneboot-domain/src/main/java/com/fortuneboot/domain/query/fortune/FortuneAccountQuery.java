@@ -82,6 +82,11 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
     private Boolean canTransferIn;
 
     /**
+     * 是否启用
+     */
+    private Boolean enable;
+
+    /**
      * 回收站
      */
     private Boolean recycleBin;
@@ -101,7 +106,8 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
                 .eq(Objects.nonNull(canExpense), FortuneAccountEntity::getCanExpense, canExpense)
                 .eq(Objects.nonNull(canIncome), FortuneAccountEntity::getCanIncome, canIncome)
                 .eq(Objects.nonNull(canTransferOut), FortuneAccountEntity::getCanTransferOut, canTransferOut)
-                .eq(Objects.nonNull(canTransferIn), FortuneAccountEntity::getCanTransferIn, canTransferIn);
+                .eq(Objects.nonNull(canTransferIn), FortuneAccountEntity::getCanTransferIn, canTransferIn)
+                .eq(Objects.nonNull(enable), FortuneAccountEntity::getEnable, enable);
         return lambdaQueryWrapper;
     }
 }
