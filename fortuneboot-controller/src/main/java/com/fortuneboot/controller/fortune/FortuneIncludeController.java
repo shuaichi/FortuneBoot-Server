@@ -39,7 +39,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计支出收入")
     @GetMapping("/{bookId}/getBillStatistics")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.groupVisitorPermission(#bookId)")
     public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @NotNull @Positive Long bookId) {
         return ResponseDTO.ok(fortuneBillService.getBillStatistics(bookId));
@@ -47,7 +46,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计总资产")
     @GetMapping("/{groupId}/getTotalAssets")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<List<FortunePieVo>> getTotalAssets(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalAssets(groupId));
@@ -55,7 +53,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计总负债")
     @GetMapping("/{groupId}/getTotalLiabilities")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<List<FortunePieVo>> getTotalLiabilities(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalLiabilities(groupId));
@@ -64,7 +61,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计收入折线图")
     @GetMapping("/getIncomeTrends")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.bookVisitorPermission(#billTrendsQuery.bookId)")
     public ResponseDTO<List<FortuneLineVo>> getIncomeTrends(@Param("billTrendsQuery") BillTrendsQuery billTrendsQuery){
         billTrendsQuery.setBillType(BillTypeEnum.INCOME.getValue());
@@ -73,7 +69,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计支出折线图")
     @GetMapping("/getExpenseTrends")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.bookVisitorPermission(#billTrendsQuery.bookId)")
     public ResponseDTO<List<FortuneLineVo>> getExpenseTrends(@Param("billTrendsQuery") BillTrendsQuery billTrendsQuery){
         billTrendsQuery.setBillType(BillTypeEnum.EXPENSE.getValue());
@@ -82,7 +77,6 @@ public class FortuneIncludeController {
 
     @Operation(summary = "")
     @GetMapping("/{groupId}/getFortuneAssetsLiabilities")
-    @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
     public ResponseDTO<FortuneAssetsLiabilitiesVo> getFortuneAssetsLiabilities(@PathVariable @NotNull @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getFortuneAssetsLiabilities(groupId));
