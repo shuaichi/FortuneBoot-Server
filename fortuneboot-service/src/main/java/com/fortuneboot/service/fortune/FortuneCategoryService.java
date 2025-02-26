@@ -226,7 +226,10 @@ public class FortuneCategoryService {
             case INCOME, EXPENSE -> {
                 return fortuneCategoryRepository.getEnableCategoryList(bookId, billType);
             }
-            case null, default -> {
+            case null -> {
+                return fortuneCategoryRepository.getEnableCategoryList(bookId, null);
+            }
+            default -> {
                 return Collections.emptyList();
             }
         }

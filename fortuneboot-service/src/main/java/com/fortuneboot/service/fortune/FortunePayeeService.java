@@ -44,7 +44,10 @@ public class FortunePayeeService {
             case INCOME, EXPENSE -> {
                 return fortunePayeeRepository.getEnablePayeeList(bookId, billType);
             }
-            case null, default -> {
+            case null -> {
+                return fortunePayeeRepository.getEnablePayeeList(bookId, null);
+            }
+            default -> {
                 return Collections.emptyList();
             }
         }

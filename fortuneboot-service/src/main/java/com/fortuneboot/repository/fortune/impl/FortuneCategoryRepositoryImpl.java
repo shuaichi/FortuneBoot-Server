@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +40,7 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
         lambdaQueryWrapper.eq(FortuneCategoryEntity::getBookId, bookId)
                 .eq(FortuneCategoryEntity::getEnable, Boolean.TRUE)
                 .eq(FortuneCategoryEntity::getRecycleBin,Boolean.FALSE)
-                .eq(FortuneCategoryEntity::getCategoryType,billType)
+                .eq(Objects.nonNull(billType),FortuneCategoryEntity::getCategoryType,billType)
                 .orderByAsc(FortuneCategoryEntity::getSort);
         return this.list(lambdaQueryWrapper);
     }

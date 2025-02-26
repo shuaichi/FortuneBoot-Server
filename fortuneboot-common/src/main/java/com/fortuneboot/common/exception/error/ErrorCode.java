@@ -261,6 +261,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_TRANSFER_PARAMETER_ERROR(27004, "转账入参有误", "Business.BILL_TRANSFER_PARAMETER_ERROR"),
 
+        BILL_TYPE_ILLEGAL(27005,"无效的账单类型：{}", "Business.BILL_TYPE_ILLEGAL"),
+
         // ---------------------------------- RATE -----------------------------------------------
         APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
 
