@@ -60,17 +60,25 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
 
     @Override
     public LambdaQueryWrapper<FortuneTagEntity> addQueryCondition() {
+        return this.addQueryCondition(Boolean.FALSE);
+    }
+
+    public LambdaQueryWrapper<FortuneTagEntity> addQueryCondition(Boolean conditionQuery) {
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.eq(FortuneTagEntity::getBookId, bookId)
                 .eq(FortuneTagEntity::getRecycleBin, recycleBin)
-                .eq(Objects.nonNull(canExpense), FortuneTagEntity::getCanExpense, canExpense)
-                .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canExpense)
-                .eq(Objects.nonNull(canTransfer), FortuneTagEntity::getCanTransfer, canTransfer)
-                .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
-                .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName)
                 .orderByAsc(FortuneTagEntity::getSort);
+        if (conditionQuery) {
+            queryWrapper.eq(Objects.nonNull(canExpense), FortuneTagEntity::getCanExpense, canExpense)
+                    .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canExpense)
+                    .eq(Objects.nonNull(canTransfer), FortuneTagEntity::getCanTransfer, canTransfer)
+                    .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
+                    .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName);
+        }
         return queryWrapper;
     }
 
-    //public Boolean isNeedDi
+    public Boolean conditionQuery() {
+        return StringUtils.isNotBlank(tagName) | Objects.nonNull(canExpense) | Objects.nonNull(canIncome) | Objects.nonNull(canTransfer) | Objects.nonNull(enable);
+    }
 }
