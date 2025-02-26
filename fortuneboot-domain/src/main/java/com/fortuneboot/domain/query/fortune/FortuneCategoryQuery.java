@@ -41,6 +41,7 @@ public class FortuneCategoryQuery extends AbstractLambdaPageQuery<FortuneCategor
 
     /**
      * 分类类型
+     * @see com.fortuneboot.common.enums.fortune.CategoryTypeEnum
      */
     private Integer categoryType;
 
@@ -52,13 +53,23 @@ public class FortuneCategoryQuery extends AbstractLambdaPageQuery<FortuneCategor
 
     @Override
     public LambdaQueryWrapper<FortuneCategoryEntity> addQueryCondition() {
+        return this.addQueryCondition(Boolean.FALSE);
+    }
+
+    public LambdaQueryWrapper<FortuneCategoryEntity> addQueryCondition(Boolean conditionQuery) {
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.eq(FortuneCategoryEntity::getBookId, bookId)
                 .eq( FortuneCategoryEntity::getRecycleBin, recycleBin)
                 .eq(Objects.nonNull(categoryType), FortuneCategoryEntity::getCategoryType, categoryType)
                 .eq(Objects.nonNull(enable), FortuneCategoryEntity::getEnable, enable)
-                .like(StringUtils.isNotBlank(categoryName), FortuneCategoryEntity::getCategoryName, categoryName)
                 .orderByAsc(FortuneCategoryEntity::getSort);
+        if (conditionQuery){
+            queryWrapper.like(StringUtils.isNotBlank(categoryName), FortuneCategoryEntity::getCategoryName, categoryName);
+        }
         return queryWrapper;
+    }
+
+    public Boolean conditionQuery() {
+        return StringUtils.isNotBlank(categoryName);
     }
 }
