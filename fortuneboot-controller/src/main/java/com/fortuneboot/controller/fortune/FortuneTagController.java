@@ -63,9 +63,9 @@ public class FortuneTagController {
     }
 
     @Operation(summary = "查询启用的标签")
-    @GetMapping("/{bookId}/{billType}/getEnableList")
+    @GetMapping("/{bookId}/getEnableList")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<List<FortuneTagVo>> getEnableList(@PathVariable Long bookId, @PathVariable Integer billType) {
+    public ResponseDTO<List<FortuneTagVo>> getEnableList(@PathVariable Long bookId, @RequestParam(required = false) Integer billType) {
         List<FortuneTagEntity> list = fortuneTagService.getEnableList(bookId, billType);
         List<FortuneTagVo> result = list.stream().map(FortuneTagVo::new).toList();
         List<FortuneTagVo> treeNodes = TreeUtil.buildForest(result, FortuneTagVo.class);

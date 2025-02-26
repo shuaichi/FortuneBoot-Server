@@ -36,6 +36,6 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
         return Arrays.stream(values())
                 .filter(e -> Objects.equals(e.value, value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("无效的账单类型"));
+                .orElse(null);
     }
 }

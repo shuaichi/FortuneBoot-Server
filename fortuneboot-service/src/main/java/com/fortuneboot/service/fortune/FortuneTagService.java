@@ -239,7 +239,10 @@ public class FortuneTagService {
             case EXPENSE, INCOME, TRANSFER -> {
                 return fortuneTagRepository.getEnableTagList(bookId, billType);
             }
-            case null, default -> {
+            case null -> {
+                return fortuneTagRepository.getEnableTagList(bookId, null);
+            }
+            default -> {
                 return Collections.emptyList();
             }
         }

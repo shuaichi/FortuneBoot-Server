@@ -45,9 +45,9 @@ public class FortunePayeeController {
     }
 
     @Operation(summary = "查询启用的交易对象")
-    @GetMapping("/{bookId}/{billType}/getEnableList")
+    @GetMapping("/{bookId}/getEnableList")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<List<FortunePayeeVo>> getEnableList(@PathVariable Long bookId, @PathVariable Integer billType) {
+    public ResponseDTO<List<FortunePayeeVo>> getEnableList(@PathVariable Long bookId, @RequestParam(required = false) Integer billType) {
         List<FortunePayeeEntity> list = fortunePayeeService.getEnableList(bookId, billType);
         List<FortunePayeeVo> result = list.stream().map(FortunePayeeVo::new).toList();
         return ResponseDTO.ok(result);

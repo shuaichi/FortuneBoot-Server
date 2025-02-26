@@ -274,7 +274,7 @@ public class FortuneBillService {
                 break;
             case null, default:
                 log.warn("Unsupported bill type: {}", billType);
-                break;
+                throw new ApiException(ErrorCode.Business.BILL_TYPE_ILLEGAL,fortuneBillModel.getBillType());
         }
 
         // 更新源账户信息
