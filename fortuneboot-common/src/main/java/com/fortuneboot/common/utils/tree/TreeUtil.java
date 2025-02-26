@@ -15,25 +15,25 @@ public class TreeUtil {
 
     private static final Long ROOT_PARENT_ID = -1L;
 
-    public static <T extends AbstractTreeNode> List<T> buildForest(List<T> dataList, Class<T> clazz) {
+    public static <T extends AbstractTreeNode> List<T> buildForest(Collection<T> data, Class<T> clazz) {
         // 参数校验
         if (Objects.isNull(clazz)) {
             throw new IllegalArgumentException("clazz must not be null");
         }
-        if (Objects.isNull(dataList)) {
+        if (Objects.isNull(data)) {
             return Collections.emptyList();
         }
         Map<Long, AbstractTreeNode> nodeMap = new HashMap<>();
         List<T> roots = new ArrayList<>();
         // 构建节点映射并检查重复ID
-        for (AbstractTreeNode item : dataList) {
+        for (AbstractTreeNode item : data) {
             if (nodeMap.containsKey(item.getId())) {
                 throw new ApiException(ErrorCode.Business.COMMON_TREE_DUPLICATE_NODE_ID, item.getId());
             }
             nodeMap.put(item.getId(), item);
         }
         // 构建树结构
-        for (AbstractTreeNode node : dataList) {
+        for (AbstractTreeNode node : data) {
             Long parentId = node.getParentId();
             if (Objects.equals(parentId, ROOT_PARENT_ID)) {
                 roots.add(clazz.cast(node));
