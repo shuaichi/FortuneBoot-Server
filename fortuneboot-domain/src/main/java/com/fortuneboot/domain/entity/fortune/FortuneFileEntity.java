@@ -30,7 +30,7 @@ public class FortuneFileEntity extends BaseEntity<FortuneFileEntity> {
 
     @Schema(description = "文件数据")
     @TableField("file_data")
-    private Byte[] fileData;
+    private byte[] fileData;
 
     @Schema(description = "文件大小")
     @TableField("size")
@@ -40,11 +40,7 @@ public class FortuneFileEntity extends BaseEntity<FortuneFileEntity> {
     @TableField("original_name")
     private String originalName;
 
-    @Schema(description = "用户ID")
-    @TableField("user_id")
-    private Long userId;
-
-    @Schema(description = "账单流水ID")
+    @Schema(description = "账单ID")
     @TableField("bill_id")
     private Long billId;
 }
