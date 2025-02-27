@@ -47,7 +47,7 @@ public class FortuneBillController {
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.ADD)
     @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@RequestPart("data") @Valid FortuneBillAddCommand addCommand,
-                                 @RequestPart("files") List<MultipartFile> fileList) {
+                                 @RequestPart(name = "files",required = false) List<MultipartFile> fileList) {
         addCommand.setFileList(fileList);
         fortuneBillService.add(addCommand);
         return ResponseDTO.ok();
@@ -57,7 +57,9 @@ public class FortuneBillController {
     @PutMapping("/modify")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBillModifyCommand modifyCommand) {
+    public ResponseDTO<Void> modify(@RequestPart("data") @Valid FortuneBillModifyCommand modifyCommand ,
+                                    @RequestPart(name = "files",required = false) List<MultipartFile> fileList) {
+        modifyCommand.setFileList(fileList);
         fortuneBillService.modify(modifyCommand);
         return ResponseDTO.ok();
     }

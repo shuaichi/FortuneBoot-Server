@@ -82,6 +82,7 @@ public class FortuneBillService {
     private final FortuneTagRepository fortuneTagRepository;
 
     private final FortuneFileService fortuneFileService;
+    private final FortuneFileRepository fortuneFileRepository;
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
@@ -250,6 +251,7 @@ public class FortuneBillService {
         // 删除分类
         fortuneCategoryRelationRepository.removeByBillId(billId);
         fortuneBillModel.deleteById();
+        fortuneFileRepository.removeByBillId(billId);
     }
 
     /**

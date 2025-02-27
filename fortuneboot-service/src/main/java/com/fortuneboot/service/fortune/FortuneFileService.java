@@ -1,9 +1,11 @@
 package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.fortuneboot.domain.entity.fortune.FortuneFileEntity;
 import com.fortuneboot.factory.fortune.FortuneFileFactory;
 import com.fortuneboot.factory.fortune.model.FortuneFileModel;
 import com.fortuneboot.repository.fortune.FortuneFileRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,4 +34,5 @@ public class FortuneFileService {
         List<FortuneFileModel> modelList = fortuneFileFactory.createByMultipartFileList(billId, fileList);
         modelList.forEach(Model::insert);
     }
+
 }
