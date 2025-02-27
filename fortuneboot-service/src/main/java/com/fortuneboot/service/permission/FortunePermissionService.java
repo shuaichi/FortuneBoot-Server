@@ -2,10 +2,12 @@ package com.fortuneboot.service.permission;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
+import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
@@ -31,6 +33,7 @@ public class FortunePermissionService {
     private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
 
     private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBillRepository fortuneBillRepository;
 
     /**
      * 验证是否是登录用户
@@ -127,5 +130,13 @@ public class FortunePermissionService {
             return Boolean.FALSE;
         }
         return this.groupVisitorPermission(book.getGroupId());
+    }
+
+    public Boolean billVisitorPermission(@NotNull(message = "账单id不能为空") @Positive(message = "账单必须是正数") Long billId) {
+        FortuneBillEntity billEntity = fortuneBillRepository.getById(billId);
+        if (ObjectUtil.isEmpty(billEntity)) {
+            return Boolean.FALSE;
+        }
+        return this.bookVisitorPermission(billEntity.getBookId());
     }
 }
