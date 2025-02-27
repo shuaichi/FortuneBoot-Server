@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class FortuneBillController {
     @Operation(summary = "分页查询账单")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
-    public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid FortuneBillQuery query){
+    public ResponseDTO<PageDTO<FortuneBillVo>> getPage(@Valid FortuneBillQuery query) {
         PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
         List<FortuneBillVo> records = page.getRows().stream().map(FortuneBillVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
@@ -45,7 +46,9 @@ public class FortuneBillController {
     @PostMapping("/add")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.ADD)
     @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
-    public ResponseDTO<Void> add(@Valid @RequestBody FortuneBillAddCommand addCommand){
+    public ResponseDTO<Void> add(@RequestPart("data") @Valid FortuneBillAddCommand addCommand,
+                                 @RequestPart("files") List<MultipartFile> fileList) {
+        addCommand.setFileList(fileList);
         fortuneBillService.add(addCommand);
         return ResponseDTO.ok();
     }
@@ -54,7 +57,7 @@ public class FortuneBillController {
     @PutMapping("/modify")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBillModifyCommand modifyCommand){
+    public ResponseDTO<Void> modify(@Valid @RequestBody FortuneBillModifyCommand modifyCommand) {
         fortuneBillService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
@@ -63,8 +66,8 @@ public class FortuneBillController {
     @DeleteMapping("/{bookId}/{billId}/remove")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> remove(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
-        fortuneBillService.remove(bookId,billId);
+    public ResponseDTO<Void> remove(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
+        fortuneBillService.remove(bookId, billId);
         return ResponseDTO.ok();
     }
 
@@ -72,8 +75,8 @@ public class FortuneBillController {
     @PatchMapping("/{bookId}/{billId}/confirm")
     @AccessLog(title = "好记-账单管理-确认账单", businessType = BusinessTypeEnum.OTHER)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> confirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
-        fortuneBillService.confirm(bookId,billId);
+    public ResponseDTO<Void> confirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
+        fortuneBillService.confirm(bookId, billId);
         return ResponseDTO.ok();
     }
 
@@ -81,8 +84,8 @@ public class FortuneBillController {
     @PatchMapping("/{bookId}/{billId}/unConfirm")
     @AccessLog(title = "好记-账单管理-取消确认账单", businessType = BusinessTypeEnum.OTHER)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> unConfirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
-        fortuneBillService.unConfirm(bookId,billId);
+    public ResponseDTO<Void> unConfirm(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
+        fortuneBillService.unConfirm(bookId, billId);
         return ResponseDTO.ok();
     }
 
@@ -90,8 +93,8 @@ public class FortuneBillController {
     @PatchMapping("/{bookId}/{billId}/include")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.INCLUDE)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> include(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
-        fortuneBillService.include(bookId,billId);
+    public ResponseDTO<Void> include(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
+        fortuneBillService.include(bookId, billId);
         return ResponseDTO.ok();
     }
 
@@ -99,8 +102,8 @@ public class FortuneBillController {
     @PatchMapping("/{bookId}/{billId}/exclude")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.EXCLUDE)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> exclude(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId){
-        fortuneBillService.exclude(bookId,billId);
+    public ResponseDTO<Void> exclude(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
+        fortuneBillService.exclude(bookId, billId);
         return ResponseDTO.ok();
     }
 }

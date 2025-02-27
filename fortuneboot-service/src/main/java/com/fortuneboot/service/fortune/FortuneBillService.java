@@ -81,6 +81,8 @@ public class FortuneBillService {
 
     private final FortuneTagRepository fortuneTagRepository;
 
+    private final FortuneFileService fortuneFileService;
+
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
         List<FortuneBillBo> list = page.getRecords().stream().map(FortuneBillBo::new).toList();
@@ -204,6 +206,7 @@ public class FortuneBillService {
         this.processTagRelations(addCommand.getTagIdList(), billId);
         // 批量分类处理
         this.processCategoryRelations(addCommand.getCategoryAmountPair(), billId);
+        fortuneFileService.batchAdd(billId, addCommand.getFileList());
     }
 
     /**
@@ -274,7 +277,7 @@ public class FortuneBillService {
                 break;
             case null, default:
                 log.warn("Unsupported bill type: {}", billType);
-                throw new ApiException(ErrorCode.Business.BILL_TYPE_ILLEGAL,fortuneBillModel.getBillType());
+                throw new ApiException(ErrorCode.Business.BILL_TYPE_ILLEGAL, fortuneBillModel.getBillType());
         }
 
         // 更新源账户信息

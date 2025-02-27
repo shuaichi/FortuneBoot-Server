@@ -8,6 +8,7 @@ import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.serializer.CategoryAmountPairDeserializer;
 import com.fortuneboot.common.serializer.CategoryAmountPairSerializer;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -101,5 +102,10 @@ public class FortuneBillAddCommand {
      * 标签id
      */
     private List<Long> tagIdList;
+
+    /**
+     * 附件
+     */
+    private List<MultipartFile> fileList;
 
 }

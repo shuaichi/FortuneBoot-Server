@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @Date 2024/6/5 23:03
  **/
 @Service
-public class FortuneFIleRepositoryImpl extends ServiceImpl<FortuneFileMapper, FortuneFileEntity> implements FortuneFileRepository {
+public class FortuneFileRepositoryImpl extends ServiceImpl<FortuneFileMapper, FortuneFileEntity> implements FortuneFileRepository {
 }
