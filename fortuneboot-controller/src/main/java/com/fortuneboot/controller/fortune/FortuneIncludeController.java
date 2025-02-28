@@ -1,23 +1,18 @@
 package com.fortuneboot.controller.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
-import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
-import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,21 +35,21 @@ public class FortuneIncludeController {
     @Operation(summary = "统计支出收入")
     @GetMapping("/{bookId}/getBillStatistics")
     @PreAuthorize("@fortune.groupVisitorPermission(#bookId)")
-    public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @NotNull @Positive Long bookId) {
+    public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @Positive Long bookId) {
         return ResponseDTO.ok(fortuneBillService.getBillStatistics(bookId));
     }
 
     @Operation(summary = "统计总资产")
     @GetMapping("/{groupId}/getTotalAssets")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<List<FortunePieVo>> getTotalAssets(@PathVariable @NotNull @Positive Long groupId){
+    public ResponseDTO<List<FortunePieVo>> getTotalAssets(@PathVariable @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalAssets(groupId));
     }
 
     @Operation(summary = "统计总负债")
     @GetMapping("/{groupId}/getTotalLiabilities")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<List<FortunePieVo>> getTotalLiabilities(@PathVariable @NotNull @Positive Long groupId){
+    public ResponseDTO<List<FortunePieVo>> getTotalLiabilities(@PathVariable @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getTotalLiabilities(groupId));
     }
 
@@ -75,10 +70,24 @@ public class FortuneIncludeController {
         return ResponseDTO.ok(fortuneBillService.getExpenseTrends(billTrendsQuery));
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "统计资产负债")
     @GetMapping("/{groupId}/getFortuneAssetsLiabilities")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<FortuneAssetsLiabilitiesVo> getFortuneAssetsLiabilities(@PathVariable @NotNull @Positive Long groupId){
+    public ResponseDTO<FortuneAssetsLiabilitiesVo> getFortuneAssetsLiabilities(@PathVariable @Positive Long groupId){
         return ResponseDTO.ok(fortuneAccountService.getFortuneAssetsLiabilities(groupId));
+    }
+
+    @Operation(summary = "统计支出分类")
+    @GetMapping("/getCategoryExpense")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
+    public ResponseDTO<List<FortunePieVo>> getCategoryExpense(@RequestBody @Valid CategoryIncludeQuery query){
+        return ResponseDTO.ok(fortuneBillService.getCategoryExpense(query));
+    }
+
+    @Operation(summary = "统计收入分类")
+    @GetMapping("/getCategoryIncome")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
+    public ResponseDTO<List<FortunePieVo>> getCategoryIncome(@RequestBody @Valid CategoryIncludeQuery query){
+        return ResponseDTO.ok(fortuneBillService.getCategoryIncome(query));
     }
 }

@@ -1,0 +1,43 @@
+package com.fortuneboot.fortune;
+
+import com.fortuneboot.domain.vo.fortune.include.CategoryIncludeQuery;
+import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
+import com.fortuneboot.integrationTest.IntegrationTestApplication;
+import com.fortuneboot.service.fortune.FortuneBillService;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
+
+/**
+ * @author zhangchi118
+ * @date 2025/2/28 18:19
+ **/
+@Slf4j
+@SpringBootTest(classes = IntegrationTestApplication.class)
+@RunWith(SpringRunner.class)
+public class FortuneBillServiceTest {
+
+    @Resource
+    private FortuneBillService fortuneBillService;
+
+    @Test
+    public void testGetCategoryExpense(){
+        CategoryIncludeQuery query = new CategoryIncludeQuery();
+        query.setBookId(1L);
+        List<FortunePieVo> result = fortuneBillService.getCategoryExpense(query);
+        log.info("[testGetCategoryExpense] result = {}", result);
+    }
+
+    @Test
+    public void testGetCategoryIncome(){
+        CategoryIncludeQuery query = new CategoryIncludeQuery();
+        query.setBookId(1L);
+        List<FortunePieVo> result = fortuneBillService.getCategoryIncome(query);
+        log.info("[testGetCategoryIncome] result = {}", result);
+    }
+}
