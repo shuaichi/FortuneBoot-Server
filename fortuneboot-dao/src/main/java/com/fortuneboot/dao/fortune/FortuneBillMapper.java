@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
-import com.fortuneboot.domain.vo.fortune.include.BillTrendsQuery;
-import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
+import com.fortuneboot.domain.vo.fortune.include.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -90,4 +88,54 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             </script>
             """)
     List<FortuneLineVo> getBillTrends(@Param("billTrendsQuery") BillTrendsQuery billTrendsQuery);
+
+    @Select(
+            """
+            <script>
+                WITH filtered_bills AS (
+                  SELECT b.bill_id, b.amount
+                  FROM fortune_bill b
+                  <where>
+                    b.bill_type = #{categoryType}
+                    <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
+                    <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+                    <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
+                    <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate}</if>
+                    <if test='query.accountIdList != null and query.accountIdList.size() > 0'>
+                      AND b.account_id IN
+                      <foreach collection='query.accountIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                    </if>
+                    <if test='query.payeeIdList != null and query.payeeIdList.size() > 0'>
+                      AND b.payee_id IN
+                      <foreach collection='query.payeeIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                    </if>
+                    <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                      AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+                       WHERE cr.bill_id = b.bill_id AND cr.category_id IN
+                       <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+                    </if>
+                    <if test='query.tagIdList != null and query.tagIdList.size() > 0'>
+                      AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
+                       WHERE tr.bill_id = b.bill_id AND tr.tag_id IN
+                       <foreach collection='query.tagIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+                    </if>
+                  </where>
+                ),
+                total AS (SELECT SUM(amount) AS total_amount FROM filtered_bills)
+                SELECT c.category_name AS name
+                       , SUM(fb.amount) AS `value`,
+                       (SUM(fb.amount) / (SELECT total_amount FROM total)) * 100 AS percent
+                FROM filtered_bills fb
+                INNER JOIN fortune_category_relation cr ON fb.bill_id = cr.bill_id
+                INNER JOIN fortune_category c ON cr.category_id = c.category_id
+                CROSS JOIN total t
+                <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                  WHERE cr.category_id IN
+                  <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                </if>
+                GROUP BY c.category_name
+            </script>
+            """
+    )
+    List<FortunePieVo> getCategoryInclude(@Param("categoryType") Integer categoryType,@Param("query") CategoryIncludeQuery query);
 }

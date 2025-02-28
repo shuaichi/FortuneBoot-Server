@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.include.BillStatisticsVo;
-import com.fortuneboot.domain.vo.fortune.include.BillTrendsQuery;
-import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
+import com.fortuneboot.domain.vo.fortune.include.*;
 
 import java.util.List;
 
@@ -83,4 +81,20 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      * @return
      */
     List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery);
+
+    /**
+     * 统计支出分类情况
+     *
+     * @param query
+     * @return
+     */
+    List<FortunePieVo> getCategoryExpense(CategoryIncludeQuery query);
+
+    /**
+     * 统计收入分类情况
+     *
+     * @param query
+     * @return
+     */
+    List<FortunePieVo> getCategoryIncome(CategoryIncludeQuery query);
 }
