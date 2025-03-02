@@ -77,12 +77,12 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
     }
 
     @Override
-    public List<FortunePieVo> getCategoryExpense(CategoryIncludeQuery query) {
-        return fortuneBillMapper.getCategoryInclude(CategoryTypeEnum.EXPENSE.getValue(), query);
+    public List<FortunePieVo> getCategoryInclude(CategoryTypeEnum typeEnum, CategoryIncludeQuery query) {
+        return fortuneBillMapper.getCategoryInclude(typeEnum.getValue(), query);
     }
 
     @Override
-    public List<FortunePieVo> getCategoryIncome(CategoryIncludeQuery query) {
-        return fortuneBillMapper.getCategoryInclude(CategoryTypeEnum.INCOME.getValue(), query);
+    public List<FortuneBarVo> getTagInclude(CategoryTypeEnum typeEnum, TagIncludeQuery query) {
+        return fortuneBillMapper.getTagInclude(typeEnum.getValue(), query);
     }
 }

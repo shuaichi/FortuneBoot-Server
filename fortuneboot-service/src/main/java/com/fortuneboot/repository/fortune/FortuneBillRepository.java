@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.vo.fortune.include.*;
 
@@ -83,18 +84,20 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
     List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery);
 
     /**
-     * 统计支出分类情况
+     * 统计分类情况
      *
      * @param query
      * @return
      */
-    List<FortunePieVo> getCategoryExpense(CategoryIncludeQuery query);
+    List<FortunePieVo> getCategoryInclude(CategoryTypeEnum typeEnum, CategoryIncludeQuery query);
 
     /**
-     * 统计收入分类情况
+     * 统计标签情况
      *
+     * @param typeEnum
      * @param query
      * @return
      */
-    List<FortunePieVo> getCategoryIncome(CategoryIncludeQuery query);
+    List<FortuneBarVo> getTagInclude(CategoryTypeEnum typeEnum, TagIncludeQuery query);
+
 }

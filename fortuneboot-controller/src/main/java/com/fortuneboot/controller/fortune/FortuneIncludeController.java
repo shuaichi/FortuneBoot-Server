@@ -90,4 +90,18 @@ public class FortuneIncludeController {
     public ResponseDTO<List<FortunePieVo>> getCategoryIncome(@RequestBody @Valid CategoryIncludeQuery query){
         return ResponseDTO.ok(fortuneBillService.getCategoryIncome(query));
     }
+
+    @Operation(summary = "统计支出标签")
+    @GetMapping("/getTagExpense")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
+    public ResponseDTO<List<FortuneBarVo>> getTagExpense(@RequestBody @Valid TagIncludeQuery query){
+        return ResponseDTO.ok(fortuneBillService.getTagExpense(query));
+    }
+
+    @Operation(summary = "统计收入标签")
+    @GetMapping("/getTagIncome")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
+    public ResponseDTO<List<FortuneBarVo>> getTagIncome(@RequestBody @Valid TagIncludeQuery query){
+        return ResponseDTO.ok(fortuneBillService.getTagIncome(query));
+    }
 }

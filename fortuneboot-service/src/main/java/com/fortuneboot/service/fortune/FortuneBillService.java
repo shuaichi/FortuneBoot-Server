@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.BalanceOperationEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
@@ -527,10 +528,18 @@ public class FortuneBillService {
     }
 
     public List<FortunePieVo> getCategoryExpense(CategoryIncludeQuery query) {
-        return fortuneBillRepository.getCategoryExpense(query);
+        return fortuneBillRepository.getCategoryInclude(CategoryTypeEnum.EXPENSE, query);
     }
 
     public List<FortunePieVo> getCategoryIncome(CategoryIncludeQuery query) {
-        return fortuneBillRepository.getCategoryIncome(query);
+        return fortuneBillRepository.getCategoryInclude(CategoryTypeEnum.INCOME, query);
+    }
+
+    public List<FortuneBarVo> getTagExpense(TagIncludeQuery query) {
+        return fortuneBillRepository.getTagInclude(CategoryTypeEnum.EXPENSE, query);
+    }
+
+    public List<FortuneBarVo> getTagIncome(TagIncludeQuery query) {
+        return fortuneBillRepository.getTagInclude(CategoryTypeEnum.INCOME, query);
     }
 }
