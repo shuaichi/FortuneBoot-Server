@@ -72,10 +72,10 @@ public class FortuneAccountController {
     }
 
     @Operation(summary = "余额调整")
-    @PutMapping("/balanceAdjust")
+    @PatchMapping("/balanceAdjust")
     @AccessLog(title = "好记-账户管理", businessType = BusinessTypeEnum.BALANCE_ADJUST)
     @PreAuthorize("@fortune.bookActorPermission(#adjustCommand.bookId)")
-    public ResponseDTO<Void> balanceAdjust(FortuneAccountAdjustCommand adjustCommand) {
+    public ResponseDTO<Void> balanceAdjust(@RequestBody @Valid FortuneAccountAdjustCommand adjustCommand) {
         fortuneAccountService.balanceAdjust(adjustCommand);
         return ResponseDTO.ok();
     }

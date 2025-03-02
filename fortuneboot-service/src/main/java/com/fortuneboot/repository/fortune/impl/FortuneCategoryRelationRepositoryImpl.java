@@ -60,6 +60,9 @@ public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCa
         LambdaQueryWrapper<FortuneCategoryRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
         wrapper.eq(FortuneCategoryRelationEntity::getBillId, billId);
         List<FortuneCategoryRelationEntity> relationList = this.list(wrapper);
+        if (CollectionUtils.isEmpty(relationList)){
+            return;
+        }
         List<Long> list = relationList.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
         fortuneCategoryRelationMapper.deleteBatchIds(list);
     }
