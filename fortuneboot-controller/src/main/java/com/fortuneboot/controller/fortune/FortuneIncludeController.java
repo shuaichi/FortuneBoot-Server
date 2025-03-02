@@ -34,7 +34,7 @@ public class FortuneIncludeController {
 
     @Operation(summary = "统计支出收入")
     @GetMapping("/{bookId}/getBillStatistics")
-    @PreAuthorize("@fortune.groupVisitorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @Positive Long bookId) {
         return ResponseDTO.ok(fortuneBillService.getBillStatistics(bookId));
     }
