@@ -1,11 +1,9 @@
 package com.fortuneboot.repository.fortune.impl;
 
-import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
@@ -84,5 +82,10 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
     @Override
     public List<FortuneBarVo> getTagInclude(CategoryTypeEnum typeEnum, TagIncludeQuery query) {
         return fortuneBillMapper.getTagInclude(typeEnum.getValue(), query);
+    }
+
+    @Override
+    public List<FortunePieVo> getPayeeInclude(CategoryTypeEnum typeEnum, PayeeIncludeQuery query) {
+        return fortuneBillMapper.getPayeeInclude(typeEnum.getValue(), query);
     }
 }

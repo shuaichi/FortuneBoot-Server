@@ -22,7 +22,6 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.factory.fortune.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -541,5 +540,13 @@ public class FortuneBillService {
 
     public List<FortuneBarVo> getTagIncome(TagIncludeQuery query) {
         return fortuneBillRepository.getTagInclude(CategoryTypeEnum.INCOME, query);
+    }
+
+    public List<FortunePieVo> getPayeeExpense(PayeeIncludeQuery query) {
+        return fortuneBillRepository.getPayeeInclude(CategoryTypeEnum.EXPENSE, query);
+    }
+
+    public List<FortunePieVo> getPayeeIncome(PayeeIncludeQuery query) {
+        return fortuneBillRepository.getPayeeInclude(CategoryTypeEnum.INCOME, query);
     }
 }
