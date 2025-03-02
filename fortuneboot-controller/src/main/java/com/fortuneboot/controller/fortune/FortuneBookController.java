@@ -113,7 +113,7 @@ public class FortuneBookController {
 
     @Operation(summary = "设置为默认账本")
     @PatchMapping("/{bookId}/setDefaultBook")
-    @AccessLog(title = "好记-账本管理-设置默认账本", businessType = BusinessTypeEnum.OTHER)
+    @AccessLog(title = "好记-账本管理-设置默认账本", businessType = BusinessTypeEnum.SET_DEFAULT)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> setDefaultBook(@PathVariable @Positive Long bookId) {
         fortuneGroupService.setDefaultBook(bookId);

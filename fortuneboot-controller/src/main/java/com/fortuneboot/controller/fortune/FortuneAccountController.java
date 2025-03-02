@@ -6,6 +6,7 @@ import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneAccountAdjustCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
@@ -67,6 +68,15 @@ public class FortuneAccountController {
     @PreAuthorize("@fortune.groupActorPermission(#modifyCommand.getGroupId())")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneAccountModifyCommand modifyCommand) {
         fortuneAccountService.modify(modifyCommand);
+        return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "余额调整")
+    @PutMapping("/balanceAdjust")
+    @AccessLog(title = "好记-账户管理", businessType = BusinessTypeEnum.BALANCE_ADJUST)
+    @PreAuthorize("@fortune.bookActorPermission(#adjustCommand.bookId)")
+    public ResponseDTO<Void> balanceAdjust(FortuneAccountAdjustCommand adjustCommand) {
+        fortuneAccountService.balanceAdjust(adjustCommand);
         return ResponseDTO.ok();
     }
 

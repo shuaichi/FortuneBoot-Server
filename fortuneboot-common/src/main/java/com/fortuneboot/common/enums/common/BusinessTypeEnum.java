@@ -42,6 +42,8 @@ public enum BusinessTypeEnum implements DictionaryEnum<Integer> {
     DISABLE(22,"停用", CssTag.PRIMARY),
     INCLUDE(23,"统计", CssTag.PRIMARY),
     EXCLUDE(24,"不统计", CssTag.PRIMARY),
+    SET_DEFAULT(25,"设置默认", CssTag.PRIMARY),
+    BALANCE_ADJUST(25,"余额调整", CssTag.PRIMARY),
     ;
 
     private final int value;
