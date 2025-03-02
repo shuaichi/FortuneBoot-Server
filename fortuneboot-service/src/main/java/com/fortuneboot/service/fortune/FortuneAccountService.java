@@ -1,27 +1,29 @@
 package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneAccountAdjustCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
+import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
 import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
-import com.fortuneboot.domain.vo.fortune.include.FortuneLineVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.FortuneAccountFactory;
+import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
+import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -38,6 +40,8 @@ public class FortuneAccountService {
     private final FortuneAccountFactory fortuneAccountFactory;
 
     private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillService fortuneBillService;
+    private final FortuneGroupFactory fortuneGroupFactory;
 
     public IPage<FortuneAccountEntity> getPage(FortuneAccountQuery query) {
         return fortuneAccountRepository.page(query.toPage(), query.addQueryCondition());
@@ -179,5 +183,27 @@ public class FortuneAccountService {
 
     public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
         return fortuneAccountRepository.getFortuneAssetsLiabilities(groupId);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void balanceAdjust(FortuneAccountAdjustCommand adjustCommand) {
+        FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(adjustCommand.getAccountId());
+        fortuneBillService.add(this.initBillAddCommand(adjustCommand, fortuneAccountModel));
+        fortuneAccountModel.setBalance(adjustCommand.getBalance());
+        fortuneAccountModel.updateById();
+    }
+
+    private FortuneBillAddCommand initBillAddCommand(FortuneAccountAdjustCommand adjustCommand, FortuneAccountModel fortuneAccountModel) {
+        FortuneBillAddCommand fortuneBill = new FortuneBillAddCommand();
+        fortuneBill.setAmount(adjustCommand.getBalance().subtract(fortuneAccountModel.getBalance()));
+        fortuneBill.setBillType(BillTypeEnum.ADJUST.getValue());
+        fortuneBill.setAccountId(adjustCommand.getAccountId());
+        fortuneBill.setBookId(adjustCommand.getBookId());
+        fortuneBill.setTradeTime(adjustCommand.getTradeTime());
+        fortuneBill.setTitle(adjustCommand.getTitle());
+        fortuneBill.setRemark(adjustCommand.getRemark());
+        fortuneBill.setConfirm(Boolean.TRUE);
+        fortuneBill.setInclude(Boolean.TRUE);
+        return fortuneBill;
     }
 }

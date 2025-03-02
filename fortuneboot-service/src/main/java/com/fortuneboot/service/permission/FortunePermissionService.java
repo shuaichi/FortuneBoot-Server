@@ -2,15 +2,13 @@ package com.fortuneboot.service.permission;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
-import com.fortuneboot.repository.fortune.FortuneBillRepository;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
-import com.fortuneboot.repository.fortune.FortuneGroupRepository;
-import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import com.fortuneboot.repository.fortune.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +32,7 @@ public class FortunePermissionService {
 
     private final FortuneBookRepository fortuneBookRepository;
     private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneAccountRepository fortuneAccountRepository;
 
     /**
      * 验证是否是登录用户
@@ -132,7 +131,7 @@ public class FortunePermissionService {
         return this.groupVisitorPermission(book.getGroupId());
     }
 
-    public Boolean billVisitorPermission(@NotNull(message = "账单id不能为空") @Positive(message = "账单必须是正数") Long billId) {
+    public Boolean billVisitorPermission(@NotNull(message = "账单不能为空") @Positive(message = "账单必须是正数") Long billId) {
         FortuneBillEntity billEntity = fortuneBillRepository.getById(billId);
         if (ObjectUtil.isEmpty(billEntity)) {
             return Boolean.FALSE;

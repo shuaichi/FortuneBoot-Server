@@ -159,7 +159,7 @@ public class FortuneGroupController {
 
     @Operation(summary = "设置为默认分组")
     @PatchMapping("/{groupId}/setDefaultGroup")
-    @AccessLog(title = "好记-分组管理-设置默认分组", businessType = BusinessTypeEnum.OTHER)
+    @AccessLog(title = "好记-分组管理-设置默认分组", businessType = BusinessTypeEnum.SET_DEFAULT)
     @PreAuthorize("@fortune.groupActorPermission(#groupId)")
     public ResponseDTO<Void> setDefaultGroup(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneUserGroupRelationService.setDefaultGroup(groupId);
