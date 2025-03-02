@@ -60,4 +60,12 @@ public interface FortuneUserGroupRelationRepository extends IService<FortuneUser
      * @return
      */
     FortuneUserGroupRelationEntity getDefaultGroupByUser(Long userId);
+
+    /**
+     * 根据分组ID查询把这个分组设置为默认分组的人
+     *
+     * @param groupId
+     * @return
+     */
+    List<FortuneUserGroupRelationEntity> getDefaultGroupByGroupId(Long groupId);
 }

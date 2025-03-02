@@ -8,6 +8,7 @@ import com.fortuneboot.domain.entity.system.SearchUserDO;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,7 +32,8 @@ public interface SysUserRepository extends IService<SysUserEntity> {
 
     /**
      * 检测邮箱是否唯一
-     * @param email 邮箱
+     *
+     * @param email  邮箱
      * @param userId 用户id
      * @return 校验结果
      */
@@ -39,6 +41,7 @@ public interface SysUserRepository extends IService<SysUserEntity> {
 
     /**
      * 检测用户名是否
+     *
      * @param userName 用户名
      * @return 校验结果
      */
@@ -46,6 +49,7 @@ public interface SysUserRepository extends IService<SysUserEntity> {
 
     /**
      * 获取用户的角色
+     *
      * @param userId 用户id
      * @return 用户角色
      */
@@ -53,6 +57,7 @@ public interface SysUserRepository extends IService<SysUserEntity> {
 
     /**
      * 获取用户的权限列表
+     *
      * @param userId 用户id
      * @return 用户菜单权限列表
      */
@@ -61,6 +66,7 @@ public interface SysUserRepository extends IService<SysUserEntity> {
 
     /**
      * 通过用户名查询用户
+     *
      * @param userName 用户名
      * @return 用户对象信息
      */
@@ -83,5 +89,12 @@ public interface SysUserRepository extends IService<SysUserEntity> {
      */
     Page<SearchUserDO> getUserList(AbstractPageQuery<SearchUserDO> query);
 
+    /**
+     * 根据ids批量查询
+     *
+     * @param userIds
+     * @return
+     */
+    List<SysUserEntity> getUsersByIds(List<Long> userIds);
 
 }

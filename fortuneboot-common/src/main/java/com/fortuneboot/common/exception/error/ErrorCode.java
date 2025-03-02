@@ -196,13 +196,21 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         GROUP_CANNOT_DELETE_SELF(21004,"不能删除自己", "Business.GROUP_CANNOT_DELETE_SELF"),
 
-        // ---------------------------------- BOOK -----------------------------------------------
+        GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT(21005,"不能设置停用的分组为默认分组", "Business.GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT"),
 
-        BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002, "请先移出回收站", "Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
+        GROUP_CANNOT_DISABLE_DEFAULT_GROUP(21006,"分组被 {} 设置为默认分组，不能停用", "Business.GROUP_CANNOT_DISABLE_DEFAULT_GROUP"),
+
+        // ---------------------------------- BOOK -----------------------------------------------
 
         BOOK_NOT_MATCH_GROUP(22001, "账本与分组不匹配", "Business.BOOK_NOT_MATCH_GROUP"),
 
-        BOOK_DEFAULT_CAN_NOT_REMOVE(22002, "默认账本不能移入回收站", "Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
+        BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST(22002, "请先移出回收站", "Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST"),
+
+        BOOK_DEFAULT_CAN_NOT_REMOVE(22003, "默认账本不能移入回收站", "Business.BOOK_DEFAULT_CAN_NOT_REMOVE"),
+
+        BOOK_CANNOT_SET_UNABLE_BOOK_DEFAULT(22004, "不能设置停用的账本为默认账本", "Business.BOOK_CANNOT_SET_UNABLE_BOOK_DEFAULT"),
+
+        BOOK_CANNOT_DISABLE_DEFAULT_BOOK(22005,"不能停用默认账本", "Business.BOOK_CANNOT_DISABLE_DEFAULT_BOOK"),
 
         // ---------------------------------- TAG -----------------------------------------------
 

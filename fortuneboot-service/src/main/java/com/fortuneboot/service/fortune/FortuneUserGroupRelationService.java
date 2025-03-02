@@ -7,6 +7,7 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationInviteCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.domain.vo.fortune.FortuneUserGroupRelationVo;
@@ -14,6 +15,7 @@ import com.fortuneboot.factory.fortune.FortuneUserGroupRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
+import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
 import com.fortuneboot.repository.system.SysUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,8 @@ public class FortuneUserGroupRelationService {
     private final FortuneUserGroupRelationFactory fortuneUserGroupRelationFactory;
 
     private final SysUserRepository userRepository;
+
+    private final FortuneGroupRepository fortuneGroupRepository;
 
     public void add(FortuneUserGroupRelationAddCommand addCommand) {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
@@ -96,7 +100,11 @@ public class FortuneUserGroupRelationService {
     public void setDefaultGroup(Long groupId) {
         List<FortuneUserGroupRelationEntity> groupRelationList = fortuneUserGroupRelationRepository.getByUserId();
         for (FortuneUserGroupRelationEntity relationEntity : groupRelationList) {
-            if (Objects.equals(groupId, relationEntity.getUserGroupRelationId())) {
+            if (Objects.equals(groupId, relationEntity.getGroupId())) {
+                FortuneGroupEntity groupEntity = fortuneGroupRepository.getById(groupId);
+                if (!groupEntity.getEnable()) {
+                    throw new ApiException(ErrorCode.Business.GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT);
+                }
                 relationEntity.setDefaultGroup(Boolean.TRUE);
             } else {
                 relationEntity.setDefaultGroup(Boolean.FALSE);

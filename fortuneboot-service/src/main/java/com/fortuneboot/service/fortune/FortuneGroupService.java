@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBookAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
@@ -12,16 +14,18 @@ import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
+import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.domain.query.fortune.FortuneGroupQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneGroupVo;
+import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
-import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.fortune.FortuneBookRepository;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import com.fortuneboot.repository.system.SysUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -70,6 +74,13 @@ public class FortuneGroupService {
      * 账本repo
      */
     private final FortuneBookRepository fortuneBookRepository;
+
+    /**
+     * 用户repo
+     */
+    private final SysUserRepository sysUserRepository;
+    private final FortuneBookFactory fortuneBookFactory;
+
 
     public FortuneGroupVo getByUserId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
@@ -235,8 +246,9 @@ public class FortuneGroupService {
     }
 
     public void setDefaultBook(Long bookId) {
-        FortuneBookEntity bookEntity = fortuneBookRepository.getById(bookId);
-        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(bookEntity.getGroupId());
+        FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(fortuneBookModel.getGroupId());
+        fortuneGroupModel.checkDefaultBookDisable(fortuneBookModel);
         fortuneGroupModel.setDefaultBookId(bookId);
         fortuneGroupModel.updateById();
     }
@@ -248,8 +260,19 @@ public class FortuneGroupService {
     }
 
     public void disable(Long groupId) {
+        this.checkDefault(groupId);
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.setEnable(Boolean.FALSE);
         fortuneGroupModel.updateById();
+    }
+
+    private void checkDefault(Long groupId) {
+        List<FortuneUserGroupRelationEntity> defaultGroupList = fortuneUserGroupRelationRepository.getDefaultGroupByGroupId(groupId);
+        if (CollectionUtils.isNotEmpty(defaultGroupList)) {
+            List<Long> userIds = defaultGroupList.stream().map(FortuneUserGroupRelationEntity::getUserId).toList();
+            List<SysUserEntity> users = sysUserRepository.getUsersByIds(userIds);
+            List<String> nicknames = users.stream().map(SysUserEntity::getNickname).toList();
+            throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DISABLE_DEFAULT_GROUP, nicknames.toString());
+        }
     }
 }
