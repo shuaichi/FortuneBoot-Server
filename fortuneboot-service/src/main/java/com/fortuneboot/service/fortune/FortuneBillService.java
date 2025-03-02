@@ -226,6 +226,9 @@ public class FortuneBillService {
      * 批量处理分类关联
      */
     private void processCategoryRelations(List<Pair<Long, BigDecimal>> categories, Long billId) {
+        if (CollectionUtils.isEmpty(categories)) {
+            return;
+        }
         List<FortuneCategoryRelationAddCommand> commands = categories.stream()
                 .map(pair -> new FortuneCategoryRelationAddCommand(billId, pair.getKey(), pair.getValue()))
                 .collect(Collectors.toList());

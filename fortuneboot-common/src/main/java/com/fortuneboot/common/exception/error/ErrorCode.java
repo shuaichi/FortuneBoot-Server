@@ -257,6 +257,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_USED_CANNOT_REMOVE(26003, "账户：{} 已被使用，请先删除相应账单后再试", "Business.ACCOUNT_NOT_MATCH_GROUP"),
 
+        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26004,"余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
+
         // ---------------------------------- BILL -----------------------------------------------
 
         BILL_NOT_MATCH_BOOK(27001, "账单与账本不匹配", "Business.BILL_NOT_MATCH_BOOK"),

@@ -82,7 +82,7 @@ public class FortuneGroupService {
     private final FortuneBookFactory fortuneBookFactory;
 
 
-    public FortuneGroupVo getByUserId(Long groupId) {
+    public FortuneGroupVo getByGroupId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
         return BeanUtil.copyProperties(fortuneGroupEntity, FortuneGroupVo.class);
     }
