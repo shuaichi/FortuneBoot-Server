@@ -10,7 +10,6 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -138,4 +137,52 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             """
     )
     List<FortunePieVo> getCategoryInclude(@Param("categoryType") Integer categoryType,@Param("query") CategoryIncludeQuery query);
+
+    @Select(
+            """
+            <script>
+                SELECT
+                  ft.tag_name AS name,
+                  SUM(b.amount) AS `value`
+                FROM fortune_bill b
+                LEFT JOIN fortune_tag_relation btr ON b.bill_id = btr.bill_id
+                LEFT JOIN fortune_tag ft ON btr.tag_id = ft.tag_id
+                WHERE b.bill_type = #{tagType}
+                  <if test='query.bookId != null'> AND b.book_id = #{query.bookId} </if>
+                  <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%') </if>
+                  <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate} </if>
+                  <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} </if>
+                  <if test='query.accountIdList != null and query.accountIdList.size() > 0'>
+                    AND b.account_id IN
+                    <foreach collection='query.accountIdList' item='item' open='(' separator=',' close=')'>
+                      #{item}
+                    </foreach>
+                  </if>
+                  <if test='query.payeeIdList != null and query.payeeIdList.size() > 0'>
+                    AND b.payee_id IN
+                    <foreach collection='query.payeeIdList' item='item' open='(' separator=',' close=')'>
+                      #{item}
+                    </foreach>
+                  </if>
+                  <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                    AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+                      WHERE cr.bill_id = b.id
+                      AND cr.category_id IN
+                      <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>
+                        #{item}
+                      </foreach>)
+                  </if>
+                  <if test='query.tagIdList != null and query.tagIdList.size() > 0'>
+                    AND EXISTS (SELECT 1 FROM fortune_bill_tag_relation tr
+                      WHERE tr.bill_id = b.id
+                      AND tr.tag_id IN
+                      <foreach collection='query.tagIdList' item='item' open='(' separator=',' close=')'>
+                        #{item}
+                      </foreach>)
+                  </if>
+                GROUP BY ft.tag_name
+            </script>
+            """
+    )
+    List<FortuneBarVo> getTagInclude(@Param("tagType") Integer tagType,@Param("query") TagIncludeQuery query);
 }
