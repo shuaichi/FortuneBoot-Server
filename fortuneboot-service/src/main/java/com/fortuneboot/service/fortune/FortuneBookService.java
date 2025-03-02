@@ -9,11 +9,13 @@ import com.fortuneboot.domain.bo.fortune.tenplate.PayeeTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.TagTemplateBo;
 import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
 import com.fortuneboot.factory.fortune.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
+import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.*;
 import lombok.RequiredArgsConstructor;
@@ -57,8 +59,6 @@ public class FortuneBookService {
     private final FortunePayeeRepository fortunePayeeRepository;
 
     private final FortuneBillService fortuneBillService;
-
-    private final FortuneBillRepository fortuneBillRepository;
 
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
         return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
@@ -195,7 +195,7 @@ public class FortuneBookService {
 
     public void moveToRecycleBin(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
-        fortuneBookModel.checkDefault(fortuneGroupFactory.loadById(fortuneBookModel.getGroupId()));
+        fortuneBookModel.checkRemoveDefault(fortuneGroupFactory.loadById(fortuneBookModel.getGroupId()));
         fortuneBookModel.setRecycleBin(Boolean.TRUE);
         fortuneBookModel.updateById();
     }
@@ -218,6 +218,8 @@ public class FortuneBookService {
 
     public void disable(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(fortuneBookModel.getGroupId());
+        fortuneBookModel.checkDisableDefault(fortuneGroupModel);
         fortuneBookModel.setEnable(Boolean.FALSE);
         fortuneBookModel.updateById();
     }

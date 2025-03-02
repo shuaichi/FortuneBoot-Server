@@ -1,6 +1,8 @@
 package com.fortuneboot.repository.system.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.fortuneboot.common.core.page.AbstractPageQuery;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -76,5 +78,12 @@ public class SysUserRepositoryImpl extends ServiceImpl<SysUserMapper, SysUserEnt
     @Override
     public Page<SearchUserDO> getUserList(AbstractPageQuery<SearchUserDO> query) {
         return baseMapper.getUserList(query.toPage(), query.toQueryWrapper());
+    }
+
+    @Override
+    public List<SysUserEntity> getUsersByIds(List<Long> userIds) {
+        LambdaQueryWrapper<SysUserEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(SysUserEntity.class);
+        queryWrapper.in(SysUserEntity::getUserId, userIds);
+        return this.list(queryWrapper);
     }
 }

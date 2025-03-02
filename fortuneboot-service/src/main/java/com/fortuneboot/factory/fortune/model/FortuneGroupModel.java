@@ -1,13 +1,19 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
+import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.repository.fortune.FortuneGroupRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,5 +50,11 @@ public class FortuneGroupModel extends FortuneGroupEntity {
             return;
         }
         this.loadAddCommand(command);
+    }
+
+    public void checkDefaultBookDisable(FortuneBookModel bookModel) {
+        if (!bookModel.getEnable()){
+            throw new ApiException(ErrorCode.Business.BOOK_CANNOT_SET_UNABLE_BOOK_DEFAULT);
+        }
     }
 }

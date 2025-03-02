@@ -45,7 +45,13 @@ public class FortuneBookModel extends FortuneBookEntity {
         this.loadAddCommand(command);
     }
 
-    public void checkDefault(FortuneGroupModel fortuneGroupModel) {
+    public void checkDisableDefault(FortuneGroupModel fortuneGroupModel) {
+        if (Objects.equals(fortuneGroupModel.getDefaultBookId(), this.getBookId())) {
+            throw new ApiException(ErrorCode.Business.BOOK_CANNOT_DISABLE_DEFAULT_BOOK);
+        }
+    }
+
+    public void checkRemoveDefault(FortuneGroupModel fortuneGroupModel) {
         if (Objects.equals(fortuneGroupModel.getDefaultBookId(), this.getBookId())) {
             throw new ApiException(ErrorCode.Business.BOOK_DEFAULT_CAN_NOT_REMOVE);
         }
