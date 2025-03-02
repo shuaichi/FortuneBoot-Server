@@ -77,6 +77,11 @@ public class LoginController {
         return ResponseDTO.ok(configDTO);
     }
 
+    @GetMapping("/getRsaPublicKey")
+    public ResponseDTO<String> getRsaPublicKey() {
+        return ResponseDTO.ok(FortuneBootConfig.getRsaPublicKey());
+    }
+
     /**
      * 生成验证码
      */

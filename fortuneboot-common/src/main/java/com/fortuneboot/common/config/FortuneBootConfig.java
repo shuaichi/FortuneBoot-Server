@@ -56,6 +56,11 @@ public class FortuneBootConfig {
      */
     private static String rsaPrivateKey;
 
+    /**
+     * rsa public key
+     */
+    private static String rsaPublicKey;
+
     private static String apiPrefix;
 
     public static String getFileBaseDir() {
@@ -96,6 +101,14 @@ public class FortuneBootConfig {
 
     public void setRsaPrivateKey(String rsaPrivateKey) {
         FortuneBootConfig.rsaPrivateKey = rsaPrivateKey;
+    }
+
+    public static String getRsaPublicKey() {
+        return rsaPublicKey;
+    }
+
+    public void setRsaPublicKey(String rsaPublicKey) {
+        FortuneBootConfig.rsaPublicKey = rsaPublicKey;
     }
 
     public static boolean isDemoEnabled() {
