@@ -1,9 +1,6 @@
 package com.fortuneboot.fortune;
 
-import com.fortuneboot.domain.vo.fortune.include.CategoryIncludeQuery;
-import com.fortuneboot.domain.vo.fortune.include.FortuneBarVo;
-import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
-import com.fortuneboot.domain.vo.fortune.include.TagIncludeQuery;
+import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import jakarta.annotation.Resource;
@@ -57,5 +54,21 @@ public class FortuneBillServiceTest {
         query.setBookId(1L);
         List<FortuneBarVo> result = fortuneBillService.getTagIncome(query);
         log.info("[testGetTagIncome] result = {}", result);
+    }
+
+    @Test
+    public void testGetPayeeExpense(){
+        PayeeIncludeQuery query = new PayeeIncludeQuery();
+        query.setBookId(1L);
+        List<FortunePieVo> result = fortuneBillService.getPayeeExpense(query);
+        log.info("[testGetPayeeExpense] result = {}", result);
+    }
+
+    @Test
+    public void testGetPayeeIncome(){
+        PayeeIncludeQuery query = new PayeeIncludeQuery();
+        query.setBookId(1L);
+        List<FortunePieVo> result = fortuneBillService.getPayeeIncome(query);
+        log.info("[testGetPayeeIncome] result = {}", result);
     }
 }

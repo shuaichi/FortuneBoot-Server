@@ -100,4 +100,12 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
      */
     List<FortuneBarVo> getTagInclude(CategoryTypeEnum typeEnum, TagIncludeQuery query);
 
+    /**
+     * 统计交易对象情况
+     *
+     * @param categoryTypeEnum
+     * @param query
+     * @return
+     */
+    List<FortunePieVo> getPayeeInclude(CategoryTypeEnum categoryTypeEnum, PayeeIncludeQuery query);
 }
