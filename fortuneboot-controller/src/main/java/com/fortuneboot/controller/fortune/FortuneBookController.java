@@ -60,7 +60,7 @@ public class FortuneBookController {
 
     @Operation(summary = "根据账本id查询")
     @GetMapping("/{bookId}/getBookById")
-    @PreAuthorize("@fortune.groupVisitorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<FortuneBookVo> getBookById(@PathVariable @Positive Long bookId){
         FortuneBookEntity book = fortuneBookService.getBookById(bookId);
         return ResponseDTO.ok(new FortuneBookVo(book));
@@ -87,7 +87,7 @@ public class FortuneBookController {
     @Operation(summary = "删除账本")
     @DeleteMapping("/{bookId}/remove")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.DELETE)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> removeFortuneBook(@PathVariable @Positive Long bookId) {
         fortuneBookService.remove(bookId);
         return ResponseDTO.ok();
@@ -96,7 +96,7 @@ public class FortuneBookController {
     @Operation(summary = "移到回收站")
     @PatchMapping("/{bookId}/moveToRecycleBin")
     @AccessLog(title = "好记-账本管理-移入回收站", businessType = BusinessTypeEnum.MOVE_TO_RECYCLE_BIN)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> moveToRecycleBin(@PathVariable @Positive Long bookId) {
         fortuneBookService.moveToRecycleBin(bookId);
         return ResponseDTO.ok();
@@ -105,7 +105,7 @@ public class FortuneBookController {
     @Operation(summary = "账本移出回收站")
     @PatchMapping("/{bookId}/putBack")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.PUT_BACK)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> putBack(@PathVariable @Positive Long bookId) {
         fortuneBookService.putBack(bookId);
         return ResponseDTO.ok();
@@ -114,7 +114,7 @@ public class FortuneBookController {
     @Operation(summary = "设置为默认账本")
     @PatchMapping("/{bookId}/setDefaultBook")
     @AccessLog(title = "好记-账本管理-设置默认账本", businessType = BusinessTypeEnum.OTHER)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> setDefaultBook(@PathVariable @Positive Long bookId) {
         fortuneGroupService.setDefaultBook(bookId);
         return ResponseDTO.ok();
@@ -132,7 +132,7 @@ public class FortuneBookController {
     @Operation(summary = "启用账本")
     @PatchMapping("/{bookId}/enable")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.ENABLE)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> enable(@PathVariable @Positive Long bookId) {
         fortuneBookService.enable(bookId);
         return ResponseDTO.ok();
@@ -141,7 +141,7 @@ public class FortuneBookController {
     @Operation(summary = "停用账本")
     @PatchMapping("/{bookId}/disable")
     @AccessLog(title = "好记-账本管理", businessType = BusinessTypeEnum.DISABLE)
-    @PreAuthorize("@fortune.groupActorPermission(#bookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> disable(@PathVariable @NotNull @Positive Long bookId) {
         fortuneBookService.disable(bookId);
         return ResponseDTO.ok();
