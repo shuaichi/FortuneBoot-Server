@@ -6,9 +6,13 @@ import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 账本标签工厂
@@ -28,6 +32,16 @@ public class FortuneTagFactory {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, tagId, "标签");
         }
         return new FortuneTagModel(entity, fortuneTagRepository);
+    }
+
+    public List<FortuneTagModel> loadByIds(List<Long> tagIds) {
+        List<FortuneTagEntity> entities = fortuneTagRepository.getByIds(tagIds);
+        if (CollectionUtils.size(entities) != CollectionUtils.size(tagIds)) {
+            List<Long> list = entities.stream().map(FortuneTagEntity::getTagId).toList();
+            Collection<Long> subtracts = CollectionUtils.subtract(tagIds, list);
+            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, subtracts.toString(), "标签");
+        }
+        return entities.stream().map(item -> new FortuneTagModel(item, fortuneTagRepository)).toList();
     }
 
     public FortuneTagModel create() {

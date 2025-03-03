@@ -81,7 +81,11 @@ public class FortuneBillService {
     private final FortuneTagRepository fortuneTagRepository;
 
     private final FortuneFileService fortuneFileService;
+
     private final FortuneFileRepository fortuneFileRepository;
+
+    private final FortuneTagFactory fortuneTagFactory;
+    private final FortuneCategoryFactory fortuneCategoryFactory;
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
@@ -186,6 +190,7 @@ public class FortuneBillService {
         if (Objects.nonNull(addCommand.getPayeeId())) {
             FortunePayeeModel payee = fortunePayeeFactory.loadById(addCommand.getPayeeId());
             fortuneBillModel.checkPayeeExist(payee);
+            fortuneBillModel.checkPayeeEnable(payee);
         }
         // 使用枚举类型直接比较
         BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
@@ -201,35 +206,49 @@ public class FortuneBillService {
         this.confirmBalance(fortuneBillModel);
         // 持久化主记录
         fortuneBillModel.insert();
-        Long billId = fortuneBillModel.getBillId();  // 提前获取ID
         // 批量标签处理
-        this.processTagRelations(addCommand.getTagIdList(), billId);
+        this.processTagRelations(addCommand.getTagIdList(), fortuneBillModel);
         // 批量分类处理
-        this.processCategoryRelations(addCommand.getCategoryAmountPair(), billId);
-        fortuneFileService.batchAdd(billId, addCommand.getFileList());
+        this.processCategoryRelations(addCommand.getCategoryAmountPair(), fortuneBillModel);
+        fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
     }
 
     /**
      * 批量处理标签关联
      */
-    private void processTagRelations(List<Long> tagIds, Long billId) {
+    private void processTagRelations(List<Long> tagIds, FortuneBillModel fortuneBillModel) {
         if (CollectionUtils.isEmpty(tagIds)) {
             return;
         }
+        List<FortuneTagModel> fortuneTagModels = fortuneTagFactory.loadByIds(tagIds);
+        // 校验标签启用
+        fortuneBillModel.checkTagListEnable(fortuneTagModels);
+        // 构建新增command
         List<FortuneTagRelationAddCommand> commands = tagIds.stream()
-                .map(tagId -> new FortuneTagRelationAddCommand(billId, tagId))
+                .map(tagId -> new FortuneTagRelationAddCommand(fortuneBillModel.getBillId(), tagId))
                 .collect(Collectors.toList());
-        fortuneTagRelationService.batchAdd(commands);  // 需要实现批量插入方法
+        // 需要实现批量插入方法
+        fortuneTagRelationService.batchAdd(commands);
     }
 
     /**
      * 批量处理分类关联
      */
-    private void processCategoryRelations(List<Pair<Long, BigDecimal>> categories, Long billId) {
+    private void processCategoryRelations(List<Pair<Long, BigDecimal>> categories, FortuneBillModel fortuneBillModel) {
+        if (CollectionUtils.isEmpty(categories)) {
+            return;
+        }
+        List<Long> categoryIds = categories.stream().map(Pair::getKey).toList();
+        // 加载分类
+        List<FortuneCategoryModel> fortuneCategoryModels = fortuneCategoryFactory.loadByIds(categoryIds);
+        // 校验分类启用
+        fortuneBillModel.checkCategoryListEnable(fortuneCategoryModels);
+        // 构建分类-账单关系
         List<FortuneCategoryRelationAddCommand> commands = categories.stream()
-                .map(pair -> new FortuneCategoryRelationAddCommand(billId, pair.getKey(), pair.getValue()))
+                .map(pair -> new FortuneCategoryRelationAddCommand(fortuneBillModel.getBillId(), pair.getKey(), pair.getValue()))
                 .collect(Collectors.toList());
-        fortuneCategoryRelationService.batchAdd(commands);  // 需要实现批量插入方法
+        // 需要实现批量插入方法
+        fortuneCategoryRelationService.batchAdd(commands);
     }
 
     // 修改的逻辑，删除旧的，新增一条新纪录
@@ -249,7 +268,9 @@ public class FortuneBillService {
         fortuneTagRelationRepository.removeByBillId(billId);
         // 删除分类
         fortuneCategoryRelationRepository.removeByBillId(billId);
+        // 删除账单
         fortuneBillModel.deleteById();
+        // 删除账单附件
         fortuneFileRepository.removeByBillId(billId);
     }
 
@@ -263,17 +284,29 @@ public class FortuneBillService {
         }
         // 加载源账户并获取账单类型
         FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+        fortuneBillModel.checkAccountEnable(sourceAccount);
         BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
         // 根据账单类型处理账户余额
         switch (billType) {
-            case INCOME, PROFIT, ADJUST:
+            case INCOME:
+                // 校验可收入
+                sourceAccount.checkCanIncome();
+                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.ADD);
+                break;
+            case PROFIT, ADJUST:
                 this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.ADD);
                 break;
             case EXPENSE:
+                // 校验可支出
+                sourceAccount.checkCanExpense();
+                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.SUBTRACT);
+                break;
             case LOSS:
                 this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.SUBTRACT);
                 break;
             case TRANSFER:
+                // 校验可转出
+                sourceAccount.checkCanTransferOut();
                 this.handleTransferOperation(sourceAccount, fortuneBillModel);
                 break;
             case null, default:
@@ -307,9 +340,13 @@ public class FortuneBillService {
             return;
         }
         // 调整源账户余额
-        adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
+        this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
         // 加载目标账户并转换金额
         FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
+        // 校验账户启用状态
+        bill.checkAccountEnable(targetAccount);
+        // 校验可转入
+        targetAccount.checkCanTransferIn();
         BigDecimal convertedAmount = convertCurrency(
                 bill.getAmount(),
                 sourceAccount.getCurrencyCode(),
@@ -317,7 +354,7 @@ public class FortuneBillService {
                 applicationScopeBo.getCurrencyTemplateBoList()
         );
         // 调整目标账户余额
-        adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
+        this.adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
         // 更新目标账户并记录转换金额
         targetAccount.updateById();
         bill.setConvertedAmount(convertedAmount);
@@ -398,10 +435,10 @@ public class FortuneBillService {
             throw new ApiException(ErrorCode.Business.BILL_TRANSFER_PARAMETER_ERROR);
         }
         // 逆向处理源账户
-        adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
+        this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
         // 处理目标账户
         FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
-        adjustBalance(targetAccount, bill.getConvertedAmount(), BalanceOperationEnum.SUBTRACT);
+        this.adjustBalance(targetAccount, bill.getConvertedAmount(), BalanceOperationEnum.SUBTRACT);
         targetAccount.updateById();
     }
 

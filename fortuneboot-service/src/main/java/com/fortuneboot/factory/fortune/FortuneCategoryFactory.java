@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangchi118
@@ -34,5 +35,15 @@ public class FortuneCategoryFactory {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, categoryId, "分类");
         }
         return new FortuneCategoryModel(fortuneCategoryEntity, fortuneCategoryRepository);
+    }
+
+    public List<FortuneCategoryModel> loadByIds(List<Long> categoryIds) {
+        List<FortuneCategoryEntity> entities = fortuneCategoryRepository.getByIds(categoryIds);
+        if (CollectionUtils.size(entities) != CollectionUtils.size(categoryIds)){
+            List<Long> list = entities.stream().map(FortuneCategoryEntity::getCategoryId).toList();
+            Collection<Long> subtracts = CollectionUtils.subtract(categoryIds, list);
+            throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, subtracts.toString(), "分类");
+        }
+        return entities.stream().map(item -> new FortuneCategoryModel(item, fortuneCategoryRepository)).toList();
     }
 }
