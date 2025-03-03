@@ -9,7 +9,9 @@ import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -57,4 +59,31 @@ public class FortuneBillModel extends FortuneBillEntity {
             throw new ApiException(ErrorCode.Business.BILL_PAYEE_NOT_EXIST);
         }
     }
+
+    public void checkPayeeEnable(FortunePayeeModel payee) {
+        if (!payee.getEnable()){
+            throw new ApiException(ErrorCode.Business.BILL_PAYEE_DISABLE,payee.getPayeeName());
+        }
+    }
+
+    public void checkTagListEnable(List<FortuneTagModel> fortuneTagModels) {
+        List<String> disables = fortuneTagModels.stream().filter(model -> !model.getEnable()).map(FortuneTagModel::getTagName).toList();
+        if (CollectionUtils.isNotEmpty(disables)) {
+            throw new ApiException(ErrorCode.Business.BILL_TAG_DISABLE, disables.toString());
+        }
+    }
+
+    public void checkCategoryListEnable(List<FortuneCategoryModel> fortuneCategoryModels) {
+        List<String> disables = fortuneCategoryModels.stream().filter(model -> !model.getEnable()).map(FortuneCategoryModel::getCategoryName).toList();
+        if (CollectionUtils.isNotEmpty(disables)) {
+            throw new ApiException(ErrorCode.Business.BILL_CATEGORY_DISABLE, disables.toString());
+        }
+    }
+
+    public void checkAccountEnable(FortuneAccountModel account) {
+        if (!account.getEnable()){
+            throw new ApiException(ErrorCode.Business.BILL_ACCOUNT_DISABLE, account.getAccountName());
+        }
+    }
+
 }
