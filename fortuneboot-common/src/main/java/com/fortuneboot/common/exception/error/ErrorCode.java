@@ -257,7 +257,15 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_USED_CANNOT_REMOVE(26003, "账户：{} 已被使用，请先删除相应账单后再试", "Business.ACCOUNT_NOT_MATCH_GROUP"),
 
-        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26004,"余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
+        ACCOUNT_CANNOT_EXPENSE(26004, "账户：{} 不可支出，请修改支出状态后再试", "Business.ACCOUNT_CANNOT_EXPENSE"),
+
+        ACCOUNT_CANNOT_INCOME(26005, "账户：{} 不可收入，请修改收入状态后再试", "Business.ACCOUNT_CANNOT_INCOME"),
+
+        ACCOUNT_CANNOT_TRANSFER_IN(26006, "账户：{} 不可转入，请修改转入状态后再试", "Business.ACCOUNT_CANNOT_TRANSFER_IN"),
+
+        ACCOUNT_CANNOT_TRANSFER_OUT(26007, "账户：{} 不可转出，请修改转出状态后再试", "Business.ACCOUNT_CANNOT_TRANSFER_OUT"),
+
+        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26008,"余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
 
         // ---------------------------------- BILL -----------------------------------------------
 
@@ -273,10 +281,17 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_TYPE_ILLEGAL(27005,"无效的账单类型：{}", "Business.BILL_TYPE_ILLEGAL"),
 
-        // ---------------------------------- RATE -----------------------------------------------
-        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
+        BILL_PAYEE_DISABLE(27006, "交易对象被禁用，无法新增账单： {}","Business.BILL_PAYEE_DISABLE" ),
 
-        ;
+        BILL_ACCOUNT_DISABLE(27007, "账户被禁用，无法新增账单： {}","Business.BILL_ACCOUNT_DISABLE" ),
+
+        BILL_TAG_DISABLE(27008, "标签被禁用，无法新增账单： {}","Business.BILL_TAGS_DISABLE" ),
+
+        BILL_CATEGORY_DISABLE(27009, "分类被禁用，无法新增账单： {}","Business.BILL_CATEGORY_DISABLE" ),
+
+        // ---------------------------------- RATE -----------------------------------------------,
+        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND");
+
 
 
         private final int code;
