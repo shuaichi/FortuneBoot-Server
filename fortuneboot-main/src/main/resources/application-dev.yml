@@ -50,9 +50,9 @@ spring:
             datasource:
                 # 主库数据源
                 master:
-                    url: jdbc:mysql://tencent.mysql:30306/fortune_boot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
-                    username: root
-                    password: zC@Mysql123
+                    url: jdbc:mysql://${DB_HOST:mysql.fortune.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
+                    username: ${DB_USERNAME:root}
+                    password: ${DB_PASSWORD:Jk9Lm2XqPvZt8N7e}
                 # 从库数据源
 #                slave:
 #                    url: jdbc:mysql://localhost:33067/fortuneboot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
@@ -62,9 +62,9 @@ spring:
         # redis 配置
         redis:
             # 地址
-            host: tencent.mysql
+            host: ${REDIS_HOST:redis.fortune.com}
             # 端口，默认为6379
-            port: 62963
+            port: ${REDIS_PORT:62963}
             # 数据库索引
             database: 0
             # 连接超时时间

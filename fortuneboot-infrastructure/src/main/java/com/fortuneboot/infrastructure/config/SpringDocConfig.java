@@ -19,7 +19,7 @@ public class SpringDocConfig {
         return new OpenAPI()
                 .info(new Info().title("好记")
                         .description("好记记账管理系统演示")
-                        .version("v0.0.1")
+                        .version("v1.0.0")
                         .license(new License()
                                 .name("MIT 3.0")
                                 .url("http://gitea.fortuneboot.com:38576/")
