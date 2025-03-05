@@ -20,6 +20,7 @@ import com.fortuneboot.repository.fortune.FortuneAccountRepository;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -194,13 +195,18 @@ public class FortuneAccountService {
     }
 
     private FortuneBillAddCommand initBillAddCommand(FortuneAccountAdjustCommand adjustCommand, FortuneAccountModel fortuneAccountModel) {
+        BigDecimal balance = adjustCommand.getBalance().subtract(fortuneAccountModel.getBalance());
+        if (BigDecimal.ZERO.compareTo(balance) == 0) {
+            throw new ApiException(ErrorCode.Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY);
+        }
         FortuneBillAddCommand fortuneBill = new FortuneBillAddCommand();
-        fortuneBill.setAmount(adjustCommand.getBalance().subtract(fortuneAccountModel.getBalance()));
+        fortuneBill.setAmount(balance);
+        fortuneBill.setConvertedAmount(balance);
         fortuneBill.setBillType(BillTypeEnum.ADJUST.getValue());
         fortuneBill.setAccountId(adjustCommand.getAccountId());
         fortuneBill.setBookId(adjustCommand.getBookId());
         fortuneBill.setTradeTime(adjustCommand.getTradeTime());
-        fortuneBill.setTitle(adjustCommand.getTitle());
+        fortuneBill.setTitle(StringUtils.isBlank(adjustCommand.getTitle()) ? "余额调整" : adjustCommand.getTitle());
         fortuneBill.setRemark(adjustCommand.getRemark());
         fortuneBill.setConfirm(Boolean.TRUE);
         fortuneBill.setInclude(Boolean.TRUE);

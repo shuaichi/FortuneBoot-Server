@@ -62,10 +62,10 @@ public class FortuneGroupController {
     }
 
     @Operation(summary = "通过分组id查看分组")
-    @GetMapping("/getByUserId/{groupId}")
+    @GetMapping("/{groupId}/getByGroupId")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<FortuneGroupVo> getByUserId(@PathVariable @NotNull(message = "分组id不能为空")  @Positive Long groupId) {
-        return ResponseDTO.ok(fortuneGroupService.getByUserId(groupId));
+    public ResponseDTO<FortuneGroupVo> getByGroupId(@PathVariable @NotNull(message = "分组id不能为空")  @Positive Long groupId) {
+        return ResponseDTO.ok(fortuneGroupService.getByGroupId(groupId));
     }
 
     @Operation(summary = "获取账本模板")

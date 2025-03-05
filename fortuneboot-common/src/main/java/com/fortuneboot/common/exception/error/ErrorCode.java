@@ -265,6 +265,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_CANNOT_TRANSFER_OUT(26007, "账户：{} 不可转出，请修改转出状态后再试", "Business.ACCOUNT_CANNOT_TRANSFER_OUT"),
 
+        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26008,"余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
+
         // ---------------------------------- BILL -----------------------------------------------
 
         BILL_NOT_MATCH_BOOK(27001, "账单与账本不匹配", "Business.BILL_NOT_MATCH_BOOK"),
