@@ -80,14 +80,14 @@ public class FortuneIncludeController {
     @Operation(summary = "统计支出分类")
     @GetMapping("/getCategoryExpense")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
-    public ResponseDTO<List<FortunePieVo>> getCategoryExpense(@RequestBody @Valid CategoryIncludeQuery query){
+    public ResponseDTO<List<FortunePieVo>> getCategoryExpense(@RequestParam @Valid CategoryIncludeQuery query){
         return ResponseDTO.ok(fortuneBillService.getCategoryExpense(query));
     }
 
     @Operation(summary = "统计收入分类")
     @GetMapping("/getCategoryIncome")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
-    public ResponseDTO<List<FortunePieVo>> getCategoryIncome(@RequestBody @Valid CategoryIncludeQuery query){
+    public ResponseDTO<List<FortunePieVo>> getCategoryIncome(@RequestParam @Valid CategoryIncludeQuery query){
         return ResponseDTO.ok(fortuneBillService.getCategoryIncome(query));
     }
 
@@ -106,14 +106,14 @@ public class FortuneIncludeController {
     }
 
 
-    @Operation(summary = "统计支出分类")
+    @Operation(summary = "统计支出交易对象")
     @GetMapping("/getPayeeExpense")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
     public ResponseDTO<List<FortunePieVo>> getPayeeExpense(@RequestBody @Valid PayeeIncludeQuery query){
         return ResponseDTO.ok(fortuneBillService.getPayeeExpense(query));
     }
 
-    @Operation(summary = "统计收入分类")
+    @Operation(summary = "统计收入交易对象")
     @GetMapping("/getPayeeIncome")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.bookId)")
     public ResponseDTO<List<FortunePieVo>> getPayeeIncome(@RequestBody @Valid PayeeIncludeQuery query){
