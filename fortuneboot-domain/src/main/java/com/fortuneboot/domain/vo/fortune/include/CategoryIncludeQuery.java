@@ -41,20 +41,20 @@ public class CategoryIncludeQuery {
     /**
      * 分类
      */
-    private List<Long> categoryIdList;
+    private List<Long> categoryIds;
 
     /**
      * 标签
      */
-    private List<Long> tagIdList;
+    private List<Long> tagIds;
 
     /**
      * 交易对象
      */
-    private List<Long> payeeIdList;
+    private List<Long> payeeIds;
 
     /**
      * 账户
      */
-    private List<Long> accountIdList;
+    private List<Long> accountIds;
 }

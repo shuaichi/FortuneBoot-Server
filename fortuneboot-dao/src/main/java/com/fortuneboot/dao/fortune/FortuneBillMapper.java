@@ -100,23 +100,23 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                             <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
                             <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
                             <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate}</if>
-                            <if test='query.accountIdList != null and query.accountIdList.size() > 0'>
+                            <if test='query.accountIds != null and query.accountIds.size() > 0'>
                               AND b.account_id IN
-                              <foreach collection='query.accountIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                              <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
                             </if>
-                            <if test='query.payeeIdList != null and query.payeeIdList.size() > 0'>
+                            <if test='query.payeeIds != null and query.payeeIds.size() > 0'>
                               AND b.payee_id IN
-                              <foreach collection='query.payeeIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                              <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
                             </if>
-                            <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                            <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
                               AND EXISTS (SELECT 1 FROM fortune_category_relation cr
                                WHERE cr.bill_id = b.bill_id AND cr.category_id IN
-                               <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+                               <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
                             </if>
-                            <if test='query.tagIdList != null and query.tagIdList.size() > 0'>
+                            <if test='query.tagIds != null and query.tagIds.size() > 0'>
                               AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
                                WHERE tr.bill_id = b.bill_id AND tr.tag_id IN
-                               <foreach collection='query.tagIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+                               <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
                             </if>
                           </where>
                         ),
@@ -128,9 +128,9 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                         INNER JOIN fortune_category_relation cr ON fb.bill_id = cr.bill_id
                         INNER JOIN fortune_category c ON cr.category_id = c.category_id
                         CROSS JOIN total t
-                        <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                        <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
                           WHERE cr.category_id IN
-                          <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+                          <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
                         </if>
                         GROUP BY c.category_id
                     </script>
@@ -142,7 +142,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             """
                     <script>
                         SELECT
-                          ft.tag_name AS name,
+                          COALESCE(ft.tag_name, '未设置标签') AS name,
                           SUM(b.amount) AS `value`
                         FROM fortune_bill b
                         LEFT JOIN fortune_tag_relation btr ON b.bill_id = btr.bill_id
@@ -152,31 +152,31 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                           <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%') </if>
                           <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate} </if>
                           <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} </if>
-                          <if test='query.accountIdList != null and query.accountIdList.size() > 0'>
+                          <if test='query.accountIds != null and query.accountIds.size() > 0'>
                             AND b.account_id IN
-                            <foreach collection='query.accountIdList' item='item' open='(' separator=',' close=')'>
+                            <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>
                               #{item}
                             </foreach>
                           </if>
-                          <if test='query.payeeIdList != null and query.payeeIdList.size() > 0'>
+                          <if test='query.payeeIds != null and query.payeeIds.size() > 0'>
                             AND b.payee_id IN
-                            <foreach collection='query.payeeIdList' item='item' open='(' separator=',' close=')'>
+                            <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>
                               #{item}
                             </foreach>
                           </if>
-                          <if test='query.categoryIdList != null and query.categoryIdList.size() > 0'>
+                          <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
                             AND EXISTS (SELECT 1 FROM fortune_category_relation cr
                               WHERE cr.bill_id = b.bill_id
                               AND cr.category_id IN
-                              <foreach collection='query.categoryIdList' item='item' open='(' separator=',' close=')'>
+                              <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>
                                 #{item}
                               </foreach>)
                           </if>
-                          <if test='query.tagIdList != null and query.tagIdList.size() > 0'>
+                          <if test='query.tagIds != null and query.tagIds.size() > 0'>
                             AND EXISTS (SELECT 1 FROM fortune_bill_tag_relation tr
                               WHERE tr.bill_id = b.bill_id
                               AND tr.tag_id IN
-                              <foreach collection='query.tagIdList' item='item' open='(' separator=',' close=')'>
+                              <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>
                                 #{item}
                               </foreach>)
                           </if>
@@ -190,21 +190,21 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             """
                     <script>
                         SELECT
-                            p.payee_name AS name,
+                            COALESCE(p.payee_name, '未设置交易对象') AS name,
                             SUM(b.amount) AS value,
                             (SUM(b.amount) / SUM(SUM(b.amount)) OVER ()) * 100 AS `percent`
                         FROM fortune_bill b
-                        INNER JOIN fortune_payee p ON b.payee_id = p.payee_id
+                        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id
                         WHERE b.bill_type = #{billType}
-                        <if test='query.accountIdList != null and !query.accountIdList.isEmpty()'>
+                        <if test='query.accountIds != null and !query.accountIds.isEmpty()'>
                             AND b.account_id IN
-                            <foreach item='item' collection='query.accountIdList' open='(' separator=',' close=')'>
+                            <foreach item='item' collection='query.accountIds' open='(' separator=',' close=')'>
                                 #{item}
                             </foreach>
                         </if>
-                        <if test='query.payeeIdList != null and !query.payeeIdList.isEmpty()'>
+                        <if test='query.payeeIds != null and !query.payeeIds.isEmpty()'>
                             AND b.payee_id IN
-                            <foreach item='item' collection='query.payeeIdList' open='(' separator=',' close=')'>
+                            <foreach item='item' collection='query.payeeIds' open='(' separator=',' close=')'>
                                 #{item}
                             </foreach>
                         </if>
@@ -220,24 +220,24 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                         <if test='query.endDate != null'>
                             AND b.trade_time &lt;= #{query.endDate}
                         </if>
-                        <if test='query.categoryIdList != null and !query.categoryIdList.isEmpty()'>
+                        <if test='query.categoryIds != null and !query.categoryIds.isEmpty()'>
                             AND EXISTS (
                                 SELECT 1
                                 FROM fortune_category_relation cr
                                 WHERE cr.bill_id = b.bill_id
                                 AND cr.category_id IN
-                                <foreach item='item' collection='query.categoryIdList' open='(' separator=',' close=')'>
+                                <foreach item='item' collection='query.categoryIds' open='(' separator=',' close=')'>
                                     #{item}
                                 </foreach>
                             )
                         </if>
-                        <if test='query.tagIdList != null and !query.tagIdList.isEmpty()'>
+                        <if test='query.tagIds != null and !query.tagIds.isEmpty()'>
                             AND EXISTS (
                                 SELECT 1
                                 FROM fortune_tag_relation tr
                                 WHERE tr.bill_id = b.bill_id
                                 AND tr.tag_id IN
-                                <foreach item='item' collection='query.tagIdList' open='(' separator=',' close=')'>
+                                <foreach item='item' collection='query.tagIds' open='(' separator=',' close=')'>
                                     #{item}
                                 </foreach>
                             )
