@@ -173,7 +173,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                               </foreach>)
                           </if>
                           <if test='query.tagIds != null and query.tagIds.size() > 0'>
-                            AND EXISTS (SELECT 1 FROM fortune_bill_tag_relation tr
+                            AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
                               WHERE tr.bill_id = b.bill_id
                               AND tr.tag_id IN
                               <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>
