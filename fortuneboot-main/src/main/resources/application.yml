@@ -21,7 +21,7 @@ server:
 # 生产环境把dev改为prod
 spring:
   profiles:
-    active: basic,dev
+    active: basic,prod
 
 # 如果需要无Mysql  无Redis直接启动的话  可以将这两个参数置为true, 并且spring.profile.active: dev换成test
 # redis的端口可能会被占用，如果被占用请自己修改一下端口号
