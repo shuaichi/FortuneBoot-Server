@@ -58,7 +58,7 @@ public class FortuneCategoryService {
                     .map(FortuneCategoryVo::new)
                     .collect(Collectors.toList());
 
-            // 递归填充子节点（优化点：保持单次数据库交互）
+            // 递归填充子节点
             this.fillChildrenWithCache(records);
 
             return new PageDTO<>(records, page.getTotal());
@@ -170,8 +170,9 @@ public class FortuneCategoryService {
      * @param parentVos 父节点VO列表
      */
     private void fillChildrenWithCache(List<FortuneCategoryVo> parentVos) {
-        if (CollectionUtils.isEmpty(parentVos)) return;
-
+        if (CollectionUtils.isEmpty(parentVos)) {
+            return;
+        }
         // 收集所有需要查询的父ID（包括所有层级的）
         Set<Long> allParentIds = new HashSet<>();
         Queue<AbstractTreeNode> queue = new LinkedList<>(parentVos);
@@ -203,12 +204,15 @@ public class FortuneCategoryService {
             );
 
             List<FortuneCategoryVo> childrenVos = childrenEntities.stream()
-                    .filter(e -> !e.getRecycleBin())  // 过滤回收站条目
+                    // 过滤回收站条目
+                    .filter(e -> !e.getRecycleBin())
                     .map(FortuneCategoryVo::new)
                     .collect(Collectors.toList());
 
             childrenVos.forEach(parentVo::addChild);
-            fillChildrenFromCache(childrenVos, childrenMap);  // 递归填充子树
+            // 递归填充子树
+            this.fillChildrenFromCache(childrenVos, childrenMap);
+            this.fillChildrenWithCache(childrenVos);
         }
     }
 

@@ -189,11 +189,14 @@ public class FortuneTagService {
             );
 
             List<FortuneTagVo> childrenVos = childrenEntities.stream()
-                    .filter(e -> !e.getRecycleBin())  // 过滤回收站条目
+                    // 过滤回收站条目
+                    .filter(e -> !e.getRecycleBin())
                     .map(FortuneTagVo::new).toList();
 
             childrenVos.forEach(parentVo::addChild);
-            fillChildrenFromCache(childrenVos, childrenMap);  // 递归填充子树
+            // 递归填充子树
+            fillChildrenFromCache(childrenVos, childrenMap);
+            this.fillChildrenWithCache(childrenVos);
         }
     }
 
