@@ -51,7 +51,8 @@ public class FortuneBookQuery extends AbstractLambdaPageQuery<FortuneBookEntity>
         queryWrapper.eq(FortuneBookEntity::getGroupId, groupId)
                 .eq(FortuneBookEntity::getRecycleBin, recycleBin)
                 .eq(Objects.nonNull(enable), FortuneBookEntity::getEnable, enable)
-                .like(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName);
+                .like(StringUtils.isNotEmpty(bookName), FortuneBookEntity::getBookName, bookName)
+                .orderByAsc(FortuneBookEntity::getSort);
         return queryWrapper;
     }
 }
