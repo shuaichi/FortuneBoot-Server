@@ -26,13 +26,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortunePermissionService {
 
-    private final FortuneGroupRepository fortuneGroupRepository;
-
     private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
 
     private final FortuneBookRepository fortuneBookRepository;
+
     private final FortuneBillRepository fortuneBillRepository;
-    private final FortuneAccountRepository fortuneAccountRepository;
 
     /**
      * 验证是否是登录用户
@@ -91,7 +89,7 @@ public class FortunePermissionService {
             // 遍历分组关系，如果查到，说明有权限
             if (ObjectUtil.equals(loginUser.getUserId(), userGroupRelationEntity.getUserId())
                     && (ObjectUtil.equal(userGroupRelationEntity.getRoleType(), RoleTypeEnum.OWNER.getValue())
-                    || Objects.equals(userGroupRelationEntity.getRoleType(), RoleTypeEnum.OWNER.getValue()))) {
+                    || Objects.equals(userGroupRelationEntity.getRoleType(), RoleTypeEnum.ACTOR.getValue()))) {
                 return Boolean.TRUE;
             }
         }
