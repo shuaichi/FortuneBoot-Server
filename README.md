@@ -16,7 +16,7 @@
 [//]: # (暂时注释logo)
 [//]: # (<img alt="logo" height="200" src="">)
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.1 </h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.2 </h1>
 <h4 align="center">基于AgileBoot开发的记账管理软件</h4>
 <p align="center">
 </p>
