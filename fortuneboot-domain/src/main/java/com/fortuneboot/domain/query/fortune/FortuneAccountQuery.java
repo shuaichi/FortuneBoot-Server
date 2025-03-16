@@ -107,7 +107,8 @@ public class FortuneAccountQuery extends AbstractLambdaPageQuery<FortuneAccountE
                 .eq(Objects.nonNull(canIncome), FortuneAccountEntity::getCanIncome, canIncome)
                 .eq(Objects.nonNull(canTransferOut), FortuneAccountEntity::getCanTransferOut, canTransferOut)
                 .eq(Objects.nonNull(canTransferIn), FortuneAccountEntity::getCanTransferIn, canTransferIn)
-                .eq(Objects.nonNull(enable), FortuneAccountEntity::getEnable, enable);
+                .eq(Objects.nonNull(enable), FortuneAccountEntity::getEnable, enable)
+                .orderByAsc(FortuneAccountEntity::getSort);
         return lambdaQueryWrapper;
     }
 }
