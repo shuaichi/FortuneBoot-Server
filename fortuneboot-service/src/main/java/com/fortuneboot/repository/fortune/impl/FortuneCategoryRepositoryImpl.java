@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,6 +30,9 @@ public class FortuneCategoryRepositoryImpl extends ServiceImpl<FortuneCategoryMa
 
     @Override
     public List<FortuneCategoryEntity> getByIds(List<Long> categoryIds) {
+        if (CollectionUtils.isEmpty(categoryIds)) {
+            return Collections.emptyList();
+        }
         LambdaQueryWrapper<FortuneCategoryEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         lambdaQueryWrapper.in(FortuneCategoryEntity::getCategoryId, categoryIds);
         return this.list(lambdaQueryWrapper);
