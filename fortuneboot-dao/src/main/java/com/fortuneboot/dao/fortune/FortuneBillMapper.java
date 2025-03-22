@@ -97,11 +97,11 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                           <where>
                             b.include = TRUE
                             AND b.bill_type = #{billType}
-                            AND deleted = 0
+                            AND b.deleted = 0
                             <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
                             <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
                             <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
-                            <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate}</if>
+                            <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
                             <if test='query.accountIds != null and query.accountIds.size() > 0'>
                               AND b.account_id IN
                               <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
@@ -151,11 +151,11 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                         LEFT JOIN fortune_tag ft ON btr.tag_id = ft.tag_id
                         WHERE b.include = TRUE
                             AND b.bill_type = #{billType}
-                            AND deleted = 0
+                            AND b.deleted = 0
                           <if test='query.bookId != null'> AND b.book_id = #{query.bookId} </if>
                           <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%') </if>
                           <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate} </if>
-                          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} </if>
+                          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59') </if>
                           <if test='query.accountIds != null and query.accountIds.size() > 0'>
                             AND b.account_id IN
                             <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>
@@ -201,7 +201,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                         LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id
                         WHERE b.include = TRUE
                             AND b.bill_type = #{billType}
-                            AND deleted = 0
+                            AND b.deleted = 0
                         <if test='query.accountIds != null and !query.accountIds.isEmpty()'>
                             AND b.account_id IN
                             <foreach item='item' collection='query.accountIds' open='(' separator=',' close=')'>
@@ -224,7 +224,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                             AND b.trade_time &gt;= #{query.startDate}
                         </if>
                         <if test='query.endDate != null'>
-                            AND b.trade_time &lt;= #{query.endDate}
+                            AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')
                         </if>
                         <if test='query.categoryIds != null and !query.categoryIds.isEmpty()'>
                             AND EXISTS (
