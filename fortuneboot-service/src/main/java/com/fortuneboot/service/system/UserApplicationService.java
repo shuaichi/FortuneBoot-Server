@@ -34,6 +34,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fortuneboot.service.fortune.FortuneGroupService;
@@ -206,5 +207,10 @@ public class UserApplicationService {
             return roleEntityList.stream().map(RoleDTO::new).collect(Collectors.toList());
         }
         throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
+    }
+
+    public Boolean checkRepeat(String userName) {
+        SysUserEntity user = userRepository.getUserByUserName(userName);
+        return Objects.nonNull(user);
     }
 }

@@ -24,10 +24,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 首页
@@ -137,6 +134,12 @@ public class LoginController {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
         List<RouterDTO> routerTree = menuApplicationService.getRouterTree(loginUser);
         return ResponseDTO.ok(routerTree);
+    }
+
+    @Operation(summary = "检查用户名是否重复", description = "用于APP注册时检查用户名是否重复")
+    @PostMapping("/{userName}/checkRepeat")
+    public ResponseDTO<Boolean> checkUserNameRepeat(@PathVariable String userName) {
+        return ResponseDTO.ok(userApplicationService.checkRepeat(userName));
     }
 
     @Operation(summary = "获取允许注册的角色",description = "用于用户注册使用，注册时必选")
