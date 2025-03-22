@@ -95,7 +95,9 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                           SELECT b.bill_id, b.amount
                           FROM fortune_bill b
                           <where>
-                            b.bill_type = #{billType}
+                            b.include = TRUE
+                            AND b.bill_type = #{billType}
+                            AND deleted = 0
                             <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
                             <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
                             <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
@@ -147,7 +149,9 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                         FROM fortune_bill b
                         LEFT JOIN fortune_tag_relation btr ON b.bill_id = btr.bill_id
                         LEFT JOIN fortune_tag ft ON btr.tag_id = ft.tag_id
-                        WHERE b.bill_type = #{billType}
+                        WHERE b.include = TRUE
+                            AND b.bill_type = #{billType}
+                            AND deleted = 0
                           <if test='query.bookId != null'> AND b.book_id = #{query.bookId} </if>
                           <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%') </if>
                           <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate} </if>
@@ -195,7 +199,9 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                             (SUM(b.amount) / SUM(SUM(b.amount)) OVER ()) * 100 AS `percent`
                         FROM fortune_bill b
                         LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id
-                        WHERE b.bill_type = #{billType}
+                        WHERE b.include = TRUE
+                            AND b.bill_type = #{billType}
+                            AND deleted = 0
                         <if test='query.accountIds != null and !query.accountIds.isEmpty()'>
                             AND b.account_id IN
                             <foreach item='item' collection='query.accountIds' open='(' separator=',' close=')'>
