@@ -1,6 +1,6 @@
 
 <p align="center">
-      <img src="https://img.shields.io/badge/Release-V0.0.1-green.svg" alt="Downloads">
+      <img src="https://img.shields.io/badge/Release-V1.0.3-green.svg" alt="Downloads">
       <img src="https://img.shields.io/badge/JDK-21+-green.svg" alt="Build Status">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Build Status">
    <img src="https://img.shields.io/badge/Spring%20Boot-3.3-blue.svg" alt="Downloads">
@@ -187,13 +187,13 @@ fortuneboot
 
 ├── fortuneboot-common -- 精简基础工具模块
 │
-├── fortuneboot-controller -- http接口
+├── fortuneboot-rest -- http接口
 │
 ├── fortuneboot-dao -- 数据库orm层
 │
 ├── fortuneboot-infrastructure -- 基础设施模块（主要是配置和集成，不包含业务逻辑）
 │
-├── fortuneboot-service 业务逻辑
+├── fortuneboot-support 业务逻辑
 │
 ├── fortuneboot-main 程序启动入口
 │
