@@ -21,8 +21,8 @@
         <module>fortuneboot-common</module>
         <module>fortuneboot-domain</module>
         <module>fortuneboot-infrastructure</module>
-        <module>fortuneboot-controller</module>
-        <module>fortuneboot-service</module>
+        <module>fortuneboot-rest</module>
+        <module>fortuneboot-support</module>
         <module>fortuneboot-dao</module>
     </modules>
 
@@ -184,12 +184,12 @@
 
             <dependency>
                 <groupId>com.fortuneboot</groupId>
-                <artifactId>fortuneboot-controller</artifactId>
+                <artifactId>fortuneboot-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fortuneboot</groupId>
-                <artifactId>fortuneboot-service</artifactId>
+                <artifactId>fortuneboot-support</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

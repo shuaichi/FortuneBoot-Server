@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.fortuneboot</groupId>
-            <artifactId>fortuneboot-controller</artifactId>
+            <artifactId>fortuneboot-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
