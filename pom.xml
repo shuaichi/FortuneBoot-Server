@@ -11,7 +11,7 @@
     <version>1.0.0</version>
 
     <name>FortuneBoot-Server</name>
-    <url>http://www.fortuneboot.com</url>
+    <url>http://fortuneboot.com</url>
     <description>好记，你的家庭财务管家</description>
 
     <packaging>pom</packaging>

@@ -16,7 +16,7 @@
 [//]: # (暂时注释logo)
 [//]: # (<img alt="logo" height="200" src="">)
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.2 </h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.3 </h1>
 <h4 align="center">基于AgileBoot开发的记账管理软件</h4>
 <p align="center">
 </p>
@@ -40,8 +40,8 @@ FortuneBoot是一套开源的记账管理系统，毫无保留给个人及企业
 
 ## 💥 在线体验 💥
 演示地址：
-- www.fortuneboot.com
-- www.fortuneboot.cn
+- http://fortuneboot.com
+- http://fortuneboot.cn
 >  账号密码：admin/admin123
 
 
