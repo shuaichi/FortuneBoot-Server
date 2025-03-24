@@ -65,6 +65,7 @@ spring:
       host: ${REDIS_HOST:127.0.0.1}
       # 端口，默认为6379
       port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:123456}
       # 数据库索引
       database: 0
       # 连接超时时间
@@ -79,6 +80,7 @@ spring:
           max-active: 8
           # #连接池最大阻塞等待时间（使用负值表示没有限制）
           max-wait: -1ms
+
 logging:
   file:
     path: /home/fortuneboot/logs/fortuneboot-dev
