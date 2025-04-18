@@ -36,7 +36,8 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             SELECT \n
                 SUM(CASE WHEN bill_type = 1 THEN amount ELSE 0 END) AS expense,\n
                 SUM(CASE WHEN bill_type = 2 THEN amount ELSE 0 END) AS income,\n
-                SUM(CASE WHEN bill_type = 2 THEN amount ELSE -amount END) AS surplus\n
+                (SUM(CASE WHEN bill_type = 2 THEN amount ELSE 0 END) - 
+                 SUM(CASE WHEN bill_type = 1 THEN amount ELSE 0 END)) AS surplus \n
             FROM fortune_bill\n
             WHERE book_id = ${bookId}\n
                AND include = TRUE\n
