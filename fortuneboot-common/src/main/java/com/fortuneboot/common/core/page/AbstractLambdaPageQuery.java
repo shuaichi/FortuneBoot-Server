@@ -20,7 +20,7 @@ public abstract class AbstractLambdaPageQuery <T> extends AbstractLambdaQuery<T>
     /**
      * 最大分页页数
      */
-    public static final int MAX_PAGE_NUM = 200;
+    public static final int MAX_PAGE_NUM = 2147483647;
     /**
      * 单页最大大小
      */
