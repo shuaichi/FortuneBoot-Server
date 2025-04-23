@@ -26,7 +26,8 @@ public interface FortuneAccountMapper extends BaseMapper<FortuneAccountEntity> {
             WHERE \n
                 group_id = ${groupId}\n
                 AND balance > 0\n
-                AND deleted = FALSE;
+                AND deleted = FALSE
+                AND include = TRUE;
             """)
     List<FortunePieVo> getTotalAssets(Long groupId);
 
@@ -40,7 +41,8 @@ public interface FortuneAccountMapper extends BaseMapper<FortuneAccountEntity> {
             WHERE \n
                 group_id = ${groupId}\n
                 AND balance < 0\n
-                AND deleted = FALSE;
+                AND deleted = FALSE
+                AND include = TRUE;
             """)
     List<FortunePieVo> getTotalLiabilities(Long groupId);
 
@@ -52,7 +54,8 @@ public interface FortuneAccountMapper extends BaseMapper<FortuneAccountEntity> {
             FROM
                 fortune_account
             WHERE deleted = FALSE
-                AND group_id = ${groupId};
+                AND group_id = ${groupId}
+                AND include = TRUE;
             """)
     FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId);
 }
