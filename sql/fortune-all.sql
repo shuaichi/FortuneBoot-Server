@@ -13,7 +13,7 @@ create table if not exists fortune_account
     can_transfer_in  tinyint(1)     default 0      null comment '可转入',
     credit_limit     decimal                       null comment '信用额度',
     currency_code    varchar(16)    default 'CNY'  not null comment '币种',
-    enable           tinyint(1)     default 0      not null comment '是否启用',
+    enable           tinyint(1)     default 1      not null comment '是否启用',
     include          tinyint(1)     default 1      not null comment '是否计入净资产',
     apr              decimal(8, 4)                 null comment '利率',
     initial_balance  decimal(20, 4) default 0.0000 null comment '期初余额',
