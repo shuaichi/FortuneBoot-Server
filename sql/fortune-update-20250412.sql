@@ -1,3 +1,0 @@
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (97, '汇率中心', 1, 'FortuneCurrency', 66, '/fortune/currency/index', 0, '', '{"title":"汇率中心","icon":"fa:dollar","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-04-12 19:47:04', 1, '2025-04-12 19:50:31', 0);
-
-INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2,  97);
