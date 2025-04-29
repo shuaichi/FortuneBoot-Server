@@ -2,6 +2,7 @@ package com.fortuneboot.common.enums.fortune;
 
 import com.fortuneboot.common.enums.BasicEnum;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,5 +38,13 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
                 .filter(e -> Objects.equals(e.value, value))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static String getDescByValue(Integer value) {
+        return Arrays.stream(values())
+                .filter(e -> Objects.equals(e.value, value))
+                .findFirst()
+                .map(BillTypeEnum::getDescription)
+                .orElse(StringUtils.EMPTY);
     }
 }

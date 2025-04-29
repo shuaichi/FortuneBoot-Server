@@ -1,6 +1,6 @@
 
 <p align="center">
-      <img src="https://img.shields.io/badge/Release-V1.0.6-green.svg" alt="Downloads">
+      <img src="https://img.shields.io/badge/Release-V1.0.7-green.svg" alt="Downloads">
       <img src="https://img.shields.io/badge/JDK-21+-green.svg" alt="Build Status">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Build Status">
    <img src="https://img.shields.io/badge/Spring%20Boot-3.3-blue.svg" alt="Downloads">
@@ -16,7 +16,7 @@
 [//]: # (暂时注释logo)
 [//]: # (<img alt="logo" height="200" src="">)
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.6 </h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot V1.0.7 </h1>
 <h4 align="center">基于AgileBoot开发的记账管理软件</h4>
 <p align="center">
 </p>
@@ -224,10 +224,10 @@ fortuneboot
     - 填入数据库地址，账号密码，库名。然后填入所需的表名执行代码即可。（大概看一下代码就知道怎么填啦）
     - 生成的类在infrastructure模块下的target/classes目录下
     - 不同的数据库keywordsHandler方法请填入对应不同数据库handler。（搜索keywordsHandler关键字）
-- 注意：管理后台的后端启动类是AgileBoot**Admin**Application
+- 注意：管理后台的后端启动类是FortuneBoot-main**main**FortuneBootApplication
 - Swagger的API地址为 http://localhost:8080/v3/api-docs
 
-## 🎬 AgileBoot全栈交流群 🎬
+## 🎬 FortuneBoot全栈交流群 🎬
 
 QQ 群： [![加入QQ群](https://img.shields.io/badge/1009576058-blue.svg)](https://qm.qq.com/q/M2zyt7vxyG) 点击按钮入群。
 
