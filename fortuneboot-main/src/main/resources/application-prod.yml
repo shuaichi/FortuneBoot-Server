@@ -12,8 +12,8 @@ spring:
         allow:
         url-pattern: /druid/*
         # 控制台管理用户名和密码
-        login-username: fortuneboot
-        login-password: 123456
+        login-username: ${DRUID_USERNAME:fortuneboot}
+        login-password: ${DRUID_PASSWORD:123456}
       filter:
         stat:
           enabled: true
@@ -90,7 +90,7 @@ springdoc:
   swagger-ui:
     # ***注意*** 开启Swagger UI界面  **安全考虑的话生产环境需要关掉**
     # 因为knife4j的一些配置不灵活 所以重新改回springdoc+swagger的组合  真实开发的时候 使用apifox这种工具效率更高
-    enabled: true
+    enabled: ${SWAGGER_ENABLE:true}
     url: ${fortuneboot.api-prefix}/v3/api-docs
     config-url: ${fortuneboot.api-prefix}/v3/api-docs/swagger-config
 

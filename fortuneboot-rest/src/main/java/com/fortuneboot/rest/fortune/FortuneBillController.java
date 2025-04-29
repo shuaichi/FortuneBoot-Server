@@ -3,15 +3,18 @@ package com.fortuneboot.rest.fortune;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.common.utils.poi.CustomExcelUtil;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillDownloadVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillVo;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +50,7 @@ public class FortuneBillController {
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.ADD)
     @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@RequestPart("data") @Valid FortuneBillAddCommand addCommand,
-                                 @RequestPart(name = "files",required = false) List<MultipartFile> fileList) {
+                                 @RequestPart(name = "files", required = false) List<MultipartFile> fileList) {
         addCommand.setFileList(fileList);
         fortuneBillService.add(addCommand);
         return ResponseDTO.ok();
@@ -57,8 +60,8 @@ public class FortuneBillController {
     @PutMapping("/modify")
     @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> modify(@RequestPart("data") @Valid FortuneBillModifyCommand modifyCommand ,
-                                    @RequestPart(name = "files",required = false) List<MultipartFile> fileList) {
+    public ResponseDTO<Void> modify(@RequestPart("data") @Valid FortuneBillModifyCommand modifyCommand,
+                                    @RequestPart(name = "files", required = false) List<MultipartFile> fileList) {
         modifyCommand.setFileList(fileList);
         fortuneBillService.modify(modifyCommand);
         return ResponseDTO.ok();
@@ -107,5 +110,17 @@ public class FortuneBillController {
     public ResponseDTO<Void> exclude(@PathVariable @Positive Long bookId, @PathVariable @Positive Long billId) {
         fortuneBillService.exclude(bookId, billId);
         return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "用户列表导出")
+    @AccessLog(title = "用户管理", businessType = BusinessTypeEnum.EXPORT)
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
+    @GetMapping("/excel")
+    public void exportUserByExcel(HttpServletResponse response, @Valid FortuneBillQuery query) {
+        query.setPageNum(1);
+        query.setPageSize(Integer.MAX_VALUE);
+        PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
+        List<FortuneBillDownloadVo> list = page.getRows().stream().map(FortuneBillDownloadVo::new).toList();
+        CustomExcelUtil.writeToResponse(list, FortuneBillDownloadVo.class, response);
     }
 }

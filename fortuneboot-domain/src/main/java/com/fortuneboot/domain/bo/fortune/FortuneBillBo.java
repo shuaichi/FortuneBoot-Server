@@ -2,6 +2,7 @@ package com.fortuneboot.domain.bo.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
@@ -28,6 +29,7 @@ public class FortuneBillBo {
     /**
      * id
      */
+    @ExcelColumn(name = "账单ID")
     private Long billId;
 
     /**
@@ -38,16 +40,19 @@ public class FortuneBillBo {
     /**
      * 账本名称
      */
+    @ExcelColumn(name = "账本")
     private String bookName;
 
     /**
      * 标题
      */
+    @ExcelColumn(name = "标题")
     private String title;
 
     /**
      * 交易时间
      */
+    @ExcelColumn(name = "交易时间")
     private LocalDateTime tradeTime;
 
     /**
@@ -58,6 +63,7 @@ public class FortuneBillBo {
     /**
      * 账户
      */
+    @ExcelColumn(name = "账户")
     private String accountName;
 
     /**
@@ -68,11 +74,13 @@ public class FortuneBillBo {
     /**
      * 币种
      */
+    @ExcelColumn(name = "币种")
     private String currencyCode;
 
     /**
      * 汇率转换后的金额
      */
+    @ExcelColumn(name = "金额")
     private BigDecimal convertedAmount;
 
     /**
@@ -83,6 +91,7 @@ public class FortuneBillBo {
     /**
      * 交易对象
      */
+    @ExcelColumn(name = "交易对象")
     private String payeeName;
 
     /**

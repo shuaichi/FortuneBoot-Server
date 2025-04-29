@@ -2,9 +2,10 @@ package com.fortuneboot.domain.vo.fortune.bill;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.common.annotation.ExcelColumn;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.domain.vo.fortune.FortuneCategoryVo;
 import com.fortuneboot.domain.vo.fortune.FortuneTagVo;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,10 +36,10 @@ public class FortuneBillVo {
             this.setTagList(tagList);
         }
     }
-
     /**
      * id
      */
+    @ExcelColumn(name = "账单ID")
     private Long billId;
 
     /**
@@ -49,56 +50,63 @@ public class FortuneBillVo {
     /**
      * 账本名称
      */
+    @ExcelColumn(name = "账本")
     private String bookName;
 
     /**
-     *标题
+     * 标题
      */
+    @ExcelColumn(name = "标题")
     private String title;
 
     /**
-     *交易时间
+     * 交易时间
      */
+    @ExcelColumn(name = "交易时间")
     private LocalDateTime tradeTime;
 
     /**
-     *账户id
+     * 账户id
      */
     private Long accountId;
 
     /**
-     * 账户名称
+     * 账户
      */
+    @ExcelColumn(name = "账户")
     private String accountName;
 
     /**
-     *金额
+     * 金额
      */
     private BigDecimal amount;
 
     /**
      * 币种
      */
+    @ExcelColumn(name = "币种")
     private String currencyCode;
 
     /**
-     *汇率转换后的金额
+     * 汇率转换后的金额
      */
+    @ExcelColumn(name = "金额")
     private BigDecimal convertedAmount;
 
     /**
-     *交易对象
+     * 交易对象
      */
     private Long payeeId;
 
     /**
      * 交易对象
      */
+    @ExcelColumn(name = "交易对象")
     private String payeeName;
 
     /**
      * 流水类型
-     * com.fortuneboot.common.enums.fortune.BillTypeEnum
+     * @see BillTypeEnum
      */
     private Integer billType;
 
