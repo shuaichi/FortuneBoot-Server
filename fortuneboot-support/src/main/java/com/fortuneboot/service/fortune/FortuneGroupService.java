@@ -84,7 +84,10 @@ public class FortuneGroupService {
 
     public FortuneGroupVo getByGroupId(Long groupId) {
         FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
-        return BeanUtil.copyProperties(fortuneGroupEntity, FortuneGroupVo.class);
+        FortuneGroupVo fortuneGroupVo = BeanUtil.copyProperties(fortuneGroupEntity, FortuneGroupVo.class);
+        FortuneBookEntity bookEntity = fortuneBookService.getBookById(fortuneGroupEntity.getDefaultBookId());
+        fortuneGroupVo.setDefaultBookName(bookEntity.getBookName());
+        return fortuneGroupVo;
     }
 
     @Transactional(rollbackFor = Exception.class)
