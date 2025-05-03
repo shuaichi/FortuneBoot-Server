@@ -135,7 +135,7 @@ public class FortuneGroupController {
     @Operation(summary = "邀请用户")
     @PostMapping("/inviteUser")
     @AccessLog(title = "好记-分组管理-邀请用户", businessType = BusinessTypeEnum.GRANT)
-    @PreAuthorize("@fortune.groupOwnerPermission(#inviteCommand.groupId)")
+    @PreAuthorize("@fortune.groupOwnerPermission(#inviteCommand.getGroupId())")
     public ResponseDTO<Void> inviteUser(@RequestBody @Valid FortuneUserGroupRelationInviteCommand inviteCommand) {
         fortuneUserGroupRelationService.inviteUser(inviteCommand);
         return ResponseDTO.ok();

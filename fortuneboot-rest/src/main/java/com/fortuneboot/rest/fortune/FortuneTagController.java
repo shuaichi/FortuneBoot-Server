@@ -75,7 +75,7 @@ public class FortuneTagController {
     @Operation(summary = "新增标签")
     @PostMapping("/add")
     @AccessLog(title = "好记-标签管理", businessType = BusinessTypeEnum.ADD)
-    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@Valid @RequestBody FortuneTagAddCommand addCommand) {
         fortuneTagService.add(addCommand);
         return ResponseDTO.ok();
@@ -84,7 +84,7 @@ public class FortuneTagController {
     @Operation(summary = "修改标签")
     @PutMapping("/modify")
     @AccessLog(title = "好记-标签管理", businessType = BusinessTypeEnum.MODIFY)
-    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneTagModifyCommand modifyCommand) {
         fortuneTagService.modify(modifyCommand);
         return ResponseDTO.ok();

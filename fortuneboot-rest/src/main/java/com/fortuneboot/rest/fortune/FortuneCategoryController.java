@@ -75,7 +75,7 @@ public class FortuneCategoryController {
     @Operation(summary = "新增分类")
     @PostMapping("/add")
     @AccessLog(title = "好记-分类管理", businessType = BusinessTypeEnum.ADD)
-    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@Valid @RequestBody FortuneCategoryAddCommand addCommand) {
         fortuneCategoryService.add(addCommand);
         return ResponseDTO.ok();
@@ -84,7 +84,7 @@ public class FortuneCategoryController {
     @Operation(summary = "修改分类")
     @PutMapping("/modify")
     @AccessLog(title = "好记-分类管理", businessType = BusinessTypeEnum.MODIFY)
-    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
     public ResponseDTO<Void> modify(@Valid @RequestBody FortuneCategoryModifyCommand modifyCommand) {
         fortuneCategoryService.modify(modifyCommand);
         return ResponseDTO.ok();
