@@ -495,8 +495,9 @@ public class FortuneBillService {
         fortuneBillModel.updateById();
     }
 
-    public BillStatisticsVo getBillStatistics(Long bookId) {
-        return fortuneBillRepository.getBillStatistics(bookId);
+    public BillStatisticsVo getBillStatistics(FortuneBillQuery query) {
+        query.setInclude(Boolean.TRUE);
+        return fortuneBillRepository.getBillStatistics(query);
     }
 
     public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {

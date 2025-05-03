@@ -8,6 +8,7 @@ import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import lombok.AllArgsConstructor;
@@ -60,8 +61,8 @@ public class FortuneBillRepositoryImpl extends ServiceImpl<FortuneBillMapper, Fo
     }
 
     @Override
-    public BillStatisticsVo getBillStatistics(Long bookId) {
-        return fortuneBillMapper.getBillStatistics(bookId);
+    public BillStatisticsVo getBillStatistics(FortuneBillQuery query) {
+        return fortuneBillMapper.getBillStatistics(query.addQueryCondition());
     }
 
     @Override

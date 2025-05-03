@@ -34,16 +34,16 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
 
     @Select("""
             SELECT \n
-                SUM(CASE WHEN bill_type = 1 THEN amount ELSE 0 END) AS expense,\n
-                SUM(CASE WHEN bill_type = 2 THEN amount ELSE 0 END) AS income,\n
-                (SUM(CASE WHEN bill_type = 2 THEN amount ELSE 0 END) - 
-                 SUM(CASE WHEN bill_type = 1 THEN amount ELSE 0 END)) AS surplus \n
-            FROM fortune_bill\n
-            WHERE book_id = ${bookId}\n
-               AND include = TRUE\n
-               AND deleted = 0
+                SUM(CASE WHEN bill.bill_type = 1 THEN bill.amount ELSE 0 END) AS expense,\n
+                SUM(CASE WHEN bill.bill_type = 2 THEN bill.amount ELSE 0 END) AS income,\n
+                (SUM(CASE WHEN bill.bill_type = 2 THEN bill.amount ELSE 0 END) - 
+                 SUM(CASE WHEN bill.bill_type = 1 THEN bill.amount ELSE 0 END)) AS surplus \n
+            FROM fortune_bill AS bill\n
+                LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id\n
+                LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id\n
+            ${ew.customSqlSegment}
             """)
-    BillStatisticsVo getBillStatistics(Long bookId);
+    BillStatisticsVo getBillStatistics(@Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
 
     @Select("""
             <script>

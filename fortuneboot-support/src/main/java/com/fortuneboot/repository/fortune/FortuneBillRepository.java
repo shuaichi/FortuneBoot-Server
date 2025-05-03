@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 
 import java.util.List;
@@ -62,10 +63,10 @@ public interface FortuneBillRepository extends IService<FortuneBillEntity> {
     /**
      * 统计收入支出
      *
-     * @param bookId
+     * @param query
      * @return
      */
-    BillStatisticsVo getBillStatistics(Long bookId);
+    BillStatisticsVo getBillStatistics(FortuneBillQuery query);
 
     /**
      * 统计收入
