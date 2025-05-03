@@ -56,7 +56,7 @@ public class FortunePayeeController {
     @Operation(summary = "新增交易对象")
     @PostMapping("/add")
     @AccessLog(title = "好记-交易对象", businessType = BusinessTypeEnum.ADD)
-    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#addCommand.getBookId())")
     public ResponseDTO<Void> add(@Valid @RequestBody FortunePayeeAddCommand addCommand) {
         fortunePayeeService.add(addCommand);
         return ResponseDTO.ok();
@@ -65,7 +65,7 @@ public class FortunePayeeController {
     @Operation(summary = "修改交易对象")
     @PutMapping("/modify")
     @AccessLog(title = "好记-交易对象", businessType = BusinessTypeEnum.MODIFY)
-    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId)")
+    @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
     public ResponseDTO<Void> modify(@RequestBody FortunePayeeModifyCommand modifyCommand) {
         fortunePayeeService.modify(modifyCommand);
         return ResponseDTO.ok();
