@@ -2,6 +2,7 @@ package com.fortuneboot.rest.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -33,10 +34,10 @@ public class FortuneIncludeController {
 
 
     @Operation(summary = "统计支出收入")
-    @GetMapping("/{bookId}/getBillStatistics")
-    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<BillStatisticsVo> getBillStatistics(@PathVariable @Positive Long bookId) {
-        return ResponseDTO.ok(fortuneBillService.getBillStatistics(bookId));
+    @GetMapping("/getBillStatistics")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
+    public ResponseDTO<BillStatisticsVo> getBillStatistics(FortuneBillQuery query) {
+        return ResponseDTO.ok(fortuneBillService.getBillStatistics(query));
     }
 
     @Operation(summary = "统计总资产")
