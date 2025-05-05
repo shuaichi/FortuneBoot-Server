@@ -70,7 +70,7 @@ public class FortuneTagQuery extends AbstractLambdaPageQuery<FortuneTagEntity> {
                 .orderByAsc(FortuneTagEntity::getSort);
         if (conditionQuery) {
             queryWrapper.eq(Objects.nonNull(canExpense), FortuneTagEntity::getCanExpense, canExpense)
-                    .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canExpense)
+                    .eq(Objects.nonNull(canIncome), FortuneTagEntity::getCanIncome, canIncome)
                     .eq(Objects.nonNull(canTransfer), FortuneTagEntity::getCanTransfer, canTransfer)
                     .eq(Objects.nonNull(enable), FortuneTagEntity::getEnable, enable)
                     .like(StringUtils.isNotBlank(tagName), FortuneTagEntity::getTagName, tagName);
