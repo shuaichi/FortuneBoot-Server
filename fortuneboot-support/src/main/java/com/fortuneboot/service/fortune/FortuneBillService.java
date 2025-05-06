@@ -533,15 +533,19 @@ public class FortuneBillService {
         LocalDate baseDate = baseTime.toLocalDate();
 
         switch (granularity) {
-            case 1: // 过去7天（包含当天）
+            // 过去7天（包含当天）
+            case 1:
                 return IntStream.rangeClosed(0, 6).mapToObj(offset -> baseDate.minusDays(6 - offset)).map(DAY_FORMATTER::format).toList();
-            case 2: // 过去30天
+            // 过去30天
+            case 2:
                 return IntStream.rangeClosed(0, 29).mapToObj(offset -> baseDate.minusDays(29 - offset)).map(DAY_FORMATTER::format).toList();
-            case 3: { // 过去12个月（自然月）
+            // 过去12个月（自然月）
+            case 3: {
                 YearMonth currentMonth = YearMonth.from(baseTime);
                 return IntStream.rangeClosed(0, 11).mapToObj(i -> currentMonth.minusMonths(11 - i)).map(month -> month.format(MONTH_FORMATTER)).toList();
             }
-            case 4: { // 跨年补全
+            // 跨年补全
+            case 4: {
                 int currentYear = Year.now().getValue();
                 int minYear = data.stream()
                         .filter(vo -> vo.getName() != null)

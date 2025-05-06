@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.serializer.CategoryAmountPairDeserializer;
 import com.fortuneboot.common.serializer.CategoryAmountPairSerializer;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,11 +30,15 @@ public class FortuneBillAddCommand {
     /**
      * 账本id
      */
+    @NotNull(message = "账本不能为空")
+    @Positive
     private Long bookId;
 
     /**
      *标题
      */
+    @NotBlank(message = "标题不能为空")
+    @Size(max = 50,message = "标题长度不能超过50个字符")
     private String title;
 
     /**
@@ -51,8 +59,9 @@ public class FortuneBillAddCommand {
     private Long accountToId;
 
     /**
-     *分类id
+     * 分类和金额
      */
+    @NotNull(message = "分类和金额不能为空")
     @JsonDeserialize(using = CategoryAmountPairDeserializer.class)
     @JsonSerialize(using = CategoryAmountPairSerializer.class)
     private List<Pair<Long,BigDecimal>> categoryAmountPair;
@@ -96,6 +105,7 @@ public class FortuneBillAddCommand {
     /**
      *备注
      */
+    @Size(max = 512,message = "备注长度不能超过512个字符")
     private String remark;
 
     /**

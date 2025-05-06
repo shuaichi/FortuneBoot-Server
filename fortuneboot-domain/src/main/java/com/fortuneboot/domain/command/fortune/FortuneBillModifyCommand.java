@@ -1,5 +1,7 @@
 package com.fortuneboot.domain.command.fortune;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,5 +16,7 @@ public class FortuneBillModifyCommand extends FortuneBillAddCommand{
     /**
      * id
      */
+    @NotNull
+    @Positive
     private Long billId;
 }

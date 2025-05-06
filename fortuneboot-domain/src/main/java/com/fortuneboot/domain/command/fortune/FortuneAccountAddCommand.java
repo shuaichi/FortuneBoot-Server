@@ -1,6 +1,10 @@
 package com.fortuneboot.domain.command.fortune;
 
 import com.fortuneboot.common.enums.fortune.AccountTypeEnum;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -23,6 +27,8 @@ public class FortuneAccountAddCommand {
     /**
      * 账户名
      */
+    @NotBlank(message = "账户名称不能为空")
+    @Size(max = 50,message = "账户名称长度不能超过50个字符")
     private String accountName;
 
     /**
@@ -94,11 +100,15 @@ public class FortuneAccountAddCommand {
      * 账户类型
      * @see AccountTypeEnum
      */
+    @NotNull(message = "账户类型不能为空")
+    @Positive
     private Integer accountType;
 
     /**
      * 分组id
      */
+    @NotNull(message = "分组不能为空")
+    @Positive
     private Long groupId;
 
     /**
@@ -109,5 +119,6 @@ public class FortuneAccountAddCommand {
     /**
      * 备注
      */
+    @Size(max = 512,message = "备注长度不能超过512个字符")
     private String remark;
 }
