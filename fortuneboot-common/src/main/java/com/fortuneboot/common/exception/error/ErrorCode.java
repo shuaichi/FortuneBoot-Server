@@ -290,7 +290,13 @@ public enum ErrorCode implements ErrorCodeInterface {
         BILL_CATEGORY_DISABLE(27009, "分类被禁用，无法新增账单： {}","Business.BILL_CATEGORY_DISABLE" ),
 
         // ---------------------------------- RATE -----------------------------------------------,
-        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND");
+        APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
+
+        // ---------------------------------- GOODS_KEEPER -----------------------------------------------,
+        GOODS_KEEPER_BOOK_NOT_MATCH(29001,"物品与账本不匹配","Business.GOODS_KEEPER_BOOK_NOT_MATCH"),
+
+        GOODS_KEEPER_STATUS_NOT_MATCH(29002,"物品状态不匹配","Business.GOODS_KEEPER_STATUS_NOT_MATCH"),
+        ;
 
 
 

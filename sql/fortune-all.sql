@@ -166,6 +166,30 @@ create table if not exists fortune_file
 )
     comment '账单文件表';
 
+create table if not exists fortune_goods_keeper
+(
+    goods_keeper_id bigint auto_increment comment '主键'
+    primary key,
+    goods_name      varchar(128)         not null comment '名称',
+    book_id         bigint               not null comment '账本id',
+    category_id     bigint               not null comment '分类id',
+    price           decimal(20, 4)       not null comment '购买价格',
+    purchase_date   date                 not null comment '购买日期',
+    warranty_date   date                 null comment '保修日期',
+    use_by_times    tinyint(1) default 0 null comment '按次使用',
+    usage_num       bigint               null comment '使用次数',
+    status          tinyint              null comment '状态',
+    retired_date    date                 null comment '退役日期',
+    sold_price      decimal(20, 4)       null comment '出二手价格',
+    remark          varchar(255)         null comment '备注',
+    creator_id      bigint               null comment '创建者ID',
+    updater_id      bigint               null comment '更新者ID',
+    update_time     datetime             null comment '更新时间',
+    create_time     datetime             null comment '创建时间',
+    deleted         tinyint(1) default 0 not null comment '逻辑删除'
+    )
+    comment '归物表';
+
 create table if not exists fortune_group
 (
     group_id         bigint auto_increment comment '主键'
@@ -381,6 +405,7 @@ INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, pat
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (85, '标签管理', 1, 'FortuneBookTag', 84, '/fortune/tag/index', 0, '', '{"title":"标签管理","showLink":false,"showParent":true}', 1, '', 1, '2025-02-13 20:22:41', 1, '2025-02-22 17:09:22', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (86, '分类管理', 1, 'FortuneBookCategory', 84, '/fortune/category/index', 0, '', '{"title":"分类管理","showLink":false,"showParent":true}', 1, '', 1, '2025-02-15 02:41:14', 1, '2025-02-22 17:09:19', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (87, '回收站', 1, 'FortuneRecycleBin', 66, '/fortune/recycle-bin/index', 0, '', '{"title":"回收站","icon":"fa:recycle","showLink":true,"showParent":true,"rank":6}', 1, '', 1, '2025-02-16 16:50:46', 1, '2025-04-12 19:49:38', 0);
+INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (88, '归物', 1, 'FortuneGoodsKeeper', 66, '/fortune/goods-keeper/index', 0, '', '{"title":"归物","icon":"fa:recycle","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-05-06 16:50:46', 1, '2025-05-06 19:49:38', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (89, '报表中心', 2, '', 0, '/report', 0, '', '{"title":"报表中心","icon":"fa:pie-chart","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-02-22 23:30:10', 1, '2025-02-22 23:30:52', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (91, '支出分类', 1, 'FortuneCategoryExpense', 89, '/fortune/report/category/expense', 0, '', '{"title":"支出分类","icon":"fa:bookmark","showLink":true,"showParent":true,"rank":1}', 1, '', 1, '2025-03-05 21:03:59', 1, '2025-03-06 16:40:42', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (92, '收入分类', 1, 'FortuneCategoryIncome', 89, '/fortune/report/category/income', 0, '', '{"title":"收入分类","icon":"fa:bookmark-o","showLink":true,"showParent":true,"rank":2}', 1, '', 1, '2025-03-06 17:50:41', null, null, 0);

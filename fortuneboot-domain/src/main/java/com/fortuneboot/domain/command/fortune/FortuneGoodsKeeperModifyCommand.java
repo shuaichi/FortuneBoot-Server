@@ -6,19 +6,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 分组/用户关系
+ * 归物修改
  *
- * @Author work.chi.zhang@gmail.com
- * @Date 2024/6/11 23:09
+ * @author zhangchi118
+ * @date 2025/5/6 11:10
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class FortuneUserGroupRelationModifyCommand extends FortuneUserGroupRelationAddCommand {
+public class FortuneGoodsKeeperModifyCommand extends FortuneGoodsKeeperAddCommand {
 
     /**
-     * 主键
+     * 物品id
      */
     @NotNull
     @Positive
-    private Long userGroupRelationId;
+    private Long goodsKeeperId;
 }
