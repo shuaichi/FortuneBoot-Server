@@ -90,7 +90,7 @@ public class FortuneGoodsKeeperAddCommand {
     /**
      * 出售价格
      */
-    private Integer soldPrice;
+    private BigDecimal soldPrice;
 
     /**
      * 备注

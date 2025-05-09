@@ -15,6 +15,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 归物
@@ -55,8 +56,10 @@ public class FortuneGoodsKeeperVo {
             this.usageNum = null;
             between = new BigDecimal(this.holdingTime);
         }
-        // 计算公式：价格 / 使用次数(时间间隔)
-        return this.getPrice().divide(between, 2, RoundingMode.HALF_UP);
+        // 计算公式：(价格 - 出二手价格（没有则是0）) / 使用次数(时间间隔)
+        return this.getPrice()
+                .subtract(Optional.ofNullable(this.getSoldPrice()).orElse(BigDecimal.ZERO))
+                .divide(between, 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -171,7 +174,7 @@ public class FortuneGoodsKeeperVo {
     /**
      * 出售价格
      */
-    private Integer soldPrice;
+    private BigDecimal soldPrice;
 
     /**
      * 备注
