@@ -82,6 +82,12 @@ public class FortuneGoodsKeeperAddCommand {
     private Integer status;
 
     /**
+     * 退役日期
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate retiredDate;
+
+    /**
      * 出售价格
      */
     private Integer soldPrice;

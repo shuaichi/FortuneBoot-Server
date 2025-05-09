@@ -72,6 +72,7 @@ public class FortuneGoodsKeeperService {
     public void add(FortuneGoodsKeeperAddCommand addCommand) {
         FortuneGoodsKeeperModel model = fortuneGoodsKeeperFactory.create();
         model.checkStatus(addCommand.getStatus());
+        model.checkRetiredDate(addCommand.getStatus(), addCommand.getRetiredDate());
         model.loadAddCommand(addCommand);
         model.insert();
     }
@@ -80,6 +81,7 @@ public class FortuneGoodsKeeperService {
         FortuneGoodsKeeperModel model = fortuneGoodsKeeperFactory.loadById(modifyCommand.getGoodsKeeperId());
         model.checkBookId(modifyCommand.getBookId());
         model.checkStatus(modifyCommand.getStatus());
+        model.checkRetiredDate(modifyCommand.getStatus(), modifyCommand.getRetiredDate());
         model.loadModifyCommand(modifyCommand);
         model.updateById();
     }

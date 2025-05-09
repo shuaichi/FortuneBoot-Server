@@ -32,7 +32,8 @@ public class FortuneGoodsKeeperQuery extends AbstractLambdaPageQuery<FortuneGood
     public LambdaQueryWrapper<FortuneGoodsKeeperEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneGoodsKeeperEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneGoodsKeeperEntity.class);
         queryWrapper.eq(FortuneGoodsKeeperEntity::getBookId, bookId)
-                .like(StringUtils.isNotBlank(goodsName), FortuneGoodsKeeperEntity::getGoodsName, goodsName);
+                .like(StringUtils.isNotBlank(goodsName), FortuneGoodsKeeperEntity::getGoodsName, goodsName)
+                .orderByDesc(FortuneGoodsKeeperEntity::getCreateTime);
         return queryWrapper;
     }
 }

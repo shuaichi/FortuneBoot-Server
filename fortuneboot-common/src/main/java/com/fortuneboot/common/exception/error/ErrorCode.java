@@ -296,6 +296,8 @@ public enum ErrorCode implements ErrorCodeInterface {
         GOODS_KEEPER_BOOK_NOT_MATCH(29001,"物品与账本不匹配","Business.GOODS_KEEPER_BOOK_NOT_MATCH"),
 
         GOODS_KEEPER_STATUS_NOT_MATCH(29002,"物品状态不匹配","Business.GOODS_KEEPER_STATUS_NOT_MATCH"),
+
+        GOODS_KEEPER_STATUS_NEED_RETIRED_DATE(29003,"该状态退役日期必填","Business.GOODS_KEEPER_STATUS_NEED_RETIRED_DATE"),
         ;
 
 

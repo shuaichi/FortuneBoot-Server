@@ -67,6 +67,10 @@ public class FortuneGoodsKeeperEntity extends BaseEntity<FortuneGoodsKeeperEntit
     @TableField("status")
     private Integer status;
 
+    @Schema(description = "退役日期")
+    @TableField("retired_date")
+    private LocalDate retiredDate;
+
     @Schema(description = "售出价格")
     @TableField("sold_price")
     private Integer soldPrice;

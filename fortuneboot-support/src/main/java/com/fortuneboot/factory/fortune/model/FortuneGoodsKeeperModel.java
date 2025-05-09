@@ -10,6 +10,7 @@ import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -50,7 +51,7 @@ public class FortuneGoodsKeeperModel extends FortuneGoodsKeeperEntity {
 
 
     public void checkBookId(Long bookId) {
-        if (Objects.equals(bookId, this.getBookId())) {
+        if (!Objects.equals(bookId, this.getBookId())) {
             throw new ApiException(ErrorCode.Business.GOODS_KEEPER_BOOK_NOT_MATCH);
         }
     }
@@ -59,5 +60,11 @@ public class FortuneGoodsKeeperModel extends FortuneGoodsKeeperEntity {
         if (!GoodsKeeperStatusEnum.contains(status)) {
             throw new ApiException(ErrorCode.Business.GOODS_KEEPER_STATUS_NOT_MATCH);
         }
+    }
+    public void checkRetiredDate(Integer status, LocalDate retiredDate) {
+        if (!GoodsKeeperStatusEnum.ACTIVE.getValue().equals(status) && Objects.isNull(retiredDate)) {
+            throw new ApiException(ErrorCode.Business.GOODS_KEEPER_STATUS_NEED_RETIRED_DATE);
+        }
+
     }
 }
