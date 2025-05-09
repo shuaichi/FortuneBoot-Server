@@ -73,6 +73,11 @@ public class FortuneGoodsKeeperVo {
     }
 
     /**
+     * id
+     */
+    private Long goodsKeeperId;
+
+    /**
      * 账本id
      */
     private Long bookId;
