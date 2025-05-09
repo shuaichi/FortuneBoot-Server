@@ -51,7 +51,7 @@ public class FortuneGoodsKeeperController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "新增物品")
+    @Operation(summary = "修改物品")
     @PutMapping("/modify")
     @AccessLog(title = "好记-归物", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.bookActorPermission(#command.getBookId())")
@@ -62,12 +62,12 @@ public class FortuneGoodsKeeperController {
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "新增物品")
+    @Operation(summary = "删除物品")
     @DeleteMapping("/{bookId}/{keeperId}/remove")
     @AccessLog(title = "好记-归物", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
     public ResponseDTO<Void> remove(@PathVariable("bookId") Long bookId,@PathVariable Long keeperId) {
-        fortuneGoodsKeeperService.remove(keeperId, bookId);
+        fortuneGoodsKeeperService.remove( bookId,keeperId);
         return ResponseDTO.ok();
     }
 }

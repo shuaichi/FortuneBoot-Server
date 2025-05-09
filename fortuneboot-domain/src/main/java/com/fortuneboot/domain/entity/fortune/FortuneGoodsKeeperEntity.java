@@ -73,7 +73,7 @@ public class FortuneGoodsKeeperEntity extends BaseEntity<FortuneGoodsKeeperEntit
 
     @Schema(description = "售出价格")
     @TableField("sold_price")
-    private Integer soldPrice;
+    private BigDecimal soldPrice;
 
     @Schema(description = "备注")
     @TableField("remark")
