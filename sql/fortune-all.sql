@@ -610,6 +610,7 @@ INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 84);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 85);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 86);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 87);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 88);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 89);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 91);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 92);
