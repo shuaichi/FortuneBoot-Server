@@ -7,11 +7,13 @@ import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperModifyCommand;
 import com.fortuneboot.domain.query.fortune.FortuneGoodsKeeperQuery;
+import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperVo;
 import com.fortuneboot.service.fortune.FortuneGoodsKeeperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +35,18 @@ public class FortuneGoodsKeeperController {
 
     private final FortuneGoodsKeeperService fortuneGoodsKeeperService;
 
-    @Operation(summary = "新增物品")
+    @Operation(summary = "分页查询")
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortuneGoodsKeeperVo>> getPage(FortuneGoodsKeeperQuery query) {
         return ResponseDTO.ok(fortuneGoodsKeeperService.getPage(query));
+    }
+
+    @Operation(summary = "查询")
+    @GetMapping("/{bookId}/getGoodsKeeperStatistics")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<FortuneGoodsKeeperStatisticsVo> getGoodsKeeperStatistics(@PathVariable @Positive Long bookId) {
+        return ResponseDTO.ok(fortuneGoodsKeeperService.getGoodsKeeperStatistics(bookId));
     }
 
     @Operation(summary = "新增物品")
@@ -66,8 +75,8 @@ public class FortuneGoodsKeeperController {
     @DeleteMapping("/{bookId}/{keeperId}/remove")
     @AccessLog(title = "好记-归物", businessType = BusinessTypeEnum.DELETE)
     @PreAuthorize("@fortune.bookActorPermission(#bookId)")
-    public ResponseDTO<Void> remove(@PathVariable("bookId") Long bookId,@PathVariable Long keeperId) {
-        fortuneGoodsKeeperService.remove( bookId,keeperId);
+    public ResponseDTO<Void> remove(@PathVariable("bookId") Long bookId, @PathVariable Long keeperId) {
+        fortuneGoodsKeeperService.remove(bookId, keeperId);
         return ResponseDTO.ok();
     }
 }
