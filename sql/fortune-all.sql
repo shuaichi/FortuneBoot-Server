@@ -1,7 +1,7 @@
 create table if not exists fortune_account
 (
     account_id       bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     card_no          varchar(128)                  null comment '卡号',
     account_name     varchar(64)                   null comment '账户名',
     balance          decimal(20, 4) default 0.0000 not null comment '余额',
@@ -27,13 +27,25 @@ create table if not exists fortune_account
     update_time      datetime                      null comment '更新时间',
     create_time      datetime                      null comment '创建时间',
     deleted          tinyint(1)     default 0      not null comment '逻辑删除'
-)
+    )
     comment '账户表';
+
+create index idx_fortune_account_balance
+    on fortune_account (balance);
+
+create index idx_fortune_account_currency
+    on fortune_account (currency_code);
+
+create index idx_fortune_account_deleted
+    on fortune_account (deleted);
+
+create index idx_fortune_account_main
+    on fortune_account (group_id, recycle_bin, account_type, sort);
 
 create table if not exists fortune_alert
 (
     alert_id        bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     alert_title     varchar(128)         null comment '标题',
     start_date      datetime             null comment '开始提醒日期',
     end_date        datetime             null comment '结束提醒日期',
@@ -48,13 +60,13 @@ create table if not exists fortune_alert
     update_time     datetime             null comment '更新时间',
     create_time     datetime             null comment '创建时间',
     deleted         tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '提醒事项';
 
 create table if not exists fortune_bill
 (
     bill_id          bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     book_id          bigint                   not null comment '账本id',
     title            varchar(128)             null comment '标题',
     trade_time       datetime                 null comment '交易时间',
@@ -73,13 +85,31 @@ create table if not exists fortune_bill
     update_time      datetime                 null comment '更新时间',
     create_time      datetime                 null comment '创建时间',
     deleted          tinyint(1)    default 0  not null comment '逻辑删除'
-)
+    )
     comment '账单流水表';
+
+create index idx_fortune_bill_book_amount
+    on fortune_bill (book_id, amount);
+
+create index idx_fortune_bill_book_time
+    on fortune_bill (book_id, trade_time);
+
+create index idx_fortune_bill_book_type_account_time
+    on fortune_bill (book_id, bill_type, account_id, trade_time);
+
+create index idx_fortune_bill_deleted
+    on fortune_bill (deleted);
+
+create index idx_fortune_bill_payee
+    on fortune_bill (payee_id);
+
+create index idx_fortune_bill_title
+    on fortune_bill (title);
 
 create table if not exists fortune_book
 (
     book_id                         bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     group_id                        bigint                      not null comment '所属组id',
     book_name                       varchar(128)                not null comment '账本名称',
     default_currency                varchar(16)   default 'CNY' not null comment '默认币种',
@@ -96,13 +126,19 @@ create table if not exists fortune_book
     update_time                     datetime                    null comment '更新时间',
     create_time                     datetime                    null comment '创建时间',
     deleted                         tinyint(1)    default 0     not null comment '逻辑删除'
-)
+    )
     comment '账本表';
+
+create index idx_fortune_book_deleted
+    on fortune_book (deleted);
+
+create index idx_fortune_book_group_recycle_enable_sort
+    on fortune_book (group_id, recycle_bin, enable, sort);
 
 create table if not exists fortune_category
 (
     category_id   bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     category_type tinyint                  not null comment '1、支出分类 2、收入分类',
     category_name varchar(128)             not null comment '分类名称',
     book_id       bigint                   not null comment '所属账本ID',
@@ -116,13 +152,22 @@ create table if not exists fortune_category
     update_time   datetime                 null comment '更新时间',
     create_time   datetime                 null comment '创建时间',
     deleted       tinyint(1)    default 0  not null comment '逻辑删除'
-)
+    )
     comment '分类表';
+
+create index idx_fortune_category_book_parent
+    on fortune_category (book_id, parent_id);
+
+create index idx_fortune_category_book_recycle_type_enable_sort
+    on fortune_category (book_id, recycle_bin, category_type, enable, sort);
+
+create index idx_fortune_category_deleted
+    on fortune_category (deleted);
 
 create table if not exists fortune_category_relation
 (
     category_relation_id bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     category_id          bigint               not null comment '分类id',
     bill_id              bigint               not null comment '账单流水ID',
     amount               decimal(20, 4)       not null comment '金额',
@@ -131,13 +176,22 @@ create table if not exists fortune_category_relation
     update_time          datetime             null comment '更新时间',
     create_time          datetime             null comment '创建时间',
     deleted              tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '交易标签和账单的关系表';
+
+create index idx_fortune_category_relation_bill
+    on fortune_category_relation (bill_id);
+
+create index idx_fortune_category_relation_category
+    on fortune_category_relation (category_id);
+
+create index idx_fortune_category_relation_deleted
+    on fortune_category_relation (deleted);
 
 create table if not exists fortune_currency
 (
     currency_id   bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     currency_name varchar(128)         not null comment '货币名称',
     rate          decimal(20, 8)       not null comment '汇率',
     remark        varchar(1024)        null comment '备注',
@@ -146,13 +200,13 @@ create table if not exists fortune_currency
     update_time   datetime             null comment '更新时间',
     create_time   datetime             null comment '创建时间',
     deleted       tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '货币表';
 
 create table if not exists fortune_file
 (
     file_id       bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     bill_id       bigint               not null comment '账单流水ID',
     content_type  varchar(128)         null comment '内容类型',
     file_data     longblob             null comment '文件数据',
@@ -163,8 +217,14 @@ create table if not exists fortune_file
     update_time   datetime             null comment '更新时间',
     create_time   datetime             null comment '创建时间',
     deleted       tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '账单文件表';
+
+create index idx_fortune_file_bill
+    on fortune_file (bill_id);
+
+create index idx_fortune_file_deleted
+    on fortune_file (deleted);
 
 create table if not exists fortune_goods_keeper
 (
@@ -173,12 +233,13 @@ create table if not exists fortune_goods_keeper
     goods_name      varchar(128)         not null comment '名称',
     book_id         bigint               not null comment '账本id',
     category_id     bigint               not null comment '分类id',
+    tag_id          bigint               null comment '标签id',
     price           decimal(20, 4)       not null comment '购买价格',
     purchase_date   date                 not null comment '购买日期',
     warranty_date   date                 null comment '保修日期',
     use_by_times    tinyint(1) default 0 null comment '按次使用',
     usage_num       bigint               null comment '使用次数',
-    status          tinyint              null comment '状态',
+    status          tinyint    default 1 not null comment '状态',
     retired_date    date                 null comment '退役日期',
     sold_price      decimal(20, 4)       null comment '出二手价格',
     remark          varchar(255)         null comment '备注',
@@ -190,10 +251,16 @@ create table if not exists fortune_goods_keeper
     )
     comment '归物表';
 
+create index idx_fortune_goods_keeper_book
+    on fortune_goods_keeper (book_id);
+
+create index idx_fortune_goods_keeper_deleted
+    on fortune_goods_keeper (deleted);
+
 create table if not exists fortune_group
 (
     group_id         bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     group_name       varchar(128)              not null comment '分组名称',
     default_currency varchar(16) default 'CNY' not null comment '默认币种',
     enable           tinyint(1)  default 1     not null comment '是否启用',
@@ -204,13 +271,13 @@ create table if not exists fortune_group
     update_time      datetime                  null comment '更新时间',
     create_time      datetime                  null comment '创建时间',
     deleted          tinyint(1)  default 0     not null comment '逻辑删除'
-)
+    )
     comment '分组表';
 
 create table if not exists fortune_payee
 (
     payee_id    bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     book_id     bigint               not null comment '账本id',
     payee_name  varchar(128)         not null comment '交易对象名称',
     can_expense tinyint(1) default 0 not null comment '可支出',
@@ -224,13 +291,25 @@ create table if not exists fortune_payee
     update_time datetime             null comment '更新时间',
     create_time datetime             null comment '创建时间',
     deleted     tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '交易对象表';
+
+create index idx_fortune_payee_book_expense_income
+    on fortune_payee (book_id, can_expense, can_income);
+
+create index idx_fortune_payee_book_recycle_enable_sort
+    on fortune_payee (book_id, recycle_bin, enable, sort);
+
+create index idx_fortune_payee_deleted
+    on fortune_payee (deleted);
+
+create index idx_fortune_payee_name
+    on fortune_payee (payee_name);
 
 create table if not exists fortune_tag
 (
     tag_id       bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     tag_name     varchar(128)         not null comment '标签名称',
     book_id      bigint               not null comment '账本ID',
     parent_id    bigint               not null comment '父级ID',
@@ -246,13 +325,28 @@ create table if not exists fortune_tag
     update_time  datetime             null comment '更新时间',
     create_time  datetime             null comment '创建时间',
     deleted      tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '交易标签表';
+
+create index idx_fortune_tag_book_expense_income_transfer_enable
+    on fortune_tag (book_id, can_expense, can_income, can_transfer, enable);
+
+create index idx_fortune_tag_book_parent
+    on fortune_tag (book_id, parent_id);
+
+create index idx_fortune_tag_book_recycle_sort
+    on fortune_tag (book_id, recycle_bin, sort);
+
+create index idx_fortune_tag_deleted
+    on fortune_tag (deleted);
+
+create index idx_fortune_tag_name
+    on fortune_tag (tag_name);
 
 create table if not exists fortune_tag_relation
 (
     tag_relation_id bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     bill_id         bigint               not null comment '账单流水ID',
     tag_id          bigint               not null comment '标签ID',
     creator_id      bigint               null comment '创建者ID',
@@ -260,13 +354,22 @@ create table if not exists fortune_tag_relation
     update_time     datetime             null comment '更新时间',
     create_time     datetime             null comment '创建时间',
     deleted         tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '交易标签和账单的关系表';
+
+create index idx_fortune_tag_relation_bill
+    on fortune_tag_relation (bill_id);
+
+create index idx_fortune_tag_relation_deleted
+    on fortune_tag_relation (deleted);
+
+create index idx_fortune_tag_relation_tag
+    on fortune_tag_relation (tag_id);
 
 create table if not exists fortune_user_group_relation
 (
     user_group_relation_id bigint auto_increment comment '主键'
-        primary key,
+    primary key,
     role_type              tinyint              not null comment '1、管理员 2、协作者 3、访客',
     group_id               bigint               not null comment '分组ID',
     user_id                bigint               not null comment '用户ID',
@@ -276,8 +379,19 @@ create table if not exists fortune_user_group_relation
     update_time            datetime             null comment '更新时间',
     create_time            datetime             null comment '创建时间',
     deleted                tinyint(1) default 0 not null comment '逻辑删除'
-)
+    )
     comment '用户/分组关系表';
+
+create index idx_fortune_user_relation_deleted
+    on fortune_user_group_relation (deleted);
+
+create index idx_fortune_user_relation_group
+    on fortune_user_group_relation (group_id);
+
+create index idx_fortune_user_relation_user
+    on fortune_user_group_relation (user_id);
+
+
 
 create table if not exists sys_config
 (
