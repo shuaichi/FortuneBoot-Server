@@ -8,16 +8,20 @@ import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneGoodsKeeperEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.query.fortune.FortuneGoodsKeeperQuery;
+import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperVo;
 import com.fortuneboot.factory.fortune.FortuneGoodsKeeperFactory;
 import com.fortuneboot.factory.fortune.model.FortuneGoodsKeeperModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
 import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepository;
 import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,24 +53,26 @@ public class FortuneGoodsKeeperService {
         return new PageDTO<>(records, page.getTotal());
     }
 
-    private void fillCategory(List<FortuneGoodsKeeperVo> dataList){
+    private void fillCategory(List<FortuneGoodsKeeperVo> dataList) {
         List<Long> idList = dataList.stream().map(FortuneGoodsKeeperVo::getCategoryId).toList();
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
         List<FortuneCategoryEntity> categoryEntityList = fortuneCategoryRepository.getByIds(idList);
         Map<Long, String> map = categoryEntityList.stream()
                 .collect(Collectors.toMap(FortuneCategoryEntity::getCategoryId, FortuneCategoryEntity::getCategoryName));
-        dataList.forEach(data->{
-            data.setCategoryName(map.get(data.getCategoryId()));
-        });
+        dataList.forEach(data -> data.setCategoryName(map.get(data.getCategoryId())));
     }
 
-    private void fillTag(List<FortuneGoodsKeeperVo> dataList){
+    private void fillTag(List<FortuneGoodsKeeperVo> dataList) {
         List<Long> idList = dataList.stream().map(FortuneGoodsKeeperVo::getTagId).toList();
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
         List<FortuneTagEntity> tagEntityList = fortuneTagRepository.getByIds(idList);
         Map<Long, String> map = tagEntityList.stream()
                 .collect(Collectors.toMap(FortuneTagEntity::getTagId, FortuneTagEntity::getTagName));
-        dataList.forEach(data->{
-            data.setTagName(map.get(data.getTagId()));
-        });
+        dataList.forEach(data -> data.setTagName(map.get(data.getTagId())));
     }
 
     public void add(FortuneGoodsKeeperAddCommand addCommand) {
@@ -92,4 +98,7 @@ public class FortuneGoodsKeeperService {
         model.deleteById();
     }
 
+    public FortuneGoodsKeeperStatisticsVo getGoodsKeeperStatistics(Long bookId) {
+        return fortuneGoodsKeeperRepository.getGoodsKeeperStatistics(bookId);
+    }
 }
