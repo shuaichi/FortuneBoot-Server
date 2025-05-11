@@ -33,7 +33,7 @@ public class FortuneGoodsKeeperQuery extends AbstractLambdaPageQuery<FortuneGood
         LambdaQueryWrapper<FortuneGoodsKeeperEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneGoodsKeeperEntity.class);
         queryWrapper.eq(FortuneGoodsKeeperEntity::getBookId, bookId)
                 .like(StringUtils.isNotBlank(goodsName), FortuneGoodsKeeperEntity::getGoodsName, goodsName)
-                .orderByDesc(FortuneGoodsKeeperEntity::getCreateTime);
+                .orderByDesc(FortuneGoodsKeeperEntity::getPurchaseDate);
         return queryWrapper;
     }
 }
