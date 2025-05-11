@@ -53,12 +53,6 @@ public class FortuneBillAddCommand {
     private Long accountId;
 
     /**
-     * 转入账户id
-     * 注：转账用
-     */
-    private Long accountToId;
-
-    /**
      * 分类和金额
      */
     @NotNull(message = "分类和金额不能为空")
