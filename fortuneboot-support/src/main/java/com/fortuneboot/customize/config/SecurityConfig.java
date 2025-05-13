@@ -147,6 +147,7 @@ public class SecurityConfig {
                                 "/profile/**").permitAll()
                         // 完全公开的接口，不管是否有token都可以访问
                         .requestMatchers("/getApiVersion").permitAll()
+                        .requestMatchers("/getIcp").permitAll()
                         // TODO this is danger.
                         .requestMatchers("/swagger-ui.html").anonymous()
                         .requestMatchers("/swagger-resources/**").anonymous()
