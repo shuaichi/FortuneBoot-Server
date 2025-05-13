@@ -16,7 +16,10 @@ public enum ConfigKeyEnum implements BasicEnum<String> {
     INIT_PASSWORD("sys.user.initPassword", "初始密码"),
     SIDE_BAR_THEME("sys.index.sideTheme", "侧边栏开关"),
     CAPTCHA("sys.account.captchaOnOff", "验证码开关"),
-    REGISTER("sys.account.registerUser", "注册开放功能");
+    REGISTER("sys.account.registerUser", "注册开放功能"),
+    IPC("sys.config.ipc", "ipc备案信息"),
+    ;
+
 
     private final String value;
     private final String description;
