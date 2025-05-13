@@ -23,7 +23,7 @@ create table if not exists fortune_goods_keeper
     )
     comment '归物表';
 
-INSERT INTO sys_menu ( menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES ( '归物', 1, 'FortuneGoodsKeeper', 66, '/fortune/goods-keeper/index', 0, '', '{"title":"归物","icon":"fa:recycle","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-05-06 16:50:46', 1, '2025-05-06 19:49:38', 0);
+INSERT INTO sys_menu ( menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES ( '归物', 1, 'FortuneGoodsKeeper', 66, '/fortune/goods-keeper/index', 0, '', '{"title":"归物","icon":"fa:dropbox","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-05-06 16:50:46', 1, '2025-05-06 19:49:38', 0);
 
 -- 账户设置索引
 CREATE INDEX idx_fortune_account_main ON fortune_account (group_id, recycle_bin, account_type, sort);
