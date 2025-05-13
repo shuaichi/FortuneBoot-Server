@@ -418,6 +418,7 @@ INSERT INTO sys_config (config_id, config_name, config_key, config_options, conf
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (3, '主框架页-侧边栏主题', 'sys.index.sideTheme', '["theme-dark","theme-light"]', 'theme-dark', 1, null, null, '2022-08-28 22:12:15', '2022-08-20 08:30:55', '深色主题theme-dark，浅色主题theme-light', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (4, '账号自助-验证码开关', 'sys.account.captchaOnOff', '["true","false"]', 'true', 1, null, 1, '2025-02-25 10:01:53', '2022-05-21 08:30:55', '是否开启验证码功能（true开启，false关闭）', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (5, '账号自助-是否开启用户注册功能', 'sys.account.registerUser', '["true","false"]', 'true', 0, null, 1, '2025-02-17 16:51:16', '2022-05-21 08:30:55', '是否开启注册用户功能（true开启，false关闭）', 0);
+INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (6, '系统配置-ICP备案', 'sys.config.ipc', '', '京ICP备2024074449号-1', 1, null, 1, '2025-05-13 22:57:42', '2025-05-13 22:57:42', 'ICP备案号', 0);
 
 
 create table if not exists sys_login_info
