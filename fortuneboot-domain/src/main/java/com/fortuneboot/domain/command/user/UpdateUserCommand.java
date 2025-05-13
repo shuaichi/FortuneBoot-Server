@@ -12,4 +12,8 @@ public class UpdateUserCommand extends AddUserCommand {
 
     private Long userId;
 
+    @Override
+    public String getPassword(){
+        return super.getPassword();
+    }
 }

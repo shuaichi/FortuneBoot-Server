@@ -1,6 +1,7 @@
 package com.fortuneboot.rest.system;
 
 import cn.hutool.core.collection.ListUtil;
+import com.fortuneboot.common.core.validation.AddValidation;
 import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
@@ -110,7 +111,7 @@ public class SysUserController extends BaseController {
     @PreAuthorize("@permission.has('system:user:add')")
     @AccessLog(title = "用户管理", businessType = BusinessTypeEnum.ADD)
     @PostMapping
-    public ResponseDTO<Void> add(@Validated @RequestBody AddUserCommand command) {
+    public ResponseDTO<Void> add(@Validated(AddValidation.class) @RequestBody AddUserCommand command) {
         command.setSource(UserSourceEnum.ADMIN_ADD.getValue());
         userApplicationService.addUser(command);
         return ResponseDTO.ok();
