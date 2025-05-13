@@ -27,8 +27,8 @@ class  SysConfigServiceImplTest {
     }
 
     @Test
-    void testGetIPCByKey() {
-        String configValue = configRepository.getConfigValueByKey(ConfigKeyEnum.IPC.getValue());
+    void testGetICPByKey() {
+        String configValue = configRepository.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
         log.info("IPC = {}", configValue);
         Assertions.assertTrue(StringUtils.isNotBlank(configValue));
     }

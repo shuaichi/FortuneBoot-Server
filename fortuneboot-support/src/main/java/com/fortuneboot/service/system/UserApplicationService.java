@@ -215,7 +215,7 @@ public class UserApplicationService {
         return Objects.nonNull(user);
     }
 
-    public String getIpc(){
-        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.IPC.getValue());
+    public String getIcp(){
+        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
     }
 }

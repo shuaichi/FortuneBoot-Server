@@ -51,9 +51,9 @@ public class LoginController {
     }
 
     @Operation(summary = "获取IPC备案信息", description = "IPC备案")
-    @GetMapping("/getIpc")
-    public ResponseDTO<String> getIpc(){
-        return ResponseDTO.ok(userApplicationService.getIpc());
+    @GetMapping("/getIcp")
+    public ResponseDTO<String> getIcp(){
+        return ResponseDTO.ok(userApplicationService.getIcp());
     }
 
 
