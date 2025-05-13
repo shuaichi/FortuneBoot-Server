@@ -1,6 +1,7 @@
 package com.fortuneboot.domain.command.user;
 
 import com.fortuneboot.common.annotation.ExcelColumn;
+import com.fortuneboot.common.core.validation.AddValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -12,11 +13,11 @@ import lombok.Data;
 public class AddUserCommand {
 
     @ExcelColumn(name = "用户名")
-    @NotBlank
+    @NotBlank(message = "用户名不能为空")
     private String username;
 
     @ExcelColumn(name = "昵称")
-    @NotBlank
+    @NotBlank(message = "昵称不能为空")
     private String nickname;
 
     @ExcelColumn(name = "邮件")
@@ -32,14 +33,14 @@ public class AddUserCommand {
     private String avatar;
 
     @ExcelColumn(name = "密码")
-    @NotBlank
+    @NotBlank(message = "密码不能为空",groups = AddValidation.class)
     private String password;
 
     @ExcelColumn(name = "状态")
     private Integer status;
 
     @ExcelColumn(name = "角色ID")
-    @NotNull
+    @NotNull(message = "角色不能为空")
     private Long roleId;
 
     @ExcelColumn(name = "备注")
