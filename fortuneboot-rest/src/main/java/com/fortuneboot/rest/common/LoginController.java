@@ -50,6 +50,13 @@ public class LoginController {
         return ResponseDTO.ok(fortuneBootConfig.getVersion());
     }
 
+    @Operation(summary = "获取IPC备案信息", description = "IPC备案")
+    @GetMapping("/getIpc")
+    public ResponseDTO<String> getIpc(){
+        return ResponseDTO.ok(userApplicationService.getIpc());
+    }
+
+
     /**
      * 访问首页，提示语
      */

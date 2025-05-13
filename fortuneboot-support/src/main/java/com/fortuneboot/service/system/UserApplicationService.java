@@ -2,6 +2,7 @@ package com.fortuneboot.service.system;
 
 import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.common.ConfigKeyEnum;
 import com.fortuneboot.common.enums.common.StatusEnum;
 import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.exception.ApiException;
@@ -212,5 +213,9 @@ public class UserApplicationService {
     public Boolean checkRepeat(String userName) {
         SysUserEntity user = userRepository.getUserByUserName(userName);
         return Objects.nonNull(user);
+    }
+
+    public String getIpc(){
+        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.IPC.getValue());
     }
 }
