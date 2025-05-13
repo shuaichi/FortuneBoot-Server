@@ -17,7 +17,7 @@ public enum ConfigKeyEnum implements BasicEnum<String> {
     SIDE_BAR_THEME("sys.index.sideTheme", "侧边栏开关"),
     CAPTCHA("sys.account.captchaOnOff", "验证码开关"),
     REGISTER("sys.account.registerUser", "注册开放功能"),
-    IPC("sys.config.ipc", "ipc备案信息"),
+    ICP("sys.config.icp", "icp备案信息"),
     ;
 
 
