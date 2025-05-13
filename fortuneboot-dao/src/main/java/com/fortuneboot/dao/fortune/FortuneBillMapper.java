@@ -33,15 +33,22 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
     IPage<FortuneBillEntity> getPage(Page<FortuneBillEntity> page, @Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
 
     @Select("""
-            SELECT \n
-                SUM(CASE WHEN bill.bill_type = 1 THEN bill.amount ELSE 0 END) AS expense,\n
-                SUM(CASE WHEN bill.bill_type = 2 THEN bill.amount ELSE 0 END) AS income,\n
-                (SUM(CASE WHEN bill.bill_type = 2 THEN bill.amount ELSE 0 END) - 
-                 SUM(CASE WHEN bill.bill_type = 1 THEN bill.amount ELSE 0 END)) AS surplus \n
-            FROM fortune_bill AS bill\n
-                LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id\n
-                LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id\n
-            ${ew.customSqlSegment}
+            
+            SELECT\s
+                SUM(t.expense) AS expense,
+                SUM(t.income) AS income,
+                SUM(t.income) - SUM(t.expense) AS surplus
+            FROM (
+                SELECT\s
+                    bill.bill_id,
+                    MAX(CASE WHEN bill.bill_type = 1 THEN bill.amount ELSE 0 END) AS expense,
+                    MAX(CASE WHEN bill.bill_type = 2 THEN bill.amount ELSE 0 END) AS income
+                FROM fortune_bill AS bill
+                LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id
+                LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id
+                ${ew.customSqlSegment}
+                GROUP BY bill.bill_id
+            ) AS t
             """)
     BillStatisticsVo getBillStatistics(@Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
 
