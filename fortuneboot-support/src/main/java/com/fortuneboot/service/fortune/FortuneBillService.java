@@ -401,8 +401,7 @@ public class FortuneBillService {
      * 条件验证方法
      */
     private boolean isValidRefundRequest(FortuneBillModel bill) {
-        return bill.getConfirm() && Objects.nonNull(bill.getAccountId())
-                && Objects.nonNull(bill.getAmount()) && bill.getAmount().compareTo(BigDecimal.ZERO) > 0;
+        return bill.getConfirm() && Objects.nonNull(bill.getAccountId()) && Objects.nonNull(bill.getAmount());
     }
 
     /**
