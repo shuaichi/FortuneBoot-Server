@@ -2,7 +2,7 @@ package com.fortuneboot.dao.fortune;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
-import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import java.util.List;
 public interface FortuneCategoryRelationMapper extends BaseMapper<FortuneCategoryRelationEntity> {
 
     /**
-     * 根据id
+     * 根据id物理删除
+     *
      * @param ids
      */
-    @Delete("DELETE FROM fortune_category_relation WHERE category_relation_id IN #{ids}")
-    void phyDeleteByIds(List<Long> ids);
+    void phyDeleteByIds(@Param("ids") List<Long> ids);
 }
