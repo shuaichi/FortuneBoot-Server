@@ -189,7 +189,7 @@ public class UserApplicationService {
 
 
     public void register(AddUserCommand command) {
-        String configValue = sysConfigRepository.getConfigValueByKey("sys.account.registerUser");
+        String configValue = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
         boolean registerUser = Boolean.parseBoolean(configValue);
         if (registerUser) {
             command.setSource(UserSourceEnum.REGISTER.getValue());
@@ -201,7 +201,7 @@ public class UserApplicationService {
     }
 
     public List<RoleDTO> getAllowRegisterRoles() {
-        String configValue = sysConfigRepository.getConfigValueByKey("sys.account.registerUser");
+        String configValue = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
         boolean registerUser = Boolean.parseBoolean(configValue);
         if (registerUser) {
             List<SysRoleEntity> roleEntityList = roleRepository.getAllowRegisterRoles();
