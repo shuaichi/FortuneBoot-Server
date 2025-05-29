@@ -292,6 +292,12 @@ public enum ErrorCode implements ErrorCodeInterface {
         // ---------------------------------- RATE -----------------------------------------------,
         APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
 
+        INVALID_EXCHANGE_RATE(28002, "无效的汇率配置: 币种={0}, 汇率={1}", "Business.INVALID_EXCHANGE_RATE"),
+
+        CURRENCY_NOT_SUPPORTED(28003, "不支持的币种: {}", "Business.CURRENCY_NOT_SUPPORTED"),
+
+        CURRENCY_CONVERSION_FAILED(28004, "币种转换失败: {} -> {}", "Business.CURRENCY_CONVERSION_FAILED"),
+
         // ---------------------------------- GOODS_KEEPER -----------------------------------------------,
         GOODS_KEEPER_BOOK_NOT_MATCH(29001,"物品与账本不匹配","Business.GOODS_KEEPER_BOOK_NOT_MATCH"),
 
