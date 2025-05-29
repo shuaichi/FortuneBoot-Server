@@ -43,14 +43,22 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
 
     @Override
     public void removeByBillId(Long billId) {
-        LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
-        queryWrapper.eq(FortuneTagRelationEntity::getBillId, billId);
-        List<FortuneTagRelationEntity> list = this.list(queryWrapper);
+        List<FortuneTagRelationEntity> list = this.getByBillId(billId);
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
-        fortuneTagRelationMapper.deleteBatchIds(ids);
+        fortuneTagRelationMapper.deleteByIds(ids);
+    }
+
+    @Override
+    public void phyRemoveByBillId(Long billId) {
+        List<FortuneTagRelationEntity> list = this.getByBillId(billId);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
+        fortuneTagRelationMapper.phyDeleteByBillId(ids);
     }
 
     @Override
@@ -62,7 +70,7 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
             return;
         }
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
-        fortuneTagRelationMapper.deleteBatchIds(ids);
+        fortuneTagRelationMapper.deleteByIds(ids);
     }
 
     @Override

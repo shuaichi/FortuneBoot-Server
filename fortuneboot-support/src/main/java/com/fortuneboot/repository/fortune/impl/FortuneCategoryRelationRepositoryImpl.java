@@ -52,20 +52,29 @@ public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCa
             return;
         }
         List<Long> ids = list.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
-        fortuneCategoryRelationMapper.deleteBatchIds(ids);
+        fortuneCategoryRelationMapper.deleteByIds(ids);
     }
 
     @Override
     public void removeByBillId(Long billId) {
-        LambdaQueryWrapper<FortuneCategoryRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);
-        wrapper.eq(FortuneCategoryRelationEntity::getBillId, billId);
-        List<FortuneCategoryRelationEntity> relationList = this.list(wrapper);
+        List<FortuneCategoryRelationEntity> relationList = this.getByBillId(billId);
         if (CollectionUtils.isEmpty(relationList)){
             return;
         }
         List<Long> list = relationList.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
-        fortuneCategoryRelationMapper.deleteBatchIds(list);
+        fortuneCategoryRelationMapper.deleteByIds(list);
     }
+
+    @Override
+    public void phyRemoveByBillId(Long billId) {
+        List<FortuneCategoryRelationEntity> relationList = this.getByBillId(billId);
+        if (CollectionUtils.isEmpty(relationList)){
+            return;
+        }
+        List<Long> list = relationList.stream().map(FortuneCategoryRelationEntity::getCategoryRelationId).toList();
+        fortuneCategoryRelationMapper.phyDeleteByIds(list);
+    }
+
     @Override
     public Boolean existByCategoryId(Long categoryId) {
         LambdaQueryWrapper<FortuneCategoryRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryRelationEntity.class);

@@ -28,4 +28,11 @@ public interface FortuneFileRepository extends IService<FortuneFileEntity> {
      * @param billId
      */
     void removeByBillId(Long billId);
+
+    /**
+     * 根据账单id物理删除
+     *
+     * @param billId
+     */
+    void phyRemoveByBillId(Long billId);
 }
