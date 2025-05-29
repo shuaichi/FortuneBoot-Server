@@ -35,4 +35,11 @@ public class FortuneFileService {
         modelList.forEach(Model::insert);
     }
 
+    /**
+     * 批量删除附件
+     */
+    public void phyRemoveByBillId(Long billId) {
+        fortuneFileRepository.removeByBillId(billId);
+    }
+
 }

@@ -251,12 +251,63 @@ public class FortuneBillService {
         fortuneCategoryRelationService.batchAdd(commands);
     }
 
-    // 修改的逻辑，删除旧的，新增一条新纪录
+    /**
+     * 修改账单 - 真正的更新操作，而不是删除+新增
+     */
     @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillModifyCommand modifyCommand) {
-        this.remove(modifyCommand.getBookId(), modifyCommand.getBillId());
-        this.add(modifyCommand);
+        // 1. 加载原账单
+        FortuneBillModel originalBill = fortuneBillFactory.loadById(modifyCommand.getBillId());
+        originalBill.checkBookId(modifyCommand.getBookId());
+
+        // 2. 如果原账单已确认，需要先回滚账户余额
+        if (originalBill.getConfirm()) {
+            this.refundBalance(originalBill);
+        }
+
+        // 3. 更新账单主体信息
+        originalBill.loadModifyCommand(modifyCommand);
+
+        // 4. 收款人校验
+        if (Objects.nonNull(modifyCommand.getPayeeId())) {
+            FortunePayeeModel payee = fortunePayeeFactory.loadById(modifyCommand.getPayeeId());
+            originalBill.checkPayeeExist(payee);
+            originalBill.checkPayeeEnable(payee);
+        }
+
+        // 5. 重新计算金额（支出和收入类型）
+        BillTypeEnum billType = BillTypeEnum.getByValue(modifyCommand.getBillType());
+        if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
+            BigDecimal amount = modifyCommand.getCategoryAmountPair().stream()
+                    .map(Pair::getValue)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            originalBill.setAmount(amount);
+            originalBill.setConvertedAmount(amount);
+        }
+
+        // 6. 更新账单主记录
+        originalBill.updateById();
+
+        // 7. 更新分类关联（先删除旧的，再添加新的）
+        fortuneCategoryRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
+        this.processCategoryRelations(modifyCommand.getCategoryAmountPair(), originalBill);
+
+        // 8. 更新标签关联（先删除旧的(物理删除)，再添加新的）
+        fortuneTagRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
+        if (CollectionUtils.isNotEmpty(modifyCommand.getTagIdList())) {
+            this.processTagRelations(modifyCommand.getTagIdList(), originalBill);
+        }
+
+        // 9. 更新文件附件（先删除旧的，再添加新的）
+        fortuneFileService.phyRemoveByBillId(modifyCommand.getBillId());
+        fortuneFileService.batchAdd(modifyCommand.getBillId(), modifyCommand.getFileList());
+
+        // 10. 如果修改后的账单需要确认，重新确认余额
+        if (originalBill.getConfirm()) {
+            this.confirmBalance(originalBill);
+        }
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long billId) {
