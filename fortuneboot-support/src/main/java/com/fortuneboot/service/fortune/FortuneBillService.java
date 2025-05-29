@@ -86,6 +86,7 @@ public class FortuneBillService {
 
     private final FortuneTagFactory fortuneTagFactory;
     private final FortuneCategoryFactory fortuneCategoryFactory;
+    private final FortuneBookFactory fortuneBookFactory;
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
@@ -186,12 +187,17 @@ public class FortuneBillService {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
         fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
+
+        // 获取账本信息以确定默认币种
+        FortuneBookModel bookModel = fortuneBookFactory.loadById(addCommand.getBookId());
+
         // 收款人校验提前
         if (Objects.nonNull(addCommand.getPayeeId())) {
             FortunePayeeModel payee = fortunePayeeFactory.loadById(addCommand.getPayeeId());
             fortuneBillModel.checkPayeeExist(payee);
             fortuneBillModel.checkPayeeEnable(payee);
         }
+
         // 使用枚举类型直接比较
         BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
         if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
@@ -200,8 +206,22 @@ public class FortuneBillService {
                     .map(Pair::getValue)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             fortuneBillModel.setAmount(amount);
-            fortuneBillModel.setConvertedAmount(amount);
+
+            // 对于非转账交易，需要根据账户币种和账本默认币种进行转换
+            if (Objects.nonNull(fortuneBillModel.getAccountId())) {
+                FortuneAccountModel accountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
+                BigDecimal convertedAmount = convertCurrency(
+                        amount,
+                        accountModel.getCurrencyCode(),
+                        bookModel.getDefaultCurrency(),
+                        applicationScopeBo.getCurrencyTemplateBoList()
+                );
+                fortuneBillModel.setConvertedAmount(convertedAmount);
+            } else {
+                fortuneBillModel.setConvertedAmount(amount);
+            }
         }
+
         // 资金操作
         this.confirmBalance(fortuneBillModel);
         // 持久化主记录
@@ -212,6 +232,7 @@ public class FortuneBillService {
         this.processCategoryRelations(addCommand.getCategoryAmountPair(), fortuneBillModel);
         fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
     }
+
 
     /**
      * 批量处理标签关联
@@ -282,7 +303,21 @@ public class FortuneBillService {
                     .map(Pair::getValue)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             originalBill.setAmount(amount);
-            originalBill.setConvertedAmount(amount);
+
+            // 对于非转账交易，需要根据账户币种和账本默认币种进行转换
+            if (Objects.nonNull(originalBill.getAccountId())) {
+                FortuneBookModel bookModel = fortuneBookFactory.loadById(modifyCommand.getBookId());
+                FortuneAccountModel accountModel = fortuneAccountFactory.loadById(originalBill.getAccountId());
+                BigDecimal convertedAmount = convertCurrency(
+                        amount,
+                        accountModel.getCurrencyCode(),
+                        bookModel.getDefaultCurrency(),
+                        applicationScopeBo.getCurrencyTemplateBoList()
+                );
+                originalBill.setConvertedAmount(convertedAmount);
+            } else {
+                originalBill.setConvertedAmount(amount);
+            }
         }
 
         // 6. 更新账单主记录
@@ -412,27 +447,49 @@ public class FortuneBillService {
     }
 
     /**
-     * 辅助方法：货币转换
+     * 货币转换 - 修复版本
+     * @param amount 原始金额
+     * @param sourceCurrency 源币种
+     * @param targetCurrency 目标币种
+     * @param rateList 汇率列表 (格式: 1 USD = rate 本币)
      */
-    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> aprList) {
+    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> rateList) {
         if (sourceCurrency.equals(targetCurrency)) {
             return amount;
         }
-        // 获取 sourceCurrency 对美元的汇率
-        BigDecimal aprSourceToRMB = aprList.stream()
-                .filter(apr -> apr.getCurrencyName().equals(sourceCurrency))
-                .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, " -> 美元"));
-        // 获取 targetCurrency 对美元的汇率
-        BigDecimal aprTargetToRMB = aprList.stream()
-                .filter(apr -> apr.getCurrencyName().equals(targetCurrency))
-                .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "美元", targetCurrency));
-        // 计算目标货币金额
-        return amount.multiply(aprSourceToRMB)
-                .divide(aprTargetToRMB, 10, RoundingMode.HALF_UP);
+
+        // 获取源币种汇率 (1 USD = sourceRate 源币种)
+        BigDecimal sourceRate = rateList.stream()
+            .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
+            .findFirst()
+            .map(CurrencyTemplateBo::getRate)
+            .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, "USD"));
+
+        // 获取目标币种汇率 (1 USD = targetRate 目标币种)
+        BigDecimal targetRate = rateList.stream()
+            .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
+            .findFirst()
+            .map(CurrencyTemplateBo::getRate)
+            .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "USD", targetCurrency));
+
+        // 汇率有效性校验
+        validateExchangeRate(sourceRate, sourceCurrency);
+        validateExchangeRate(targetRate, targetCurrency);
+
+        // 正确的转换公式：
+        // 步骤1: 源币种 → USD: amount ÷ sourceRate
+        // 步骤2: USD → 目标币种: usdAmount × targetRate
+        BigDecimal usdAmount = amount.divide(sourceRate, 10, RoundingMode.HALF_UP);
+        return usdAmount.multiply(targetRate).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 汇率校验
+     */
+    private void validateExchangeRate(BigDecimal rate, String currency) {
+        if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ApiException(ErrorCode.Business.INVALID_EXCHANGE_RATE, currency, rate);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
