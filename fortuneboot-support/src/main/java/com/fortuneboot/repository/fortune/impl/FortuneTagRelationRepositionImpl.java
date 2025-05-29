@@ -58,7 +58,7 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
             return;
         }
         List<Long> ids = list.stream().map(FortuneTagRelationEntity::getTagRelationId).toList();
-        fortuneTagRelationMapper.phyDeleteByBillId(ids);
+        fortuneTagRelationMapper.phyDeleteByIds(ids);
     }
 
     @Override

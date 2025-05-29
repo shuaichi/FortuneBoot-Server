@@ -14,6 +14,9 @@ import java.util.List;
  **/
 public interface FortuneTagRelationMapper extends BaseMapper<FortuneTagRelationEntity> {
 
-    @Delete("DELETE FROM fortune_tag_relation WHERE tag_relation_id IN #{ids}")
-    void phyDeleteByBillId(List<Long> ids);
+    /**
+     * 物理删除
+     * @param ids
+     */
+    void phyDeleteByIds(List<Long> ids);
 }
