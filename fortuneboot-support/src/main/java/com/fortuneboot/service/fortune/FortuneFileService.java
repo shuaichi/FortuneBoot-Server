@@ -39,7 +39,7 @@ public class FortuneFileService {
      * 批量删除附件
      */
     public void phyRemoveByBillId(Long billId) {
-        fortuneFileRepository.removeByBillId(billId);
+        fortuneFileRepository.phyRemoveByBillId(billId);
     }
 
 }

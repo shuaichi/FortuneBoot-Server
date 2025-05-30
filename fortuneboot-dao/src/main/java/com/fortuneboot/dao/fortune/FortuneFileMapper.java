@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * 账单文件
+ *
  * @Author work.chi.zhang@gmail.com
  * @Date 2024/6/5 23:02
  **/
@@ -15,8 +16,8 @@ public interface FortuneFileMapper extends BaseMapper<FortuneFileEntity> {
 
     /**
      * 根据id物理删除
+     *
      * @param ids
      */
-    @Delete("DELETE FROM fortune_file WHERE file_id IN #{ids}")
     void phyDeleteByIds(List<Long> ids);
 }
