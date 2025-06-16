@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -63,12 +64,12 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     /**
      * 最小金额
      */
-    private Integer amountMin;
+    private BigDecimal amountMin;
 
     /**
      * 最大金额
      */
-    private Integer amountMax;
+    private BigDecimal amountMax;
 
     /**
      * 分类id
