@@ -113,6 +113,7 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
         queryWrapper.eq(Objects.nonNull(bookId), "bill.book_id", bookId)
                 .eq(Objects.nonNull(billType), "bill.bill_type", billType)
                 .eq(Objects.nonNull(accountId), "bill.account_id", accountId)
+                .eq(Objects.nonNull(accountId),"bill.to_account_id", accountId)
                 .like(StringUtils.isNotBlank(title), "bill.title", title)
                 .ge(StringUtils.isNotBlank(tradeTimeStartTime), "bill.trade_time", tradeTimeStartTime + " 00:00:00")
                 .le(StringUtils.isNotBlank(tradeTimeEndTime), "bill.trade_time", tradeTimeEndTime + " 23:59:59")
