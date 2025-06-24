@@ -214,7 +214,7 @@ public class FortuneBillService {
             // 对于非转账交易，需要根据账户币种和账本默认币种进行转换
             if (Objects.nonNull(fortuneBillModel.getAccountId())) {
                 FortuneAccountModel accountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-                BigDecimal convertedAmount = convertCurrency(
+                BigDecimal convertedAmount = this.convertCurrency(
                         amount,
                         accountModel.getCurrencyCode(),
                         bookModel.getDefaultCurrency(),
@@ -435,12 +435,10 @@ public class FortuneBillService {
         bill.checkAccountEnable(targetAccount);
         // 校验可转入
         targetAccount.checkCanTransferIn();
-        BigDecimal convertedAmount = convertCurrency(
-                bill.getAmount(),
-                sourceAccount.getCurrencyCode(),
-                targetAccount.getCurrencyCode(),
-                applicationScopeBo.getCurrencyTemplateBoList()
-        );
+        // 如果convertedAmount不为空，则说明前端指定了转换后金额。
+        BigDecimal convertedAmount = Objects.nonNull(bill.getConvertedAmount())
+                ? bill.getConvertedAmount()
+                : this.convertCurrency(bill.getAmount(), sourceAccount.getCurrencyCode(), targetAccount.getCurrencyCode(), applicationScopeBo.getCurrencyTemplateBoList());
         // 调整目标账户余额
         this.adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
         // 更新目标账户并记录转换金额
@@ -476,8 +474,8 @@ public class FortuneBillService {
                 .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "USD", targetCurrency));
 
         // 汇率有效性校验
-        validateExchangeRate(sourceRate, sourceCurrency);
-        validateExchangeRate(targetRate, targetCurrency);
+        this.validateExchangeRate(sourceRate, sourceCurrency);
+        this.validateExchangeRate(targetRate, targetCurrency);
 
         // 正确的转换公式：
         // 步骤1: 源币种 → USD: amount ÷ sourceRate
