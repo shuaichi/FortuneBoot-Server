@@ -88,6 +88,11 @@ public class FortuneBillVo {
     private String currencyCode;
 
     /**
+     * 被转入账户金额币种
+     */
+    private String toCurrencyCode;
+
+    /**
      * 汇率转换后的金额
      */
     @ExcelColumn(name = "金额")
