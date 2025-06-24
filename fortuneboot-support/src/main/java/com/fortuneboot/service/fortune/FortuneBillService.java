@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -165,7 +166,6 @@ public class FortuneBillService {
         for (FortuneBillBo billBo : list) {
             FortuneBookEntity fortuneBookEntity = map.get(billBo.getBookId());
             billBo.setBookName(fortuneBookEntity.getBookName());
-            billBo.setCurrencyCode(fortuneBookEntity.getDefaultCurrency());
         }
     }
 
@@ -174,10 +174,14 @@ public class FortuneBillService {
         List<Long> toAccountIdList = list.stream().map(FortuneBillBo::getToAccountId).toList();
         accountIdList.addAll(toAccountIdList);
         List<FortuneAccountEntity> accountList = fortuneAccountRepository.getByIds(accountIdList);
-        Map<Long, String> map = accountList.stream().collect(Collectors.toMap(FortuneAccountEntity::getAccountId, FortuneAccountEntity::getAccountName));
+        Map<Long, FortuneAccountEntity> map = accountList.stream().collect(Collectors.toMap(FortuneAccountEntity::getAccountId, Function.identity()));
         for (FortuneBillBo billBo : list) {
-            billBo.setAccountName(map.get(billBo.getAccountId()));
-            billBo.setToAccountName(map.get(billBo.getToAccountId()));
+            FortuneAccountEntity account = map.get(billBo.getAccountId());
+            FortuneAccountEntity toAccount = map.get(billBo.getToAccountId());
+            billBo.setAccountName(Optional.ofNullable(account).map(FortuneAccountEntity::getAccountName).orElse(StringUtils.EMPTY));
+            billBo.setCurrencyCode(Optional.ofNullable(account).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
+            billBo.setToAccountName(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getAccountName).orElse(StringUtils.EMPTY));
+            billBo.setToCurrencyCode(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
         }
     }
 
@@ -289,7 +293,7 @@ public class FortuneBillService {
         // 3. 更新账单主体信息
         originalBill.loadModifyCommand(modifyCommand);
 
-        // 4. 收款人校验
+        // 4. 交易对象校验
         if (Objects.nonNull(modifyCommand.getPayeeId())) {
             FortunePayeeModel payee = fortunePayeeFactory.loadById(modifyCommand.getPayeeId());
             originalBill.checkPayeeExist(payee);
@@ -319,28 +323,26 @@ public class FortuneBillService {
                 originalBill.setConvertedAmount(amount);
             }
         }
-
-        // 6. 更新账单主记录
+        // 6. 重新确认余额
+        this.confirmBalance(originalBill);
+        // 7. 更新账单主记录
         originalBill.updateById();
 
-        // 7. 更新分类关联（先删除旧的，再添加新的）
+        // 8. 更新分类关联（先删除旧的，再添加新的）
         fortuneCategoryRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
         this.processCategoryRelations(modifyCommand.getCategoryAmountPair(), originalBill);
 
-        // 8. 更新标签关联（先删除旧的(物理删除)，再添加新的）
+        // 9. 更新标签关联（先删除旧的(物理删除)，再添加新的）
         fortuneTagRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
         if (CollectionUtils.isNotEmpty(modifyCommand.getTagIdList())) {
             this.processTagRelations(modifyCommand.getTagIdList(), originalBill);
         }
 
-        // 9. 更新文件附件（先删除旧的，再添加新的）
+        // 10. 更新文件附件（先删除旧的，再添加新的）
         fortuneFileService.phyRemoveByBillId(modifyCommand.getBillId());
         fortuneFileService.batchAdd(modifyCommand.getBillId(), modifyCommand.getFileList());
 
-        // 10. 如果修改后的账单需要确认，重新确认余额
-        if (originalBill.getConfirm()) {
-            this.confirmBalance(originalBill);
-        }
+
     }
 
 
@@ -448,10 +450,11 @@ public class FortuneBillService {
 
     /**
      * 货币转换 - 修复版本
-     * @param amount 原始金额
+     *
+     * @param amount         原始金额
      * @param sourceCurrency 源币种
      * @param targetCurrency 目标币种
-     * @param rateList 汇率列表 (格式: 1 USD = rate 本币)
+     * @param rateList       汇率列表 (格式: 1 USD = rate 本币)
      */
     public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> rateList) {
         if (sourceCurrency.equals(targetCurrency)) {
@@ -460,17 +463,17 @@ public class FortuneBillService {
 
         // 获取源币种汇率 (1 USD = sourceRate 源币种)
         BigDecimal sourceRate = rateList.stream()
-            .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
-            .findFirst()
-            .map(CurrencyTemplateBo::getRate)
-            .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, "USD"));
+                .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
+                .findFirst()
+                .map(CurrencyTemplateBo::getRate)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, "USD"));
 
         // 获取目标币种汇率 (1 USD = targetRate 目标币种)
         BigDecimal targetRate = rateList.stream()
-            .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
-            .findFirst()
-            .map(CurrencyTemplateBo::getRate)
-            .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "USD", targetCurrency));
+                .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
+                .findFirst()
+                .map(CurrencyTemplateBo::getRate)
+                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "USD", targetCurrency));
 
         // 汇率有效性校验
         validateExchangeRate(sourceRate, sourceCurrency);
