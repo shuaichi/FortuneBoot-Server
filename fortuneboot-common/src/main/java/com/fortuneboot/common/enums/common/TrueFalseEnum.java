@@ -24,11 +24,11 @@ public enum TrueFalseEnum implements BasicEnum<Integer> {
 
     @Override
     public Integer getValue() {
-        return 0;
+        return value;
     }
 
     @Override
     public String getDescription() {
-        return "";
+        return description;
     }
 }
