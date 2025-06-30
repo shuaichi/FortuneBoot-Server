@@ -6,6 +6,7 @@ import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
+import com.fortuneboot.service.system.UserApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +32,8 @@ public class FortuneIncludeController {
     private final FortuneBillService fortuneBillService;
 
     private final FortuneAccountService fortuneAccountService;
+
+    private final UserApplicationService userApplicationService;
 
 
     @Operation(summary = "统计支出收入")
@@ -119,5 +122,11 @@ public class FortuneIncludeController {
     @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
     public ResponseDTO<List<FortunePieVo>> getPayeeIncome(@Valid PayeeIncludeQuery query){
         return ResponseDTO.ok(fortuneBillService.getPayeeIncome(query));
+    }
+
+    @Operation(summary = "获取首页金额显示设置", description = "首页金额显示")
+    @GetMapping("/getDisplayConfig")
+    public ResponseDTO<String> getDisplayConfig(){
+        return ResponseDTO.ok(userApplicationService.getDisplayConfig());
     }
 }
