@@ -218,4 +218,8 @@ public class UserApplicationService {
     public String getIcp(){
         return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
     }
+
+    public String getDisplayConfig() {
+        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.DISPLAY.getValue());
+    }
 }

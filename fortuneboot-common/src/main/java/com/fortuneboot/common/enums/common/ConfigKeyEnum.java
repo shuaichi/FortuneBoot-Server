@@ -18,6 +18,7 @@ public enum ConfigKeyEnum implements BasicEnum<String> {
     CAPTCHA("sys.account.captchaOnOff", "验证码开关"),
     REGISTER("sys.account.registerUser", "注册开放功能"),
     ICP("sys.config.icp", "icp备案信息"),
+    DISPLAY("sys.config.display", "金额显示"),
     ;
 
 
