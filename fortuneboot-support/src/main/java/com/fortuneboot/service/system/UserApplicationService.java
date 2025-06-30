@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.ConfigKeyEnum;
 import com.fortuneboot.common.enums.common.StatusEnum;
+import com.fortuneboot.common.enums.common.TrueFalseEnum;
 import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
@@ -38,10 +39,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.fortuneboot.service.fortune.FortuneGroupService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author valarchie
@@ -220,6 +220,7 @@ public class UserApplicationService {
     }
 
     public String getDisplayConfig() {
-        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.DISPLAY.getValue());
+        String display = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.DISPLAY.getValue());
+        return StringUtils.isBlank(display) ? TrueFalseEnum.TRUE.getDescription() : display;
     }
 }

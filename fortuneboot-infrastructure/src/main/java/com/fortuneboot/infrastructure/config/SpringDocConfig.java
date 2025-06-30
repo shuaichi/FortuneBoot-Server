@@ -19,7 +19,7 @@ public class SpringDocConfig {
         return new OpenAPI()
                 .info(new Info().title("好记")
                         .description("好记记账管理系统演示")
-                        .version("v1.1.5")
+                        .version("v1.1.6")
                         .license(new License()
                                 .name("MIT 3.0")
                                 .url("https://www.fortuneboot.com/")
