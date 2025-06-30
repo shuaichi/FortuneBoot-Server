@@ -419,7 +419,7 @@ INSERT INTO sys_config (config_id, config_name, config_key, config_options, conf
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (4, '账号自助-验证码开关', 'sys.account.captchaOnOff', '["true","false"]', 'true', 1, null, 1, '2025-02-25 10:01:53', '2022-05-21 08:30:55', '是否开启验证码功能（true开启，false关闭）', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (5, '账号自助-是否开启用户注册功能', 'sys.account.registerUser', '["true","false"]', 'true', 0, null, 1, '2025-02-17 16:51:16', '2022-05-21 08:30:55', '是否开启注册用户功能（true开启，false关闭）', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (6, '系统配置-ICP备案', 'sys.config.icp', '', '暂未配置ICP备案信息', 1, null, 1, '2025-05-13 22:57:42', '2025-05-13 22:57:42', 'ICP备案号', 0);
-
+INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (7, '首页大屏-金额显示/隐藏设置', 'sys.config.display', '["true","false"]', 'true', 1, null, null, null, '2025-06-30 09:44:57', '首页金额默认显示/隐藏设置', 0);
 create table if not exists sys_login_info
 (
     info_id          bigint auto_increment comment '访问ID'
