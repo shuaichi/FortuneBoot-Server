@@ -32,7 +32,7 @@ public class FortuneRecurringBillJob implements Job {
             log.info("周期记账任务执行完成，规则ID: {}", ruleId);
         } catch (Exception e) {
             log.error("周期记账任务执行失败，规则ID: {}", ruleId, e);
-            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTE_FAILED, ruleId);
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, ruleId);
         }
     }
 }

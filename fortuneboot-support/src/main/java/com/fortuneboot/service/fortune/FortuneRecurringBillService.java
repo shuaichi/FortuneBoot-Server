@@ -1,19 +1,27 @@
 package com.fortuneboot.service.fortune;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.enums.fortune.RecoveryStrategyEnum;
+import com.fortuneboot.common.enums.fortune.RecurringBillLogStatusEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillLogEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
+import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
 import com.fortuneboot.factory.fortune.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.job.FortuneRecurringBillJob;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepository;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +45,10 @@ public class FortuneRecurringBillService {
 
     private final FortuneRecurringBillRuleFactory fortuneRecurringBillRuleFactory;
 
+    private final FortuneRecurringBillRuleRepository fortuneRecurringBillRuleRepository;
+
+    private final FortuneRecurringBillLogRepository fortuneRecurringBillLogRepository;
+
     private final Scheduler scheduler;
 
     private final FortuneBillService fortuneBillService;
@@ -44,6 +56,73 @@ public class FortuneRecurringBillService {
     private final String GROUP_NAME = "RecurringBillGroup";
 
     private final String JOB_NAME_PREFIX = "RecurringBill_";
+
+
+    public IPage<FortuneRecurringBillRuleEntity> getRulePage(FortuneRecurringBillRuleQuery query) {
+        return fortuneRecurringBillRuleRepository.page(query.toPage(), query.addQueryCondition());
+    }
+
+
+    public List<FortuneRecurringBillLogEntity> getLogByRuleId(Long ruleId) {
+        return fortuneRecurringBillLogRepository.getByRuleId(ruleId);
+    }
+
+
+    /**
+     * 动态添加新规则
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void addNewRule(FortuneRecurringBillRuleAddCommand addCommand) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.create();
+        rule.loadAddCommand(addCommand);
+        rule.checkCronValid();
+        this.scheduleJob(rule);
+    }
+
+    /**
+     * 动态更新规则
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void modifyRule(FortuneRecurringBillRuleModifyCommand modifyCommand) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(modifyCommand.getRuleId());
+        rule.loadModifyCommand(modifyCommand);
+        rule.checkCronValid();
+        rule.checkBookId(modifyCommand.getBookId());
+        this.scheduleJob(rule);
+    }
+
+    /**
+     * 动态删除规则
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void removeRule(Long bookId, Long ruleId) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
+        rule.checkBookId(bookId);
+        rule.deleteById();
+        this.deleteJob(ruleId);
+    }
+
+    /**
+     * 启用规则
+     */
+    public void enableRule(Long bookId,Long ruleId) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
+        rule.checkBookId(bookId);
+        rule.setEnable(Boolean.TRUE);
+        rule.updateById();
+        this.scheduleJob(rule);
+    }
+
+    /**
+     * 禁用规则
+     */
+    public void disableRule(Long bookId,Long ruleId) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
+        rule.checkBookId(bookId);
+        rule.setEnable(Boolean.FALSE);
+        rule.updateById();
+        this.deleteJob(ruleId);
+    }
 
     /**
      * 应用启动时初始化定时任务
@@ -57,7 +136,7 @@ public class FortuneRecurringBillService {
 
         for (FortuneRecurringBillRuleModel rule : rules) {
             // 执行补偿逻辑
-            this.performRecovery(rule);
+            ((FortuneRecurringBillService) AopContext.currentProxy()).performRecovery(rule);
 
             // 创建定时任务
             this.scheduleJob(rule);
@@ -70,7 +149,8 @@ public class FortuneRecurringBillService {
     /**
      * 执行补偿逻辑
      */
-    private void performRecovery(FortuneRecurringBillRuleModel rule) {
+    @Transactional(rollbackFor = Exception.class)
+    void performRecovery(FortuneRecurringBillRuleModel rule) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime lastCheck = rule.getLastRecoveryCheck();
 
@@ -228,39 +308,47 @@ public class FortuneRecurringBillService {
      * 执行周期记账（指定执行时间）
      */
     public void executeRecurringBillWithTime(Long ruleId, LocalDateTime executionTime) {
-        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
-        if (Objects.isNull(rule) || !rule.getEnable() || rule.getDeleted()) {
-            log.warn("规则不存在或已禁用，规则ID: {}", ruleId);
-            return;
+        long startTime = System.currentTimeMillis();
+        try {
+            FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
+            if (!rule.getEnable()) {
+                log.warn("规则已禁用，规则ID: {}", ruleId);
+                return;
+            }
+
+            // 检查是否超过最大执行次数
+            if (rule.checkOverExecutions()) {
+                log.info("规则已达到最大执行次数，停止执行，规则ID: {}", ruleId);
+                this.disableRule(ruleId);
+                return;
+            }
+
+            // 检查是否超过结束日期
+            if (rule.checkOverEndDate(executionTime.toLocalDate())) {
+                log.info("规则已超过结束日期，停止执行，规则ID: {}", ruleId);
+                this.disableRule(ruleId);
+                return;
+            }
+
+            // 解析账单参数并执行
+            String billRequestJson = rule.getBillRequest();
+            FortuneBillAddCommand billRequest = JacksonUtil.from(billRequestJson, FortuneBillAddCommand.class);
+            // 设置交易时间
+            billRequest.setTradeTime(executionTime);
+            // 执行记账逻辑
+            Long billId =fortuneBillService.add(billRequest);
+
+            // 更新执行记录
+            this.updateExecutionRecord(ruleId, executionTime);
+            this.recordSuccessLog(ruleId, executionTime, billId,  System.currentTimeMillis() - startTime);
+            log.info("周期记账执行成功，规则ID: {}, 执行时间: {}", ruleId, executionTime);
+        } catch (Exception e) {
+            String errorMsg = e.getMessage();
+            // 记录失败日志
+            this.recordFailureLog(ruleId, executionTime, errorMsg, System.currentTimeMillis() - startTime);
+            log.error("周期记账执行失败，规则ID: {}, 执行时间: {}, 错误信息: {}", ruleId, executionTime, errorMsg, e);
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, ruleId, errorMsg);
         }
-
-        // 检查是否超过最大执行次数
-        if (Objects.nonNull(rule.getMaxExecutions()) && rule.getExecutedCount() >= rule.getMaxExecutions()) {
-            log.info("规则已达到最大执行次数，停止执行，规则ID: {}", ruleId);
-            this.disableRule(ruleId);
-            return;
-        }
-
-        // 检查是否超过结束日期
-        if (Objects.nonNull(rule.getEndDate()) && executionTime.toLocalDate().isAfter(rule.getEndDate())) {
-            log.info("规则已超过结束日期，停止执行，规则ID: {}", ruleId);
-            this.disableRule(ruleId);
-            return;
-        }
-
-        // 解析账单参数并执行
-        String billRequestJson = rule.getBillRequest();
-        FortuneBillAddCommand billRequest = JacksonUtil.from(billRequestJson, FortuneBillAddCommand.class);
-        // 设置交易时间
-        billRequest.setTradeTime(executionTime);
-        // 执行记账逻辑
-        fortuneBillService.add(billRequest);
-
-        // 更新执行记录
-        this.updateExecutionRecord(ruleId, executionTime);
-
-        log.info("周期记账执行成功，规则ID: {}, 执行时间: {}", ruleId, executionTime);
-
     }
 
     /**
@@ -303,59 +391,13 @@ public class FortuneRecurringBillService {
     }
 
     /**
-     * 启用规则
-     *
-     * @param ruleId
+     * 禁用规则重载
      */
-    public void enableRule(Long ruleId) {
-        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
-        rule.setEnable(Boolean.TRUE);
-        rule.updateById();
-        this.scheduleJob(rule);
-    }
-
-    /**
-     * 禁用规则
-     */
-    public void disableRule(Long ruleId) {
+    private void disableRule(Long ruleId) {
+        this.deleteJob(ruleId);
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
         rule.setEnable(Boolean.FALSE);
         rule.updateById();
-        this.deleteJob(ruleId);
-    }
-
-    /**
-     * 动态添加新规则
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void addNewRule(FortuneRecurringBillRuleAddCommand addCommand) {
-        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.create();
-        rule.loadAddCommand(addCommand);
-        rule.checkCronValid();
-        this.scheduleJob(rule);
-    }
-
-    /**
-     * 动态更新规则
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void modifyRule(FortuneRecurringBillRuleModifyCommand modifyCommand) {
-        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(modifyCommand.getRuleId());
-        rule.loadModifyCommand(modifyCommand);
-        rule.checkCronValid();
-        rule.checkBookId(modifyCommand.getBookId());
-        this.scheduleJob(rule);
-    }
-
-    /**
-     * 动态删除规则
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void removeRule(Long bookId, Long ruleId) {
-        this.deleteJob(ruleId);
-        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
-        rule.checkBookId(bookId);
-        rule.deleteById();
     }
 
     private void deleteJob(Long ruleId) {
@@ -367,5 +409,34 @@ public class FortuneRecurringBillService {
             log.error("删除定时任务失败，规则ID: {}", ruleId, e);
             throw new ApiException(ErrorCode.Business.RECURRING_BILL_REMOVE_JOB_FAILED, ruleId);
         }
+    }
+
+    /**
+     * 记录成功日志
+     */
+    private void recordSuccessLog(Long ruleId, LocalDateTime executionTime, Long billId, Long duration) {
+        this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.SUCCESS.getValue(), billId, null, duration);
+    }
+
+    /**
+     * 记录失败日志
+     */
+    private void recordFailureLog(Long ruleId, LocalDateTime executionTime, String errorMsg, Long duration) {
+        this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.FAILURE.getValue(), null, errorMsg, duration);
+    }
+
+    /**
+     * 记录执行日志
+     */
+    private void recordExecutionLog(Long ruleId, LocalDateTime executionTime, Integer status, Long billId, String errorMsg, Long duration) {
+        FortuneRecurringBillLogEntity logEntity = new FortuneRecurringBillLogEntity();
+        logEntity.setRuleId(ruleId);
+        logEntity.setExecutionTime(executionTime);
+        logEntity.setStatus(status);
+        logEntity.setBillId(billId);
+        logEntity.setErrorMsg(errorMsg);
+        logEntity.setExecutionDuration(duration);
+
+        fortuneRecurringBillLogRepository.save(logEntity);
     }
 }

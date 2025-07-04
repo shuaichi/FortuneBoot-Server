@@ -63,7 +63,7 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
             return;
         }
         List<Long> ids = list.stream().map(FortunePayeeEntity::getPayeeId).toList();
-        fortunePayeeMapper.deleteBatchIds(ids);
+        fortunePayeeMapper.deleteByIds(ids);
     }
 
     @Override
@@ -72,6 +72,6 @@ public class FortunePayeeRepositoryImpl extends ServiceImpl<FortunePayeeMapper, 
         queryWrapper.in(FortunePayeeEntity::getBookId,bookIds);
         List<FortunePayeeEntity> list = this.list(queryWrapper);
         List<Long> ids = list.stream().map(FortunePayeeEntity::getPayeeId).toList();
-        fortunePayeeMapper.deleteBatchIds(ids);
+        fortunePayeeMapper.deleteByIds(ids);
     }
 }

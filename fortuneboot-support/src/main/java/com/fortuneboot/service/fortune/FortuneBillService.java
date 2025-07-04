@@ -186,7 +186,7 @@ public class FortuneBillService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void add(FortuneBillAddCommand addCommand) {
+    public Long add(FortuneBillAddCommand addCommand) {
         // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
@@ -235,6 +235,7 @@ public class FortuneBillService {
         // 批量分类处理
         this.processCategoryRelations(addCommand.getCategoryAmountPair(), fortuneBillModel);
         fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
+        return fortuneBillModel.getBillId();
     }
 
 

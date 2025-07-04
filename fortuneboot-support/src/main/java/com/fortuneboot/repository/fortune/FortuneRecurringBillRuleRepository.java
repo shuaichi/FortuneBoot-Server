@@ -16,4 +16,5 @@ public interface FortuneRecurringBillRuleRepository extends IService<FortuneRecu
      * @return
      */
     List<FortuneRecurringBillRuleEntity> getAllEnable();
+
 }

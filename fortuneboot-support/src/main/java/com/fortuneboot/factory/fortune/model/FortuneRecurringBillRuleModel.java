@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.scheduling.support.CronExpression;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -50,7 +51,7 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
         try {
             CronExpression.parse(this.getCronExpression());
         } catch (IllegalArgumentException e) {
-            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTE_FAILED, this.getCronExpression());
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, this.getCronExpression());
         }
     }
 
@@ -58,5 +59,14 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
         if (!Objects.equals(bookId, this.getBookId())) {
             throw new ApiException(ErrorCode.Business.RECURRING_BILL_BOOK_NOT_MATCH);
         }
+    }
+
+    public Boolean checkOverExecutions() {
+        return Objects.nonNull(this.getMaxExecutions()) && this.getExecutedCount() >= this.getMaxExecutions();
+    }
+
+
+    public boolean checkOverEndDate(LocalDate localDate) {
+        return Objects.nonNull(this.getEndDate()) && localDate.isAfter(this.getEndDate());
     }
 }
