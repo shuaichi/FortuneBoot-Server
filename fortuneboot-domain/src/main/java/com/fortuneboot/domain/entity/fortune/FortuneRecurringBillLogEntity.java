@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("fortune_recurring_bill_log")
 @EqualsAndHashCode(callSuper = true)
-public class FortuneRecurringBillLog extends BaseEntity<FortuneRecurringBillLog> {
+public class FortuneRecurringBillLogEntity extends BaseEntity<FortuneRecurringBillLogEntity> {
     /**
      * 主键
      */

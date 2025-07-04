@@ -7,6 +7,8 @@ import com.fortuneboot.common.enums.common.YesOrNoEnum;
 import com.fortuneboot.common.enums.BasicEnumUtil;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import lombok.Data;
@@ -42,6 +44,6 @@ public class ConfigDTO {
     private Integer isAllowChange;
     private String isAllowChangeStr;
     private String remark;
-    private Date createTime;
+    private LocalDateTime createTime;
 
 }

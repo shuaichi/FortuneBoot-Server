@@ -6,6 +6,8 @@ import com.fortuneboot.common.annotation.ExcelSheet;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.domain.entity.system.SearchUserDO;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fortuneboot.domain.registry.CacheRegistry;
@@ -94,7 +96,7 @@ public class UserDTO {
     private String creatorName;
 
     @ExcelColumn(name = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @ExcelColumn(name = "修改者ID")
     private Long updaterId;
@@ -103,7 +105,7 @@ public class UserDTO {
     private String updaterName;
 
     @ExcelColumn(name = "修改时间")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     @ExcelColumn(name = "备注")
     private String remark;

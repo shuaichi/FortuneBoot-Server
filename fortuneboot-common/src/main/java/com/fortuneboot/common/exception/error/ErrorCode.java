@@ -190,15 +190,15 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         GROUP_CANNOT_DELETE_DEFAULT_GROUP(21001, "不能删除默认分组", "Business.GROUP_CANNOT_DELETE_DEFAULT_GROUP"),
 
-        GROUP_USER_NON_EXIST(21002,"被邀请用户：{} 不存在", "Business.GROUP_USER_NON_EXIST"),
+        GROUP_USER_NON_EXIST(21002, "被邀请用户：{} 不存在", "Business.GROUP_USER_NON_EXIST"),
 
-        GROUP_USER_ALREADY_EXIST(21003,"该分组中已存在：{} 用户，请勿重复添加","Business.GROUP_USER_ALREADY_EXIST"),
+        GROUP_USER_ALREADY_EXIST(21003, "该分组中已存在：{} 用户，请勿重复添加", "Business.GROUP_USER_ALREADY_EXIST"),
 
-        GROUP_CANNOT_DELETE_SELF(21004,"不能删除自己", "Business.GROUP_CANNOT_DELETE_SELF"),
+        GROUP_CANNOT_DELETE_SELF(21004, "不能删除自己", "Business.GROUP_CANNOT_DELETE_SELF"),
 
-        GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT(21005,"不能设置停用的分组为默认分组", "Business.GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT"),
+        GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT(21005, "不能设置停用的分组为默认分组", "Business.GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT"),
 
-        GROUP_CANNOT_DISABLE_DEFAULT_GROUP(21006,"分组被 {} 设置为默认分组，不能停用", "Business.GROUP_CANNOT_DISABLE_DEFAULT_GROUP"),
+        GROUP_CANNOT_DISABLE_DEFAULT_GROUP(21006, "分组被 {} 设置为默认分组，不能停用", "Business.GROUP_CANNOT_DISABLE_DEFAULT_GROUP"),
 
         // ---------------------------------- BOOK -----------------------------------------------
 
@@ -210,7 +210,7 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BOOK_CANNOT_SET_UNABLE_BOOK_DEFAULT(22004, "不能设置停用的账本为默认账本", "Business.BOOK_CANNOT_SET_UNABLE_BOOK_DEFAULT"),
 
-        BOOK_CANNOT_DISABLE_DEFAULT_BOOK(22005,"不能停用默认账本", "Business.BOOK_CANNOT_DISABLE_DEFAULT_BOOK"),
+        BOOK_CANNOT_DISABLE_DEFAULT_BOOK(22005, "不能停用默认账本", "Business.BOOK_CANNOT_DISABLE_DEFAULT_BOOK"),
 
         // ---------------------------------- TAG -----------------------------------------------
 
@@ -265,7 +265,7 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         ACCOUNT_CANNOT_TRANSFER_OUT(26007, "账户：{} 不可转出，请修改转出状态后再试", "Business.ACCOUNT_CANNOT_TRANSFER_OUT"),
 
-        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26008,"余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
+        ACCOUNT_BALANCE_ADJUST_NOT_MODIFY(26008, "余额未发生变化，无需调整", "Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY"),
 
         // ---------------------------------- BILL -----------------------------------------------
 
@@ -279,15 +279,15 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_TRANSFER_PARAMETER_ERROR(27004, "转账入参有误", "Business.BILL_TRANSFER_PARAMETER_ERROR"),
 
-        BILL_TYPE_ILLEGAL(27005,"无效的账单类型：{}", "Business.BILL_TYPE_ILLEGAL"),
+        BILL_TYPE_ILLEGAL(27005, "无效的账单类型：{}", "Business.BILL_TYPE_ILLEGAL"),
 
-        BILL_PAYEE_DISABLE(27006, "交易对象被禁用，无法新增账单： {}","Business.BILL_PAYEE_DISABLE" ),
+        BILL_PAYEE_DISABLE(27006, "交易对象被禁用，无法新增账单： {}", "Business.BILL_PAYEE_DISABLE"),
 
-        BILL_ACCOUNT_DISABLE(27007, "账户被禁用，无法新增账单： {}","Business.BILL_ACCOUNT_DISABLE" ),
+        BILL_ACCOUNT_DISABLE(27007, "账户被禁用，无法新增账单： {}", "Business.BILL_ACCOUNT_DISABLE"),
 
-        BILL_TAG_DISABLE(27008, "标签被禁用，无法新增账单： {}","Business.BILL_TAGS_DISABLE" ),
+        BILL_TAG_DISABLE(27008, "标签被禁用，无法新增账单： {}", "Business.BILL_TAGS_DISABLE"),
 
-        BILL_CATEGORY_DISABLE(27009, "分类被禁用，无法新增账单： {}","Business.BILL_CATEGORY_DISABLE" ),
+        BILL_CATEGORY_DISABLE(27009, "分类被禁用，无法新增账单： {}", "Business.BILL_CATEGORY_DISABLE"),
 
         // ---------------------------------- RATE -----------------------------------------------,
         APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
@@ -299,13 +299,31 @@ public enum ErrorCode implements ErrorCodeInterface {
         CURRENCY_CONVERSION_FAILED(28004, "币种转换失败: {} -> {}", "Business.CURRENCY_CONVERSION_FAILED"),
 
         // ---------------------------------- GOODS_KEEPER -----------------------------------------------,
-        GOODS_KEEPER_BOOK_NOT_MATCH(29001,"物品与账本不匹配","Business.GOODS_KEEPER_BOOK_NOT_MATCH"),
+        GOODS_KEEPER_BOOK_NOT_MATCH(29001, "物品与账本不匹配", "Business.GOODS_KEEPER_BOOK_NOT_MATCH"),
 
-        GOODS_KEEPER_STATUS_NOT_MATCH(29002,"物品状态不匹配","Business.GOODS_KEEPER_STATUS_NOT_MATCH"),
+        GOODS_KEEPER_STATUS_NOT_MATCH(29002, "物品状态不匹配", "Business.GOODS_KEEPER_STATUS_NOT_MATCH"),
 
-        GOODS_KEEPER_STATUS_NEED_RETIRED_DATE(29003,"该状态退役日期必填","Business.GOODS_KEEPER_STATUS_NEED_RETIRED_DATE"),
+        GOODS_KEEPER_STATUS_NEED_RETIRED_DATE(29003, "该状态退役日期必填", "Business.GOODS_KEEPER_STATUS_NEED_RETIRED_DATE"),
+
+        // ---------------------------------- RECURRING_BILL -----------------------------------------------,
+
+        RECURRING_BILL_EXECUTE_FAILED(31001, "周期记账执行失败，规则ID为{}", "Business.RECURRING_BILL_EXECUTE_FAILED"),
+
+        RECURRING_BILL_CREATE_JOB_FAILED(31002, "创建周期记账任务失败，规则ID：{}", "Business.RECURRING_BILL_CREATE_JOB_FAILED"),
+
+        RECURRING_BILL_REMOVE_JOB_FAILED(31003, "删除周期记账任务失败，规则ID为：{}", "Business.RECURRING_BILL_REMOVE_JOB_FAILED"),
+
+        RECURRING_BILL_CRON_ILLEGAL(31004, "CRON表达式不合法：{}", "Business.RECURRING_BILL_CRON_ILLEGAL"),
+
+        RECURRING_BILL_CRON_EXPRESSION_PARSE_FAILED(31005, "解析Cron表达式失败：{}", "Business.RECURRING_BILL_CRON_EXPRESSION_PARSE_FAILED"),
+
+        RECURRING_BILL_BOOK_NOT_MATCH(31006,"周期记账规则与账本不匹配","Business.RECURRING_BILL_BOOK_NOT_MATCH"),
+
+        RECURRING_BILL_CALCULATE_NEXT_EXECUTION_TIME_FAILED(31007,"计算下次执行时间失败，规则ID为：{}","Business.RECURRING_BILL_CALCULATE_NEXT_EXECUTION_TIME_FAILED"),
+
+        RECURRING_BILL_INIT_FAILED(31008,"初始化周期记账失败，规则ID为：{}","Business.RECURRING_BILL_INIT_FAILED"),
+
         ;
-
 
 
         private final int code;

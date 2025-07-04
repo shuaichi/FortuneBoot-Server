@@ -3,6 +3,7 @@ package com.fortuneboot.domain.dto;
 //import com.fortuneboot.domain.common.cache.CacheCenter;
 import com.fortuneboot.domain.entity.system.SysNoticeEntity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fortuneboot.domain.entity.system.SysUserEntity;
@@ -42,7 +43,7 @@ public class NoticeDTO {
 
     private Integer status;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
     private String creatorName;
 

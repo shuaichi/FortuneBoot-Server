@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("fortune_recurring_bill_rule")
 @EqualsAndHashCode(callSuper = true)
-public class FortuneRecurringBillRule extends BaseEntity<FortuneRecurringBillRule> {
+public class FortuneRecurringBillRuleEntity extends BaseEntity<FortuneRecurringBillRuleEntity> {
 
     /**
      * 主键
@@ -41,7 +41,7 @@ public class FortuneRecurringBillRule extends BaseEntity<FortuneRecurringBillRul
      * 规则名称
      */
     @Schema(description = "规则名称")
-    @TableField("role_name")
+    @TableField("rule_name")
     private String ruleName;
 
     /**
@@ -82,8 +82,8 @@ public class FortuneRecurringBillRule extends BaseEntity<FortuneRecurringBillRul
     /**
      * 最大执行次数
      */
-    @Schema(description = "max_executions")
-    @TableField("最大执行次数")
+    @Schema(description = "最大执行次数")
+    @TableField("max_executions")
     private Long maxExecutions;
 
     /**

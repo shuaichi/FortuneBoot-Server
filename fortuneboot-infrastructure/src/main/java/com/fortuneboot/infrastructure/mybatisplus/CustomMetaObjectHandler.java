@@ -3,7 +3,9 @@ package com.fortuneboot.infrastructure.mybatisplus;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import java.util.Date;
+
+import java.time.LocalDateTime;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * Mybatis Plus允许在插入或者更新的时候
  * 自定义设定值
+ *
  * @author valarchie
  */
 @Component
@@ -27,7 +30,7 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         if (metaObject.hasSetter(CREATE_TIME_FIELD)) {
-            this.setFieldValByName(CREATE_TIME_FIELD, new Date(), metaObject);
+            this.setFieldValByName(CREATE_TIME_FIELD, LocalDateTime.now(), metaObject);
         }
 
         Long userId = getUserIdSafely();
@@ -39,7 +42,7 @@ public class CustomMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         if (metaObject.hasSetter(UPDATE_TIME_FIELD)) {
-            this.setFieldValByName(UPDATE_TIME_FIELD, new Date(), metaObject);
+            this.setFieldValByName(UPDATE_TIME_FIELD, LocalDateTime.now(), metaObject);
         }
 
         Long userId = getUserIdSafely();

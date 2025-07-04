@@ -3,6 +3,8 @@ package com.fortuneboot.domain.dto;
 import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.common.annotation.ExcelSheet;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class RoleDTO {
     @ExcelColumn(name = "备注")
     private String remark;
     @ExcelColumn(name = "创建时间")
-    private Date createTime;
+    private LocalDateTime createTime;
     @ExcelColumn(name = "数据范围")
     private Integer dataScope;
     @ExcelColumn(name = "数据范围")
