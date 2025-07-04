@@ -1,7 +1,7 @@
 package com.fortuneboot.dao.fortune;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRule;
+import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 
 /**
  * 周期记账规则
@@ -9,5 +9,5 @@ import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRule;
  * @author zhangchi118
  * @date 2025/6/30 20:39
  **/
-public interface FortuneRecurringBillRuleMapper extends BaseMapper<FortuneRecurringBillRule> {
+public interface FortuneRecurringBillRuleMapper extends BaseMapper<FortuneRecurringBillRuleEntity> {
 }

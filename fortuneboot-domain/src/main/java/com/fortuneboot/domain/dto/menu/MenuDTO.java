@@ -6,6 +6,8 @@ import com.fortuneboot.common.enums.common.MenuTypeEnum;
 import com.fortuneboot.common.enums.common.StatusEnum;
 import com.fortuneboot.common.enums.BasicEnumUtil;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import lombok.Data;
@@ -68,7 +70,7 @@ public class MenuDTO {
 
     private String statusStr;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
     private String icon;
 

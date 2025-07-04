@@ -1,0 +1,62 @@
+package com.fortuneboot.factory.fortune.model;
+
+import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.scheduling.support.CronExpression;
+
+import java.util.Objects;
+
+/**
+ * @author zhangchi118
+ * @date 2025/7/3 17:02
+ **/
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntity {
+
+    private final FortuneRecurringBillRuleRepository fortuneRecurringBillRuleRepository;
+
+    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleRepository repository) {
+        this.fortuneRecurringBillRuleRepository = repository;
+    }
+
+    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleEntity entity, FortuneRecurringBillRuleRepository repository) {
+        if (Objects.nonNull(entity)) {
+            BeanUtil.copyProperties(entity, this);
+        }
+        this.fortuneRecurringBillRuleRepository = repository;
+    }
+
+    public void loadAddCommand(FortuneRecurringBillRuleAddCommand command) {
+        if (Objects.nonNull(command)) {
+            BeanUtil.copyProperties(command, this, "ruleId");
+        }
+    }
+
+    public void loadModifyCommand(FortuneRecurringBillRuleAddCommand command) {
+        if (Objects.isNull(command)) {
+            return;
+        }
+        this.loadAddCommand(command);
+    }
+
+    public void checkCronValid() {
+        try {
+            CronExpression.parse(this.getCronExpression());
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTE_FAILED, this.getCronExpression());
+        }
+    }
+
+    public void checkBookId(Long bookId) {
+        if (!Objects.equals(bookId, this.getBookId())) {
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_BOOK_NOT_MATCH);
+        }
+    }
+}
