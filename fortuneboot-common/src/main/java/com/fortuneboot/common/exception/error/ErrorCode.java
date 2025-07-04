@@ -307,7 +307,7 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         // ---------------------------------- RECURRING_BILL -----------------------------------------------,
 
-        RECURRING_BILL_EXECUTE_FAILED(31001, "周期记账执行失败，规则ID为{}", "Business.RECURRING_BILL_EXECUTE_FAILED"),
+        RECURRING_BILL_EXECUTION_FAILED(31001, "周期记账执行失败，规则ID为{}", "Business.RECURRING_BILL_EXECUTION_FAILED"),
 
         RECURRING_BILL_CREATE_JOB_FAILED(31002, "创建周期记账任务失败，规则ID：{}", "Business.RECURRING_BILL_CREATE_JOB_FAILED"),
 

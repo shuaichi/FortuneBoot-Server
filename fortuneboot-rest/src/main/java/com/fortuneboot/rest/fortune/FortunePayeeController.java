@@ -40,8 +40,8 @@ public class FortunePayeeController {
     @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
     public ResponseDTO<PageDTO<FortunePayeeVo>> getPage(@Valid FortunePayeeQuery query) {
         IPage<FortunePayeeEntity> page = fortunePayeeService.getPage(query);
-        List<FortunePayeeVo> record = page.getRecords().stream().map(FortunePayeeVo::new).toList();
-        return ResponseDTO.ok(new PageDTO<>(record, page.getTotal()));
+        List<FortunePayeeVo> records = page.getRecords().stream().map(FortunePayeeVo::new).toList();
+        return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 
     @Operation(summary = "查询启用的交易对象")
@@ -66,7 +66,7 @@ public class FortunePayeeController {
     @PutMapping("/modify")
     @AccessLog(title = "好记-交易对象", businessType = BusinessTypeEnum.MODIFY)
     @PreAuthorize("@fortune.bookActorPermission(#modifyCommand.getBookId())")
-    public ResponseDTO<Void> modify(@RequestBody FortunePayeeModifyCommand modifyCommand) {
+    public ResponseDTO<Void> modify(@RequestBody @Valid FortunePayeeModifyCommand modifyCommand) {
         fortunePayeeService.modify(modifyCommand);
         return ResponseDTO.ok();
     }
