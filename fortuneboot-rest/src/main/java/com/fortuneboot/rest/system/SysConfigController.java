@@ -4,6 +4,10 @@ import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.customize.accessLog.AccessLog;
+import com.fortuneboot.domain.command.system.AddMenuCommand;
+import com.fortuneboot.domain.command.system.ConfigAddCommand;
+import com.fortuneboot.domain.dto.configKeyDTO;
+import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.service.cache.CacheCenter;
 import com.fortuneboot.service.system.ConfigApplicationService;
 import com.fortuneboot.domain.command.system.ConfigUpdateCommand;
@@ -20,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,4 +90,39 @@ public class SysConfigController extends BaseController {
         CacheCenter.configCache.invalidateAll();
         return ResponseDTO.ok();
     }
+
+    /**
+     * 获取参数设置枚举列表
+     */
+    @Operation(summary = "参数设置枚举列表", description = "分页获取配置参数枚举列表")
+    @PreAuthorize("@permission.has('system:config:list')")
+    @GetMapping("/config/getSystemConfigOptions")
+    @AccessLog(title = "参数管理", businessType = BusinessTypeEnum.CLEAN)
+    public ResponseDTO<PageDTO<configKeyDTO>> getSystemConfigOptions() {
+        PageDTO<configKeyDTO> page = configApplicationService.getSystemConfigOptions();
+        return ResponseDTO.ok(page);
+    }
+
+    @Operation(summary = "新增参数")
+    @PreAuthorize("@permission.has('system:config:add')")
+    @AccessLog(title = "参数管理", businessType = BusinessTypeEnum.ADD)
+    @PostMapping("/config/addSystemConfig")
+    public ResponseDTO<Void> addSystemConfig(@RequestBody ConfigAddCommand configAddCommand)  {
+        configApplicationService.addSystemConfig(configAddCommand);
+        return ResponseDTO.ok();
+    }
+
+    /**
+     * 删除参数
+     */
+    @Operation(summary = "删除参数")
+    @PreAuthorize("@permission.has('system:config:remove')")
+    @AccessLog(title = "参数管理", businessType = BusinessTypeEnum.DELETE)
+    @DeleteMapping("/config/{configId}")
+    public ResponseDTO<Void> deleteSystemConfig(@NotNull @PathVariable("configId") Long configId) {
+        configApplicationService.deleteSystemConfig(configId);
+        return ResponseDTO.ok();
+    }
+
+
 }

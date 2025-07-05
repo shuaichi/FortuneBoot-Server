@@ -21,4 +21,7 @@ public interface SysConfigRepository extends IService<SysConfigEntity> {
      */
     String getConfigValueByKey(String key);
 
+    //校验参数键是否唯一
+    boolean checkConfigKeyUnique(String configKey );
+
 }
