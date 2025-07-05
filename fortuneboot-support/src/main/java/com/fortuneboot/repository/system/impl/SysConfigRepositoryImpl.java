@@ -34,5 +34,16 @@ public class SysConfigRepositoryImpl extends ServiceImpl<SysConfigMapper, SysCon
         return one.getConfigValue();
     }
 
+    @Override
+    public boolean checkConfigKeyUnique(String configKey) {
+        if (StrUtil.isBlank(configKey)) {
+            return false;
+        }
+        QueryWrapper<SysConfigEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("config_key", configKey);
+        return this.count(queryWrapper) > 0;
+
+    }
+
 
 }
