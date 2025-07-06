@@ -30,7 +30,7 @@ public class QuartzConfig {
     }
 
     @Bean
-    public Scheduler scheduler() throws Exception {
+    public Scheduler scheduler() {
         return schedulerFactoryBean().getScheduler();
     }
 }

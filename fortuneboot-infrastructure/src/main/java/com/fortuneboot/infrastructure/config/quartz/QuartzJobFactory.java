@@ -23,7 +23,7 @@ public class QuartzJobFactory extends SpringBeanJobFactory implements Applicatio
     }
 
     @Override
-    protected Object createJobInstance(TriggerFiredBundle bundle) throws Exception {
+    protected Object createJobInstance(TriggerFiredBundle bundle) {
         Class<?> jobClass = bundle.getJobDetail().getJobClass();
         // 直接从Spring容器获取Bean实例
         return beanFactory.getBean(jobClass);

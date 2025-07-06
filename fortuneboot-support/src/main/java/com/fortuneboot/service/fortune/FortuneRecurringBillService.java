@@ -128,6 +128,7 @@ public class FortuneRecurringBillService {
      * 应用启动时初始化定时任务
      */
     @PostConstruct
+    @Transactional(rollbackFor = Exception.class)
     public void initRecurringBills() {
         log.info("开始初始化周期记账任务...");
 
@@ -136,7 +137,7 @@ public class FortuneRecurringBillService {
 
         for (FortuneRecurringBillRuleModel rule : rules) {
             // 执行补偿逻辑
-            ((FortuneRecurringBillService) AopContext.currentProxy()).performRecovery(rule);
+            this.performRecovery(rule);
 
             // 创建定时任务
             this.scheduleJob(rule);
