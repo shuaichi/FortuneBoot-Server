@@ -8,7 +8,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.scheduling.support.CronExpression;
+import org.quartz.CronExpression;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -48,9 +48,7 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
     }
 
     public void checkCronValid() {
-        try {
-            CronExpression.parse(this.getCronExpression());
-        } catch (IllegalArgumentException e) {
+        if (!CronExpression.isValidExpression(this.getCronExpression())) {
             throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, this.getCronExpression());
         }
     }
