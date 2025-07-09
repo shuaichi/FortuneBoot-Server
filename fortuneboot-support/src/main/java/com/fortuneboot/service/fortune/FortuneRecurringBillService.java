@@ -21,7 +21,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -105,7 +104,7 @@ public class FortuneRecurringBillService {
     /**
      * 启用规则
      */
-    public void enableRule(Long bookId,Long ruleId) {
+    public void enableRule(Long bookId, Long ruleId) {
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
         rule.checkBookId(bookId);
         rule.setEnable(Boolean.TRUE);
@@ -116,7 +115,7 @@ public class FortuneRecurringBillService {
     /**
      * 禁用规则
      */
-    public void disableRule(Long bookId,Long ruleId) {
+    public void disableRule(Long bookId, Long ruleId) {
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
         rule.checkBookId(bookId);
         rule.setEnable(Boolean.FALSE);
@@ -337,11 +336,11 @@ public class FortuneRecurringBillService {
             // 设置交易时间
             billRequest.setTradeTime(executionTime);
             // 执行记账逻辑
-            Long billId =fortuneBillService.add(billRequest);
+            Long billId = fortuneBillService.add(billRequest);
 
             // 更新执行记录
             this.updateExecutionRecord(ruleId, executionTime);
-            this.recordSuccessLog(ruleId, executionTime, billId,  System.currentTimeMillis() - startTime);
+            this.recordSuccessLog(ruleId, executionTime, billId, System.currentTimeMillis() - startTime);
             log.info("周期记账执行成功，规则ID: {}, 执行时间: {}", ruleId, executionTime);
         } catch (Exception e) {
             String errorMsg = e.getMessage();
@@ -439,5 +438,9 @@ public class FortuneRecurringBillService {
         logEntity.setExecutionDuration(duration);
 
         fortuneRecurringBillLogRepository.save(logEntity);
+    }
+
+    public Boolean checkCronExpression(String cronExpression) {
+        return CronExpression.isValidExpression(cronExpression);
     }
 }

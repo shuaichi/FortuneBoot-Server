@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.common.enums.fortune.RecoveryStrategyEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyCommand;
+import com.fortuneboot.domain.common.vo.SelectOptionsVo;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillLogEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
@@ -21,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,6 +48,21 @@ public class FortuneRecurringBillController {
         IPage<FortuneRecurringBillRuleEntity> page = fortuneRecurringBillService.getRulePage(query);
         List<FortuneRecurringBillRuleVo> records = page.getRecords().stream().map(FortuneRecurringBillRuleVo::new).toList();
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
+    }
+
+    @Operation(summary = "查询补偿策略")
+    @GetMapping("/getRecoveryStrategy")
+    public ResponseDTO<List<SelectOptionsVo>> getRecoveryStrategy() {
+        List<SelectOptionsVo> result = Arrays.stream(RecoveryStrategyEnum.values())
+                .map(item -> new SelectOptionsVo(item.getValue().longValue(), item.getDescription()))
+                .toList();
+        return ResponseDTO.ok(result);
+    }
+
+    @Operation(summary = "校验Cron表达式是否合法")
+    @PostMapping("/checkCronExpression")
+    public ResponseDTO<Boolean> checkCronExpression(@RequestBody String cronExpression) {
+        return ResponseDTO.ok(fortuneRecurringBillService.checkCronExpression(cronExpression));
     }
 
     @Operation(summary = "新增周期记账规则")
@@ -76,7 +95,7 @@ public class FortuneRecurringBillController {
     @Operation(summary = "查询周期记账执行情况")
     @GetMapping("/{bookId}/{ruleId}/getLogByRuleId")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
-    public ResponseDTO<List<FortuneRecurringBillLogVo>> getLogByRuleId(@PathVariable @Positive Long bookId,@PathVariable @Positive Long ruleId) {
+    public ResponseDTO<List<FortuneRecurringBillLogVo>> getLogByRuleId(@PathVariable @Positive Long bookId, @PathVariable @Positive Long ruleId) {
         List<FortuneRecurringBillLogEntity> list = fortuneRecurringBillService.getLogByRuleId(ruleId);
         List<FortuneRecurringBillLogVo> result = list.stream().map(FortuneRecurringBillLogVo::new).toList();
         return ResponseDTO.ok(result);
