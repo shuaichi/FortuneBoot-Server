@@ -27,6 +27,11 @@ public class FortuneRecurringBillRuleVo {
     private Long bookId;
 
     /**
+     * 规则ID
+     */
+    private Long ruleId;
+
+    /**
      * 规则名称
      */
     private String ruleName;

@@ -3,6 +3,7 @@ package com.fortuneboot.factory.fortune.model;
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
@@ -37,6 +38,8 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
     public void loadAddCommand(FortuneRecurringBillRuleAddCommand command) {
         if (Objects.nonNull(command)) {
             BeanUtil.copyProperties(command, this, "ruleId");
+            // 将billRequest设置为json字符串
+            this.setBillRequest(JacksonUtil.to(command.getBillRequest()));
         }
     }
 

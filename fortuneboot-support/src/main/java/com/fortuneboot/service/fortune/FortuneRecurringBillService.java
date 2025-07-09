@@ -75,6 +75,7 @@ public class FortuneRecurringBillService {
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.create();
         rule.loadAddCommand(addCommand);
         rule.checkCronValid();
+        rule.insert();
         this.scheduleJob(rule);
     }
 
@@ -87,6 +88,7 @@ public class FortuneRecurringBillService {
         rule.loadModifyCommand(modifyCommand);
         rule.checkCronValid();
         rule.checkBookId(modifyCommand.getBookId());
+        rule.updateById();
         this.scheduleJob(rule);
     }
 

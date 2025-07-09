@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,7 +60,7 @@ public class FortuneRecurringBillController {
 
     @Operation(summary = "校验Cron表达式是否合法")
     @PostMapping("/checkCronExpression")
-    public ResponseDTO<Boolean> checkCronExpression(@RequestBody String cronExpression) {
+    public ResponseDTO<Boolean> checkCronExpression(String cronExpression) {
         return ResponseDTO.ok(fortuneRecurringBillService.checkCronExpression(cronExpression));
     }
 
@@ -102,7 +101,7 @@ public class FortuneRecurringBillController {
     }
 
     @Operation(summary = "启用周期记账")
-    @PutMapping("/{bookId}/{ruleId}/enableRule")
+    @PatchMapping("/{bookId}/{ruleId}/enableRule")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<Boolean> enableRule(@PathVariable @Positive Long bookId, @PathVariable @Positive Long ruleId) {
         fortuneRecurringBillService.enableRule(bookId, ruleId);
@@ -110,7 +109,7 @@ public class FortuneRecurringBillController {
     }
 
     @Operation(summary = "禁用周期记账")
-    @PutMapping("/{bookId}/{ruleId}/disableRule")
+    @PatchMapping("/{bookId}/{ruleId}/disableRule")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<Boolean> disableRule(@PathVariable @Positive Long bookId, @PathVariable @Positive Long ruleId) {
         fortuneRecurringBillService.disableRule(bookId, ruleId);
