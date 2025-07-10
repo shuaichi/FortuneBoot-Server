@@ -14,7 +14,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneRecurringBillLogVo;
 import com.fortuneboot.domain.vo.fortune.FortuneRecurringBillRuleVo;
-import com.fortuneboot.service.fortune.FortuneRecurringBillService;
+import com.fortuneboot.service.fortune.recurringBill.FortuneRecurringBillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

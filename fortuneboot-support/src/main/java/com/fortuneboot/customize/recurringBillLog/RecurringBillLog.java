@@ -19,13 +19,4 @@ public @interface RecurringBillLog {
      */
     String value() default "";
 
-    /**
-     * 是否记录参数
-     */
-    boolean recordParams() default true;
-
-    /**
-     * 是否记录返回值
-     */
-    boolean recordResult() default false;
 }

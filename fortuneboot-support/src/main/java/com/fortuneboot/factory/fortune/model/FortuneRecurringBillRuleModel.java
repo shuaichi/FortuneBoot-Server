@@ -5,6 +5,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
         }
     }
 
-    public void loadModifyCommand(FortuneRecurringBillRuleAddCommand command) {
+    public void loadModifyCommand(FortuneRecurringBillRuleModifyCommand command) {
         if (Objects.isNull(command)) {
             return;
         }
@@ -52,7 +53,7 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
 
     public void checkCronValid() {
         if (!CronExpression.isValidExpression(this.getCronExpression())) {
-            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, this.getCronExpression());
+            throw new ApiException(ErrorCode.Business.RECURRING_BILL_CRON_ILLEGAL, this.getCronExpression());
         }
     }
 
@@ -69,5 +70,20 @@ public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntit
 
     public boolean checkOverEndDate(LocalDate localDate) {
         return Objects.nonNull(this.getEndDate()) && localDate.isAfter(this.getEndDate());
+    }
+
+    /**
+     * 检查是否在开始日期之前
+     */
+    public boolean checkBeforeStartDate(LocalDate localDate) {
+        return Objects.nonNull(this.getStartDate()) && localDate.isBefore(this.getStartDate());
+    }
+
+    /**
+     * 检查当前是否可以执行
+     */
+    public boolean canExecuteNow() {
+        LocalDate today = LocalDate.now();
+        return !checkBeforeStartDate(today) && !checkOverEndDate(today);
     }
 }
