@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fortuneboot.common.exception.ApiException;
@@ -92,7 +93,7 @@ class ConfigModelTest {
         entity.setIsAllowChange(false);
         entity.setRemark("备注");
         entity.setCreatorId(1L);
-        entity.setCreateTime(new Date());
+        entity.setCreateTime(LocalDateTime.now());
         return entity;
     }
 
