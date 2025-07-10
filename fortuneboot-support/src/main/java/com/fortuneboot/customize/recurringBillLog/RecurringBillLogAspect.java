@@ -35,7 +35,6 @@ public class RecurringBillLogAspect {
         // 获取方法参数
         Object[] args = joinPoint.getArgs();
         Long ruleId = this.extractRuleId(args);
-        LocalDateTime actualExecutionTime = this.extractExecutionTime(args, executionTime);
 
         String logDescription = recurringBillLog.value();
 
@@ -44,14 +43,14 @@ public class RecurringBillLogAspect {
             Object result = joinPoint.proceed();
 
             // 记录成功日志
-            Long billId = recurringBillLog.recordResult() ? this.extractBillId(result) : null;
+            Long billId = this.extractBillId(result);
             Long duration = System.currentTimeMillis() - startTime;
 
-            this.recordExecutionLog(ruleId, actualExecutionTime, RecurringBillLogStatusEnum.SUCCESS.getValue(),
+            this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.SUCCESS.getValue(),
                     billId, null, duration);
 
             log.info("{}成功，规则ID: {}, 执行时间: {}, 耗时: {}ms",
-                    logDescription, ruleId, actualExecutionTime, duration);
+                    logDescription, ruleId, executionTime, duration);
 
             return result;
 
@@ -60,11 +59,11 @@ public class RecurringBillLogAspect {
             Long duration = System.currentTimeMillis() - startTime;
             String errorMsg = e.getMessage();
 
-            this.recordExecutionLog(ruleId, actualExecutionTime, RecurringBillLogStatusEnum.FAILURE.getValue(),
+            this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.FAILURE.getValue(),
                     null, errorMsg, duration);
 
             log.error("{}失败，规则ID: {}, 执行时间: {}, 错误信息: {}, 耗时: {}ms",
-                    logDescription, ruleId, actualExecutionTime, errorMsg, duration, e);
+                    logDescription, ruleId, executionTime, errorMsg, duration, e);
 
             throw e;
         }
@@ -74,20 +73,10 @@ public class RecurringBillLogAspect {
      * 从参数中提取规则ID
      */
     private Long extractRuleId(Object[] args) {
-        if (args != null && args.length > 0 && args[0] instanceof Long) {
+        if (Objects.nonNull(args)  && args.length > 0 && args[0] instanceof Long) {
             return (Long) args[0];
         }
         return null;
-    }
-
-    /**
-     * 从参数中提取执行时间
-     */
-    private LocalDateTime extractExecutionTime(Object[] args, LocalDateTime defaultTime) {
-        if (args != null && args.length > 1 && args[1] instanceof LocalDateTime) {
-            return (LocalDateTime) args[1];
-        }
-        return defaultTime;
     }
 
     /**
@@ -106,8 +95,8 @@ public class RecurringBillLogAspect {
      */
     private void recordExecutionLog(Long ruleId, LocalDateTime executionTime, Integer status,
                                     Long billId, String errorMsg, Long duration) {
-        if (Objects.isNull(ruleId)) {
-            log.warn("规则ID为空，无法记录执行日志");
+        if (Objects.isNull(ruleId) || Objects.isNull(billId)) {
+            log.warn("规则ID或者账单ID为空，无法记录执行日志");
             return;
         }
 
