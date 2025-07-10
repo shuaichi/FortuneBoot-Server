@@ -10,6 +10,8 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 /**
  * @author zhangchi118
  * @date 2025/7/3 16:58
@@ -28,7 +30,7 @@ public class FortuneRecurringBillJob implements Job {
 
         try {
             log.info("开始执行周期记账任务，规则ID: {}", ruleId);
-            fortuneRecurringBillService.executeRecurringBill(ruleId);
+            fortuneRecurringBillService.executeRecurringBill(ruleId, LocalDateTime.now());
             log.info("周期记账任务执行完成，规则ID: {}", ruleId);
         } catch (Exception e) {
             log.error("周期记账任务执行失败，规则ID: {}", ruleId, e);

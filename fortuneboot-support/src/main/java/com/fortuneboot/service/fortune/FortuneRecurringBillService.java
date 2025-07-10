@@ -2,10 +2,10 @@ package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.enums.fortune.RecoveryStrategyEnum;
-import com.fortuneboot.common.enums.fortune.RecurringBillLogStatusEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
+import com.fortuneboot.customize.recurringBillLog.RecurringBillLog;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyCommand;
@@ -62,7 +62,9 @@ public class FortuneRecurringBillService {
     }
 
 
-    public List<FortuneRecurringBillLogEntity> getLogByRuleId(Long ruleId) {
+    public List<FortuneRecurringBillLogEntity> getLogByRuleId(Long bookId, Long ruleId) {
+        FortuneRecurringBillRuleModel ruleModel = fortuneRecurringBillRuleFactory.loadById(ruleId);
+        ruleModel.checkBookId(bookId);
         return fortuneRecurringBillLogRepository.getByRuleId(ruleId);
     }
 
@@ -181,7 +183,7 @@ public class FortuneRecurringBillService {
 
         // 执行补偿
         for (LocalDateTime executionTime : toRecover) {
-            this.executeRecurringBillWithTime(rule.getRuleId(), executionTime);
+            this.executeRecurringBill(rule.getRuleId(), executionTime);
         }
 
         this.updateRecoveryCheckTime(rule.getRuleId(), now);
@@ -210,7 +212,7 @@ public class FortuneRecurringBillService {
                 }
 
                 // 检查是否在有效期内
-                if (isInValidPeriod(rule, nextExecution)) {
+                if (this.isInValidPeriod(rule, nextExecution)) {
                     missed.add(nextExecution);
                 }
 
@@ -300,57 +302,45 @@ public class FortuneRecurringBillService {
     }
 
     /**
-     * 执行周期记账
-     */
-    public void executeRecurringBill(Long ruleId) {
-        this.executeRecurringBillWithTime(ruleId, LocalDateTime.now());
-    }
-
-    /**
      * 执行周期记账（指定执行时间）
+     *
+     * @return 账单ID
      */
-    public void executeRecurringBillWithTime(Long ruleId, LocalDateTime executionTime) {
-        long startTime = System.currentTimeMillis();
-        try {
-            FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
-            if (!rule.getEnable()) {
-                log.warn("规则已禁用，规则ID: {}", ruleId);
-                return;
-            }
-
-            // 检查是否超过最大执行次数
-            if (rule.checkOverExecutions()) {
-                log.info("规则已达到最大执行次数，停止执行，规则ID: {}", ruleId);
-                this.disableRule(ruleId);
-                return;
-            }
-
-            // 检查是否超过结束日期
-            if (rule.checkOverEndDate(executionTime.toLocalDate())) {
-                log.info("规则已超过结束日期，停止执行，规则ID: {}", ruleId);
-                this.disableRule(ruleId);
-                return;
-            }
-
-            // 解析账单参数并执行
-            String billRequestJson = rule.getBillRequest();
-            FortuneBillAddCommand billRequest = JacksonUtil.from(billRequestJson, FortuneBillAddCommand.class);
-            // 设置交易时间
-            billRequest.setTradeTime(executionTime);
-            // 执行记账逻辑
-            Long billId = fortuneBillService.add(billRequest);
-
-            // 更新执行记录
-            this.updateExecutionRecord(ruleId, executionTime);
-            this.recordSuccessLog(ruleId, executionTime, billId, System.currentTimeMillis() - startTime);
-            log.info("周期记账执行成功，规则ID: {}, 执行时间: {}", ruleId, executionTime);
-        } catch (Exception e) {
-            String errorMsg = e.getMessage();
-            // 记录失败日志
-            this.recordFailureLog(ruleId, executionTime, errorMsg, System.currentTimeMillis() - startTime);
-            log.error("周期记账执行失败，规则ID: {}, 执行时间: {}, 错误信息: {}", ruleId, executionTime, errorMsg, e);
-            throw new ApiException(ErrorCode.Business.RECURRING_BILL_EXECUTION_FAILED, ruleId, errorMsg);
+    @RecurringBillLog("执行周期记账")
+    public Long executeRecurringBill(Long ruleId, LocalDateTime executionTime) {
+        FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(ruleId);
+        if (!rule.getEnable()) {
+            log.warn("规则已禁用，规则ID: {}", ruleId);
+            return null;
         }
+
+        // 检查是否超过最大执行次数
+        if (rule.checkOverExecutions()) {
+            log.info("规则已达到最大执行次数，停止执行，规则ID: {}", ruleId);
+            this.disableRule(ruleId);
+            return null;
+        }
+
+        // 检查是否超过结束日期
+        if (rule.checkOverEndDate(executionTime.toLocalDate())) {
+            log.info("规则已超过结束日期，停止执行，规则ID: {}", ruleId);
+            this.disableRule(ruleId);
+            return null;
+        }
+
+        // 解析账单参数并执行
+        String billRequestJson = rule.getBillRequest();
+        FortuneBillAddCommand billRequest = JacksonUtil.from(billRequestJson, FortuneBillAddCommand.class);
+        // 设置交易时间
+        billRequest.setTradeTime(executionTime);
+        // 执行记账逻辑
+        Long billId = fortuneBillService.add(billRequest);
+
+        // 更新执行记录
+        this.updateExecutionRecord(ruleId, executionTime);
+
+        log.info("周期记账执行成功，规则ID: {}, 执行时间: {}", ruleId, executionTime);
+        return billId;
     }
 
     /**
@@ -411,35 +401,6 @@ public class FortuneRecurringBillService {
             log.error("删除定时任务失败，规则ID: {}", ruleId, e);
             throw new ApiException(ErrorCode.Business.RECURRING_BILL_REMOVE_JOB_FAILED, ruleId);
         }
-    }
-
-    /**
-     * 记录成功日志
-     */
-    private void recordSuccessLog(Long ruleId, LocalDateTime executionTime, Long billId, Long duration) {
-        this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.SUCCESS.getValue(), billId, null, duration);
-    }
-
-    /**
-     * 记录失败日志
-     */
-    private void recordFailureLog(Long ruleId, LocalDateTime executionTime, String errorMsg, Long duration) {
-        this.recordExecutionLog(ruleId, executionTime, RecurringBillLogStatusEnum.FAILURE.getValue(), null, errorMsg, duration);
-    }
-
-    /**
-     * 记录执行日志
-     */
-    private void recordExecutionLog(Long ruleId, LocalDateTime executionTime, Integer status, Long billId, String errorMsg, Long duration) {
-        FortuneRecurringBillLogEntity logEntity = new FortuneRecurringBillLogEntity();
-        logEntity.setRuleId(ruleId);
-        logEntity.setExecutionTime(executionTime);
-        logEntity.setStatus(status);
-        logEntity.setBillId(billId);
-        logEntity.setErrorMsg(errorMsg);
-        logEntity.setExecutionDuration(duration);
-
-        fortuneRecurringBillLogRepository.save(logEntity);
     }
 
     public Boolean checkCronExpression(String cronExpression) {

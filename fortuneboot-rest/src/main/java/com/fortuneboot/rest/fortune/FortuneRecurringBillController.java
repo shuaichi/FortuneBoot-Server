@@ -95,7 +95,7 @@ public class FortuneRecurringBillController {
     @GetMapping("/{bookId}/{ruleId}/getLogByRuleId")
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<List<FortuneRecurringBillLogVo>> getLogByRuleId(@PathVariable @Positive Long bookId, @PathVariable @Positive Long ruleId) {
-        List<FortuneRecurringBillLogEntity> list = fortuneRecurringBillService.getLogByRuleId(ruleId);
+        List<FortuneRecurringBillLogEntity> list = fortuneRecurringBillService.getLogByRuleId(bookId, ruleId);
         List<FortuneRecurringBillLogVo> result = list.stream().map(FortuneRecurringBillLogVo::new).toList();
         return ResponseDTO.ok(result);
     }
