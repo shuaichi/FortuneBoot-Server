@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
+import com.fortuneboot.domain.command.system.ConfigAddCommand;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +57,22 @@ public class ConfigModel extends SysConfigEntity {
 
         if (!configOptionSet.isEmpty() && !configOptionSet.contains(getConfigValue())) {
             throw new ApiException(ErrorCode.Business.CONFIG_VALUE_IS_NOT_IN_OPTIONS);
+        }
+    }
+
+    public void loadAddCommand(ConfigAddCommand configAddCommand) {
+        this.setConfigId(null);
+        this.setConfigName(configAddCommand.getConfigName());
+        this.setConfigKey(configAddCommand.getConfigKey());
+        this.setConfigValue(configAddCommand.getConfigValue());
+        this.setConfigOptions(configAddCommand.getConfigOptions());
+        this.setIsAllowChange(configAddCommand.getIsAllowChange());
+        this.setRemark(configAddCommand.getRemark());
+    }
+
+    public void checkConfigKeyUnique() {
+        if (configRepository.checkConfigKeyUnique(getConfigKey())) {
+            throw new ApiException(ErrorCode.Business.CONFIG_KEY_IS_NOT_UNIQUE, getConfigKey());
         }
     }
 
