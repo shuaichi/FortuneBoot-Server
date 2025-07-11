@@ -1,8 +1,10 @@
 package com.fortuneboot.repository.system.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.dao.system.SysConfigMapper;
 import com.fortuneboot.repository.system.SysConfigRepository;
@@ -39,9 +41,9 @@ public class SysConfigRepositoryImpl extends ServiceImpl<SysConfigMapper, SysCon
         if (StrUtil.isBlank(configKey)) {
             return false;
         }
-        QueryWrapper<SysConfigEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("config_key", configKey);
-        return this.count(queryWrapper) > 0;
+        LambdaQueryWrapper<SysConfigEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(SysConfigEntity.class);
+        queryWrapper.eq(SysConfigEntity::getConfigKey, configKey);
+        return this.exists(queryWrapper);
 
     }
 

@@ -54,12 +54,9 @@ public class ConfigApplicationService {
         CacheCenter.configCache.invalidate(configModel.getConfigKey());
     }
 
-    public PageDTO<configKeyDTO> getSystemConfigOptions() {
+    public List<configKeyDTO> getSystemConfigOptions() {
         List<ConfigKeyEnum> configKeyDTOS = ConfigKeyEnum.getAllConfigKeys();
-        List<configKeyDTO> records = configKeyDTOS.stream().map(configKeyDTO::new).toList();
-        Page<configKeyDTO> page = new Page<>(1, records.size());
-        return new PageDTO<>(records, page.getTotal());
-
+        return configKeyDTOS.stream().map(configKeyDTO::new).toList();
     }
 
     public void addSystemConfig(ConfigAddCommand configAddCommand) {

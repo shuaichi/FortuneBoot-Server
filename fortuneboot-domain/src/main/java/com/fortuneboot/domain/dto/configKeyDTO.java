@@ -1,7 +1,11 @@
 package com.fortuneboot.domain.dto;
 
+import com.fortuneboot.common.enums.common.ConfigKeyEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.beans.BeanUtils;
+
+import java.util.Objects;
 
 /**
  * @Author: wch
@@ -15,13 +19,14 @@ public class configKeyDTO {
     private String value;
     private String description;
     private String option;
-    private Boolean required;
+    private String defaultValue;
+    private Boolean isAllowChange;
+    private String remark;
 
-    public configKeyDTO(com.fortuneboot.common.enums.common.ConfigKeyEnum configKeyEnum) {
-        this.value = configKeyEnum.getValue();
-        this.description = configKeyEnum.getDescription();
-        this.option = configKeyEnum.getOption();
-        this.required = configKeyEnum.getRequired();
+    public configKeyDTO(ConfigKeyEnum configKeyEnum) {
+        if (Objects.nonNull(configKeyEnum)) {
+            BeanUtils.copyProperties(configKeyEnum, this);
+        }
     }
 
 }

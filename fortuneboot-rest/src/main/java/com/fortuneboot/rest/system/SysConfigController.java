@@ -4,10 +4,8 @@ import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.customize.accessLog.AccessLog;
-import com.fortuneboot.domain.command.system.AddMenuCommand;
 import com.fortuneboot.domain.command.system.ConfigAddCommand;
 import com.fortuneboot.domain.dto.configKeyDTO;
-import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.service.cache.CacheCenter;
 import com.fortuneboot.service.system.ConfigApplicationService;
 import com.fortuneboot.domain.command.system.ConfigUpdateCommand;
@@ -29,6 +27,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 参数配置 信息操作处理
@@ -97,10 +97,9 @@ public class SysConfigController extends BaseController {
     @Operation(summary = "参数设置枚举列表", description = "分页获取配置参数枚举列表")
     @PreAuthorize("@permission.has('system:config:list')")
     @GetMapping("/config/getSystemConfigOptions")
-    @AccessLog(title = "参数管理", businessType = BusinessTypeEnum.CLEAN)
-    public ResponseDTO<PageDTO<configKeyDTO>> getSystemConfigOptions() {
-        PageDTO<configKeyDTO> page = configApplicationService.getSystemConfigOptions();
-        return ResponseDTO.ok(page);
+    public ResponseDTO<List<configKeyDTO>> getSystemConfigOptions() {
+        List<configKeyDTO> list = configApplicationService.getSystemConfigOptions();
+        return ResponseDTO.ok(list);
     }
 
     @Operation(summary = "新增参数")
