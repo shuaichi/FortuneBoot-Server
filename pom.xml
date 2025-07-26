@@ -402,5 +402,10 @@
 <!--            </snapshots>-->
 <!--        </pluginRepository>-->
 <!--    </pluginRepositories>-->
-
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/${env.GITHUB_REPOSITORY}</url>
+        </repository>
+    </distributionManagement>
 </project>
