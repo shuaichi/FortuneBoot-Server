@@ -464,11 +464,12 @@ create table if not exists sys_config
     update_time     datetime                 null comment '更新时间',
     create_time     datetime                 null comment '创建时间',
     remark          varchar(128)             null comment '备注',
-    deleted         tinyint(1)    default 0  not null comment '逻辑删除',
-    constraint config_key_uniq_idx
-        unique (config_key)
+    deleted         tinyint(1)    default 0  not null comment '逻辑删除'
 )
     comment '参数配置表';
+
+create index config_key_idx
+    on sys_config (config_key);
 
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (1, '主框架页-默认皮肤样式名称', 'sys.index.skinName', '["skin-blue","skin-green","skin-purple","skin-red","skin-yellow"]', 'skin-blue', 1, null, null, '2022-08-28 22:12:19', '2022-05-21 08:30:55', '蓝色 skin-blue、绿色 skin-green、紫色 skin-purple、红色 skin-red、黄色 skin-yellow', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (2, '用户管理-账号初始密码', 'sys.user.initPassword', '', '12345678', 1, null, 1, '2025-02-17 16:50:59', '2022-05-21 08:30:55', '初始化密码 123456', 0);
