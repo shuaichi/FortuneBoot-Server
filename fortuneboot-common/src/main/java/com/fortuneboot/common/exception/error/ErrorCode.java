@@ -122,6 +122,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         CONFIG_VALUE_IS_NOT_IN_OPTIONS(10602, "参数键值不存在列表中", "Business.CONFIG_VALUE_IS_NOT_IN_OPTIONS"),
 
+        CONFIG_KEY_IS_NOT_UNIQUE(10603, "参数键名已存在", "Business.CONFIG_KEY_IS_NOT_UNIQUE"),
+
         // -------------------------------  MENU -------------------------------------------------
 
         MENU_NAME_IS_NOT_UNIQUE(10901, "新增菜单:{} 失败，菜单名称已存在", "Business.MENU_NAME_IS_NOT_UNIQUE"),
