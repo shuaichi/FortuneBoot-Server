@@ -1,4 +1,4 @@
 package com.fortuneboot.common.core.validation;
 
-public class AddValidation {
+public interface AddValidation {
 }
