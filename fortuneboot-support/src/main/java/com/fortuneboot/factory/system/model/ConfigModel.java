@@ -6,8 +6,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
+import com.fortuneboot.domain.command.system.ConfigAddCommand;
+
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.fortuneboot.domain.command.system.ConfigUpdateCommand;
@@ -35,8 +39,8 @@ public class ConfigModel extends SysConfigEntity {
         BeanUtil.copyProperties(entity, this);
 
         List<String> options =
-            JSONUtil.isTypeJSONArray(entity.getConfigOptions()) ? JSONUtil.toList(entity.getConfigOptions(),
-                String.class) : ListUtil.empty();
+                JSONUtil.isTypeJSONArray(entity.getConfigOptions()) ? JSONUtil.toList(entity.getConfigOptions(),
+                        String.class) : ListUtil.empty();
 
         this.configOptionSet = new HashSet<>(options);
 
@@ -55,6 +59,18 @@ public class ConfigModel extends SysConfigEntity {
 
         if (!configOptionSet.isEmpty() && !configOptionSet.contains(getConfigValue())) {
             throw new ApiException(ErrorCode.Business.CONFIG_VALUE_IS_NOT_IN_OPTIONS);
+        }
+    }
+
+    public void loadAddCommand(ConfigAddCommand configAddCommand) {
+        if (Objects.nonNull(configAddCommand)) {
+            BeanUtil.copyProperties(configAddCommand, this, "configId");
+        }
+    }
+
+    public void checkConfigKeyUnique() {
+        if (configRepository.checkConfigKeyUnique(getConfigKey())) {
+            throw new ApiException(ErrorCode.Business.CONFIG_KEY_IS_NOT_UNIQUE, getConfigKey());
         }
     }
 
