@@ -662,6 +662,7 @@ create table if not exists sys_role_menu
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 66);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 67);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 68);
+INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 69);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 81);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 82);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 83);
