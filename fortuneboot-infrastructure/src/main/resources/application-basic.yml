@@ -89,9 +89,9 @@ token:
     # 令牌自定义标识
     header: Authorization
     # 令牌密钥 TODO 记得更换
-    secret: Noyvfhx7MzInoYP5PAyrBqz6ZdGUpLb/qV3cIaM3H5JcDIi7L1ddLVhLVowGezO24ztckyj0duWWUrw7onDuhA==
-    # 自动刷新token的时间
-    autoRefreshTime: 20
+    secret: ${TOKEN_SECRET:Noyvfhx7MzInoYP5PAyrBqz6ZdGUpLb/qV3cIaM3H5JcDIi7L1ddLVhLVowGezO24ztckyj0duWWUrw7onDuhA==}
+    # 自动刷新token的时间, 单位分钟（30天）
+    autoRefreshTime: ${TOKEN_AUTO_REFRESH_TIME:21600}
 
 # MyBatis配置
 mybatis-plus:
