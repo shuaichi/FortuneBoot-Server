@@ -2,6 +2,7 @@ package com.fortuneboot.infrastructure.user.web;
 
 import com.fortuneboot.infrastructure.user.base.BaseLoginUser;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class SystemLoginUser extends BaseLoginUser {
 
     private static final long serialVersionUID = 1L;
@@ -29,10 +31,6 @@ public class SystemLoginUser extends BaseLoginUser {
         this.username = username;
         this.password = password;
         this.roleInfo = roleInfo;
-    }
-
-    public RoleInfo getRoleInfo() {
-        return roleInfo;
     }
 
     public Long getRoleId() {
