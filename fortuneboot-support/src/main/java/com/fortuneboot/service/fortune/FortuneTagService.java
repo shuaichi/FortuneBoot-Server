@@ -13,8 +13,8 @@ import com.fortuneboot.domain.query.fortune.FortuneTagQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneTagVo;
 import com.fortuneboot.factory.fortune.factory.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
-import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
-import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
+import com.fortuneboot.repository.fortune.FortuneTagRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,17 +35,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FortuneTagService {
 
-    private final FortuneTagRepository fortuneTagRepository;
+    private final FortuneTagRepo fortuneTagRepo;
 
     private final FortuneTagFactory fortuneTagFactory;
 
-    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+    private final FortuneTagRelationRepo fortuneTagRelationRepo;
 
     public PageDTO<FortuneTagVo> getPage(FortuneTagQuery query) {
         // 根据是否条件查询选择不同处理逻辑
         if (!query.conditionQuery()) {
             // 无查询条件时直接获取根节点
-            IPage<FortuneTagEntity> page = fortuneTagRepository.page(
+            IPage<FortuneTagEntity> page = fortuneTagRepo.page(
                     query.toPage(),
                     query.addQueryCondition().eq(FortuneTagEntity::getParentId, -1L)
             );
@@ -63,13 +63,13 @@ public class FortuneTagService {
         } else {
             // 有查询条件时需要关联查找完整树结构
             // 获取所有符合条件的节点（包括非根节点）
-            List<FortuneTagEntity> list = fortuneTagRepository.list(query.addQueryCondition(Boolean.TRUE));
+            List<FortuneTagEntity> list = fortuneTagRepo.list(query.addQueryCondition(Boolean.TRUE));
 
             // 递归查找所有关联的根节点ID（优化点：批量查询代替逐级递归）
             Set<Long> rootIdSet = this.findRootIdsEfficiently(list);
 
             // 根据根节点ID进行分页查询
-            IPage<FortuneTagEntity> result = fortuneTagRepository.page(
+            IPage<FortuneTagEntity> result = fortuneTagRepo.page(
                     query.toPage(),
                     query.addQueryCondition().in(FortuneTagEntity::getTagId, rootIdSet)
             );
@@ -101,7 +101,7 @@ public class FortuneTagService {
         // 迭代处理父节点直到没有新的父ID
         while (!pendingParentIds.isEmpty()) {
             // 批量查询父节点
-            List<FortuneTagEntity> parents = fortuneTagRepository.getByIds(new ArrayList<>(pendingParentIds));
+            List<FortuneTagEntity> parents = fortuneTagRepo.getByIds(new ArrayList<>(pendingParentIds));
             pendingParentIds.clear();
 
             parents.forEach(parent -> {
@@ -171,7 +171,7 @@ public class FortuneTagService {
         }
 
         // 单次批量查询所有子节点
-        Map<Long, List<FortuneTagEntity>> childrenMap = fortuneTagRepository.getByParentIds(new ArrayList<>(allParentIds));
+        Map<Long, List<FortuneTagEntity>> childrenMap = fortuneTagRepo.getByParentIds(new ArrayList<>(allParentIds));
 
         // 递归填充子节点（使用内存数据）
         this.fillChildrenFromCache(parentVos, childrenMap);
@@ -224,11 +224,11 @@ public class FortuneTagService {
     }*/
 
     public List<FortuneTagEntity> getList(FortuneTagQuery query) {
-        return fortuneTagRepository.list(query.addQueryCondition());
+        return fortuneTagRepo.list(query.addQueryCondition());
     }
 
     public IPage<FortuneTagEntity> getListPage(FortuneTagQuery query) {
-        return fortuneTagRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneTagRepo.page(query.toPage(), query.addQueryCondition());
     }
 
 
@@ -236,10 +236,10 @@ public class FortuneTagService {
         BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
         switch (billTypeEnum) {
             case EXPENSE, INCOME, TRANSFER -> {
-                return fortuneTagRepository.getEnableTagList(bookId, billType);
+                return fortuneTagRepo.getEnableTagList(bookId, billType);
             }
             case null -> {
-                return fortuneTagRepository.getEnableTagList(bookId, null);
+                return fortuneTagRepo.getEnableTagList(bookId, null);
             }
             default -> {
                 return Collections.emptyList();
@@ -274,7 +274,7 @@ public class FortuneTagService {
 
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long tagId) {
-        Boolean used = fortuneTagRelationRepository.existByTagId(tagId);
+        Boolean used = fortuneTagRelationRepo.existByTagId(tagId);
         if (used) {
             throw new ApiException(ErrorCode.Business.TAG_ALREADY_USED);
         }
@@ -282,7 +282,7 @@ public class FortuneTagService {
         fortuneTagModel.checkBookId(bookId);
         fortuneTagModel.deleteById();
         // 递归删除子级标签
-        List<FortuneTagEntity> children = fortuneTagRepository.getByParentId(tagId);
+        List<FortuneTagEntity> children = fortuneTagRepo.getByParentId(tagId);
         for (FortuneTagEntity child : children) {
             this.remove(bookId, child.getTagId());
         }

@@ -22,10 +22,10 @@ import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
-import com.fortuneboot.repository.fortune.FortuneGroupRepository;
-import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.fortune.FortuneBookRepo;
+import com.fortuneboot.repository.fortune.FortuneGroupRepo;
+import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
+import com.fortuneboot.repository.system.SysUserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -49,7 +49,7 @@ public class FortuneGroupService {
     /**
      * 分组repository
      */
-    private final FortuneGroupRepository fortuneGroupRepository;
+    private final FortuneGroupRepo fortuneGroupRepo;
 
     /**
      * 分组工厂
@@ -59,7 +59,7 @@ public class FortuneGroupService {
     /**
      * 用户/分组关系repository
      */
-    private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+    private final FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
 
     /**
      * 用户/分组关系工厂
@@ -73,17 +73,17 @@ public class FortuneGroupService {
     /**
      * 账本repo
      */
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
     /**
      * 用户repo
      */
-    private final SysUserRepository sysUserRepository;
+    private final SysUserRepo sysUserRepo;
     private final FortuneBookFactory fortuneBookFactory;
 
 
     public FortuneGroupVo getByGroupId(Long groupId) {
-        FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepository.getById(groupId);
+        FortuneGroupEntity fortuneGroupEntity = fortuneGroupRepo.getById(groupId);
         FortuneGroupVo fortuneGroupVo = BeanUtil.copyProperties(fortuneGroupEntity, FortuneGroupVo.class);
         FortuneBookEntity bookEntity = fortuneBookService.getBookById(fortuneGroupEntity.getDefaultBookId());
         fortuneGroupVo.setDefaultBookName(bookEntity.getBookName());
@@ -123,13 +123,13 @@ public class FortuneGroupService {
     public void remove(Long groupId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
         fortuneGroupModel.deleteById();
-        fortuneUserGroupRelationRepository.removeByGroupId(groupId);
+        fortuneUserGroupRelationRepo.removeByGroupId(groupId);
         fortuneBookService.removeByGroupId(groupId);
     }
 
     public PageDTO<FortuneGroupVo> getFortuneGroupPage(FortuneGroupQuery query) {
         // 获取当前用户的组关系列表
-        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepository.getByUserId();
+        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepo.getByUserId();
         if (CollectionUtils.isEmpty(relationList)) {
             return PageDTO.empty();
         }
@@ -139,7 +139,7 @@ public class FortuneGroupService {
 
         // 构建查询条件并执行分页查询
         LambdaQueryWrapper<FortuneGroupEntity> queryWrapper = buildQueryWrapper(query, groupIds);
-        Page<FortuneGroupEntity> groupPage = fortuneGroupRepository.page(query.toPage(), queryWrapper);
+        Page<FortuneGroupEntity> groupPage = fortuneGroupRepo.page(query.toPage(), queryWrapper);
 
         // 提前返回空结果
         if (CollectionUtils.isEmpty(groupPage.getRecords())) {
@@ -159,13 +159,13 @@ public class FortuneGroupService {
 
     public List<FortuneGroupVo> getEnableGroupList() {
         // 获取当前用户的组关系列表
-        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepository.getByUserId();
+        List<FortuneUserGroupRelationEntity> relationList = fortuneUserGroupRelationRepo.getByUserId();
         if (CollectionUtils.isEmpty(relationList)) {
             return Collections.emptyList();
         }
         // 提取用户有权限的组ID列表
         List<Long> groupIds = extractGroupIds(relationList);
-        List<FortuneGroupEntity> list = fortuneGroupRepository.getEnableByGroupIds(groupIds);
+        List<FortuneGroupEntity> list = fortuneGroupRepo.getEnableByGroupIds(groupIds);
 
         // 提前返回空结果
         if (CollectionUtils.isEmpty(list)) {
@@ -202,7 +202,7 @@ public class FortuneGroupService {
 
         return CollectionUtils.isEmpty(bookIds)
                 ? Collections.emptyMap()
-                : fortuneBookRepository.listByIds(bookIds).stream()
+                : fortuneBookRepo.listByIds(bookIds).stream()
                 .collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
     }
 
@@ -270,10 +270,10 @@ public class FortuneGroupService {
     }
 
     private void checkDefault(Long groupId) {
-        List<FortuneUserGroupRelationEntity> defaultGroupList = fortuneUserGroupRelationRepository.getDefaultGroupByGroupId(groupId);
+        List<FortuneUserGroupRelationEntity> defaultGroupList = fortuneUserGroupRelationRepo.getDefaultGroupByGroupId(groupId);
         if (CollectionUtils.isNotEmpty(defaultGroupList)) {
             List<Long> userIds = defaultGroupList.stream().map(FortuneUserGroupRelationEntity::getUserId).toList();
-            List<SysUserEntity> users = sysUserRepository.getUsersByIds(userIds);
+            List<SysUserEntity> users = sysUserRepo.getUsersByIds(userIds);
             List<String> nicknames = users.stream().map(SysUserEntity::getNickname).toList();
             throw new ApiException(ErrorCode.Business.GROUP_CANNOT_DISABLE_DEFAULT_GROUP, nicknames.toString());
         }

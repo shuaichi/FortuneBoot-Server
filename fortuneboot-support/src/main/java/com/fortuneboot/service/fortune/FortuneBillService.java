@@ -53,7 +53,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class FortuneBillService {
 
-    private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillRepo fortuneBillRepo;
 
     private final FortuneBillFactory fortuneBillFactory;
 
@@ -65,32 +65,32 @@ public class FortuneBillService {
 
     private final FortunePayeeFactory fortunePayeeFactory;
 
-    private final FortuneCategoryRepository fortuneCategoryRepository;
+    private final FortuneCategoryRepo fortuneCategoryRepo;
 
     private final FortuneCategoryRelationService fortuneCategoryRelationService;
 
-    private final FortunePayeeRepository fortunePayeeRepository;
+    private final FortunePayeeRepo fortunePayeeRepo;
 
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
-    private final FortuneAccountRepository fortuneAccountRepository;
+    private final FortuneAccountRepo fortuneAccountRepo;
 
-    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+    private final FortuneCategoryRelationRepo fortuneCategoryRelationRepo;
 
-    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+    private final FortuneTagRelationRepo fortuneTagRelationRepo;
 
-    private final FortuneTagRepository fortuneTagRepository;
+    private final FortuneTagRepo fortuneTagRepo;
 
     private final FortuneFileService fortuneFileService;
 
-    private final FortuneFileRepository fortuneFileRepository;
+    private final FortuneFileRepo fortuneFileRepo;
 
     private final FortuneTagFactory fortuneTagFactory;
     private final FortuneCategoryFactory fortuneCategoryFactory;
     private final FortuneBookFactory fortuneBookFactory;
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
-        IPage<FortuneBillEntity> page = fortuneBillRepository.getPage(query.toPage(), query.addQueryCondition());
+        IPage<FortuneBillEntity> page = fortuneBillRepo.getPage(query.toPage(), query.addQueryCondition());
         List<FortuneBillBo> list = page.getRecords().stream().map(FortuneBillBo::new).toList();
         if (CollectionUtils.isEmpty(list)) {
             return new PageDTO<>(Collections.emptyList());
@@ -105,9 +105,9 @@ public class FortuneBillService {
 
     private void fillCategory(List<FortuneBillBo> list) {
         List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
-        Map<Long, List<FortuneCategoryRelationEntity>> map = fortuneCategoryRelationRepository.getByBillIdList(billIdList);
+        Map<Long, List<FortuneCategoryRelationEntity>> map = fortuneCategoryRelationRepo.getByBillIdList(billIdList);
         List<Long> categoryIdList = map.values().stream().flatMap(List::stream).map(FortuneCategoryRelationEntity::getCategoryId).distinct().toList();
-        List<FortuneCategoryEntity> categoryList = fortuneCategoryRepository.getByIds(categoryIdList);
+        List<FortuneCategoryEntity> categoryList = fortuneCategoryRepo.getByIds(categoryIdList);
         Map<Long, FortuneCategoryEntity> categoryMap = categoryList.stream().collect(Collectors.toMap(FortuneCategoryEntity::getCategoryId, Function.identity()));
         for (FortuneBillBo billBo : list) {
             List<FortuneCategoryRelationEntity> relationList = map.get(billBo.getBillId());
@@ -128,12 +128,12 @@ public class FortuneBillService {
 
     private void fillTag(List<FortuneBillBo> list) {
         List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
-        Map<Long, List<FortuneTagRelationEntity>> map = fortuneTagRelationRepository.getByBillIdList(billIdList);
+        Map<Long, List<FortuneTagRelationEntity>> map = fortuneTagRelationRepo.getByBillIdList(billIdList);
         if (MapUtils.isEmpty(map)) {
             return;
         }
         List<Long> tagIdList = map.values().stream().flatMap(List::stream).map(FortuneTagRelationEntity::getTagId).distinct().toList();
-        List<FortuneTagEntity> categoryList = fortuneTagRepository.getByIds(tagIdList);
+        List<FortuneTagEntity> categoryList = fortuneTagRepo.getByIds(tagIdList);
         Map<Long, FortuneTagEntity> categoryMap = categoryList.stream().collect(Collectors.toMap(FortuneTagEntity::getTagId, Function.identity()));
         for (FortuneBillBo billBo : list) {
             List<FortuneTagRelationEntity> relationList = map.get(billBo.getBillId());
@@ -152,7 +152,7 @@ public class FortuneBillService {
         if (CollectionUtils.isEmpty(payeeIdList)) {
             return;
         }
-        List<FortunePayeeEntity> payeeList = fortunePayeeRepository.getByIdList(payeeIdList);
+        List<FortunePayeeEntity> payeeList = fortunePayeeRepo.getByIdList(payeeIdList);
         Map<Long, String> map = payeeList.stream().collect(Collectors.toMap(FortunePayeeEntity::getPayeeId, FortunePayeeEntity::getPayeeName));
         for (FortuneBillBo billBo : list) {
             billBo.setPayeeName(map.get(billBo.getPayeeId()));
@@ -161,7 +161,7 @@ public class FortuneBillService {
 
     private void fillBook(List<FortuneBillBo> list) {
         List<Long> bookIdList = list.stream().map(FortuneBillBo::getBookId).toList();
-        List<FortuneBookEntity> bookList = fortuneBookRepository.listByIds(bookIdList);
+        List<FortuneBookEntity> bookList = fortuneBookRepo.listByIds(bookIdList);
         Map<Long, FortuneBookEntity> map = bookList.stream().collect(Collectors.toMap(FortuneBookEntity::getBookId, Function.identity()));
         for (FortuneBillBo billBo : list) {
             FortuneBookEntity fortuneBookEntity = map.get(billBo.getBookId());
@@ -173,7 +173,7 @@ public class FortuneBillService {
         List<Long> accountIdList = new ArrayList<>(list.stream().map(FortuneBillBo::getAccountId).toList());
         List<Long> toAccountIdList = list.stream().map(FortuneBillBo::getToAccountId).toList();
         accountIdList.addAll(toAccountIdList);
-        List<FortuneAccountEntity> accountList = fortuneAccountRepository.getByIds(accountIdList);
+        List<FortuneAccountEntity> accountList = fortuneAccountRepo.getByIds(accountIdList);
         Map<Long, FortuneAccountEntity> map = accountList.stream().collect(Collectors.toMap(FortuneAccountEntity::getAccountId, Function.identity()));
         for (FortuneBillBo billBo : list) {
             FortuneAccountEntity account = map.get(billBo.getAccountId());
@@ -330,11 +330,11 @@ public class FortuneBillService {
         originalBill.updateById();
 
         // 8. 更新分类关联（先删除旧的，再添加新的）
-        fortuneCategoryRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
+        fortuneCategoryRelationRepo.phyRemoveByBillId(modifyCommand.getBillId());
         this.processCategoryRelations(modifyCommand.getCategoryAmountPair(), originalBill);
 
         // 9. 更新标签关联（先删除旧的(物理删除)，再添加新的）
-        fortuneTagRelationRepository.phyRemoveByBillId(modifyCommand.getBillId());
+        fortuneTagRelationRepo.phyRemoveByBillId(modifyCommand.getBillId());
         if (CollectionUtils.isNotEmpty(modifyCommand.getTagIdList())) {
             this.processTagRelations(modifyCommand.getTagIdList(), originalBill);
         }
@@ -354,13 +354,13 @@ public class FortuneBillService {
         // 账户金额回滚
         this.refundBalance(fortuneBillModel);
         // 删除标签
-        fortuneTagRelationRepository.removeByBillId(billId);
+        fortuneTagRelationRepo.removeByBillId(billId);
         // 删除分类
-        fortuneCategoryRelationRepository.removeByBillId(billId);
+        fortuneCategoryRelationRepo.removeByBillId(billId);
         // 删除账单
         fortuneBillModel.deleteById();
         // 删除账单附件
-        fortuneFileRepository.removeByBillId(billId);
+        fortuneFileRepo.removeByBillId(billId);
     }
 
     /**
@@ -553,23 +553,23 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByBookId(Long bookId) {
-        List<FortuneBillEntity> billList = fortuneBillRepository.getByBookId(bookId);
+        List<FortuneBillEntity> billList = fortuneBillRepo.getByBookId(bookId);
         if (CollectionUtils.isEmpty(billList)) {
             return;
         }
         List<Long> billIds = billList.stream().map(FortuneBillEntity::getBillId).toList();
-        fortuneBillRepository.removeBatchByIds(billIds);
-        fortuneCategoryRelationRepository.removeByBillIds(billIds);
-        fortuneTagRelationRepository.removeByBillIds(billIds);
+        fortuneBillRepo.removeBatchByIds(billIds);
+        fortuneCategoryRelationRepo.removeByBillIds(billIds);
+        fortuneTagRelationRepo.removeByBillIds(billIds);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByBookIds(List<Long> bookIds) {
-        List<FortuneBillEntity> billList = fortuneBillRepository.getByBookIds(bookIds);
+        List<FortuneBillEntity> billList = fortuneBillRepo.getByBookIds(bookIds);
         List<Long> billIds = billList.stream().map(FortuneBillEntity::getBillId).toList();
-        fortuneBillRepository.removeBatchByIds(billIds);
-        fortuneCategoryRelationRepository.removeByBillIds(billIds);
-        fortuneTagRelationRepository.removeByBillIds(billIds);
+        fortuneBillRepo.removeBatchByIds(billIds);
+        fortuneCategoryRelationRepo.removeByBillIds(billIds);
+        fortuneTagRelationRepo.removeByBillIds(billIds);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -606,16 +606,16 @@ public class FortuneBillService {
 
     public BillStatisticsVo getBillStatistics(FortuneBillQuery query) {
         query.setInclude(Boolean.TRUE);
-        return fortuneBillRepository.getBillStatistics(query);
+        return fortuneBillRepo.getBillStatistics(query);
     }
 
     public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {
-        List<FortuneLineVo> originData = fortuneBillRepository.getExpenseTrends(billTrendsQuery);
+        List<FortuneLineVo> originData = fortuneBillRepo.getExpenseTrends(billTrendsQuery);
         return this.completeTimeSeries(originData, billTrendsQuery.getTimeGranularity(), billTrendsQuery.getTimePoint());
     }
 
     public List<FortuneLineVo> getIncomeTrends(BillTrendsQuery billTrendsQuery) {
-        List<FortuneLineVo> originData = fortuneBillRepository.getIncomeTrends(billTrendsQuery);
+        List<FortuneLineVo> originData = fortuneBillRepo.getIncomeTrends(billTrendsQuery);
         return this.completeTimeSeries(originData, billTrendsQuery.getTimeGranularity(), billTrendsQuery.getTimePoint());
     }
 
@@ -678,26 +678,26 @@ public class FortuneBillService {
     }
 
     public List<FortunePieVo> getCategoryExpense(CategoryIncludeQuery query) {
-        return fortuneBillRepository.getCategoryInclude(CategoryTypeEnum.EXPENSE, query);
+        return fortuneBillRepo.getCategoryInclude(CategoryTypeEnum.EXPENSE, query);
     }
 
     public List<FortunePieVo> getCategoryIncome(CategoryIncludeQuery query) {
-        return fortuneBillRepository.getCategoryInclude(CategoryTypeEnum.INCOME, query);
+        return fortuneBillRepo.getCategoryInclude(CategoryTypeEnum.INCOME, query);
     }
 
     public List<FortuneBarVo> getTagExpense(TagIncludeQuery query) {
-        return fortuneBillRepository.getTagInclude(CategoryTypeEnum.EXPENSE, query);
+        return fortuneBillRepo.getTagInclude(CategoryTypeEnum.EXPENSE, query);
     }
 
     public List<FortuneBarVo> getTagIncome(TagIncludeQuery query) {
-        return fortuneBillRepository.getTagInclude(CategoryTypeEnum.INCOME, query);
+        return fortuneBillRepo.getTagInclude(CategoryTypeEnum.INCOME, query);
     }
 
     public List<FortunePieVo> getPayeeExpense(PayeeIncludeQuery query) {
-        return fortuneBillRepository.getPayeeInclude(CategoryTypeEnum.EXPENSE, query);
+        return fortuneBillRepo.getPayeeInclude(CategoryTypeEnum.EXPENSE, query);
     }
 
     public List<FortunePieVo> getPayeeIncome(PayeeIncludeQuery query) {
-        return fortuneBillRepository.getPayeeInclude(CategoryTypeEnum.INCOME, query);
+        return fortuneBillRepo.getPayeeInclude(CategoryTypeEnum.INCOME, query);
     }
 }

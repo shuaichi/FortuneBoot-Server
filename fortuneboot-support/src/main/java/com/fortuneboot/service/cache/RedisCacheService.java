@@ -9,8 +9,8 @@ import com.fortuneboot.infrastructure.cache.redis.RedisCacheTemplate;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import java.io.Serializable;
 
-import com.fortuneboot.repository.system.SysRoleRepository;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysRoleRepo;
+import com.fortuneboot.repository.system.SysUserRepo;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -39,7 +39,7 @@ public class RedisCacheService {
         userCache = new RedisCacheTemplate<SysUserEntity>(redisUtil, CacheKeyEnum.USER_ENTITY) {
             @Override
             public SysUserEntity getObjectFromDb(Object id) {
-                SysUserRepository userRepository = SpringUtil.getBean(SysUserRepository.class);
+                SysUserRepo userRepository = SpringUtil.getBean(SysUserRepo.class);
                 return userRepository.getById((Serializable) id);
             }
         };
@@ -47,7 +47,7 @@ public class RedisCacheService {
         roleCache = new RedisCacheTemplate<SysRoleEntity>(redisUtil, CacheKeyEnum.ROLE_ENTITY) {
             @Override
             public SysRoleEntity getObjectFromDb(Object id) {
-                SysRoleRepository roleRepository = SpringUtil.getBean(SysRoleRepository.class);
+                SysRoleRepo roleRepository = SpringUtil.getBean(SysRoleRepo.class);
                 return roleRepository.getById((Serializable) id);
             }
         };

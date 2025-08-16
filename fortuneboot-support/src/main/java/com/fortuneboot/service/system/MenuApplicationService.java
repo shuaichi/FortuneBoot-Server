@@ -15,7 +15,7 @@ import com.fortuneboot.domain.query.system.MenuQuery;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.StatusEnum;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
-import com.fortuneboot.repository.system.SysMenuRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MenuApplicationService {
 
-    private final SysMenuRepository menuRepository;
+    private final SysMenuRepo menuRepository;
 
     private final MenuModelFactory menuModelFactory;
 

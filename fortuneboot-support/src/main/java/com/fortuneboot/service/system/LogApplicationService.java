@@ -8,8 +8,8 @@ import com.fortuneboot.domain.dto.OperationLogDTO;
 import com.fortuneboot.domain.query.system.OperationLogQuery;
 import com.fortuneboot.domain.entity.system.SysLoginInfoEntity;
 import com.fortuneboot.domain.entity.system.SysOperationLogEntity;
-import com.fortuneboot.repository.system.SysLoginInfoRepository;
-import com.fortuneboot.repository.system.SysOperationLogRepository;
+import com.fortuneboot.repository.system.SysLoginInfoRepo;
+import com.fortuneboot.repository.system.SysOperationLogRepo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
@@ -26,9 +26,9 @@ import org.springframework.stereotype.Service;
 public class LogApplicationService {
 
     // TODO 命名到时候统一改成叫LoginLog
-    private final SysLoginInfoRepository loginInfoRepository;
+    private final SysLoginInfoRepo loginInfoRepository;
 
-    private final SysOperationLogRepository operationLogRepository;
+    private final SysOperationLogRepo operationLogRepository;
 
     public PageDTO<LoginLogDTO> getLoginInfoList(LoginLogQuery query) {
         Page<SysLoginInfoEntity> page = loginInfoRepository.page(query.toPage(), query.toQueryWrapper());

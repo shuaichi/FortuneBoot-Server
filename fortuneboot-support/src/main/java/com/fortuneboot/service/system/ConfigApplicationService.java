@@ -11,7 +11,7 @@ import com.fortuneboot.factory.system.model.ConfigModel;
 import com.fortuneboot.domain.query.system.ConfigQuery;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.factory.system.factory.ConfigModelFactory;
-import com.fortuneboot.repository.system.SysConfigRepository;
+import com.fortuneboot.repository.system.SysConfigRepo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class ConfigApplicationService {
 
     private final ConfigModelFactory configModelFactory;
 
-    private final SysConfigRepository configRepository;
+    private final SysConfigRepo configRepository;
 
     public PageDTO<ConfigDTO> getConfigList(ConfigQuery query) {
         Page<SysConfigEntity> page = configRepository.page(query.toPage(), query.toQueryWrapper());

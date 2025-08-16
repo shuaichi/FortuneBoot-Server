@@ -7,7 +7,7 @@ import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationAddCommand
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationInviteCommand;
 import com.fortuneboot.domain.command.fortune.FortuneUserGroupRelationModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
-import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,17 +23,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntity {
 
-    private FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+    private FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
 
-    public FortuneUserGroupRelationModel(FortuneUserGroupRelationRepository repository) {
-        this.fortuneUserGroupRelationRepository = repository;
+    public FortuneUserGroupRelationModel(FortuneUserGroupRelationRepo repository) {
+        this.fortuneUserGroupRelationRepo = repository;
     }
 
-    public FortuneUserGroupRelationModel(FortuneUserGroupRelationEntity entity, FortuneUserGroupRelationRepository repository) {
+    public FortuneUserGroupRelationModel(FortuneUserGroupRelationEntity entity, FortuneUserGroupRelationRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneUserGroupRelationRepository = repository;
+        this.fortuneUserGroupRelationRepo = repository;
     }
 
     public void loadAddCommand(FortuneUserGroupRelationAddCommand command) {
@@ -56,14 +56,14 @@ public class FortuneUserGroupRelationModel extends FortuneUserGroupRelationEntit
     }
 
     public void checkRepeat(String username) {
-        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getByGroupAndUser(this.getGroupId(), this.getUserId());
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepo.getByGroupAndUser(this.getGroupId(), this.getUserId());
         if (Objects.nonNull(entity)) {
             throw new ApiException(ErrorCode.Business.GROUP_USER_ALREADY_EXIST, username);
         }
     }
 
     public void checkRepeat(Long userId) {
-        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getByGroupAndUser(this.getGroupId(), userId);
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepo.getByGroupAndUser(this.getGroupId(), userId);
         if (Objects.nonNull(entity)) {
             throw new ApiException(ErrorCode.Business.GROUP_USER_ALREADY_EXIST, entity.getUserId());
         }

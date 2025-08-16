@@ -10,8 +10,8 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
-import com.fortuneboot.repository.system.SysConfigRepository;
-import com.fortuneboot.repository.system.SysRoleRepository;
+import com.fortuneboot.repository.system.SysConfigRepo;
+import com.fortuneboot.repository.system.SysRoleRepo;
 import com.fortuneboot.service.cache.CacheCenter;
 import com.fortuneboot.domain.common.command.BulkOperationCommand;
 import com.fortuneboot.domain.common.dto.CurrentLoginUserDTO;
@@ -31,7 +31,7 @@ import com.fortuneboot.domain.query.system.SearchUserQuery;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysUserRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -50,14 +50,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserApplicationService {
 
-    private final SysUserRepository userRepository;
+    private final SysUserRepo userRepository;
 
-    private final SysRoleRepository roleRepository;
+    private final SysRoleRepo roleRepository;
 
 
     private final UserModelFactory userModelFactory;
 
-    private final SysConfigRepository sysConfigRepository;
+    private final SysConfigRepo sysConfigRepo;
 
 
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
@@ -189,7 +189,7 @@ public class UserApplicationService {
 
 
     public void register(AddUserCommand command) {
-        String configValue = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
+        String configValue = sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
         boolean registerUser = Boolean.parseBoolean(configValue);
         if (registerUser) {
             command.setSource(UserSourceEnum.REGISTER.getValue());
@@ -201,7 +201,7 @@ public class UserApplicationService {
     }
 
     public List<RoleDTO> getAllowRegisterRoles() {
-        String configValue = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
+        String configValue = sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
         boolean registerUser = Boolean.parseBoolean(configValue);
         if (registerUser) {
             List<SysRoleEntity> roleEntityList = roleRepository.getAllowRegisterRoles();
@@ -216,11 +216,11 @@ public class UserApplicationService {
     }
 
     public String getIcp(){
-        return sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
+        return sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
     }
 
     public String getDisplayConfig() {
-        String display = sysConfigRepository.getConfigValueByKey(ConfigKeyEnum.DISPLAY.getValue());
+        String display = sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.DISPLAY.getValue());
         return StringUtils.isBlank(display) ? TrueFalseEnum.TRUE.getDescription() : display;
     }
 }

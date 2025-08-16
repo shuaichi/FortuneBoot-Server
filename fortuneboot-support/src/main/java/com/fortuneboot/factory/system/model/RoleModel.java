@@ -9,8 +9,8 @@ import com.fortuneboot.domain.command.system.AddRoleCommand;
 import com.fortuneboot.domain.command.system.UpdateRoleCommand;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysRoleMenuEntity;
-import com.fortuneboot.repository.system.SysRoleMenuRepository;
-import com.fortuneboot.repository.system.SysRoleRepository;
+import com.fortuneboot.repository.system.SysRoleMenuRepo;
+import com.fortuneboot.repository.system.SysRoleRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +29,15 @@ public class RoleModel extends SysRoleEntity {
 
     private List<Long> menuIds;
 
-    private SysRoleRepository roleRepository;
-    private SysRoleMenuRepository roleMenuRepository;
+    private SysRoleRepo roleRepository;
+    private SysRoleMenuRepo roleMenuRepository;
 
-    public RoleModel(SysRoleRepository roleRepository, SysRoleMenuRepository roleMenuRepository) {
+    public RoleModel(SysRoleRepo roleRepository, SysRoleMenuRepo roleMenuRepository) {
         this.roleRepository = roleRepository;
         this.roleMenuRepository = roleMenuRepository;
     }
 
-    public RoleModel(SysRoleEntity entity, SysRoleRepository roleRepository, SysRoleMenuRepository roleMenuRepository) {
+    public RoleModel(SysRoleEntity entity, SysRoleRepo roleRepository, SysRoleMenuRepo roleMenuRepository) {
         if (entity != null) {
             BeanUtil.copyProperties(entity, this);
         }

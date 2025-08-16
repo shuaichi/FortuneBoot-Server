@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.factory.system.model.RoleModel;
-import com.fortuneboot.repository.system.SysMenuRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
 import com.fortuneboot.service.cache.CacheCenter;
 import com.fortuneboot.domain.command.system.AddRoleCommand;
 import com.fortuneboot.domain.command.system.UpdateDataScopeCommand;
@@ -19,8 +19,8 @@ import com.fortuneboot.factory.system.model.UserModel;
 import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.system.SysRoleRepository;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysRoleRepo;
+import com.fortuneboot.repository.system.SysUserRepo;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
@@ -40,11 +40,11 @@ public class RoleApplicationService {
 
     private final UserModelFactory userModelFactory;
 
-    private final SysRoleRepository roleRepository;
+    private final SysRoleRepo roleRepository;
 
-    private final SysUserRepository userRepository;
+    private final SysUserRepo userRepository;
 
-    private final SysMenuRepository menuRepository;
+    private final SysMenuRepo menuRepository;
 
 
     public PageDTO<RoleDTO> getRoleList(RoleQuery query) {

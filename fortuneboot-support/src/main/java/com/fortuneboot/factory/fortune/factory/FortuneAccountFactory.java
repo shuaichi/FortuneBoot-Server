@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
-import com.fortuneboot.repository.fortune.FortuneAccountRepository;
+import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +18,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneAccountFactory {
 
-    private final FortuneAccountRepository fortuneAccountRepository;
+    private final FortuneAccountRepo fortuneAccountRepo;
 
     public FortuneAccountModel create() {
-        return new FortuneAccountModel(fortuneAccountRepository);
+        return new FortuneAccountModel(fortuneAccountRepo);
     }
 
     public FortuneAccountModel loadById(Long accountId){
-        FortuneAccountEntity fortuneAccountEntity = fortuneAccountRepository.getById(accountId);
+        FortuneAccountEntity fortuneAccountEntity = fortuneAccountRepo.getById(accountId);
         if (Objects.isNull(fortuneAccountEntity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, accountId, "账户");
         }
-        return new FortuneAccountModel(fortuneAccountEntity,fortuneAccountRepository);
+        return new FortuneAccountModel(fortuneAccountEntity, fortuneAccountRepo);
     }
 }

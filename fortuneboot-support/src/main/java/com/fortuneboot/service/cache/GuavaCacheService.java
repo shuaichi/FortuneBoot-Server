@@ -2,7 +2,7 @@ package com.fortuneboot.service.cache;
 
 
 import com.fortuneboot.infrastructure.cache.guava.AbstractGuavaCacheTemplate;
-import com.fortuneboot.repository.system.SysConfigRepository;
+import com.fortuneboot.repository.system.SysConfigRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GuavaCacheService {
 
-    private final SysConfigRepository configRepository;
+    private final SysConfigRepo configRepository;
 
 
     public final AbstractGuavaCacheTemplate<String> configCache = new AbstractGuavaCacheTemplate<String>() {

@@ -4,7 +4,7 @@ import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.factory.fortune.factory.FortuneTagFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneTagRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneTagRelationModel;
-import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class FortuneTagRelationService {
 
     private final FortuneTagFactory fortuneTagFactory;
 
-    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+    private final FortuneTagRelationRepo fortuneTagRelationRepo;
 
     public void add(FortuneTagRelationAddCommand addCommand) {
         FortuneTagRelationModel fortuneTagRelationModel = fortuneTagRelationFactory.create();

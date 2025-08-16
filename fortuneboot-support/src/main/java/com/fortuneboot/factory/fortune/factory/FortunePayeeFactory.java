@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
-import com.fortuneboot.repository.fortune.FortunePayeeRepository;
+import com.fortuneboot.repository.fortune.FortunePayeeRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +20,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortunePayeeFactory {
 
-    private final FortunePayeeRepository fortunePayeeRepository;
+    private final FortunePayeeRepo fortunePayeeRepo;
 
     public FortunePayeeModel loadById(Long payeeId) {
-        FortunePayeeEntity entity = fortunePayeeRepository.getById(payeeId);
+        FortunePayeeEntity entity = fortunePayeeRepo.getById(payeeId);
         if (Objects.isNull(entity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, payeeId, "交易对象");
         }
-        return new FortunePayeeModel(entity, fortunePayeeRepository);
+        return new FortunePayeeModel(entity, fortunePayeeRepo);
     }
 
     public FortunePayeeModel create() {
-        return new FortunePayeeModel(fortunePayeeRepository);
+        return new FortunePayeeModel(fortunePayeeRepo);
     }
 }

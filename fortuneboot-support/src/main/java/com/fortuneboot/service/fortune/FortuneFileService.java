@@ -3,7 +3,7 @@ package com.fortuneboot.service.fortune;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.fortuneboot.factory.fortune.factory.FortuneFileFactory;
 import com.fortuneboot.factory.fortune.model.FortuneFileModel;
-import com.fortuneboot.repository.fortune.FortuneFileRepository;
+import com.fortuneboot.repository.fortune.FortuneFileRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FortuneFileService {
 
-    private final FortuneFileRepository fortuneFileRepository;
+    private final FortuneFileRepo fortuneFileRepo;
 
     private final FortuneFileFactory fortuneFileFactory;
 
@@ -37,7 +37,7 @@ public class FortuneFileService {
      * 批量删除附件
      */
     public void phyRemoveByBillId(Long billId) {
-        fortuneFileRepository.phyRemoveByBillId(billId);
+        fortuneFileRepo.phyRemoveByBillId(billId);
     }
 
 }

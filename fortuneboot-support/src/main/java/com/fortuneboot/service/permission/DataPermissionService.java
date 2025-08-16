@@ -6,7 +6,7 @@ import com.fortuneboot.service.permission.model.DataCondition;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysUserRepo;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DataPermissionService {
 
-    private final SysUserRepository userService;
+    private final SysUserRepo userService;
 
     /**
      * 通过userId 校验当前用户 对 目标用户是否有操作权限

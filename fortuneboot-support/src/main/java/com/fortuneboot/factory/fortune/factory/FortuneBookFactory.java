@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
+import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,18 +19,18 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneBookFactory {
 
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
 
     public FortuneBookModel loadById(Long bookId) {
-        FortuneBookEntity fortuneBookEntity = fortuneBookRepository.getById(bookId);
+        FortuneBookEntity fortuneBookEntity = fortuneBookRepo.getById(bookId);
         if (Objects.isNull(fortuneBookEntity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, bookId, "账本");
         }
-        return new FortuneBookModel(fortuneBookEntity,fortuneBookRepository);
+        return new FortuneBookModel(fortuneBookEntity, fortuneBookRepo);
     }
 
     public FortuneBookModel create() {
-        return new FortuneBookModel(fortuneBookRepository);
+        return new FortuneBookModel(fortuneBookRepo);
     }
 }

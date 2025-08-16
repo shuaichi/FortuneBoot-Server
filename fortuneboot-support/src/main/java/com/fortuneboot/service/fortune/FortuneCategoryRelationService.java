@@ -4,7 +4,7 @@ import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.factory.fortune.factory.FortuneCategoryFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneCategoryRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryRelationModel;
-import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FortuneCategoryRelationService {
 
-    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+    private final FortuneCategoryRelationRepo fortuneCategoryRelationRepository;
 
     private final FortuneCategoryRelationFactory fortuneCategoryRelationFactory;
 

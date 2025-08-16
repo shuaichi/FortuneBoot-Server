@@ -11,9 +11,9 @@ import com.fortuneboot.common.enums.BasicEnumUtil;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.system.SysMenuRepository;
-import com.fortuneboot.repository.system.SysRoleRepository;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
+import com.fortuneboot.repository.system.SysRoleRepo;
+import com.fortuneboot.repository.system.SysUserRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import java.util.List;
@@ -42,11 +42,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final SysUserRepository userService;
+    private final SysUserRepo userService;
 
-    private final SysMenuRepository menuService;
+    private final SysMenuRepo menuService;
 
-    private final SysRoleRepository roleService;
+    private final SysRoleRepo roleService;
 
     private final TokenService tokenService;
 

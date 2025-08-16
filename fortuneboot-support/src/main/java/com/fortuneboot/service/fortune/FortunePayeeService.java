@@ -10,8 +10,8 @@ import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
 import com.fortuneboot.factory.fortune.factory.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
-import com.fortuneboot.repository.fortune.FortuneBillRepository;
-import com.fortuneboot.repository.fortune.FortunePayeeRepository;
+import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import com.fortuneboot.repository.fortune.FortunePayeeRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,24 +28,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FortunePayeeService {
 
-    private final FortunePayeeRepository fortunePayeeRepository;
+    private final FortunePayeeRepo fortunePayeeRepo;
 
     private final FortunePayeeFactory fortunePayeeFactory;
 
-    private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillRepo fortuneBillRepo;
 
     public IPage<FortunePayeeEntity> getPage(FortunePayeeQuery query) {
-        return fortunePayeeRepository.page(query.toPage(),query.addQueryCondition());
+        return fortunePayeeRepo.page(query.toPage(),query.addQueryCondition());
     }
 
     public List<FortunePayeeEntity> getEnableList(Long bookId, Integer billType) {
         BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
         switch (billTypeEnum) {
             case INCOME, EXPENSE -> {
-                return fortunePayeeRepository.getEnablePayeeList(bookId, billType);
+                return fortunePayeeRepo.getEnablePayeeList(bookId, billType);
             }
             case null -> {
-                return fortunePayeeRepository.getEnablePayeeList(bookId, null);
+                return fortunePayeeRepo.getEnablePayeeList(bookId, null);
             }
             default -> {
                 return Collections.emptyList();
@@ -76,7 +76,7 @@ public class FortunePayeeService {
     }
 
     public void remove(Long bookId, Long payeeId) {
-        Boolean used = fortuneBillRepository.existByPayeeId(payeeId);
+        Boolean used = fortuneBillRepo.existByPayeeId(payeeId);
         if (used) {
             throw new ApiException(ErrorCode.Business.PAYEE_ALREADY_USED);
         }

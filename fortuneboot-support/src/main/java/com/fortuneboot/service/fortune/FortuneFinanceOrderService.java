@@ -1,7 +1,7 @@
 package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.factory.fortune.factory.FortuneFinanceOrderFactory;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepository;
+import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class FortuneFinanceOrderService {
 
     private final FortuneFinanceOrderFactory fortuneFinanceOrderFactory;
 
-    private final FortuneFinanceOrderRepository fortuneFinanceOrderRepository;
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
 
 
 }

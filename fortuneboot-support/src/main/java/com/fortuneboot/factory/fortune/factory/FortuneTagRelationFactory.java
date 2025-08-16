@@ -1,7 +1,7 @@
 package com.fortuneboot.factory.fortune.factory;
 
 import com.fortuneboot.factory.fortune.model.FortuneTagRelationModel;
-import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FortuneTagRelationFactory {
 
-    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+    private final FortuneTagRelationRepo fortuneTagRelationRepo;
 
     public FortuneTagRelationModel create() {
-        return new FortuneTagRelationModel(fortuneTagRelationRepository);
+        return new FortuneTagRelationModel(fortuneTagRelationRepo);
     }
 }

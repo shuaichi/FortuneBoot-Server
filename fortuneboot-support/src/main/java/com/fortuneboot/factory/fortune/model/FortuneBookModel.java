@@ -5,7 +5,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.*;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
-import com.fortuneboot.repository.fortune.FortuneBookRepository;
+import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,17 +19,17 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneBookModel extends FortuneBookEntity {
 
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
-    public FortuneBookModel(FortuneBookRepository repository) {
-        this.fortuneBookRepository = repository;
+    public FortuneBookModel(FortuneBookRepo repository) {
+        this.fortuneBookRepo = repository;
     }
 
-    public FortuneBookModel(FortuneBookEntity entity, FortuneBookRepository repository) {
+    public FortuneBookModel(FortuneBookEntity entity, FortuneBookRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneBookRepository = repository;
+        this.fortuneBookRepo = repository;
     }
 
     public void loadAddCommand(FortuneBookAddCommand command) {

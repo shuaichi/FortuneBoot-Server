@@ -14,7 +14,7 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysUserRepo;
 import java.util.Objects;
 
 import lombok.Data;
@@ -29,11 +29,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserModel extends SysUserEntity {
 
-    private SysUserRepository userRepository;
+    private SysUserRepo userRepository;
 
     private RoleModelFactory roleModelFactory;
 
-    public UserModel(SysUserEntity entity, SysUserRepository userRepository, RoleModelFactory roleModelFactory) {
+    public UserModel(SysUserEntity entity, SysUserRepo userRepository, RoleModelFactory roleModelFactory) {
         this(userRepository, roleModelFactory);
 
         if (entity != null) {
@@ -41,7 +41,7 @@ public class UserModel extends SysUserEntity {
         }
     }
 
-    public UserModel(SysUserRepository userRepository, RoleModelFactory roleModelFactory) {
+    public UserModel(SysUserRepo userRepository, RoleModelFactory roleModelFactory) {
         this.userRepository = userRepository;
         this.roleModelFactory = roleModelFactory;
     }

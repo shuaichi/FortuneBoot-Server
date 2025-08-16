@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
-import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -23,27 +23,27 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneTagFactory {
 
-    private final FortuneTagRepository fortuneTagRepository;
+    private final FortuneTagRepo fortuneTagRepo;
 
     public FortuneTagModel loadById(Long tagId) {
-        FortuneTagEntity entity = fortuneTagRepository.getById(tagId);
+        FortuneTagEntity entity = fortuneTagRepo.getById(tagId);
         if (Objects.isNull(entity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, tagId, "标签");
         }
-        return new FortuneTagModel(entity, fortuneTagRepository);
+        return new FortuneTagModel(entity, fortuneTagRepo);
     }
 
     public List<FortuneTagModel> loadByIds(List<Long> tagIds) {
-        List<FortuneTagEntity> entities = fortuneTagRepository.getByIds(tagIds);
+        List<FortuneTagEntity> entities = fortuneTagRepo.getByIds(tagIds);
         if (CollectionUtils.size(entities) != CollectionUtils.size(tagIds)) {
             List<Long> list = entities.stream().map(FortuneTagEntity::getTagId).toList();
             Collection<Long> subtracts = CollectionUtils.subtract(tagIds, list);
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, subtracts.toString(), "标签");
         }
-        return entities.stream().map(item -> new FortuneTagModel(item, fortuneTagRepository)).toList();
+        return entities.stream().map(item -> new FortuneTagModel(item, fortuneTagRepo)).toList();
     }
 
     public FortuneTagModel create() {
-        return new FortuneTagModel(fortuneTagRepository);
+        return new FortuneTagModel(fortuneTagRepo);
     }
 }

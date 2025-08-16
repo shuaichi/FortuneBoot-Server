@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneGoodsKeeperEntity;
 import com.fortuneboot.factory.fortune.model.FortuneGoodsKeeperModel;
-import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepository;
+import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +20,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneGoodsKeeperFactory {
 
-    private final FortuneGoodsKeeperRepository fortuneGoodsKeeperRepository;
+    private final FortuneGoodsKeeperRepo fortuneGoodsKeeperRepo;
 
     public FortuneGoodsKeeperModel create(){
-        return new FortuneGoodsKeeperModel(fortuneGoodsKeeperRepository);
+        return new FortuneGoodsKeeperModel(fortuneGoodsKeeperRepo);
     }
 
     public FortuneGoodsKeeperModel loadById(Long goodsKeeperId){
-        FortuneGoodsKeeperEntity entity = fortuneGoodsKeeperRepository.getById(goodsKeeperId);
+        FortuneGoodsKeeperEntity entity = fortuneGoodsKeeperRepo.getById(goodsKeeperId);
         if (Objects.isNull(entity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, goodsKeeperId, "物品");
         }
-        return new FortuneGoodsKeeperModel(entity,fortuneGoodsKeeperRepository);
+        return new FortuneGoodsKeeperModel(entity, fortuneGoodsKeeperRepo);
     }
 }

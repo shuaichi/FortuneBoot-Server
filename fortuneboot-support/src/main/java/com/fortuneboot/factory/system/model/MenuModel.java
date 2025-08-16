@@ -9,7 +9,7 @@ import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.system.AddMenuCommand;
 import com.fortuneboot.domain.command.system.UpdateMenuCommand;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
-import com.fortuneboot.repository.system.SysMenuRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
@@ -20,13 +20,13 @@ import java.util.Objects;
 @NoArgsConstructor
 public class MenuModel extends SysMenuEntity {
 
-    private SysMenuRepository menuRepository;
+    private SysMenuRepo menuRepository;
 
-    public MenuModel(SysMenuRepository menuRepository) {
+    public MenuModel(SysMenuRepo menuRepository) {
         this.menuRepository = menuRepository;
     }
 
-    public MenuModel(SysMenuEntity entity, SysMenuRepository menuRepository) {
+    public MenuModel(SysMenuEntity entity, SysMenuRepo menuRepository) {
         if (entity != null) {
             BeanUtil.copyProperties(entity, this);
         }

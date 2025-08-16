@@ -3,7 +3,7 @@ package com.fortuneboot.factory.system.factory;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysUserRepo;
 import com.fortuneboot.factory.system.model.UserModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserModelFactory {
 
-    private final SysUserRepository userRepository;
+    private final SysUserRepo userRepository;
 
     private final RoleModelFactory roleModelFactory;
 

@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.factory.fortune.model.FortuneFinanceOrderModel;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepository;
+import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +20,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneFinanceOrderFactory {
 
-    private final FortuneFinanceOrderRepository fortuneFinanceOrderRepository;
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
 
     public FortuneFinanceOrderModel create(){
-        return new FortuneFinanceOrderModel(fortuneFinanceOrderRepository);
+        return new FortuneFinanceOrderModel(fortuneFinanceOrderRepo);
     }
 
     public FortuneFinanceOrderModel loadById(Long orderId){
-        FortuneFinanceOrderEntity entity = fortuneFinanceOrderRepository.getById(orderId);
+        FortuneFinanceOrderEntity entity = fortuneFinanceOrderRepo.getById(orderId);
         if(Objects.isNull(entity)){
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, orderId, "单据");
         }
-        return new FortuneFinanceOrderModel(fortuneFinanceOrderRepository,entity);
+        return new FortuneFinanceOrderModel(fortuneFinanceOrderRepo,entity);
     }
 }
