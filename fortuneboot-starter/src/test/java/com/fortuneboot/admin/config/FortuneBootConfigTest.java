@@ -1,7 +1,7 @@
 package com.fortuneboot.admin.config;
 
 
-import com.fortuneboot.admin.FortuneBootApplication;
+import com.fortuneboot.admin.ApplicationStarter;
 import java.io.File;
 
 import com.fortuneboot.common.config.FortuneBootConfig;
@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@SpringBootTest(classes = FortuneBootApplication.class)
+@SpringBootTest(classes = ApplicationStarter.class)
 @RunWith(SpringRunner.class)
 public class FortuneBootConfigTest {
 

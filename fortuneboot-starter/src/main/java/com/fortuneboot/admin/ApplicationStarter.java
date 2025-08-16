@@ -16,10 +16,10 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @ComponentScan(basePackages = "com.fortuneboot.*")
-public class FortuneBootApplication {
+public class ApplicationStarter {
 
     public static void main(String[] args) {
-        SpringApplication.run(FortuneBootApplication.class, args);
+        SpringApplication.run(ApplicationStarter.class, args);
         String successMsg = "  ____   _                _                                                           __         _  _ \n"
                           + " / ___| | |_  __ _  _ __ | |_   _   _  _ __    ___  _   _   ___  ___  ___  ___  ___  / _| _   _ | || |\n"
                           + " \\___ \\ | __|/ _` || '__|| __| | | | || '_ \\  / __|| | | | / __|/ __|/ _ \\/ __|/ __|| |_ | | | || || |\n"
