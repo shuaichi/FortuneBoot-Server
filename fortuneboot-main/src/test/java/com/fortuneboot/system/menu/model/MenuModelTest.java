@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode.Business;
-import com.fortuneboot.factory.system.MenuModelFactory;
+import com.fortuneboot.factory.system.factory.MenuModelFactory;
 import com.fortuneboot.factory.system.model.MenuModel;
 import com.fortuneboot.repository.system.SysMenuRepository;
 import org.junit.jupiter.api.Assertions;

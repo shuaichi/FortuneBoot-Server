@@ -6,12 +6,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
-import com.fortuneboot.factory.system.ConfigModelFactory;
+import com.fortuneboot.factory.system.factory.ConfigModelFactory;
 import com.fortuneboot.factory.system.model.ConfigModel;
 import com.fortuneboot.repository.system.SysConfigRepository;
 import org.junit.jupiter.api.Assertions;

@@ -19,7 +19,7 @@ import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import com.fortuneboot.domain.vo.fortune.include.*;
-import com.fortuneboot.factory.fortune.*;
+import com.fortuneboot.factory.fortune.factory.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
 import lombok.RequiredArgsConstructor;

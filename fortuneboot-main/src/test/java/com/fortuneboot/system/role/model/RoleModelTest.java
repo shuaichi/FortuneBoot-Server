@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode.Business;
-import com.fortuneboot.factory.system.RoleModelFactory;
+import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.factory.system.model.RoleModel;
 import com.fortuneboot.repository.system.SysRoleMenuRepository;
 import com.fortuneboot.repository.system.SysRoleRepository;

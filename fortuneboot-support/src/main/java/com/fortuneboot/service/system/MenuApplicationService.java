@@ -10,7 +10,7 @@ import com.fortuneboot.domain.dto.menu.MenuDTO;
 import com.fortuneboot.domain.dto.menu.MenuDetailDTO;
 import com.fortuneboot.domain.dto.menu.RouterDTO;
 import com.fortuneboot.factory.system.model.MenuModel;
-import com.fortuneboot.factory.system.MenuModelFactory;
+import com.fortuneboot.factory.system.factory.MenuModelFactory;
 import com.fortuneboot.domain.query.system.MenuQuery;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.StatusEnum;

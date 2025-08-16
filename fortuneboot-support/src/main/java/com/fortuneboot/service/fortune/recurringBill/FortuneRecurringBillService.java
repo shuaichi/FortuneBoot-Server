@@ -6,7 +6,7 @@ import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyComm
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillLogEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
-import com.fortuneboot.factory.fortune.FortuneRecurringBillRuleFactory;
+import com.fortuneboot.factory.fortune.factory.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepository;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;

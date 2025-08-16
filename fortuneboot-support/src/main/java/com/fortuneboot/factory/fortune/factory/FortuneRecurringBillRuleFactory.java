@@ -1,9 +1,7 @@
-package com.fortuneboot.factory.fortune;
+package com.fortuneboot.factory.fortune.factory;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author zhangchi118

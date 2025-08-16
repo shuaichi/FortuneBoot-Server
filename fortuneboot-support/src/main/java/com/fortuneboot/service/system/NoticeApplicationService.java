@@ -6,7 +6,7 @@ import com.fortuneboot.domain.command.system.NoticeAddCommand;
 import com.fortuneboot.domain.command.system.NoticeUpdateCommand;
 import com.fortuneboot.domain.dto.NoticeDTO;
 import com.fortuneboot.factory.system.model.NoticeModel;
-import com.fortuneboot.factory.system.NoticeModelFactory;
+import com.fortuneboot.factory.system.factory.NoticeModelFactory;
 import com.fortuneboot.domain.query.system.NoticeQuery;
 import com.fortuneboot.domain.entity.system.SysNoticeEntity;
 import com.fortuneboot.repository.system.SysNoticeRepository;

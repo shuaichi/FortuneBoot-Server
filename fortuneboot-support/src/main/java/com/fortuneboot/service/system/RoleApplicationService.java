@@ -2,7 +2,7 @@ package com.fortuneboot.service.system;
 
 import cn.hutool.core.collection.CollUtil;
 import com.fortuneboot.common.core.page.PageDTO;
-import com.fortuneboot.factory.system.RoleModelFactory;
+import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.factory.system.model.RoleModel;
 import com.fortuneboot.repository.system.SysMenuRepository;
 import com.fortuneboot.service.cache.CacheCenter;
@@ -16,7 +16,7 @@ import com.fortuneboot.domain.query.system.RoleQuery;
 import com.fortuneboot.domain.query.system.UnallocatedRoleQuery;
 import com.fortuneboot.domain.dto.user.UserDTO;
 import com.fortuneboot.factory.system.model.UserModel;
-import com.fortuneboot.factory.system.UserModelFactory;
+import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.repository.system.SysRoleRepository;

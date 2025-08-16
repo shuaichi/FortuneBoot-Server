@@ -11,7 +11,7 @@ import com.fortuneboot.domain.command.user.UpdateProfileCommand;
 import com.fortuneboot.domain.command.user.UpdateUserCommand;
 import com.fortuneboot.domain.command.user.UpdateUserPasswordCommand;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.factory.system.RoleModelFactory;
+import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.repository.system.SysUserRepository;
