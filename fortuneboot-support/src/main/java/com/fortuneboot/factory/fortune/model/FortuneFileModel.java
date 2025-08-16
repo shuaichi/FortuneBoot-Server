@@ -6,7 +6,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneFileAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneFileEntity;
-import com.fortuneboot.repository.fortune.FortuneFileRepository;
+import com.fortuneboot.repository.fortune.FortuneFileRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +22,7 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneFileModel extends FortuneFileEntity {
 
-    private FortuneFileRepository fortuneFileRepository;
+    private FortuneFileRepo fortuneFileRepo;
 
     /**
      * 默认的文件名最大长度 127
@@ -34,15 +34,15 @@ public class FortuneFileModel extends FortuneFileEntity {
      */
     public static final long MAX_FILE_SIZE = 5 * Constants.MB;
 
-    public FortuneFileModel(FortuneFileRepository fortuneFileRepository) {
-        this.fortuneFileRepository = fortuneFileRepository;
+    public FortuneFileModel(FortuneFileRepo fortuneFileRepo) {
+        this.fortuneFileRepo = fortuneFileRepo;
     }
 
-    public FortuneFileModel(FortuneFileEntity entity, FortuneFileRepository fortuneFileRepository) {
+    public FortuneFileModel(FortuneFileEntity entity, FortuneFileRepo fortuneFileRepo) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneFileRepository = fortuneFileRepository;
+        this.fortuneFileRepo = fortuneFileRepo;
     }
 
     public void loadAddCommand(FortuneFileAddCommand command) {

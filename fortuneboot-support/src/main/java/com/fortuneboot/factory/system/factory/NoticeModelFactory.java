@@ -3,7 +3,7 @@ package com.fortuneboot.factory.system.factory;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysNoticeEntity;
-import com.fortuneboot.repository.system.SysNoticeRepository;
+import com.fortuneboot.repository.system.SysNoticeRepo;
 import com.fortuneboot.factory.system.model.NoticeModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class NoticeModelFactory {
 
-    private final SysNoticeRepository noticeRepository;
+    private final SysNoticeRepo noticeRepository;
 
     public NoticeModel loadById(Long noticeId) {
         SysNoticeEntity byId = noticeRepository.getById(noticeId);

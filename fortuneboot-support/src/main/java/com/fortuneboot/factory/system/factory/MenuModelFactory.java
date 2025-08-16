@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
 import com.fortuneboot.factory.system.model.MenuModel;
-import com.fortuneboot.repository.system.SysMenuRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MenuModelFactory {
 
-    private final SysMenuRepository menuRepository;
+    private final SysMenuRepo menuRepository;
 
     public MenuModel loadById(Long menuId) {
         SysMenuEntity byId = menuRepository.getById(menuId);

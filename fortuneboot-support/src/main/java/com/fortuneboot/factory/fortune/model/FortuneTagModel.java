@@ -6,7 +6,7 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneTagAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
-import com.fortuneboot.repository.fortune.FortuneTagRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,17 +22,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneTagModel extends FortuneTagEntity {
 
-    private FortuneTagRepository fortuneTagRepository;
+    private FortuneTagRepo fortuneTagRepo;
 
-    public FortuneTagModel(FortuneTagRepository repository) {
-        this.fortuneTagRepository = repository;
+    public FortuneTagModel(FortuneTagRepo repository) {
+        this.fortuneTagRepo = repository;
     }
 
-    public FortuneTagModel(FortuneTagEntity entity, FortuneTagRepository repository) {
+    public FortuneTagModel(FortuneTagEntity entity, FortuneTagRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneTagRepository = repository;
+        this.fortuneTagRepo = repository;
     }
 
     public void loadAddCommand(FortuneTagAddCommand command) {
@@ -42,7 +42,7 @@ public class FortuneTagModel extends FortuneTagEntity {
     }
 
     public void checkTagExist() {
-        FortuneTagEntity existTag = fortuneTagRepository.getByBookIdAndName(this.getBookId(), this.getTagName());
+        FortuneTagEntity existTag = fortuneTagRepo.getByBookIdAndName(this.getBookId(), this.getTagName());
         if (Objects.nonNull(existTag) && !Objects.equals(existTag.getTagId(), this.getTagId())) {
             ErrorCode.Business business;
             if (existTag.getRecycleBin()) {
@@ -74,7 +74,7 @@ public class FortuneTagModel extends FortuneTagEntity {
             if (height > 3) {
                 throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
             }
-            FortuneTagEntity parent = fortuneTagRepository.getById(parentId);
+            FortuneTagEntity parent = fortuneTagRepo.getById(parentId);
             parentId = parent.getParentId();
             height++;
         }
@@ -89,7 +89,7 @@ public class FortuneTagModel extends FortuneTagEntity {
     public void checkParentInRecycleBin() {
         Long parentId = this.getParentId();
         while (parentId != -1) {
-            FortuneTagEntity parent = fortuneTagRepository.getById(parentId);
+            FortuneTagEntity parent = fortuneTagRepo.getById(parentId);
             if (parent.getRecycleBin()) {
                 throw new ApiException(ErrorCode.Business.TAG_PARENT_IN_RECYCLE, parent.getTagName());
             }

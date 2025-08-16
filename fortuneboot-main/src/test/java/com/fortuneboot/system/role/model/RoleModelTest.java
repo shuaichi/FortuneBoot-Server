@@ -8,16 +8,16 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode.Business;
 import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.factory.system.model.RoleModel;
-import com.fortuneboot.repository.system.SysRoleMenuRepository;
-import com.fortuneboot.repository.system.SysRoleRepository;
+import com.fortuneboot.repository.system.SysRoleMenuRepo;
+import com.fortuneboot.repository.system.SysRoleRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class RoleModelTest {
 
-    private final SysRoleRepository roleService = mock(SysRoleRepository.class);
+    private final SysRoleRepo roleService = mock(SysRoleRepo.class);
 
-    private final SysRoleMenuRepository roleMenuService = mock(SysRoleMenuRepository.class);
+    private final SysRoleMenuRepo roleMenuService = mock(SysRoleMenuRepo.class);
 
     private final RoleModelFactory roleModelFactory = new RoleModelFactory(roleService, roleMenuService);
 

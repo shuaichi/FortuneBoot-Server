@@ -6,14 +6,10 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGroupModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
-import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
-import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.fortuneboot.repository.fortune.FortuneGroupRepository;
+import com.fortuneboot.repository.fortune.FortuneGroupRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,17 +22,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneGroupModel extends FortuneGroupEntity {
 
-    private FortuneGroupRepository fortuneGroupRepository;
+    private FortuneGroupRepo fortuneGroupRepo;
 
-    public FortuneGroupModel(FortuneGroupRepository repository) {
-        this.fortuneGroupRepository = repository;
+    public FortuneGroupModel(FortuneGroupRepo repository) {
+        this.fortuneGroupRepo = repository;
     }
 
-    public FortuneGroupModel(FortuneGroupEntity entity, FortuneGroupRepository repository) {
+    public FortuneGroupModel(FortuneGroupEntity entity, FortuneGroupRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneGroupRepository = repository;
+        this.fortuneGroupRepo = repository;
     }
 
     public void loadAddCommand(FortuneGroupAddCommand command) {

@@ -15,8 +15,8 @@ import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.factory.FortuneAccountFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
-import com.fortuneboot.repository.fortune.FortuneAccountRepository;
-import com.fortuneboot.repository.fortune.FortuneBillRepository;
+import com.fortuneboot.repository.fortune.FortuneAccountRepo;
+import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,20 +35,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FortuneAccountService {
 
-    private final FortuneAccountRepository fortuneAccountRepository;
+    private final FortuneAccountRepo fortuneAccountRepo;
 
     private final FortuneAccountFactory fortuneAccountFactory;
 
-    private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillRepo fortuneBillRepo;
     private final FortuneBillService fortuneBillService;
     private final FortuneGroupFactory fortuneGroupFactory;
 
     public IPage<FortuneAccountEntity> getPage(FortuneAccountQuery query) {
-        return fortuneAccountRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneAccountRepo.page(query.toPage(), query.addQueryCondition());
     }
 
     public List<FortuneAccountEntity> getEnableAccountList(Long groupId) {
-        return fortuneAccountRepository.getEnableAccountList(groupId);
+        return fortuneAccountRepo.getEnableAccountList(groupId);
     }
 
     public void add(FortuneAccountAddCommand addCommand) {
@@ -75,7 +75,7 @@ public class FortuneAccountService {
     public void remove(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
-        Boolean exist = fortuneBillRepository.existByAccount(accountId);
+        Boolean exist = fortuneBillRepo.existByAccount(accountId);
         if (exist) {
             throw new ApiException(ErrorCode.Business.ACCOUNT_USED_CANNOT_REMOVE, fortuneAccountModel.getAccountName());
         }
@@ -174,15 +174,15 @@ public class FortuneAccountService {
     }
 
     public List<FortunePieVo> getTotalAssets(Long groupId) {
-        return fortuneAccountRepository.getTotalAssets(groupId);
+        return fortuneAccountRepo.getTotalAssets(groupId);
     }
 
     public List<FortunePieVo> getTotalLiabilities(Long groupId) {
-        return fortuneAccountRepository.getTotalLiabilities(groupId);
+        return fortuneAccountRepo.getTotalLiabilities(groupId);
     }
 
     public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
-        return fortuneAccountRepository.getFortuneAssetsLiabilities(groupId);
+        return fortuneAccountRepo.getFortuneAssetsLiabilities(groupId);
     }
 
     @Transactional(rollbackFor = Exception.class)

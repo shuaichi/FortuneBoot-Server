@@ -1,32 +1,10 @@
 package com.fortuneboot.runner;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
-import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
-import com.fortuneboot.domain.entity.fortune.FortuneCurrencyEntity;
-import com.fortuneboot.repository.fortune.FortuneCurrencyRepository;
 import com.fortuneboot.service.fortune.FortuneCurrencyService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 货币模板Runner

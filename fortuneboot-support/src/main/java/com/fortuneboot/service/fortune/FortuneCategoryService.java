@@ -14,8 +14,8 @@ import com.fortuneboot.domain.query.fortune.FortuneCategoryQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneCategoryVo;
 import com.fortuneboot.factory.fortune.factory.FortuneCategoryFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
-import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
-import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
+import com.fortuneboot.repository.fortune.FortuneCategoryRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,17 +34,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FortuneCategoryService {
 
-    private final FortuneCategoryRepository fortuneCategoryRepository;
+    private final FortuneCategoryRepo fortuneCategoryRepo;
 
     private final FortuneCategoryFactory fortuneCategoryFactory;
 
-    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+    private final FortuneCategoryRelationRepo fortuneCategoryRelationRepository;
     public PageDTO<FortuneCategoryVo> getPage(FortuneCategoryQuery query) {
         // 根据是否条件查询选择不同处理逻辑
         if (!query.conditionQuery()) {
             // 无查询条件时直接获取根节点
             // 优化点：复用分页参数，避免重复创建
-            IPage<FortuneCategoryEntity> page = fortuneCategoryRepository.page(
+            IPage<FortuneCategoryEntity> page = fortuneCategoryRepo.page(
                     query.toPage(),
                     query.addQueryCondition()
                             .eq(FortuneCategoryEntity::getParentId, -1L)  // 根节点条件
@@ -63,7 +63,7 @@ public class FortuneCategoryService {
         } else {
             // 有查询条件时需要关联查找完整树结构
             // 获取所有符合条件的节点（包括非根节点）
-            List<FortuneCategoryEntity> list = fortuneCategoryRepository.list(
+            List<FortuneCategoryEntity> list = fortuneCategoryRepo.list(
                     query.addQueryCondition(Boolean.TRUE)
             );
 
@@ -71,7 +71,7 @@ public class FortuneCategoryService {
             Set<Long> rootIdSet = this.findRootIdsEfficiently(list);
 
             // 根据根节点ID进行分页查询
-            Page<FortuneCategoryEntity> result = fortuneCategoryRepository.page(
+            Page<FortuneCategoryEntity> result = fortuneCategoryRepo.page(
                     query.toPage(),
                     query.addQueryCondition()
                             .in(FortuneCategoryEntity::getCategoryId, rootIdSet)
@@ -108,7 +108,7 @@ public class FortuneCategoryService {
         // 迭代处理父节点直到没有新的父ID
         while (!pendingParentIds.isEmpty()) {
             // 批量查询父节点
-            List<FortuneCategoryEntity> parents = fortuneCategoryRepository.getByIds(
+            List<FortuneCategoryEntity> parents = fortuneCategoryRepo.getByIds(
                     new ArrayList<>(pendingParentIds)
             );
             pendingParentIds.clear();
@@ -183,7 +183,7 @@ public class FortuneCategoryService {
             }
         }
         // 单次批量查询所有子节点
-        Map<Long, List<FortuneCategoryEntity>> childrenMap = fortuneCategoryRepository.getByParentIds(new ArrayList<>(allParentIds));
+        Map<Long, List<FortuneCategoryEntity>> childrenMap = fortuneCategoryRepo.getByParentIds(new ArrayList<>(allParentIds));
 
         // 递归填充子节点（使用内存数据）
         this.fillChildrenFromCache(parentVos, childrenMap);
@@ -215,21 +215,21 @@ public class FortuneCategoryService {
     }
 
     public List<FortuneCategoryEntity> getList(FortuneCategoryQuery query) {
-        return fortuneCategoryRepository.list(query.addQueryCondition());
+        return fortuneCategoryRepo.list(query.addQueryCondition());
     }
 
     public IPage<FortuneCategoryEntity> getListPageApi(FortuneCategoryQuery query) {
-        return fortuneCategoryRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneCategoryRepo.page(query.toPage(), query.addQueryCondition());
     }
 
     public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId, Integer billType) {
         CategoryTypeEnum categoryTypeEnum = CategoryTypeEnum.getByValue(billType);
         switch (categoryTypeEnum) {
             case INCOME, EXPENSE -> {
-                return fortuneCategoryRepository.getEnableCategoryList(bookId, billType);
+                return fortuneCategoryRepo.getEnableCategoryList(bookId, billType);
             }
             case null -> {
-                return fortuneCategoryRepository.getEnableCategoryList(bookId, null);
+                return fortuneCategoryRepo.getEnableCategoryList(bookId, null);
             }
             default -> {
                 return Collections.emptyList();
@@ -269,7 +269,7 @@ public class FortuneCategoryService {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(categoryId);
         fortuneCategoryModel.checkBookId(bookId);
         fortuneCategoryModel.deleteById();
-        List<FortuneCategoryEntity> children = fortuneCategoryRepository.getByParentId(categoryId);
+        List<FortuneCategoryEntity> children = fortuneCategoryRepo.getByParentId(categoryId);
         for (FortuneCategoryEntity child : children) {
             this.remove(bookId, child.getCategoryId());
         }

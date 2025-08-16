@@ -1,11 +1,9 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
-import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,17 +19,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneCategoryRelationModel extends FortuneCategoryRelationEntity {
 
-    private FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+    private FortuneCategoryRelationRepo fortuneCategoryRelationRepo;
 
-    public FortuneCategoryRelationModel(FortuneCategoryRelationRepository repository) {
-        this.fortuneCategoryRelationRepository = repository;
+    public FortuneCategoryRelationModel(FortuneCategoryRelationRepo repository) {
+        this.fortuneCategoryRelationRepo = repository;
     }
 
-    public FortuneCategoryRelationModel(FortuneCategoryRelationEntity entity, FortuneCategoryRelationRepository repository) {
+    public FortuneCategoryRelationModel(FortuneCategoryRelationEntity entity, FortuneCategoryRelationRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneCategoryRelationRepository = repository;
+        this.fortuneCategoryRelationRepo = repository;
     }
 
     public void loadAddCommand(FortuneCategoryRelationAddCommand command) {

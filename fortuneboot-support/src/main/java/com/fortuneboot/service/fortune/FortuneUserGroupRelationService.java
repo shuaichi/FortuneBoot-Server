@@ -14,9 +14,9 @@ import com.fortuneboot.factory.fortune.factory.FortuneUserGroupRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
-import com.fortuneboot.repository.fortune.FortuneGroupRepository;
-import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.fortune.FortuneGroupRepo;
+import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
+import com.fortuneboot.repository.system.SysUserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,20 +38,20 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FortuneUserGroupRelationService {
 
-    private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+    private final FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
 
     private final FortuneUserGroupRelationFactory fortuneUserGroupRelationFactory;
 
-    private final SysUserRepository userRepository;
+    private final SysUserRepo userRepository;
 
-    private final FortuneGroupRepository fortuneGroupRepository;
+    private final FortuneGroupRepo fortuneGroupRepo;
 
     public void add(FortuneUserGroupRelationAddCommand addCommand) {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
         relationModel.loadAddCommand(addCommand);
         relationModel.checkRepeat(addCommand.getUserId());
         SystemLoginUser user = AuthenticationUtils.getSystemLoginUser();
-        Boolean exists = fortuneUserGroupRelationRepository.existsByUserId(user.getUserId());
+        Boolean exists = fortuneUserGroupRelationRepo.existsByUserId(user.getUserId());
         // 如果不存在分组，则将本分组设置为默认分组
         relationModel.setDefaultGroup(!exists);
         relationModel.insert();
@@ -82,7 +82,7 @@ public class FortuneUserGroupRelationService {
     }
 
     public List<FortuneUserGroupRelationVo> getGroupUser(Long groupId) {
-        List<FortuneUserGroupRelationEntity> userGroupList = fortuneUserGroupRelationRepository.getByGroupId(groupId);
+        List<FortuneUserGroupRelationEntity> userGroupList = fortuneUserGroupRelationRepo.getByGroupId(groupId);
         List<Long> userIds = userGroupList.stream().map(FortuneUserGroupRelationEntity::getUserId).toList();
         List<SysUserEntity> userEntityList = userRepository.listByIds(userIds);
         Map<Long, SysUserEntity> userEntityMap = userEntityList.stream().collect(Collectors.toMap(SysUserEntity::getUserId, Function.identity()));
@@ -97,10 +97,10 @@ public class FortuneUserGroupRelationService {
     }
 
     public void setDefaultGroup(Long groupId) {
-        List<FortuneUserGroupRelationEntity> groupRelationList = fortuneUserGroupRelationRepository.getByUserId();
+        List<FortuneUserGroupRelationEntity> groupRelationList = fortuneUserGroupRelationRepo.getByUserId();
         for (FortuneUserGroupRelationEntity relationEntity : groupRelationList) {
             if (Objects.equals(groupId, relationEntity.getGroupId())) {
-                FortuneGroupEntity groupEntity = fortuneGroupRepository.getById(groupId);
+                FortuneGroupEntity groupEntity = fortuneGroupRepo.getById(groupId);
                 if (!groupEntity.getEnable()) {
                     throw new ApiException(ErrorCode.Business.GROUP_CANNOT_SET_UNABLE_GROUP_DEFAULT);
                 }
@@ -109,12 +109,12 @@ public class FortuneUserGroupRelationService {
                 relationEntity.setDefaultGroup(Boolean.FALSE);
             }
         }
-        fortuneUserGroupRelationRepository.updateBatchById(groupRelationList);
+        fortuneUserGroupRelationRepo.updateBatchById(groupRelationList);
     }
 
     public Long getDefaultGroupId() {
         SystemLoginUser user = AuthenticationUtils.getSystemLoginUser();
-        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepository.getDefaultGroupByUser(user.getUserId());
+        FortuneUserGroupRelationEntity entity = fortuneUserGroupRelationRepo.getDefaultGroupByUser(user.getUserId());
         return Objects.isNull(entity)?null:entity.getGroupId();
     }
 }

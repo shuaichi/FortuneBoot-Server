@@ -7,7 +7,7 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
-import com.fortuneboot.repository.fortune.FortuneAccountRepository;
+import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,17 +21,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneAccountModel extends FortuneAccountEntity {
 
-    private FortuneAccountRepository fortuneAccountRepository;
+    private FortuneAccountRepo fortuneAccountRepo;
 
-    public FortuneAccountModel(FortuneAccountRepository repository) {
-        this.fortuneAccountRepository = repository;
+    public FortuneAccountModel(FortuneAccountRepo repository) {
+        this.fortuneAccountRepo = repository;
     }
 
-    public FortuneAccountModel(FortuneAccountEntity entity, FortuneAccountRepository repository) {
+    public FortuneAccountModel(FortuneAccountEntity entity, FortuneAccountRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneAccountRepository = repository;
+        this.fortuneAccountRepo = repository;
     }
 
     public void loadAddCommand(FortuneAccountAddCommand command) {

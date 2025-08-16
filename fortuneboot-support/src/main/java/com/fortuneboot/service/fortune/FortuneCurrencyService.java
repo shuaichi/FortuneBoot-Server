@@ -5,12 +5,11 @@ import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
 import com.fortuneboot.domain.entity.fortune.FortuneCurrencyEntity;
 import com.fortuneboot.domain.query.fortune.FortuneCurrencyQuery;
-import com.fortuneboot.repository.fortune.FortuneCurrencyRepository;
+import com.fortuneboot.repository.fortune.FortuneCurrencyRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,7 +41,7 @@ public class FortuneCurrencyService {
 
     private final ApplicationScopeBo applicationScopeBo;
 
-    private final FortuneCurrencyRepository fortuneCurrencyRepository;
+    private final FortuneCurrencyRepo fortuneCurrencyRepo;
 
     private final TaskScheduler taskScheduler;
 
@@ -58,7 +56,7 @@ public class FortuneCurrencyService {
     public void loadCurrencyTemplate() {
         List<CurrencyTemplateBo> currencyDetailsList = new ArrayList<>();
         try {
-            List<FortuneCurrencyEntity> currencyEntityList = fortuneCurrencyRepository.getAll();
+            List<FortuneCurrencyEntity> currencyEntityList = fortuneCurrencyRepo.getAll();
             if (CollectionUtils.isEmpty(currencyEntityList)) {
                 Resource resource = new ClassPathResource("currency-template.json");
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -105,7 +103,7 @@ public class FortuneCurrencyService {
             });
             // 持久化到数据库
             List<FortuneCurrencyEntity> list = BeanUtil.copyToList(currencyTemplateBoList, FortuneCurrencyEntity.class);
-            fortuneCurrencyRepository.saveOrUpdateBatch(list);
+            fortuneCurrencyRepo.saveOrUpdateBatch(list);
         } catch (Exception e) {
             log.error("刷新汇率失败: {}", e.getMessage(), e);
         }

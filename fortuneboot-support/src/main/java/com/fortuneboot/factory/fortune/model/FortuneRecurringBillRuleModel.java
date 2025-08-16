@@ -7,7 +7,7 @@ import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneRecurringBillRuleModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
-import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.quartz.CronExpression;
@@ -23,17 +23,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneRecurringBillRuleModel extends FortuneRecurringBillRuleEntity {
 
-    private final FortuneRecurringBillRuleRepository fortuneRecurringBillRuleRepository;
+    private final FortuneRecurringBillRuleRepo fortuneRecurringBillRuleRepo;
 
-    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleRepository repository) {
-        this.fortuneRecurringBillRuleRepository = repository;
+    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleRepo repository) {
+        this.fortuneRecurringBillRuleRepo = repository;
     }
 
-    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleEntity entity, FortuneRecurringBillRuleRepository repository) {
+    public FortuneRecurringBillRuleModel(FortuneRecurringBillRuleEntity entity, FortuneRecurringBillRuleRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneRecurringBillRuleRepository = repository;
+        this.fortuneRecurringBillRuleRepo = repository;
     }
 
     public void loadAddCommand(FortuneRecurringBillRuleAddCommand command) {

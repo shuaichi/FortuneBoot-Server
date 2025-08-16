@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
-import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,24 +19,24 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneRecurringBillRuleFactory {
 
-    private final FortuneRecurringBillRuleRepository fortuneRecurringBillRuleRepository;
+    private final FortuneRecurringBillRuleRepo fortuneRecurringBillRuleRepo;
 
     public FortuneRecurringBillRuleModel loadById(Long ruleId) {
-        FortuneRecurringBillRuleEntity entity = fortuneRecurringBillRuleRepository.getById(ruleId);
+        FortuneRecurringBillRuleEntity entity = fortuneRecurringBillRuleRepo.getById(ruleId);
         if (Objects.isNull(entity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, ruleId, "周期记账规则");
         }
-        return new FortuneRecurringBillRuleModel(entity, fortuneRecurringBillRuleRepository);
+        return new FortuneRecurringBillRuleModel(entity, fortuneRecurringBillRuleRepo);
     }
 
     public FortuneRecurringBillRuleModel create() {
-        return new FortuneRecurringBillRuleModel(fortuneRecurringBillRuleRepository);
+        return new FortuneRecurringBillRuleModel(fortuneRecurringBillRuleRepo);
     }
 
     public List<FortuneRecurringBillRuleModel> loadAllEnable() {
-        List<FortuneRecurringBillRuleEntity> list = fortuneRecurringBillRuleRepository.getAllEnable();
+        List<FortuneRecurringBillRuleEntity> list = fortuneRecurringBillRuleRepo.getAllEnable();
         return list.stream()
-                .map(item -> new FortuneRecurringBillRuleModel(item, fortuneRecurringBillRuleRepository))
+                .map(item -> new FortuneRecurringBillRuleModel(item, fortuneRecurringBillRuleRepo))
                 .toList();
     }
 

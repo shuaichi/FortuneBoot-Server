@@ -9,7 +9,7 @@ import com.fortuneboot.factory.system.model.NoticeModel;
 import com.fortuneboot.factory.system.factory.NoticeModelFactory;
 import com.fortuneboot.domain.query.system.NoticeQuery;
 import com.fortuneboot.domain.entity.system.SysNoticeEntity;
-import com.fortuneboot.repository.system.SysNoticeRepository;
+import com.fortuneboot.repository.system.SysNoticeRepo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NoticeApplicationService {
 
-    private final SysNoticeRepository noticeRepository;
+    private final SysNoticeRepo noticeRepository;
 
     private final NoticeModelFactory noticeModelFactory;
 

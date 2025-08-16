@@ -6,7 +6,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneGoodsKeeperEntity;
-import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepository;
+import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,14 +23,14 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneGoodsKeeperModel extends FortuneGoodsKeeperEntity {
 
-    private FortuneGoodsKeeperRepository fortuneGoodsKeeperRepository;
+    private FortuneGoodsKeeperRepo fortuneGoodsKeeperRepo;
 
-    public FortuneGoodsKeeperModel(FortuneGoodsKeeperRepository repository) {
-        this.fortuneGoodsKeeperRepository = repository;
+    public FortuneGoodsKeeperModel(FortuneGoodsKeeperRepo repository) {
+        this.fortuneGoodsKeeperRepo = repository;
     }
 
-    public FortuneGoodsKeeperModel(FortuneGoodsKeeperEntity entity, FortuneGoodsKeeperRepository repository) {
-        this.fortuneGoodsKeeperRepository = repository;
+    public FortuneGoodsKeeperModel(FortuneGoodsKeeperEntity entity, FortuneGoodsKeeperRepo repository) {
+        this.fortuneGoodsKeeperRepo = repository;
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }

@@ -12,13 +12,13 @@ import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
-import com.fortuneboot.repository.system.SysUserRepository;
+import com.fortuneboot.repository.system.SysUserRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class UserModelTest {
 
-    private final SysUserRepository userService = mock(SysUserRepository.class);
+    private final SysUserRepo userService = mock(SysUserRepo.class);
     private final RoleModelFactory roleModelFactory = mock(RoleModelFactory.class);
 
     private final UserModelFactory userModelFactory = new UserModelFactory(userService, roleModelFactory);

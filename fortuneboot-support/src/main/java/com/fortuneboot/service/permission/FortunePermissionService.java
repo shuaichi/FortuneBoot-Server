@@ -2,7 +2,6 @@ package com.fortuneboot.service.permission;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
-import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
@@ -26,11 +25,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortunePermissionService {
 
-    private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+    private final FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
 
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
-    private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillRepo fortuneBillRepo;
 
     /**
      * 验证是否是登录用户
@@ -45,7 +44,7 @@ public class FortunePermissionService {
 
     public Boolean groupVisitorPermission(Long groupId) {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
-        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepository.getByGroupId(groupId);
+        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepo.getByGroupId(groupId);
         // 未根据分组id查到分组关系，说明没有权限
         if (CollectionUtils.isEmpty(userGroupRelation)) {
             return Boolean.FALSE;
@@ -62,7 +61,7 @@ public class FortunePermissionService {
 
     public Boolean groupOwnerPermission(@NotNull(message = "分组不能为空") @Positive(message = "分组必须是正数") Long groupId) {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
-        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepository.getByGroupId(groupId);
+        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepo.getByGroupId(groupId);
         // 未根据分组id查到分组关系，说明没有权限
         if (CollectionUtils.isEmpty(userGroupRelation)) {
             return Boolean.FALSE;
@@ -80,7 +79,7 @@ public class FortunePermissionService {
 
     public Boolean groupActorPermission(@NotNull(message = "分组不能为空") @Positive(message = "分组必须是正数") Long groupId) {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
-        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepository.getByGroupId(groupId);
+        List<FortuneUserGroupRelationEntity> userGroupRelation = fortuneUserGroupRelationRepo.getByGroupId(groupId);
         // 未根据分组id查到分组关系，说明没有权限
         if (CollectionUtils.isEmpty(userGroupRelation)) {
             return Boolean.FALSE;
@@ -98,12 +97,12 @@ public class FortunePermissionService {
     }
 
     public Boolean groupOwnerPermissionByRelationId(Long relationId) {
-        FortuneUserGroupRelationEntity userGroupRelation = fortuneUserGroupRelationRepository.getById(relationId);
+        FortuneUserGroupRelationEntity userGroupRelation = fortuneUserGroupRelationRepo.getById(relationId);
         return this.groupOwnerPermission(userGroupRelation.getGroupId());
     }
 
     public Boolean bookOwnerPermission(@NotNull(message = "账本不能为空") @Positive(message = "账本必须是正数") Long bookId) {
-        FortuneBookEntity book = fortuneBookRepository.getById(bookId);
+        FortuneBookEntity book = fortuneBookRepo.getById(bookId);
         // 未查找账本，则说明没权限
         if (ObjectUtil.isEmpty(book)) {
             return Boolean.FALSE;
@@ -112,7 +111,7 @@ public class FortunePermissionService {
     }
 
     public Boolean bookActorPermission(@NotNull(message = "账本不能为空") @Positive(message = "账本必须是正数") Long bookId) {
-        FortuneBookEntity book = fortuneBookRepository.getById(bookId);
+        FortuneBookEntity book = fortuneBookRepo.getById(bookId);
         // 未查找账本，则说明没权限
         if (ObjectUtil.isEmpty(book)) {
             return Boolean.FALSE;
@@ -121,7 +120,7 @@ public class FortunePermissionService {
     }
 
     public Boolean bookVisitorPermission(@NotNull(message = "账本不能为空") @Positive(message = "账本必须是正数") Long bookId) {
-        FortuneBookEntity book = fortuneBookRepository.getById(bookId);
+        FortuneBookEntity book = fortuneBookRepo.getById(bookId);
         // 未查找账本，则说明没权限
         if (ObjectUtil.isEmpty(book)) {
             return Boolean.FALSE;
@@ -130,7 +129,7 @@ public class FortunePermissionService {
     }
 
     public Boolean billVisitorPermission(@NotNull(message = "账单不能为空") @Positive(message = "账单必须是正数") Long billId) {
-        FortuneBillEntity billEntity = fortuneBillRepository.getById(billId);
+        FortuneBillEntity billEntity = fortuneBillRepo.getById(billId);
         if (ObjectUtil.isEmpty(billEntity)) {
             return Boolean.FALSE;
         }

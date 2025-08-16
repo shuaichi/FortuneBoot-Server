@@ -3,7 +3,7 @@ package com.fortuneboot.factory.fortune.model;
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
-import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,17 +19,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneTagRelationModel extends FortuneTagRelationEntity {
 
-    private final FortuneTagRelationRepository fortuneTagRelationRepository;
+    private final FortuneTagRelationRepo fortuneTagRelationRepo;
 
-    public FortuneTagRelationModel(FortuneTagRelationRepository repository) {
-        this.fortuneTagRelationRepository = repository;
+    public FortuneTagRelationModel(FortuneTagRelationRepo repository) {
+        this.fortuneTagRelationRepo = repository;
     }
 
-    public FortuneTagRelationModel(FortuneTagRelationEntity entity, FortuneTagRelationRepository repository) {
+    public FortuneTagRelationModel(FortuneTagRelationEntity entity, FortuneTagRelationRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneTagRelationRepository = repository;
+        this.fortuneTagRelationRepo = repository;
     }
 
     public void loadAddCommand(FortuneTagRelationAddCommand command) {

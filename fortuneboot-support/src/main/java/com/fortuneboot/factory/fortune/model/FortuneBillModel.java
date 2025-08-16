@@ -6,7 +6,7 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
-import com.fortuneboot.repository.fortune.FortuneBillRepository;
+import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
@@ -22,17 +22,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneBillModel extends FortuneBillEntity {
 
-    private final FortuneBillRepository fortuneBillRepository;
+    private final FortuneBillRepo fortuneBillRepo;
 
-    public FortuneBillModel(FortuneBillRepository repository) {
-        this.fortuneBillRepository = repository;
+    public FortuneBillModel(FortuneBillRepo repository) {
+        this.fortuneBillRepo = repository;
     }
 
-    public FortuneBillModel(FortuneBillEntity entity, FortuneBillRepository repository) {
+    public FortuneBillModel(FortuneBillEntity entity, FortuneBillRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneBillRepository = repository;
+        this.fortuneBillRepo = repository;
     }
 
     public void loadAddCommand(FortuneBillAddCommand addCommand) {

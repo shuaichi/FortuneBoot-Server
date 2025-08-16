@@ -8,8 +8,8 @@ import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillRuleEntity;
 import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
 import com.fortuneboot.factory.fortune.factory.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
-import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepository;
-import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepository;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepo;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepo;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,20 +32,20 @@ import java.util.List;
 public class FortuneRecurringBillService {
 
     private final FortuneRecurringBillRuleFactory fortuneRecurringBillRuleFactory;
-    private final FortuneRecurringBillRuleRepository fortuneRecurringBillRuleRepository;
-    private final FortuneRecurringBillLogRepository fortuneRecurringBillLogRepository;
+    private final FortuneRecurringBillRuleRepo fortuneRecurringBillRuleRepo;
+    private final FortuneRecurringBillLogRepo fortuneRecurringBillLogRepo;
 
     private final FortuneRecurringBillScheduleService scheduleService;
     private final FortuneRecurringBillRecoveryService recoveryService;
 
     public IPage<FortuneRecurringBillRuleEntity> getRulePage(FortuneRecurringBillRuleQuery query) {
-        return fortuneRecurringBillRuleRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneRecurringBillRuleRepo.page(query.toPage(), query.addQueryCondition());
     }
 
     public List<FortuneRecurringBillLogEntity> getLogByRuleId(Long bookId, Long ruleId) {
         FortuneRecurringBillRuleModel ruleModel = fortuneRecurringBillRuleFactory.loadById(ruleId);
         ruleModel.checkBookId(bookId);
-        return fortuneRecurringBillLogRepository.getByRuleId(ruleId);
+        return fortuneRecurringBillLogRepo.getByRuleId(ruleId);
     }
 
     @Transactional(rollbackFor = Exception.class)

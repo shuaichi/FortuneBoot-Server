@@ -39,7 +39,7 @@ public class FortuneBookService {
 
     private final FortuneBookFactory fortuneBookFactory;
 
-    private final FortuneBookRepository fortuneBookRepository;
+    private final FortuneBookRepo fortuneBookRepo;
 
     private final FortuneGroupFactory fortuneGroupFactory;
 
@@ -47,24 +47,24 @@ public class FortuneBookService {
 
     private final FortuneTagService fortuneTagService;
 
-    private final FortuneTagRepository fortuneTagRepository;
+    private final FortuneTagRepo fortuneTagRepo;
 
     private final FortuneCategoryService fortuneCategoryService;
 
     private final FortunePayeeService fortunePayeeService;
 
-    private final FortuneCategoryRepository fortuneCategoryRepository;
+    private final FortuneCategoryRepo fortuneCategoryRepo;
 
-    private final FortunePayeeRepository fortunePayeeRepository;
+    private final FortunePayeeRepo fortunePayeeRepo;
 
     private final FortuneBillService fortuneBillService;
 
     public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
-        return fortuneBookRepository.page(query.toPage(), query.addQueryCondition());
+        return fortuneBookRepo.page(query.toPage(), query.addQueryCondition());
     }
 
     public List<FortuneBookEntity> getEnableBookList(Long groupId) {
-        return fortuneBookRepository.getEnableBookList(groupId);
+        return fortuneBookRepo.getEnableBookList(groupId);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -186,9 +186,9 @@ public class FortuneBookService {
     public void remove(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
         fortuneBookModel.deleteById();
-        fortuneTagRepository.removeByBookId(bookId);
-        fortuneCategoryRepository.removeByBookId(bookId);
-        fortunePayeeRepository.removeByBookId(bookId);
+        fortuneTagRepo.removeByBookId(bookId);
+        fortuneCategoryRepo.removeByBookId(bookId);
+        fortunePayeeRepo.removeByBookId(bookId);
         fortuneBillService.removeByBookId(bookId);
     }
 
@@ -206,7 +206,7 @@ public class FortuneBookService {
     }
 
     public List<FortuneBookEntity> getByGroupId(Long groupId) {
-        return fortuneBookRepository.getByGroupId(groupId);
+        return fortuneBookRepo.getByGroupId(groupId);
     }
 
     public void enable(Long bookId) {
@@ -227,15 +227,15 @@ public class FortuneBookService {
     public void removeByGroupId(Long groupId) {
         List<FortuneBookEntity> bookList = this.getByGroupId(groupId);
         List<Long> bookIds = bookList.stream().map(FortuneBookEntity::getBookId).toList();
-        fortuneBookRepository.removeBatchByIds(bookIds);
-        fortuneTagRepository.removeByBookIds(bookIds);
-        fortuneCategoryRepository.removeByBookIds(bookIds);
-        fortunePayeeRepository.removeByBookIds(bookIds);
+        fortuneBookRepo.removeBatchByIds(bookIds);
+        fortuneTagRepo.removeByBookIds(bookIds);
+        fortuneCategoryRepo.removeByBookIds(bookIds);
+        fortunePayeeRepo.removeByBookIds(bookIds);
         fortuneBillService.removeByBookIds(bookIds);
     }
 
     public FortuneBookEntity getBookById(Long bookId) {
-        return fortuneBookRepository.getById(bookId);
+        return fortuneBookRepo.getById(bookId);
     }
 
 }

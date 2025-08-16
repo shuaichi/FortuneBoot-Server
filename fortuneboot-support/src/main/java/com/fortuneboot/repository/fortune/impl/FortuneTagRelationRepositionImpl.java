@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneTagRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
-import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  **/
 @Service
 @AllArgsConstructor
-public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRelationMapper, FortuneTagRelationEntity> implements FortuneTagRelationRepository {
+public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRelationMapper, FortuneTagRelationEntity> implements FortuneTagRelationRepo {
 
     private final FortuneTagRelationMapper fortuneTagRelationMapper;
 

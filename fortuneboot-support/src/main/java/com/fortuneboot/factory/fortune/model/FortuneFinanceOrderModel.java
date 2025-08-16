@@ -2,7 +2,7 @@ package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepository;
+import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 
 import java.util.Objects;
 
@@ -14,16 +14,16 @@ import java.util.Objects;
  **/
 public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
 
-    private final FortuneFinanceOrderRepository fortuneFinanceOrderRepository;
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
 
-    public FortuneFinanceOrderModel(FortuneFinanceOrderRepository fortuneFinanceOrderRepository) {
-        this.fortuneFinanceOrderRepository = fortuneFinanceOrderRepository;
+    public FortuneFinanceOrderModel(FortuneFinanceOrderRepo fortuneFinanceOrderRepo) {
+        this.fortuneFinanceOrderRepo = fortuneFinanceOrderRepo;
     }
 
-    public FortuneFinanceOrderModel(FortuneFinanceOrderRepository fortuneFinanceOrderRepository,FortuneFinanceOrderEntity entity) {
+    public FortuneFinanceOrderModel(FortuneFinanceOrderRepo fortuneFinanceOrderRepo, FortuneFinanceOrderEntity entity) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneFinanceOrderRepository = fortuneFinanceOrderRepository;
+        this.fortuneFinanceOrderRepo = fortuneFinanceOrderRepo;
     }
 }

@@ -12,13 +12,13 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.factory.system.factory.ConfigModelFactory;
 import com.fortuneboot.factory.system.model.ConfigModel;
-import com.fortuneboot.repository.system.SysConfigRepository;
+import com.fortuneboot.repository.system.SysConfigRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class ConfigModelTest {
 
-    private final SysConfigRepository configService = mock(SysConfigRepository.class);
+    private final SysConfigRepo configService = mock(SysConfigRepo.class);
 
     private final ConfigModelFactory configModelFactory = new ConfigModelFactory(configService);
 

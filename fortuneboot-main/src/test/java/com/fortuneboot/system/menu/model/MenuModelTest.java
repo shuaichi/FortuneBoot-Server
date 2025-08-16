@@ -8,7 +8,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode.Business;
 import com.fortuneboot.factory.system.factory.MenuModelFactory;
 import com.fortuneboot.factory.system.model.MenuModel;
-import com.fortuneboot.repository.system.SysMenuRepository;
+import com.fortuneboot.repository.system.SysMenuRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -17,7 +17,7 @@ class MenuModelTest {
 
     private static final long MENU_ID = 1L;
 
-    private final SysMenuRepository menuService = mock(SysMenuRepository.class);
+    private final SysMenuRepo menuService = mock(SysMenuRepo.class);
 
     private final MenuModelFactory menuModelFactory = new MenuModelFactory(menuService);
 

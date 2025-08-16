@@ -8,8 +8,8 @@ import com.fortuneboot.common.utils.ip.IpRegionUtil;
 import com.fortuneboot.common.enums.common.LoginStatusEnum;
 import com.fortuneboot.domain.entity.system.SysLoginInfoEntity;
 import com.fortuneboot.domain.entity.system.SysOperationLogEntity;
-import com.fortuneboot.repository.system.SysLoginInfoRepository;
-import com.fortuneboot.repository.system.SysOperationLogRepository;
+import com.fortuneboot.repository.system.SysLoginInfoRepo;
+import com.fortuneboot.repository.system.SysOperationLogRepo;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,7 +57,7 @@ public class AsyncTaskFactory {
             loginInfo.setLoginTime(DateUtil.date());
             loginInfo.setStatus(loginStatusEnum.getValue());
             // 插入数据
-            SpringUtil.getBean(SysLoginInfoRepository.class).save(loginInfo);
+            SpringUtil.getBean(SysLoginInfoRepo.class).save(loginInfo);
         };
     }
 
@@ -71,7 +71,7 @@ public class AsyncTaskFactory {
         return () -> {
             // 远程查询操作地点
             operationLog.setOperatorLocation(IpRegionUtil.getBriefLocationByIp(operationLog.getOperatorIp()));
-            SpringUtil.getBean(SysOperationLogRepository.class).save(operationLog);
+            SpringUtil.getBean(SysOperationLogRepo.class).save(operationLog);
         };
     }
 

@@ -6,7 +6,7 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
-import com.fortuneboot.repository.fortune.FortuneCategoryRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -22,17 +22,17 @@ import java.util.Objects;
 @EqualsAndHashCode(callSuper = true)
 public class FortuneCategoryModel extends FortuneCategoryEntity {
 
-    private FortuneCategoryRepository fortuneCategoryRepository;
+    private FortuneCategoryRepo fortuneCategoryRepo;
 
-    public FortuneCategoryModel(FortuneCategoryRepository repository) {
-        this.fortuneCategoryRepository = repository;
+    public FortuneCategoryModel(FortuneCategoryRepo repository) {
+        this.fortuneCategoryRepo = repository;
     }
 
-    public FortuneCategoryModel(FortuneCategoryEntity entity, FortuneCategoryRepository repository) {
+    public FortuneCategoryModel(FortuneCategoryEntity entity, FortuneCategoryRepo repository) {
         if (Objects.nonNull(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
-        this.fortuneCategoryRepository = repository;
+        this.fortuneCategoryRepo = repository;
     }
 
     public void loadAddCommand(FortuneCategoryAddCommand command) {
@@ -55,7 +55,7 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
             if (height > 3) {
                 throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
             }
-            FortuneCategoryEntity parent = fortuneCategoryRepository.getById(parentId);
+            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(parentId);
             parentId = parent.getParentId();
             height++;
         }
@@ -76,7 +76,7 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
     public void checkParentInRecycleBin() {
         Long parentId = this.getParentId();
         while (parentId != -1) {
-            FortuneCategoryEntity parent = fortuneCategoryRepository.getById(parentId);
+            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(parentId);
             if (parent.getRecycleBin()) {
                 throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_IN_RECYCLE,parent.getCategoryName());
             }

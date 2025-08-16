@@ -5,8 +5,8 @@ import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysRoleMenuEntity;
 import com.fortuneboot.factory.system.model.RoleModel;
-import com.fortuneboot.repository.system.SysRoleMenuRepository;
-import com.fortuneboot.repository.system.SysRoleRepository;
+import com.fortuneboot.repository.system.SysRoleMenuRepo;
+import com.fortuneboot.repository.system.SysRoleRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RoleModelFactory {
 
-    private final SysRoleRepository roleRepository;
+    private final SysRoleRepo roleRepository;
 
-    private final SysRoleMenuRepository roleMenuRepository;
+    private final SysRoleMenuRepo roleMenuRepository;
 
     public RoleModel loadById(Long roleId) {
         SysRoleEntity byId = roleRepository.getById(roleId);

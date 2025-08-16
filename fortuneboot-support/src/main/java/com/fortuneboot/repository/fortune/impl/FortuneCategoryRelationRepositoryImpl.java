@@ -1,13 +1,11 @@
 package com.fortuneboot.repository.fortune.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fortuneboot.common.enums.common.DeleteEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneCategoryRelationMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
-import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
  **/
 @Service
 @AllArgsConstructor
-public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCategoryRelationMapper, FortuneCategoryRelationEntity> implements FortuneCategoryRelationRepository {
+public class FortuneCategoryRelationRepositoryImpl extends ServiceImpl<FortuneCategoryRelationMapper, FortuneCategoryRelationEntity> implements FortuneCategoryRelationRepo {
 
     private final FortuneCategoryRelationMapper fortuneCategoryRelationMapper;
 

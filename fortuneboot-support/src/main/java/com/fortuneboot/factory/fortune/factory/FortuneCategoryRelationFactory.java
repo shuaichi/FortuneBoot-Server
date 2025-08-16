@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryRelationModel;
-import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +18,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneCategoryRelationFactory {
 
-    private final FortuneCategoryRelationRepository fortuneCategoryRelationRepository;
+    private final FortuneCategoryRelationRepo fortuneCategoryRelationRepo;
 
     public FortuneCategoryRelationModel create(){
-        return new FortuneCategoryRelationModel(fortuneCategoryRelationRepository);
+        return new FortuneCategoryRelationModel(fortuneCategoryRelationRepo);
     }
 
     public FortuneCategoryRelationModel loadById(Long groupId) {
-        FortuneCategoryRelationEntity entity = fortuneCategoryRelationRepository.getById(groupId);
+        FortuneCategoryRelationEntity entity = fortuneCategoryRelationRepo.getById(groupId);
         if (Objects.isNull(entity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, groupId, "分类关系");
         }
-        return new FortuneCategoryRelationModel(entity, fortuneCategoryRelationRepository);
+        return new FortuneCategoryRelationModel(entity, fortuneCategoryRelationRepo);
     }
 }

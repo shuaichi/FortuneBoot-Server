@@ -4,7 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.factory.fortune.model.FortuneUserGroupRelationModel;
-import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepository;
+import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +20,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FortuneUserGroupRelationFactory {
 
-    private final FortuneUserGroupRelationRepository fortuneUserGroupRelationRepository;
+    private final FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
 
     public FortuneUserGroupRelationModel loadById(Long userGroupRelationId) {
-        FortuneUserGroupRelationEntity userGroupRelationEntity = fortuneUserGroupRelationRepository.getById(userGroupRelationId);
+        FortuneUserGroupRelationEntity userGroupRelationEntity = fortuneUserGroupRelationRepo.getById(userGroupRelationId);
         if (Objects.isNull(userGroupRelationEntity)) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, userGroupRelationId, "分组关系");
         }
-        return new FortuneUserGroupRelationModel(userGroupRelationEntity, fortuneUserGroupRelationRepository);
+        return new FortuneUserGroupRelationModel(userGroupRelationEntity, fortuneUserGroupRelationRepo);
     }
 
     public FortuneUserGroupRelationModel create(){
-        return new FortuneUserGroupRelationModel(fortuneUserGroupRelationRepository);
+        return new FortuneUserGroupRelationModel(fortuneUserGroupRelationRepo);
     }
 }

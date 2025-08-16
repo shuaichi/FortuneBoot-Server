@@ -2,7 +2,7 @@ package com.fortuneboot.customize.recurringBillLog;
 
 import com.fortuneboot.common.enums.fortune.RecurringBillLogStatusEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneRecurringBillLogEntity;
-import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepository;
+import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,7 +25,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class RecurringBillLogAspect {
 
-    private final FortuneRecurringBillLogRepository fortuneRecurringBillLogRepository;
+    private final FortuneRecurringBillLogRepo fortuneRecurringBillLogRepo;
 
     @Around("@annotation(recurringBillLog)")
     public Object around(ProceedingJoinPoint joinPoint, RecurringBillLog recurringBillLog) throws Throwable {
@@ -109,7 +109,7 @@ public class RecurringBillLogAspect {
             logEntity.setErrorMsg(errorMsg);
             logEntity.setExecutionDuration(duration);
 
-            fortuneRecurringBillLogRepository.save(logEntity);
+            fortuneRecurringBillLogRepo.save(logEntity);
         } catch (Exception e) {
             log.error("记录周期记账执行日志失败", e);
         }
