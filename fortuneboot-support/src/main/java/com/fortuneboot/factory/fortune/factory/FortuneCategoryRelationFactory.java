@@ -1,11 +1,9 @@
-package com.fortuneboot.factory.fortune;
+package com.fortuneboot.factory.fortune.factory;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
-import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryRelationModel;
-import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

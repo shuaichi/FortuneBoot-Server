@@ -1,21 +1,16 @@
 package com.fortuneboot.service.fortune;
 
-import cn.hutool.core.map.MapUtil;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
-import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
-import com.fortuneboot.factory.fortune.FortuneCategoryFactory;
-import com.fortuneboot.factory.fortune.FortuneCategoryRelationFactory;
-import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
+import com.fortuneboot.factory.fortune.factory.FortuneCategoryFactory;
+import com.fortuneboot.factory.fortune.factory.FortuneCategoryRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryRelationModel;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 分类账单关系

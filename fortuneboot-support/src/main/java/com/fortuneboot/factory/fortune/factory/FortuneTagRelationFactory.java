@@ -1,4 +1,4 @@
-package com.fortuneboot.factory.fortune;
+package com.fortuneboot.factory.fortune.factory;
 
 import com.fortuneboot.factory.fortune.model.FortuneTagRelationModel;
 import com.fortuneboot.repository.fortune.FortuneTagRelationRepository;

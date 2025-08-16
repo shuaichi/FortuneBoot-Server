@@ -8,7 +8,7 @@ import com.fortuneboot.domain.command.fortune.FortunePayeeAddCommand;
 import com.fortuneboot.domain.command.fortune.FortunePayeeModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
-import com.fortuneboot.factory.fortune.FortunePayeeFactory;
+import com.fortuneboot.factory.fortune.factory.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortuneBillRepository;
 import com.fortuneboot.repository.fortune.FortunePayeeRepository;

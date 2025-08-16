@@ -1,4 +1,4 @@
-package com.fortuneboot.factory.fortune;
+package com.fortuneboot.factory.fortune.factory;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;

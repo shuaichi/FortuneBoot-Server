@@ -3,7 +3,7 @@ package com.fortuneboot.service.fortune.recurringBill;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.customize.recurringBillLog.RecurringBillLog;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
-import com.fortuneboot.factory.fortune.FortuneRecurringBillRuleFactory;
+import com.fortuneboot.factory.fortune.factory.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import lombok.AllArgsConstructor;

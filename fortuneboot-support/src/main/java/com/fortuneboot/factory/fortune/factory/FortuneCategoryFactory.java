@@ -1,4 +1,4 @@
-package com.fortuneboot.factory.fortune;
+package com.fortuneboot.factory.fortune.factory;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
@@ -9,11 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author zhangchi118

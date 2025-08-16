@@ -8,7 +8,7 @@ import com.fortuneboot.common.enums.common.TrueFalseEnum;
 import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.factory.system.UserModelFactory;
+import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
 import com.fortuneboot.repository.system.SysConfigRepository;
 import com.fortuneboot.repository.system.SysRoleRepository;
