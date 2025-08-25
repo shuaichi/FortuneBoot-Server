@@ -30,7 +30,7 @@ public class FortuneFinanceOrderEntity extends BaseEntity<FortuneFinanceOrderEnt
 
     @Schema(description = "账本id")
     @TableField("book_id")
-    private Long booId;
+    private Long bookId;
 
     @Schema(description = "标题")
     @TableField("title")

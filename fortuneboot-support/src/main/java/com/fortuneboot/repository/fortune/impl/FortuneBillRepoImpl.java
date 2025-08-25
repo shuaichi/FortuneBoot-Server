@@ -89,4 +89,18 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     public List<FortunePieVo> getPayeeInclude(CategoryTypeEnum typeEnum, PayeeIncludeQuery query) {
         return fortuneBillMapper.getPayeeInclude(typeEnum.getValue(), query);
     }
+
+    @Override
+    public Boolean existByOrderId(Long orderId) {
+        LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
+        queryWrapper.eq(FortuneBillEntity::getOrderId, orderId);
+        return this.exists(queryWrapper);
+    }
+
+    @Override
+    public List<FortuneBillEntity> getByOrderId(Long orderId) {
+        LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
+        queryWrapper.eq(FortuneBillEntity::getOrderId, orderId);
+        return this.list(queryWrapper);
+    }
 }
