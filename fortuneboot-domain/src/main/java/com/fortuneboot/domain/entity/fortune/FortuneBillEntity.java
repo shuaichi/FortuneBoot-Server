@@ -74,6 +74,10 @@ public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
     @TableField("include")
     private Boolean include;
 
+    @Schema(description = "单据ID")
+    @TableField("order_id")
+    private Long orderId;
+
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;

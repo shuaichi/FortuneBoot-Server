@@ -109,4 +109,20 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
      * @return
      */
     List<FortunePieVo> getPayeeInclude(CategoryTypeEnum categoryTypeEnum, PayeeIncludeQuery query);
+
+    /**
+     * 根据orderId查询是否存在
+     *
+     * @param orderId
+     * @return
+     */
+    Boolean existByOrderId(Long orderId);
+
+    /**
+     * 根据单据id查询
+     *
+     * @param orderId
+     * @return
+     */
+    List<FortuneBillEntity> getByOrderId(Long orderId);
 }

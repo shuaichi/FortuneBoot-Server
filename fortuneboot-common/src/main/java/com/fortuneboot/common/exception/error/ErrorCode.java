@@ -214,6 +214,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BOOK_CANNOT_DISABLE_DEFAULT_BOOK(22005, "不能停用默认账本", "Business.BOOK_CANNOT_DISABLE_DEFAULT_BOOK"),
 
+        BOOK_ID_CAN_NOT_BE_NULL(22006, "账本ID不能为空", "Business.BOOK_ID_CAN_NOT_BE_NULL"),
+
         // ---------------------------------- TAG -----------------------------------------------
 
         TAG_ADD_EXIST(23001, "标签{}已存在，请勿重复添加", "Business.TAG_ADD_EXIST"),
@@ -307,6 +309,14 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         GOODS_KEEPER_STATUS_NEED_RETIRED_DATE(29003, "该状态退役日期必填", "Business.GOODS_KEEPER_STATUS_NEED_RETIRED_DATE"),
 
+        // ---------------------------------- ORDER -----------------------------------------------,
+
+        ORDER_CLOSE_CAN_NOT_MODIFY(30001,"单据已关闭，不能修改；" ,"Business.ORDER_CLOSE_ERROR" ),
+
+        ORDER_BILL_EXISTED_CAN_NOT_REMOVE(30002,"单据已挂靠账单，不能删除；" , "Business.ORDER_BILL_EXISTED_CAN_NOT_REMOVE"),
+
+        ORDER_BOOK_NOT_MATCH(30003,"单据与账本不匹配","Business.ORDER_BOOK_NOT_MATCH"),
+
         // ---------------------------------- RECURRING_BILL -----------------------------------------------,
 
         RECURRING_BILL_EXECUTION_FAILED(31001, "周期记账执行失败，规则ID为{}", "Business.RECURRING_BILL_EXECUTION_FAILED"),
@@ -326,7 +336,6 @@ public enum ErrorCode implements ErrorCodeInterface {
         RECURRING_BILL_INIT_FAILED(31008,"初始化周期记账失败，规则ID为：{}","Business.RECURRING_BILL_INIT_FAILED"),
 
         ;
-
 
         private final int code;
         private final String msg;

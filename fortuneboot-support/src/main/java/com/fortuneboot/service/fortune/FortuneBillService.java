@@ -190,7 +190,6 @@ public class FortuneBillService {
         // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
-        fortuneBillModel.checkBookId(fortuneBillModel.getBookId());
 
         // 获取账本信息以确定默认币种
         FortuneBookModel bookModel = fortuneBookFactory.loadById(addCommand.getBookId());

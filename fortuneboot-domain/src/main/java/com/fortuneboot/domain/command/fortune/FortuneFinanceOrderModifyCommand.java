@@ -1,5 +1,7 @@
 package com.fortuneboot.domain.command.fortune;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 /**
@@ -9,6 +11,12 @@ import lombok.Data;
  * @date 2025/8/16 18:21
  **/
 @Data
-public class FortuneFinanceOrderModifyCommand {
+public class FortuneFinanceOrderModifyCommand extends FortuneFinanceOrderAddCommand{
 
+    /**
+     * id
+     */
+    @NotNull
+    @Positive
+    private Long orderId;
 }

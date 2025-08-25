@@ -22,6 +22,12 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
     ADJUST(4, "余额调整"),
     PROFIT(5, "盈利"),
     LOSS(6, "亏损"),
+    ADVANCE(7, "垫付"),
+    REIMBURSE(8, "报销"),
+    LOAN_OUT(9, "借出"),
+    LOAN_RECOVER(10, "收回"),
+    LOAN_IN(11, "借入"),
+    LOAN_REPAY(12, "归还"),
     ;
 
     private final Integer value;
