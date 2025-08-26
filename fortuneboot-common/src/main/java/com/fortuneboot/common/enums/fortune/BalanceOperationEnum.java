@@ -11,8 +11,8 @@ import lombok.Getter;
  **/
 @Getter
 public enum BalanceOperationEnum implements BasicEnum<Integer> {
-    ADD(1, "余额增加"),
-    SUBTRACT(2, "余额减少"),
+    INCREASE(1, "余额增加"),
+    DECREASE(2, "余额减少"),
     ;
 
 
