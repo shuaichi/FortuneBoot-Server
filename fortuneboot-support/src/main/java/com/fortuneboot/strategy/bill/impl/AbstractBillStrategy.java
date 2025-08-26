@@ -70,7 +70,7 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
      * 汇率校验
      */
     private void validateExchangeRate(BigDecimal rate, String currency) {
-        if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0) {
+        if (Objects.isNull(rate) || rate.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ApiException(ErrorCode.Business.INVALID_EXCHANGE_RATE, currency, rate);
         }
     }

@@ -17,7 +17,7 @@ import java.util.Objects;
  **/
 @Component
 @AllArgsConstructor
-public class IncomeBillProcessStrategy extends AbstractBillStrategy {
+public class IncomeBillStrategy extends AbstractBillStrategy {
 
     @Override
     public void confirmBalance(BillStrategyContext context) {
@@ -49,11 +49,6 @@ public class IncomeBillProcessStrategy extends AbstractBillStrategy {
     @Override
     public BillTypeEnum getSupportedBillType() {
         return BillTypeEnum.INCOME;
-    }
-
-    @Override
-    public void validateBusiness(BillStrategyContext context) {
-        // 收入账单特有的业务校验
     }
 
 }

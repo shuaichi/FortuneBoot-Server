@@ -40,8 +40,8 @@ public class FortuneAccountService {
     private final FortuneAccountFactory fortuneAccountFactory;
 
     private final FortuneBillRepo fortuneBillRepo;
+
     private final FortuneBillService fortuneBillService;
-    private final FortuneGroupFactory fortuneGroupFactory;
 
     public IPage<FortuneAccountEntity> getPage(FortuneAccountQuery query) {
         return fortuneAccountRepo.page(query.toPage(), query.addQueryCondition());
@@ -188,27 +188,10 @@ public class FortuneAccountService {
     @Transactional(rollbackFor = Exception.class)
     public void balanceAdjust(FortuneAccountAdjustCommand adjustCommand) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(adjustCommand.getAccountId());
-        fortuneBillService.add(this.initBillAddCommand(adjustCommand, fortuneAccountModel));
+        FortuneBillAddCommand fortuneBillAddCommand = fortuneAccountModel.loadAdjustCommand(adjustCommand);
+        fortuneBillService.add(fortuneBillAddCommand);
         fortuneAccountModel.setBalance(adjustCommand.getBalance());
         fortuneAccountModel.updateById();
     }
 
-    private FortuneBillAddCommand initBillAddCommand(FortuneAccountAdjustCommand adjustCommand, FortuneAccountModel fortuneAccountModel) {
-        BigDecimal balance = adjustCommand.getBalance().subtract(fortuneAccountModel.getBalance());
-        if (BigDecimal.ZERO.compareTo(balance) == 0) {
-            throw new ApiException(ErrorCode.Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY);
-        }
-        FortuneBillAddCommand fortuneBill = new FortuneBillAddCommand();
-        fortuneBill.setAmount(balance);
-        fortuneBill.setConvertedAmount(balance);
-        fortuneBill.setBillType(BillTypeEnum.ADJUST.getValue());
-        fortuneBill.setAccountId(adjustCommand.getAccountId());
-        fortuneBill.setBookId(adjustCommand.getBookId());
-        fortuneBill.setTradeTime(adjustCommand.getTradeTime());
-        fortuneBill.setTitle(StringUtils.isBlank(adjustCommand.getTitle()) ? "余额调整" : adjustCommand.getTitle());
-        fortuneBill.setRemark(adjustCommand.getRemark());
-        fortuneBill.setConfirm(Boolean.TRUE);
-        fortuneBill.setInclude(Boolean.TRUE);
-        return fortuneBill;
-    }
 }
