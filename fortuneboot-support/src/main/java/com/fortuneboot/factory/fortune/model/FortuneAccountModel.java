@@ -85,4 +85,10 @@ public class FortuneAccountModel extends FortuneAccountEntity {
             throw new ApiException(ErrorCode.Business.ACCOUNT_CANNOT_TRANSFER_OUT, this.getAccountName());
         }
     }
+
+    public void checkEnable() {
+        if (!this.getEnable()){
+            throw new ApiException(ErrorCode.Business.BILL_ACCOUNT_DISABLE, account.getAccountName());
+        }
+    }
 }

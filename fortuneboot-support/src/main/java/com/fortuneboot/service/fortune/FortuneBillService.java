@@ -22,6 +22,9 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.factory.fortune.factory.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
+import com.fortuneboot.strategy.bill.BillProcessStrategy;
+import com.fortuneboot.strategy.bill.BillStrategyContext;
+import com.fortuneboot.strategy.bill.BillStrategyFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -88,6 +91,10 @@ public class FortuneBillService {
     private final FortuneTagFactory fortuneTagFactory;
     private final FortuneCategoryFactory fortuneCategoryFactory;
     private final FortuneBookFactory fortuneBookFactory;
+
+
+    private final BillStrategyFactory strategyFactory;
+
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepo.getPage(query.toPage(), query.addQueryCondition());
@@ -191,9 +198,6 @@ public class FortuneBillService {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
 
-        // 获取账本信息以确定默认币种
-        FortuneBookModel bookModel = fortuneBookFactory.loadById(addCommand.getBookId());
-
         // 收款人校验提前
         if (Objects.nonNull(addCommand.getPayeeId())) {
             FortunePayeeModel payee = fortunePayeeFactory.loadById(addCommand.getPayeeId());
@@ -201,39 +205,29 @@ public class FortuneBillService {
             fortuneBillModel.checkPayeeEnable(payee);
         }
 
-        // 使用枚举类型直接比较
-        BillTypeEnum billType = BillTypeEnum.getByValue(addCommand.getBillType());
-        if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
-            // 金额计算优化
-            BigDecimal amount = addCommand.getCategoryAmountPair().stream()
-                    .map(Pair::getValue)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            fortuneBillModel.setAmount(amount);
+        // 构建策略执行上下文
+        BillStrategyContext context = this.buildContext(fortuneBillModel);
 
-            // 对于非转账交易，需要根据账户币种和账本默认币种进行转换
-            if (Objects.nonNull(fortuneBillModel.getAccountId())) {
-                FortuneAccountModel accountModel = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-                BigDecimal convertedAmount = this.convertCurrency(
-                        amount,
-                        accountModel.getCurrencyCode(),
-                        bookModel.getDefaultCurrency(),
-                        applicationScopeBo.getCurrencyTemplateBoList()
-                );
-                fortuneBillModel.setConvertedAmount(convertedAmount);
-            } else {
-                fortuneBillModel.setConvertedAmount(amount);
-            }
-        }
+        // 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(fortuneBillModel.getBillType());
+
+        // 汇率转换
+        strategy.convertRate(context);
 
         // 资金操作
-        this.confirmBalance(fortuneBillModel);
+        strategy.confirmBalance(context);
+
         // 持久化主记录
         fortuneBillModel.insert();
+
         // 批量标签处理
         this.processTagRelations(addCommand.getTagIdList(), fortuneBillModel);
+
         // 批量分类处理
         this.processCategoryRelations(addCommand.getCategoryAmountPair(), fortuneBillModel);
+
         fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
+
         return fortuneBillModel.getBillId();
     }
 
@@ -300,31 +294,18 @@ public class FortuneBillService {
             originalBill.checkPayeeEnable(payee);
         }
 
-        // 5. 重新计算金额（支出和收入类型）
-        BillTypeEnum billType = BillTypeEnum.getByValue(modifyCommand.getBillType());
-        if (billType == BillTypeEnum.EXPENSE || billType == BillTypeEnum.INCOME) {
-            BigDecimal amount = modifyCommand.getCategoryAmountPair().stream()
-                    .map(Pair::getValue)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            originalBill.setAmount(amount);
+        // 构建策略执行上下文
+        BillStrategyContext context = this.buildContext(originalBill);
 
-            // 对于非转账交易，需要根据账户币种和账本默认币种进行转换
-            if (Objects.nonNull(originalBill.getAccountId())) {
-                FortuneBookModel bookModel = fortuneBookFactory.loadById(modifyCommand.getBookId());
-                FortuneAccountModel accountModel = fortuneAccountFactory.loadById(originalBill.getAccountId());
-                BigDecimal convertedAmount = convertCurrency(
-                        amount,
-                        accountModel.getCurrencyCode(),
-                        bookModel.getDefaultCurrency(),
-                        applicationScopeBo.getCurrencyTemplateBoList()
-                );
-                originalBill.setConvertedAmount(convertedAmount);
-            } else {
-                originalBill.setConvertedAmount(amount);
-            }
-        }
-        // 6. 重新确认余额
-        this.confirmBalance(originalBill);
+        // 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(originalBill.getBillType());
+
+        // 汇率转换
+        strategy.convertRate(context);
+
+        // 资金操作
+        strategy.confirmBalance(context);
+
         // 7. 更新账单主记录
         originalBill.updateById();
 
@@ -367,187 +348,50 @@ public class FortuneBillService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void confirmBalance(FortuneBillModel fortuneBillModel) {
-        if (!fortuneBillModel.getConfirm() || Objects.isNull(fortuneBillModel.getAccountId())) {
-            return;
-        }
-        // 加载源账户并获取账单类型
-        FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(fortuneBillModel.getAccountId());
-        fortuneBillModel.checkAccountEnable(sourceAccount);
-        BillTypeEnum billType = BillTypeEnum.getByValue(fortuneBillModel.getBillType());
-        // 根据账单类型处理账户余额
-        switch (billType) {
-            case INCOME:
-                // 校验可收入
-                sourceAccount.checkCanIncome();
-                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.ADD);
-                break;
-            case PROFIT, ADJUST:
-                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.ADD);
-                break;
-            case EXPENSE:
-                // 校验可支出
-                sourceAccount.checkCanExpense();
-                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.SUBTRACT);
-                break;
-            case LOSS:
-                this.adjustBalance(sourceAccount, fortuneBillModel.getAmount(), BalanceOperationEnum.SUBTRACT);
-                break;
-            case TRANSFER:
-                // 校验可转出
-                sourceAccount.checkCanTransferOut();
-                this.handleTransferOperation(sourceAccount, fortuneBillModel);
-                break;
-            case null, default:
-                log.warn("Unsupported bill type: {}", billType);
-                throw new ApiException(ErrorCode.Business.BILL_TYPE_ILLEGAL, fortuneBillModel.getBillType());
-        }
 
-        // 更新源账户信息
-        sourceAccount.updateById();
+        BillStrategyContext context = this.buildContext(fortuneBillModel);
+        // 3. 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(fortuneBillModel.getBillType());
+
+        strategy.confirmBalance(context);
+
     }
 
     /**
-     * 辅助方法：调整账户余额
+     * 构建策略执行上下文
      */
-    private void adjustBalance(FortuneAccountModel account, BigDecimal amount, BalanceOperationEnum operation) {
-        if (account == null || amount == null) return;
+    private BillStrategyContext buildContext(FortuneBillModel bill) {
+        BillStrategyContext context = new BillStrategyContext();
 
-        BigDecimal newBalance = operation == BalanceOperationEnum.ADD ?
-                account.getBalance().add(amount) :
-                account.getBalance().subtract(amount);
-        account.setBalance(newBalance);
-    }
+        context.setBillModel(bill);
 
-    /**
-     * 辅助方法：处理转账操作
-     */
-    private void handleTransferOperation(FortuneAccountModel sourceAccount, FortuneBillModel bill) {
-        // 验证目标账户是否存在
-        if (Objects.isNull(bill.getToAccountId())) {
-            log.error("Missing target account for transfer operation");
-            return;
-        }
-        // 调整源账户余额
-        this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
-        // 加载目标账户并转换金额
-        FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
-        // 校验账户启用状态
-        bill.checkAccountEnable(targetAccount);
-        // 校验可转入
-        targetAccount.checkCanTransferIn();
-        // 如果convertedAmount不为空，则说明前端指定了转换后金额。
-        BigDecimal convertedAmount = Objects.nonNull(bill.getConvertedAmount())
-                ? bill.getConvertedAmount()
-                : this.convertCurrency(bill.getAmount(), sourceAccount.getCurrencyCode(), targetAccount.getCurrencyCode(), applicationScopeBo.getCurrencyTemplateBoList());
-        // 调整目标账户余额
-        this.adjustBalance(targetAccount, convertedAmount, BalanceOperationEnum.ADD);
-        // 更新目标账户并记录转换金额
-        targetAccount.updateById();
-        bill.setConvertedAmount(convertedAmount);
-    }
+        // 获取账本信息以确定默认币种
+        FortuneBookModel bookModel = fortuneBookFactory.loadById(bill.getBookId());
+        context.setBookModel(bookModel);
 
-    /**
-     * 货币转换 - 修复版本
-     *
-     * @param amount         原始金额
-     * @param sourceCurrency 源币种
-     * @param targetCurrency 目标币种
-     * @param rateList       汇率列表 (格式: 1 USD = rate 本币)
-     */
-    public BigDecimal convertCurrency(BigDecimal amount, String sourceCurrency, String targetCurrency, List<CurrencyTemplateBo> rateList) {
-        if (sourceCurrency.equals(targetCurrency)) {
-            return amount;
+        // 根据账单类型设置相关账户
+        context.setFromAccount(fortuneAccountFactory.loadById(bill.getAccountId()));
+
+        if (Objects.nonNull(bill.getToAccountId())) {
+            context.setToAccount(fortuneAccountFactory.loadById(bill.getToAccountId()));
         }
 
-        // 获取源币种汇率 (1 USD = sourceRate 源币种)
-        BigDecimal sourceRate = rateList.stream()
-                .filter(rate -> rate.getCurrencyName().equals(sourceCurrency))
-                .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, sourceCurrency, "USD"));
-
-        // 获取目标币种汇率 (1 USD = targetRate 目标币种)
-        BigDecimal targetRate = rateList.stream()
-                .filter(rate -> rate.getCurrencyName().equals(targetCurrency))
-                .findFirst()
-                .map(CurrencyTemplateBo::getRate)
-                .orElseThrow(() -> new ApiException(ErrorCode.Business.APR_NOT_FOUND, "USD", targetCurrency));
-
-        // 汇率有效性校验
-        this.validateExchangeRate(sourceRate, sourceCurrency);
-        this.validateExchangeRate(targetRate, targetCurrency);
-
-        // 正确的转换公式：
-        // 步骤1: 源币种 → USD: amount ÷ sourceRate
-        // 步骤2: USD → 目标币种: usdAmount × targetRate
-        BigDecimal usdAmount = amount.divide(sourceRate, 10, RoundingMode.HALF_UP);
-        return usdAmount.multiply(targetRate).setScale(2, RoundingMode.HALF_UP);
-    }
-
-    /**
-     * 汇率校验
-     */
-    private void validateExchangeRate(BigDecimal rate, String currency) {
-        if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ApiException(ErrorCode.Business.INVALID_EXCHANGE_RATE, currency, rate);
-        }
+        return context;
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void refundBalance(FortuneBillModel bill) {
         // 验证退款基本条件
-        if (!isValidRefundRequest(bill)) {
+        if (!(bill.getConfirm() && Objects.nonNull(bill.getAccountId()) && Objects.nonNull(bill.getAmount()))) {
             log.warn("Invalid refund request for bill: {}", bill.getBillId());
             return;
         }
-        // 加载账户并处理退款
-        FortuneAccountModel sourceAccount = fortuneAccountFactory.loadById(bill.getAccountId());
-        BillTypeEnum billType = BillTypeEnum.getByValue(bill.getBillType());
-        processRefundByType(sourceAccount, bill, billType);
-    }
-
-    /**
-     * 条件验证方法
-     */
-    private boolean isValidRefundRequest(FortuneBillModel bill) {
-        return bill.getConfirm() && Objects.nonNull(bill.getAccountId()) && Objects.nonNull(bill.getAmount());
-    }
-
-    /**
-     * 退款处理核心逻辑
-     */
-    private void processRefundByType(FortuneAccountModel sourceAccount, FortuneBillModel bill, BillTypeEnum billType) {
-        switch (billType) {
-            case INCOME, PROFIT, ADJUST:
-                this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.SUBTRACT);
-                break;
-            case EXPENSE, LOSS:
-                this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
-                break;
-            case TRANSFER:
-                this.handleTransferRefund(sourceAccount, bill);
-                break;
-            default:
-                log.warn("Unsupported refund type: {}", billType);
-                break;
-        }
-        sourceAccount.updateById();
-    }
-
-    /**
-     * 处理转账退款
-     */
-    private void handleTransferRefund(FortuneAccountModel sourceAccount, FortuneBillModel bill) {
-        // 验证转账必要参数
-        if (Objects.isNull(bill.getToAccountId()) || Objects.isNull(bill.getConvertedAmount())) {
-            throw new ApiException(ErrorCode.Business.BILL_TRANSFER_PARAMETER_ERROR);
-        }
-        // 逆向处理源账户
-        this.adjustBalance(sourceAccount, bill.getAmount(), BalanceOperationEnum.ADD);
-        // 处理目标账户
-        FortuneAccountModel targetAccount = fortuneAccountFactory.loadById(bill.getToAccountId());
-        this.adjustBalance(targetAccount, bill.getConvertedAmount(), BalanceOperationEnum.SUBTRACT);
-        targetAccount.updateById();
+        // 构建策略执行上下文
+        BillStrategyContext context = this.buildContext(bill);
+        // 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(bill.getBillType());
+        // 回滚金额
+        strategy.refuseBalance(context);
     }
 
     @Transactional(rollbackFor = Exception.class)
