@@ -22,11 +22,6 @@ public class LoanRecoverStrategy extends AbstractBillStrategy {
     }
 
     @Override
-    public void validateBusiness(BillStrategyContext context) {
-
-    }
-
-    @Override
     public BillTypeEnum getSupportedBillType() {
         return BillTypeEnum.LOAN_RECOVER;
     }

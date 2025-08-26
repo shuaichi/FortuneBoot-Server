@@ -31,14 +31,6 @@ public interface BillProcessStrategy {
      */
     void refuseBalance(BillStrategyContext context);
 
-
-    /**
-     * 业务校验
-     *
-     * @param context
-     */
-    void validateBusiness(BillStrategyContext context);
-
     /**
      * 支持的账单类型
      *

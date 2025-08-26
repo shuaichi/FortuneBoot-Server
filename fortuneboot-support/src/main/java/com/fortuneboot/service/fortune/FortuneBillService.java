@@ -62,8 +62,6 @@ public class FortuneBillService {
 
     private final FortuneAccountFactory fortuneAccountFactory;
 
-    private final ApplicationScopeBo applicationScopeBo;
-
     private final FortuneTagRelationService fortuneTagRelationService;
 
     private final FortunePayeeFactory fortunePayeeFactory;
@@ -89,11 +87,17 @@ public class FortuneBillService {
     private final FortuneFileRepo fortuneFileRepo;
 
     private final FortuneTagFactory fortuneTagFactory;
+
     private final FortuneCategoryFactory fortuneCategoryFactory;
+
     private final FortuneBookFactory fortuneBookFactory;
 
-
     private final BillStrategyFactory strategyFactory;
+
+
+    private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
+    private final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
 
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
@@ -279,9 +283,15 @@ public class FortuneBillService {
         FortuneBillModel originalBill = fortuneBillFactory.loadById(modifyCommand.getBillId());
         originalBill.checkBookId(modifyCommand.getBookId());
 
+        // 构建策略执行上下文
+        BillStrategyContext context = this.buildContext(originalBill);
+
+        // 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(originalBill.getBillType());
+
         // 2. 如果原账单已确认，需要先回滚账户余额
-        if (originalBill.getConfirm()) {
-            this.refundBalance(originalBill);
+        if (originalBill.getConfirm() && Objects.nonNull(originalBill.getAccountId()) && Objects.nonNull(originalBill.getAmount())) {
+            strategy.refuseBalance(context);
         }
 
         // 3. 更新账单主体信息
@@ -293,12 +303,6 @@ public class FortuneBillService {
             originalBill.checkPayeeExist(payee);
             originalBill.checkPayeeEnable(payee);
         }
-
-        // 构建策略执行上下文
-        BillStrategyContext context = this.buildContext(originalBill);
-
-        // 获取对应策略并执行
-        BillProcessStrategy strategy = strategyFactory.getStrategy(originalBill.getBillType());
 
         // 汇率转换
         strategy.convertRate(context);
@@ -326,7 +330,6 @@ public class FortuneBillService {
 
     }
 
-
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
@@ -341,20 +344,6 @@ public class FortuneBillService {
         fortuneBillModel.deleteById();
         // 删除账单附件
         fortuneFileRepo.removeByBillId(billId);
-    }
-
-    /**
-     * 确认余额
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void confirmBalance(FortuneBillModel fortuneBillModel) {
-
-        BillStrategyContext context = this.buildContext(fortuneBillModel);
-        // 3. 获取对应策略并执行
-        BillProcessStrategy strategy = strategyFactory.getStrategy(fortuneBillModel.getBillType());
-
-        strategy.confirmBalance(context);
-
     }
 
     /**
@@ -420,7 +409,12 @@ public class FortuneBillService {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
         fortuneBillModel.setConfirm(Boolean.TRUE);
-        this.confirmBalance(fortuneBillModel);
+
+        // 获取对应策略并执行
+        BillStrategyContext context = this.buildContext(fortuneBillModel);
+        BillProcessStrategy strategy = strategyFactory.getStrategy(fortuneBillModel.getBillType());
+        strategy.confirmBalance(context);
+
         fortuneBillModel.updateById();
     }
 
@@ -462,20 +456,23 @@ public class FortuneBillService {
         return this.completeTimeSeries(originData, billTrendsQuery.getTimeGranularity(), billTrendsQuery.getTimePoint());
     }
 
-    private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
-    private final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
 
     private List<FortuneLineVo> completeTimeSeries(List<FortuneLineVo> originData, int timeGranularity, LocalDateTime baseTime) {
         // 参数校验
-        if (originData == null) originData = new ArrayList<>();
-        if (baseTime == null) baseTime = LocalDateTime.now();
+        if (CollectionUtils.isEmpty(originData)) {
+            originData = new ArrayList<>();
+        }
+        if (Objects.isNull(baseTime)) {
+            baseTime = LocalDateTime.now();
+        }
 
         // 根据粒度类型生成对应时间序列
-        List<String> timeKeys = generateTimeKeys(timeGranularity, baseTime, originData);
+        List<String> timeKeys = this.generateTimeKeys(timeGranularity, baseTime, originData);
 
         // 构建数据映射表
-        Map<String, FortuneLineVo> dataMap = originData.stream().filter(vo -> vo.getName() != null).collect(Collectors.toMap(FortuneLineVo::getName, Function.identity()));
+        Map<String, FortuneLineVo> dataMap = originData.stream()
+                .filter(vo -> StringUtils.isNotBlank(vo.getName()))
+                .collect(Collectors.toMap(FortuneLineVo::getName, Function.identity()));
 
         // 补全缺失数据
         return timeKeys.stream().map(key -> dataMap.containsKey(key) ? dataMap.get(key) : new FortuneLineVo(key, BigDecimal.ZERO)).toList();
@@ -508,8 +505,7 @@ public class FortuneBillService {
                                 // 无效数据按当前年处理
                                 return currentYear;
                             }
-                        })
-                        .min()
+                        }).min()
                         // 无数据时使用当前年
                         .orElse(currentYear);
                 return IntStream.rangeClosed(minYear, currentYear).mapToObj(year -> Year.of(year).format(YEAR_FORMATTER)).toList();

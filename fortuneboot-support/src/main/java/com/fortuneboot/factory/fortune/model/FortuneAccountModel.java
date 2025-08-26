@@ -2,15 +2,20 @@ package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.enums.fortune.AccountTypeEnum;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
+import com.fortuneboot.domain.command.fortune.FortuneAccountAdjustCommand;
 import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
+import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -87,8 +92,27 @@ public class FortuneAccountModel extends FortuneAccountEntity {
     }
 
     public void checkEnable() {
-        if (!this.getEnable()){
-            throw new ApiException(ErrorCode.Business.BILL_ACCOUNT_DISABLE, account.getAccountName());
+        if (!this.getEnable()) {
+            throw new ApiException(ErrorCode.Business.BILL_ACCOUNT_DISABLE, this.getAccountName());
         }
+    }
+
+    public FortuneBillAddCommand loadAdjustCommand(FortuneAccountAdjustCommand adjustCommand) {
+        BigDecimal balance = adjustCommand.getBalance().subtract(this.getBalance());
+        if (BigDecimal.ZERO.compareTo(balance) == 0) {
+            throw new ApiException(ErrorCode.Business.ACCOUNT_BALANCE_ADJUST_NOT_MODIFY);
+        }
+        FortuneBillAddCommand fortuneBill = new FortuneBillAddCommand();
+        fortuneBill.setAmount(balance);
+        fortuneBill.setConvertedAmount(balance);
+        fortuneBill.setBillType(BillTypeEnum.ADJUST.getValue());
+        fortuneBill.setAccountId(adjustCommand.getAccountId());
+        fortuneBill.setBookId(adjustCommand.getBookId());
+        fortuneBill.setTradeTime(adjustCommand.getTradeTime());
+        fortuneBill.setTitle(StringUtils.isBlank(adjustCommand.getTitle()) ? "余额调整" : adjustCommand.getTitle());
+        fortuneBill.setRemark(adjustCommand.getRemark());
+        fortuneBill.setConfirm(Boolean.TRUE);
+        fortuneBill.setInclude(Boolean.TRUE);
+        return fortuneBill;
     }
 }
