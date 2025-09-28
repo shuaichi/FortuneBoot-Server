@@ -135,6 +135,8 @@ create index idx_fortune_book_deleted
 create index idx_fortune_book_group_recycle_enable_sort
     on fortune_book (group_id, recycle_bin, enable, sort);
 
+INSERT INTO fortune_book (book_id, group_id, book_name, default_currency, default_expense_account_id, default_income_account_id, default_transfer_out_account_id, default_transfer_in_account_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (1, 1, '默认账本', 'CNY', null, null, null, null, null, 1, 0, '用于个人生活记账。将支出分为维持类，消费类，提升类，社交类4个大类，收入分为主动收入，被动收入，社交收入3个大类。', 1, 1, '2025-09-28 17:45:27', '2025-09-28 17:45:08', 0);
+
 create table if not exists fortune_category
 (
     category_id   bigint auto_increment comment '主键'
@@ -163,6 +165,19 @@ create index idx_fortune_category_book_recycle_type_enable_sort
 
 create index idx_fortune_category_deleted
     on fortune_category (deleted);
+
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (1, 1, '维持类', 1, -1, 100, 1, 0, '维持生活的必须开支，是无法节省的开支。', 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (2, 1, '消费类', 1, -1, 200, 1, 0, '可以节省的开支，比如娱乐，旅游等。', 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (3, 1, '提升类', 1, -1, 300, 1, 0, '提升自己的生存能力，比如买书，保险等消费。', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (4, 1, '社交类', 1, -1, 400, 1, 0, '社交类型的支出，比如请朋友吃饭，送礼等。', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (5, 2, '主动收入', 1, -1, 100, 1, 0, '即劳动收入，指用时间来换取金钱，它最大的特点就是必须花费时间和精力去获得。', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (6, 2, '工资', 1, 5, 100, 1, 0, '', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (7, 2, '兼职', 1, 5, 200, 1, 0, '', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (8, 2, '薅羊毛', 1, 5, 300, 1, 0, '利用各种网络金融产品或红包活动推广下线抽成赚钱，比如外卖优惠券、减免优惠、送话费等。', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (9, 2, '被动收入', 1, -1, 200, 1, 0, '', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (10, 2, '理财', 1, 9, 100, 1, 0, '', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (11, 2, '租金', 1, 9, 200, 1, 0, '', 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_category (category_id, category_type, category_name, book_id, parent_id, sort, enable, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (12, 2, '社交收入', 1, -1, 300, 1, 0, '比如收到的红包。', 1, null, null, '2025-09-28 17:45:12', 0);
 
 create table if not exists fortune_category_relation
 (
@@ -274,6 +289,8 @@ create table if not exists fortune_group
     )
     comment '分组表';
 
+INSERT INTO fortune_group (group_id, group_name, default_currency, enable, default_book_id, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (1, '默认分组', 'CNY', 1, 1, '超级管理员初始化的默认分组。', 1, 1, '2025-09-28 17:45:12', '2025-09-28 17:45:08', 0);
+
 create table if not exists fortune_payee
 (
     payee_id    bigint auto_increment comment '主键'
@@ -305,6 +322,11 @@ create index idx_fortune_payee_deleted
 
 create index idx_fortune_payee_name
     on fortune_payee (payee_name);
+
+INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (1, 1, '美团外卖', 1, 0, 1, 0, 200, null, 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (2, 1, '京东商城', 1, 0, 1, 0, 100, null, 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (3, 1, '淘宝商城', 1, 0, 1, 0, 400, null, 1, null, null, '2025-09-28 17:45:12', 0);
+INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (4, 1, '拼多多', 1, 0, 1, 0, 300, null, 1, null, null, '2025-09-28 17:45:12', 0);
 
 create table if not exists fortune_recurring_bill_log
 (
@@ -400,6 +422,64 @@ create index idx_fortune_tag_deleted
 create index idx_fortune_tag_name
     on fortune_tag (tag_name);
 
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (1, '饮食', 1, -1, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (2, '居住', 1, -1, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (3, '衣着', 1, -1, 1, 0, 0, 1, 300, 0, '维护个人形象方面的支出，比如美容，美甲，衣服，首饰等。', 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (4, '出行', 1, -1, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (5, '数码', 1, -1, 1, 0, 0, 1, 500, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (6, '养车', 1, -1, 1, 0, 0, 1, 600, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (7, '医疗', 1, -1, 1, 0, 0, 1, 700, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (8, '教育', 1, -1, 1, 0, 0, 1, 800, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (9, '娱乐', 1, -1, 1, 0, 0, 1, 900, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (10, '日用', 1, -1, 1, 0, 0, 1, 1000, 0, '日用消耗品。', 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (11, '早餐', 1, 1, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:08', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (12, '午餐', 1, 1, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (13, '晚餐', 1, 1, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (14, '零食', 1, 1, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (15, '买菜', 1, 1, 1, 0, 0, 1, 500, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (16, '水果', 1, 1, 1, 0, 0, 1, 600, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (17, '房租', 1, 2, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (18, '水费', 1, 2, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (19, '电费', 1, 2, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (20, '天然气', 1, 2, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (21, '物业费', 1, 2, 1, 0, 0, 1, 500, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (22, '话费', 1, 2, 1, 0, 0, 1, 600, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (23, '房贷', 1, 2, 1, 0, 0, 1, 700, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (24, '衣服', 1, 3, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (25, '理发', 1, 3, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (26, '地铁', 1, 4, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:09', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (27, '公交', 1, 4, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (28, '打车', 1, 4, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (29, '顺风车', 1, 4, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (30, '高铁', 1, 4, 1, 0, 0, 1, 500, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (31, '手机', 1, 5, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (32, '电脑', 1, 5, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (33, '软件', 1, 5, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (34, '配件', 1, 5, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (35, '加油', 1, 6, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (36, '停车', 1, 6, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (37, '维修', 1, 6, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (38, '洗车', 1, 6, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (39, '过路费', 1, 6, 1, 0, 0, 1, 500, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (40, '违章罚款', 1, 6, 1, 0, 0, 1, 600, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (41, '车险', 1, 6, 1, 0, 0, 1, 700, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (42, '配饰', 1, 6, 1, 0, 0, 1, 800, 0, null, 1, null, null, '2025-09-28 17:45:10', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (43, '年检', 1, 6, 1, 0, 0, 1, 900, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (44, '烟', 1, 1, 1, 0, 0, 1, 700, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (45, '酒', 1, 1, 1, 0, 0, 1, 800, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (46, '饮用水', 1, 1, 1, 0, 0, 1, 900, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (47, '牛奶', 1, 1, 1, 0, 0, 1, 1000, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (48, '飞机', 1, 4, 1, 0, 0, 1, 600, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (49, '体检', 1, 7, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (50, '保险', 1, 7, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (51, '保健品', 1, 7, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (52, '牙科', 1, 7, 1, 0, 0, 1, 400, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (53, '买书', 1, 8, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (54, '培训', 1, 8, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (55, '游戏', 1, 9, 1, 0, 0, 1, 100, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (56, '电影', 1, 9, 1, 0, 0, 1, 200, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+INSERT INTO fortune_tag (tag_id, tag_name, book_id, parent_id, can_expense, can_income, can_transfer, enable, sort, recycle_bin, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (57, '健身', 1, 9, 1, 0, 0, 1, 300, 0, null, 1, null, null, '2025-09-28 17:45:11', 0);
+
 create table if not exists fortune_tag_relation
 (
     tag_relation_id bigint auto_increment comment '主键'
@@ -448,7 +528,7 @@ create index idx_fortune_user_relation_group
 create index idx_fortune_user_relation_user
     on fortune_user_group_relation (user_id);
 
-
+INSERT INTO fortune_user_group_relation (user_group_relation_id, role_type, group_id, user_id, creator_id, default_group, updater_id, update_time, create_time, deleted) VALUES (1, 1, 1, 1, 1, 1, null, null, '2025-09-28 17:45:08', 0);
 
 create table if not exists sys_config
 (
