@@ -56,7 +56,7 @@ public class FortuneGroupRest {
 
     @Operation(summary = "查询我的启用分组")
     @GetMapping("/getEnableList")
-    public ResponseDTO<List<FortuneGroupVo>> getEnableGroupList(){
+    public ResponseDTO<List<FortuneGroupVo>> getEnableGroupList() {
         List<FortuneGroupVo> result = fortuneGroupService.getEnableGroupList();
         return ResponseDTO.ok(result);
     }
@@ -64,7 +64,7 @@ public class FortuneGroupRest {
     @Operation(summary = "通过分组id查看分组")
     @GetMapping("/{groupId}/getByGroupId")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<FortuneGroupVo> getByGroupId(@PathVariable @NotNull(message = "分组id不能为空")  @Positive Long groupId) {
+    public ResponseDTO<FortuneGroupVo> getByGroupId(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         return ResponseDTO.ok(fortuneGroupService.getByGroupId(groupId));
     }
 
@@ -85,7 +85,7 @@ public class FortuneGroupRest {
     @GetMapping("/getCurrencyTemplate")
     public ResponseDTO<List<SelectOptionsVo>> getCurrencyTemplate() {
         List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
-        List<SelectOptionsVo> result = currencyTemplateBoList.stream().map(item->{
+        List<SelectOptionsVo> result = currencyTemplateBoList.stream().map(item -> {
             SelectOptionsVo selectOptionsVo = new SelectOptionsVo();
             selectOptionsVo.setValue(item.getCurrencyId());
             selectOptionsVo.setLabel(item.getCurrencyName());
@@ -104,7 +104,7 @@ public class FortuneGroupRest {
     @PostMapping("/add")
     @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.ADD)
     public ResponseDTO<Void> add(@Valid @RequestBody FortuneGroupAddCommand groupAddCommand) {
-        fortuneGroupService.add(groupAddCommand);
+        fortuneGroupService.add(groupAddCommand, null);
         return ResponseDTO.ok();
     }
 
@@ -128,8 +128,8 @@ public class FortuneGroupRest {
 
     @Operation(summary = "查询分组角色枚举")
     @GetMapping("/getRoleTypes")
-    public ResponseDTO<Map<Integer,String>> getRoleTypes() {
-        return ResponseDTO.ok(Arrays.stream(RoleTypeEnum.values()).collect(Collectors.toMap(RoleTypeEnum::getValue,RoleTypeEnum::getDescription)));
+    public ResponseDTO<Map<Integer, String>> getRoleTypes() {
+        return ResponseDTO.ok(Arrays.stream(RoleTypeEnum.values()).collect(Collectors.toMap(RoleTypeEnum::getValue, RoleTypeEnum::getDescription)));
     }
 
     @Operation(summary = "邀请用户")
@@ -170,7 +170,7 @@ public class FortuneGroupRest {
     @PatchMapping("/{groupId}/enable")
     @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.ENABLE)
     @PreAuthorize("@fortune.groupActorPermission(#groupId)")
-    public ResponseDTO<Void> enable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
+    public ResponseDTO<Void> enable(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneGroupService.enable(groupId);
         return ResponseDTO.ok();
     }
@@ -179,7 +179,7 @@ public class FortuneGroupRest {
     @PatchMapping("/{groupId}/disable")
     @AccessLog(title = "好记-分组管理", businessType = BusinessTypeEnum.DISABLE)
     @PreAuthorize("@fortune.groupActorPermission(#groupId)")
-    public ResponseDTO<Void> disable(@PathVariable  @NotNull(message = "分组id不能为空") @Positive Long groupId){
+    public ResponseDTO<Void> disable(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
         fortuneGroupService.disable(groupId);
         return ResponseDTO.ok();
     }
