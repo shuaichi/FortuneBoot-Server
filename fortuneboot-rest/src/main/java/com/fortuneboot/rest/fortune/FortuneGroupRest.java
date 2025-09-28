@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -64,7 +65,7 @@ public class FortuneGroupRest {
     @Operation(summary = "通过分组id查看分组")
     @GetMapping("/{groupId}/getByGroupId")
     @PreAuthorize("@fortune.groupVisitorPermission(#groupId)")
-    public ResponseDTO<FortuneGroupVo> getByGroupId(@PathVariable @NotNull(message = "分组id不能为空") @Positive Long groupId) {
+    public ResponseDTO<FortuneGroupVo> getByGroupId(@PathVariable @Positive Long groupId) {
         return ResponseDTO.ok(fortuneGroupService.getByGroupId(groupId));
     }
 
@@ -79,6 +80,18 @@ public class FortuneGroupRest {
             return selectOptionsVo;
         }).toList();
         return ResponseDTO.ok(result);
+    }
+
+    @Operation(summary = "通过id获取账本模板备注")
+    @GetMapping("/{id}/getBookTemplateRemarkById")
+    public ResponseDTO<String> getBookTemplateRemarkById(@PathVariable @Positive Long id ) {
+        List<BookTemplateBo> bookTemplateBoList = applicationScopeBo.getBookTemplateBoList();
+        String remark = bookTemplateBoList.stream()
+                .filter(item -> Objects.equals(item.getBookTemplateId(), id))
+                .findAny()
+                .map(BookTemplateBo::getRemark)
+                .orElse(null);
+        return ResponseDTO.ok(remark);
     }
 
     @Operation(summary = "获取货币模板")
