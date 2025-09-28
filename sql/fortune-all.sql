@@ -74,7 +74,7 @@ create table if not exists fortune_bill
     amount           decimal(20, 4)           null comment '金额',
     converted_amount decimal(20, 4)           null comment '汇率转换后的金额',
     payee_id         bigint                   null comment '交易对象',
-    bill_type        tinyint                  null comment '流水类型 1、收入 2、支出 3、转账 4、余额调整 5、盈利 6、亏损',
+    bill_type        tinyint                  null comment '流水类型',
     to_account_id    tinyint                  null comment '转账到的账户',
     confirm          tinyint(1)               null comment '是否确认',
     include          tinyint(1)               null comment '是否统计',

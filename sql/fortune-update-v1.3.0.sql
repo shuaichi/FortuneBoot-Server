@@ -1,3 +1,6 @@
+alter table fortune_bill
+    modify bill_type tinyint null comment '流水类型';
+
 create table fortune_finance_order
 (
     order_id    bigint auto_increment comment '主键'
