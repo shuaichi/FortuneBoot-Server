@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +44,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
 
     @Override
     public void removeByBillId(Long billId) {
+        if (Objects.isNull(billId)) {
+            return;
+        }
         List<FortuneTagRelationEntity> list = this.getByBillId(billId);
         if (CollectionUtils.isEmpty(list)) {
             return;
@@ -53,6 +57,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
 
     @Override
     public void phyRemoveByBillId(Long billId) {
+        if (Objects.isNull(billId)) {
+            return;
+        }
         List<FortuneTagRelationEntity> list = this.getByBillId(billId);
         if (CollectionUtils.isEmpty(list)) {
             return;
@@ -63,6 +70,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
 
     @Override
     public void removeByBillIds(List<Long> billIds) {
+        if (CollectionUtils.isEmpty(billIds)) {
+            return;
+        }
         LambdaQueryWrapper<FortuneTagRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         queryWrapper.in(FortuneTagRelationEntity::getBillId, billIds);
         List<FortuneTagRelationEntity> list = this.list(queryWrapper);
