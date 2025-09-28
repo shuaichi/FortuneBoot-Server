@@ -91,14 +91,15 @@ public class FortuneGroupService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void add(FortuneGroupAddCommand groupAddCommand) {
+    public void add(FortuneGroupAddCommand groupAddCommand, Long userId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
         fortuneGroupModel.insert();
         // 设置权限
+        userId = Objects.isNull(userId) ? AuthenticationUtils.getSystemLoginUser().getUserId() : userId;
         FortuneUserGroupRelationAddCommand fortuneUserGroupRelationAddCommand = new FortuneUserGroupRelationAddCommand();
         fortuneUserGroupRelationAddCommand.setGroupId(fortuneGroupModel.getGroupId());
-        fortuneUserGroupRelationAddCommand.setUserId(AuthenticationUtils.getSystemLoginUser().getUserId());
+        fortuneUserGroupRelationAddCommand.setUserId(userId);
         fortuneUserGroupRelationAddCommand.setRoleType(RoleTypeEnum.OWNER.getValue());
         fortuneUserGroupRelationService.add(fortuneUserGroupRelationAddCommand);
         // 新增账本

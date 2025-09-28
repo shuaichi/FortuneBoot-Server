@@ -34,6 +34,9 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.repository.system.SysUserRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fortuneboot.service.fortune.FortuneGroupService;
+import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +61,8 @@ public class UserApplicationService {
     private final UserModelFactory userModelFactory;
 
     private final SysConfigRepo sysConfigRepo;
+
+    private final FortuneGroupService fortuneGroupService;
 
 
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
@@ -119,6 +124,7 @@ public class UserApplicationService {
         return detailDTO;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void addUser(AddUserCommand command) {
         UserModel model = userModelFactory.create();
         model.loadAddUserCommand(command);
@@ -129,7 +135,17 @@ public class UserApplicationService {
         model.checkFieldRelatedEntityExist();
         model.resetPassword(command.getPassword());
 
+        // 新增用户
         model.insert();
+
+        // 自动为新用户创建默认分组与默认账本（模板ID固定为1L，默认币种为CNY）
+        FortuneGroupAddCommand groupAddCommand = new FortuneGroupAddCommand();
+        groupAddCommand.setGroupName(Objects.requireNonNullElse(model.getNickname(), model.getUsername()));
+        groupAddCommand.setDefaultCurrency("CNY");
+        groupAddCommand.setEnable(Boolean.TRUE);
+        groupAddCommand.setBookTemplate(1L);
+        groupAddCommand.setRemark("新建账户创建的默认分组。");
+        fortuneGroupService.add(groupAddCommand, model.getUserId());
     }
 
     public void updateUser(UpdateUserCommand command) {
