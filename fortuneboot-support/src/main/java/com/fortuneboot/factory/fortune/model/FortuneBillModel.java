@@ -93,4 +93,9 @@ public class FortuneBillModel extends FortuneBillEntity {
         }
     }
 
+    public void checkOrderId() {
+        if (Objects.isNull(this.getOrderId())) {
+            throw new ApiException(ErrorCode.Business.BILL_ORDER_ID_CAN_NOT_NULL);
+        }
+    }
 }

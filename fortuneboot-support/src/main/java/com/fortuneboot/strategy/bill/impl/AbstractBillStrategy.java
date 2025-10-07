@@ -10,8 +10,6 @@ import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
 import jakarta.annotation.Resource;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -99,4 +97,8 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
         }
 
     }
+
+    public void operateFinanceOrder(BillStrategyContext context){}
+
+    public void refuseFinanceOrder(BillStrategyContext context){}
 }

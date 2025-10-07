@@ -42,10 +42,9 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
     }
 
     public void loadModifyCommand(FortuneFinanceOrderModifyCommand command) {
-        if (Objects.isNull(command)) {
-            return;
+        if (Objects.nonNull(command)) {
+            BeanUtil.copyProperties(command, this, "order_id");
         }
-        this.loadAddCommand(command);
     }
 
     public void checkModifyStatus() {
@@ -71,6 +70,7 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
             throw new ApiException(ErrorCode.Business.ORDER_USING_STATUS_ERROR);
         }
     }
+
     public void checkCloseStatus() {
         if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
             throw new ApiException(ErrorCode.Business.ORDER_CLOSE_STATUS_ERROR);
@@ -80,6 +80,12 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
     public void checkReopenStatus() {
         if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
             throw new ApiException(ErrorCode.Business.ORDER_REOPEN_STATUS_ERROR);
+        }
+    }
+
+    public void checkUsingOperateStatus() {
+        if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_USING_STATUS_ERROR);
         }
     }
 

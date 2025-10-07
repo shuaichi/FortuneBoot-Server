@@ -37,4 +37,18 @@ public interface BillProcessStrategy {
      * @return
      */
     BillTypeEnum getSupportedBillType();
+
+    /**
+     * 操作单据
+     *
+     * @param context
+     */
+    void operateFinanceOrder(BillStrategyContext context);
+
+    /**
+     * 回滚单据
+     *
+     * @param context
+     */
+    void refuseFinanceOrder(BillStrategyContext context);
 }

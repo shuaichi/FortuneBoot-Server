@@ -295,6 +295,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_TYPE_CAN_NOT_ADJUST(28010,"余额调整不能修改确认状态和统计状态","Business.BILL_TYPE_CAN_NOT_ADJUST"),
 
+        BILL_ORDER_ID_CAN_NOT_NULL(28011,"单据不能为空","Business.BILL_ORDER_ID_CAN_NOT_NULL"),
+
         // ---------------------------------- RATE -----------------------------------------------,
         APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
 
@@ -324,6 +326,8 @@ public enum ErrorCode implements ErrorCodeInterface {
         ORDER_CLOSE_STATUS_ERROR(30005,"单据状态有误，不能关闭；" ,"Business.ORDER_CLOSE_STATUS_ERROR" ),
 
         ORDER_REOPEN_STATUS_ERROR(30006,"单据状态有误，不能重新打开；" ,"Business.ORDER_REOPEN_STATUS_ERROR" ),
+
+        ORDER_REOPEN_OPERATE_STATUS_ERROR(30007,"单据状态有误，不能进行操作；" ,"Business.ORDER_REOPEN_OPERATE_STATUS_ERROR" ),
         // ---------------------------------- RECURRING_BILL -----------------------------------------------,
 
         RECURRING_BILL_EXECUTION_FAILED(31001, "周期记账执行失败，规则ID为{}", "Business.RECURRING_BILL_EXECUTION_FAILED"),

@@ -3,7 +3,9 @@ package com.fortuneboot.service.fortune;
 import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
@@ -217,6 +219,9 @@ public class FortuneBillService {
         // 资金操作
         strategy.confirmBalance(context);
 
+        // 操作单据
+        strategy.operateFinanceOrder(context);
+
         // 持久化主记录
         fortuneBillModel.insert();
 
@@ -282,9 +287,6 @@ public class FortuneBillService {
         // 构建策略执行上下文
         BillStrategyContext context = this.buildContext(originalBill);
 
-        // 上下文设置command
-        context.setCommand(modifyCommand);
-
         // 获取对应策略并执行
         BillProcessStrategy strategy = strategyFactory.getStrategy(originalBill.getBillType());
 
@@ -292,6 +294,8 @@ public class FortuneBillService {
         if (originalBill.getConfirm() && Objects.nonNull(originalBill.getAccountId()) && Objects.nonNull(originalBill.getAmount())) {
             strategy.refuseBalance(context);
         }
+
+        strategy.refuseFinanceOrder(context);
 
         // 3. 更新账单主体信息
         originalBill.loadModifyCommand(modifyCommand);
@@ -302,12 +306,20 @@ public class FortuneBillService {
             originalBill.checkPayeeExist(payee);
             originalBill.checkPayeeEnable(payee);
         }
+        // 重新构建上下文(上面回滚账户余额后，需要使用新的入参重新操作资金/单据)
+        context = this.buildContext(originalBill);
+
+        // 上下文设置command
+        context.setCommand(modifyCommand);
 
         // 汇率转换
         strategy.convertRate(context);
 
         // 资金操作
         strategy.confirmBalance(context);
+
+        // 操作单据
+        strategy.operateFinanceOrder(context);
 
         // 7. 更新账单主记录
         originalBill.updateById();
@@ -335,6 +347,8 @@ public class FortuneBillService {
         fortuneBillModel.checkBookId(bookId);
         // 账户金额回滚
         this.refundBalance(fortuneBillModel);
+        // 回滚单据
+        this.refuseFinanceOrder(fortuneBillModel);
         // 删除标签
         fortuneTagRelationRepo.removeByBillId(billId);
         // 删除分类
@@ -381,6 +395,17 @@ public class FortuneBillService {
         BillProcessStrategy strategy = strategyFactory.getStrategy(bill.getBillType());
         // 回滚金额
         strategy.refuseBalance(context);
+    }
+
+    public void refuseFinanceOrder(FortuneBillModel bill) {
+        if (!Objects.equals(bill.getBillType(), BillTypeEnum.ADVANCE.getValue()) && !Objects.equals(bill.getBillType(), BillTypeEnum.REIMBURSE.getValue())) {
+            return;
+        }
+        // 构建策略执行上下文
+        BillStrategyContext context = this.buildContext(bill);
+        // 获取对应策略并执行
+        BillProcessStrategy strategy = strategyFactory.getStrategy(bill.getBillType());
+        strategy.refuseFinanceOrder(context);
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -71,6 +71,11 @@ public class FortuneBillVo {
     private Long accountId;
 
     /**
+     * 单据ID
+     */
+    private Long orderId;
+
+    /**
      * 账户
      */
     @ExcelColumn(name = "账户")
