@@ -29,7 +29,7 @@ public class ReimburseStrategy extends AbstractBillStrategy {
         fromAccount.checkEnable();
         fromAccount.checkCanIncome();
 
-        BigDecimal amount = context.getAmount();
+        BigDecimal amount = context.getBillModel().getAmount();
         fromAccount.setBalance(fromAccount.getBalance().add(amount));
 
         fromAccount.updateById();

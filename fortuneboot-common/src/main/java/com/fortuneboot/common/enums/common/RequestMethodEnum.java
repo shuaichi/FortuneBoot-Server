@@ -15,6 +15,7 @@ public enum RequestMethodEnum implements BasicEnum<Integer> {
     POST(2, "POST"),
     PUT(3, "PUT"),
     DELETE(4, "DELETE"),
+    PATCH(5, "PATCH"),
     UNKNOWN(-1, "UNKNOWN");
 
     private final int value;

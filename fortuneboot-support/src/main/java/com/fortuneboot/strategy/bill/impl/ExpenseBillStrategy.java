@@ -32,7 +32,7 @@ public class ExpenseBillStrategy extends AbstractBillStrategy {
         fromAccount.checkEnable();
         fromAccount.checkCanExpense();
 
-        BigDecimal amount = context.getAmount();
+        BigDecimal amount = context.getBillModel().getAmount();
         fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
 
         fromAccount.updateById();

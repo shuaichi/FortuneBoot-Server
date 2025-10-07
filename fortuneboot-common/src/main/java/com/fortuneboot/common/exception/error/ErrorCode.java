@@ -293,6 +293,8 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         BILL_CATEGORY_DISABLE(27009, "分类被禁用，无法新增账单： {}", "Business.BILL_CATEGORY_DISABLE"),
 
+        BILL_TYPE_CAN_NOT_ADJUST(28010,"余额调整不能修改确认状态和统计状态","Business.BILL_TYPE_CAN_NOT_ADJUST"),
+
         // ---------------------------------- RATE -----------------------------------------------,
         APR_NOT_FOUND(28001, "汇率没有找到: {} -> {}", "Business.APR_NOT_FOUND"),
 
