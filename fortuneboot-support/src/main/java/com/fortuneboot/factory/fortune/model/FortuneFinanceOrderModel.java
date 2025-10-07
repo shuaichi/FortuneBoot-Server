@@ -37,6 +37,7 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
         if (Objects.nonNull(command)) {
             BeanUtil.copyProperties(command, this, "order_id");
             this.setSubmitTime(LocalDateTime.now());
+            this.setStatus(FinanceOrderStatusEnum.INIT.getValue());
         }
     }
 
@@ -47,7 +48,7 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
         this.loadAddCommand(command);
     }
 
-    public void checkStatus() {
+    public void checkModifyStatus() {
         if (Objects.equals(this.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
             throw new ApiException(ErrorCode.Business.ORDER_CLOSE_CAN_NOT_MODIFY);
         }
@@ -64,4 +65,22 @@ public class FortuneFinanceOrderModel extends FortuneFinanceOrderEntity {
             throw new ApiException(ErrorCode.Business.ORDER_BOOK_NOT_MATCH);
         }
     }
+
+    public void checkUsingStatus() {
+        if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.INIT.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_USING_STATUS_ERROR);
+        }
+    }
+    public void checkCloseStatus() {
+        if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_CLOSE_STATUS_ERROR);
+        }
+    }
+
+    public void checkReopenStatus() {
+        if (!Objects.equals(this.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_REOPEN_STATUS_ERROR);
+        }
+    }
+
 }

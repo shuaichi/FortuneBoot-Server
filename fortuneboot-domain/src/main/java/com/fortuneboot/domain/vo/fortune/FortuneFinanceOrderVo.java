@@ -1,5 +1,6 @@
 package com.fortuneboot.domain.vo.fortune;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
@@ -75,11 +76,13 @@ public class FortuneFinanceOrderVo {
     /**
      * 单据提交时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime submitTime;
 
     /**
      * 单据关闭时间
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private LocalDateTime closeTime;
 
     /**

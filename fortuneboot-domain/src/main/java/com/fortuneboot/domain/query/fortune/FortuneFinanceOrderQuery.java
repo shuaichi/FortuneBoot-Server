@@ -38,13 +38,19 @@ public class FortuneFinanceOrderQuery extends AbstractLambdaPageQuery<FortuneFin
      */
     private Integer status;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
     @Override
     public LambdaQueryWrapper<FortuneFinanceOrderEntity> addQueryCondition() {
         LambdaQueryWrapper<FortuneFinanceOrderEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class);
         queryWrapper.eq(FortuneFinanceOrderEntity::getBookId, bookId)
                 .like(StringUtils.isNotBlank(title), FortuneFinanceOrderEntity::getTitle, title)
                 .eq(Objects.nonNull(type), FortuneFinanceOrderEntity::getType, type)
-                .eq(Objects.nonNull(status), FortuneFinanceOrderEntity::getStatus, status);
+                .eq(Objects.nonNull(status), FortuneFinanceOrderEntity::getStatus, status)
+                .like(StringUtils.isNotBlank(remark), FortuneFinanceOrderEntity::getRemark, remark);
         return queryWrapper;
     }
 }
