@@ -27,7 +27,6 @@ public class ExpenseBillStrategy extends AbstractBillStrategy {
             return;
         }
 
-        // 收入账单：增加目标账户余额
         FortuneAccountModel fromAccount = context.getFromAccount();
         fromAccount.checkEnable();
         fromAccount.checkCanExpense();

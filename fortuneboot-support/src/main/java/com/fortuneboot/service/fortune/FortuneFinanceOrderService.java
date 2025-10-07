@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 单据
@@ -80,5 +81,9 @@ public class FortuneFinanceOrderService {
         model.checkReopenStatus();
         model.setStatus(FinanceOrderStatusEnum.USING.getValue());
         model.updateById();
+    }
+
+    public List<FortuneFinanceOrderEntity> getUsingFinanceOrderList(Long bookId) {
+        return fortuneFinanceOrderRepo.getUsingFinanceOrderList(bookId);
     }
 }

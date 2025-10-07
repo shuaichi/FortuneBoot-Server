@@ -43,6 +43,15 @@ public class FortuneFinanceOrderRest {
         return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
     }
 
+    @Operation(summary = "查询使用中的单据")
+    @GetMapping("/{bookId}/getUsingFinanceOrderList")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<List<FortuneFinanceOrderVo>> getUsingFinanceOrderList(@PathVariable Long bookId) {
+        List<FortuneFinanceOrderEntity> list = fortuneFinanceOrderService.getUsingFinanceOrderList(bookId);
+        List<FortuneFinanceOrderVo> result = list.stream().map(FortuneFinanceOrderVo::new).toList();
+        return ResponseDTO.ok(result);
+    }
+
     @Operation(summary = "新增单据")
     @PostMapping("/add")
     @AccessLog(title = "好记-单据管理", businessType = BusinessTypeEnum.ADD)

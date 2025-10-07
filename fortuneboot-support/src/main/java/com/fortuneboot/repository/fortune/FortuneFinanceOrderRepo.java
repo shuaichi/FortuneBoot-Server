@@ -3,6 +3,8 @@ package com.fortuneboot.repository.fortune;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 
+import java.util.List;
+
 /**
  * 单据表
  *
@@ -10,4 +12,12 @@ import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
  * @date 2025/8/16 18:11
  **/
 public interface FortuneFinanceOrderRepo extends IService<FortuneFinanceOrderEntity> {
+
+    /**
+     * 根据账本ID查询单据
+     *
+     * @param bookId
+     * @return
+     */
+    List<FortuneFinanceOrderEntity> getUsingFinanceOrderList(Long bookId);
 }
