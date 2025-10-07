@@ -50,7 +50,8 @@ public class FortuneFinanceOrderQuery extends AbstractLambdaPageQuery<FortuneFin
                 .like(StringUtils.isNotBlank(title), FortuneFinanceOrderEntity::getTitle, title)
                 .eq(Objects.nonNull(type), FortuneFinanceOrderEntity::getType, type)
                 .eq(Objects.nonNull(status), FortuneFinanceOrderEntity::getStatus, status)
-                .like(StringUtils.isNotBlank(remark), FortuneFinanceOrderEntity::getRemark, remark);
+                .like(StringUtils.isNotBlank(remark), FortuneFinanceOrderEntity::getRemark, remark)
+                .orderByDesc(FortuneFinanceOrderEntity::getCreateTime);
         return queryWrapper;
     }
 }
