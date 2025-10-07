@@ -32,7 +32,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
-        SystemLoginUser loginUser = tokenService.getLoginUser(request);
+        SystemLoginUser loginUser = tokenService.getLoginUser(request, response);
         if (loginUser != null && AuthenticationUtils.getAuthentication() == null) {
             tokenService.refreshToken(loginUser);
             // 如果没有将当前登录用户放入到上下文中的话，会认定用户未授权，返回用户未登陆的错误
