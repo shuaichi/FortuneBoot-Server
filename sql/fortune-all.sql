@@ -73,6 +73,7 @@ create table if not exists fortune_bill
     account_id       bigint                   null comment '账户id',
     amount           decimal(20, 4)           null comment '金额',
     converted_amount decimal(20, 4)           null comment '汇率转换后的金额',
+    order_id         bigint                   null comment '关联单据id',
     payee_id         bigint                   null comment '交易对象',
     bill_type        tinyint                  null comment '流水类型',
     to_account_id    tinyint                  null comment '转账到的账户',
