@@ -38,10 +38,4 @@ public class BillStrategyContext {
      */
     private FortuneAccountModel toAccount;
 
-    /**
-     * 金额
-     */
-    private BigDecimal amount;
-
-
 }

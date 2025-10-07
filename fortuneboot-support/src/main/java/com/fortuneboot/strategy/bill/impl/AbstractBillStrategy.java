@@ -9,6 +9,7 @@ import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
+import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -22,10 +23,9 @@ import java.util.Objects;
  * @author zhangchi118
  * @date 2025/8/25 22:00
  **/
-@NoArgsConstructor
-@AllArgsConstructor
 abstract class AbstractBillStrategy implements BillProcessStrategy {
 
+    @Resource
     private ApplicationScopeBo applicationScopeBo;
 
     /**
@@ -97,7 +97,6 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
         } else {
             billModel.setConvertedAmount(amount);
         }
-        context.setAmount(amount);
 
     }
 }

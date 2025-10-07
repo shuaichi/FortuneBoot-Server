@@ -38,7 +38,7 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         }
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
-        BigDecimal amount = context.getAmount();
+        BigDecimal amount = context.getBillModel().getAmount();
 
         // 转出账户：减少目标账户余额
         fromAccount.checkEnable();
@@ -78,11 +78,11 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         }
 
         FortuneAccountModel fromAccount = context.getFromAccount();
-        BigDecimal fromBalance = fromAccount.getBalance().subtract(billModel.getAmount());
+        BigDecimal fromBalance = fromAccount.getBalance().add(billModel.getAmount());
         fromAccount.setBalance(fromBalance);
 
         FortuneAccountModel toAccount = context.getToAccount();
-        BigDecimal toBalance = toAccount.getBalance().add(billModel.getAmount());
+        BigDecimal toBalance = toAccount.getBalance().subtract(billModel.getAmount());
         toAccount.setBalance(toBalance);
 
         fromAccount.updateById();

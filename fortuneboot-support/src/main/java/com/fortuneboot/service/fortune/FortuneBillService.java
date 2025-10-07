@@ -3,14 +3,8 @@ package com.fortuneboot.service.fortune;
 import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
-import com.fortuneboot.common.enums.fortune.BalanceOperationEnum;
-import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
-import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
@@ -34,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -212,6 +205,9 @@ public class FortuneBillService {
         // 构建策略执行上下文
         BillStrategyContext context = this.buildContext(fortuneBillModel);
 
+        // 上下文设置command
+        context.setCommand(addCommand);
+
         // 获取对应策略并执行
         BillProcessStrategy strategy = strategyFactory.getStrategy(fortuneBillModel.getBillType());
 
@@ -286,6 +282,9 @@ public class FortuneBillService {
         // 构建策略执行上下文
         BillStrategyContext context = this.buildContext(originalBill);
 
+        // 上下文设置command
+        context.setCommand(modifyCommand);
+
         // 获取对应策略并执行
         BillProcessStrategy strategy = strategyFactory.getStrategy(originalBill.getBillType());
 
@@ -359,8 +358,9 @@ public class FortuneBillService {
         context.setBookModel(bookModel);
 
         // 根据账单类型设置相关账户
-        context.setFromAccount(fortuneAccountFactory.loadById(bill.getAccountId()));
-
+        if (Objects.nonNull(bill.getAccountId())) {
+            context.setFromAccount(fortuneAccountFactory.loadById(bill.getAccountId()));
+        }
         if (Objects.nonNull(bill.getToAccountId())) {
             context.setToAccount(fortuneAccountFactory.loadById(bill.getToAccountId()));
         }
@@ -411,6 +411,7 @@ public class FortuneBillService {
     public void confirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setConfirm(Boolean.TRUE);
 
         // 获取对应策略并执行
@@ -425,6 +426,7 @@ public class FortuneBillService {
     public void unConfirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.checkBillTypeConfirmAndInclude();
         this.refundBalance(fortuneBillModel);
         fortuneBillModel.setConfirm(Boolean.FALSE);
         fortuneBillModel.updateById();
@@ -433,6 +435,7 @@ public class FortuneBillService {
     public void include(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setInclude(Boolean.TRUE);
         fortuneBillModel.updateById();
     }
@@ -440,6 +443,7 @@ public class FortuneBillService {
     public void exclude(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setInclude(Boolean.FALSE);
         fortuneBillModel.updateById();
     }

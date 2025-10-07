@@ -1,6 +1,7 @@
 package com.fortuneboot.factory.fortune.model;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
@@ -83,6 +84,12 @@ public class FortuneBillModel extends FortuneBillEntity {
     public void checkAccountEnable(FortuneAccountModel account) {
         if (!account.getEnable()){
             throw new ApiException(ErrorCode.Business.BILL_ACCOUNT_DISABLE, account.getAccountName());
+        }
+    }
+
+    public void checkBillTypeConfirmAndInclude() {
+        if (Objects.equals(this.getBillType(), BillTypeEnum.ADJUST.getValue())){
+            throw new ApiException(ErrorCode.Business.BILL_TYPE_CAN_NOT_ADJUST);
         }
     }
 
