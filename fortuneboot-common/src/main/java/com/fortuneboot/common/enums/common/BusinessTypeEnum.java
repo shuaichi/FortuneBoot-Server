@@ -44,7 +44,9 @@ public enum BusinessTypeEnum implements DictionaryEnum<Integer> {
     EXCLUDE(24,"不统计", CssTag.PRIMARY),
     SET_DEFAULT(25,"设置默认", CssTag.PRIMARY),
     BALANCE_ADJUST(25,"余额调整", CssTag.PRIMARY),
-    CLOSE_ORDER(26,"关闭订单", CssTag.WARNING),
+    USING_ORDER(26,"使用单据", CssTag.PRIMARY),
+    CLOSE_ORDER(27,"关闭单据", CssTag.WARNING),
+    REOPEN_ORDER(28,"重开单据", CssTag.PRIMARY),
     ;
 
     private final int value;
