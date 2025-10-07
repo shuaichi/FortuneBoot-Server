@@ -91,7 +91,7 @@ public class SecurityConfig {
     @Bean
     public LogoutSuccessHandler logOutSuccessHandler() {
         return (request, response, authentication) -> {
-            SystemLoginUser loginUser = tokenService.getLoginUser(request);
+            SystemLoginUser loginUser = tokenService.getLoginUser(request, response);
             if (Objects.nonNull(loginUser)) {
                 String userName = loginUser.getUsername();
                 // 删除用户缓存记录

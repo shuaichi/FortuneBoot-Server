@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +55,7 @@ public class TokenService {
     /**
      * 过期时间，30天
      */
+//    private static final Long EXP_TIME = 20 * 1000L;
     private static final Long EXP_TIME = 24 * 30  * 60 * 60 * 1000L;
 
     /**
@@ -71,7 +73,7 @@ public class TokenService {
      *
      * @return 用户信息
      */
-    public SystemLoginUser getLoginUser(HttpServletRequest request) {
+    public SystemLoginUser getLoginUser(HttpServletRequest request, HttpServletResponse response) {
         // 获取请求携带的令牌
         String token = getTokenFromRequest(request);
         if (StrUtil.isNotEmpty(token)) {
@@ -79,8 +81,32 @@ public class TokenService {
                 Claims claims = parseToken(token);
                 // 解析对应的权限以及用户信息
                 String uuid = (String) claims.get(Token.LOGIN_USER_KEY);
+                SystemLoginUser loginUser = redisCache.loginUserCache.getObjectOnlyInCacheById(uuid);
 
-                return redisCache.loginUserCache.getObjectOnlyInCacheById(uuid);
+                // 如果 loginUser 为 null，说明缓存过期或用户登出
+                if (loginUser == null) {
+                    throw new ApiException(ErrorCode.Client.INVALID_TOKEN);
+                }
+
+                // 检查是否需要刷新 JWT（例如：当剩余有效期 <= autoRefreshTime 时刷新）
+                long now = System.currentTimeMillis();
+                Date exp = claims.getExpiration();
+                long remaining = exp.getTime() - now;
+
+                // autoRefreshTime 单位：分钟（你的 @Value 注入），转换为毫秒
+                long refreshThresholdMs = TimeUnit.MINUTES.toMillis(autoRefreshTime);
+
+                if (remaining > refreshThresholdMs) {
+                    // 生成新的 JWT，并把新的 token 放到响应头，前端需替换掉旧 token
+                    String newToken = generateToken(MapUtil.of(Token.LOGIN_USER_KEY, loginUser.getCachedKey()));
+                    // 把新的 token 放在响应头里（注意前端需要处理）
+                    response.setHeader(header, Token.PREFIX + newToken);
+                }
+
+                return loginUser;
+            } catch (io.jsonwebtoken.ExpiredJwtException expiredEx) {
+                log.warn("token expired.", expiredEx);
+                throw new ApiException(expiredEx, ErrorCode.Client.INVALID_TOKEN);
             } catch (SignatureException | MalformedJwtException | UnsupportedJwtException |
                      IllegalArgumentException jwtException) {
                 log.error("parse token failed.", jwtException);
@@ -115,7 +141,8 @@ public class TokenService {
      */
     public void refreshToken(SystemLoginUser loginUser) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime > loginUser.getAutoRefreshCacheTime()) {
+        Long refreshTime = loginUser.getAutoRefreshCacheTime();
+        if (currentTime > refreshTime) {
             loginUser.setAutoRefreshCacheTime(currentTime + TimeUnit.MINUTES.toMillis(autoRefreshTime));
             // 根据uuid将loginUser存入缓存
             redisCache.loginUserCache.set(loginUser.getCachedKey(), loginUser);
@@ -147,7 +174,11 @@ public class TokenService {
      */
     private Claims parseToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
-        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**
