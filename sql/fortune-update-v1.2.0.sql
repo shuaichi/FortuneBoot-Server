@@ -40,7 +40,7 @@ create table if not exists fortune_recurring_bill_rule
     executed_count      bigint        default 0  null comment '已执行次数',
     last_executed_time  datetime                 null comment '上次执行时间',
     next_execution_time datetime                 null comment '下次执行时间',
-    last_recovery_check datetime                 null comment '上次回复检查时间',
+    last_recovery_check datetime                 null comment '上次恢复检查时间',
     recovery_strategy   int                      null comment '补偿策略1、全部补偿 2、仅补偿最近N次 3、不补偿',
     max_recovery_count  int                      null comment '最大补偿次数',
     remark              varchar(1024) default '' not null comment '备注',
