@@ -40,13 +40,25 @@ public class FortuneRecurringBillRecoveryService {
             lastCheck = rule.getCreateTime();
         }
 
+        // 以最后一次真实执行时间为基准，避免重复补偿
+        LocalDateTime baseline = lastCheck;
+        LocalDateTime lastExecuted = rule.getLastExecutedTime();
+        if (Objects.nonNull(lastExecuted) && lastExecuted.isAfter(baseline)) {
+            baseline = lastExecuted;
+        }
+
         RecoveryStrategyEnum strategy = RecoveryStrategyEnum.getEnumByValue(rule.getRecoveryStrategy());
         if (Objects.equals(strategy, RecoveryStrategyEnum.NO_RECOVERY)) {
             return;
         }
 
+        // 如果基准时间不早于当前时间，则无需补偿
+        if (!baseline.isBefore(now)) {
+            return;
+        }
+
         // 计算应该执行但未执行的时间点
-        List<LocalDateTime> missedExecutions = calculateMissedExecutions(rule, lastCheck, now);
+        List<LocalDateTime> missedExecutions = calculateMissedExecutions(rule, baseline, now);
 
         if (missedExecutions.isEmpty()) {
             return;
