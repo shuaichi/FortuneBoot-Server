@@ -42,6 +42,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FastByteArrayOutputStream;
+import com.fortuneboot.service.cache.CacheCenter;
 
 /**
  * 登录校验方法
@@ -200,12 +201,15 @@ public class LoginService {
     public void recordLoginInfo(SystemLoginUser loginUser) {
         ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(loginUser.getUsername(), LoginStatusEnum.LOGIN_SUCCESS,
             LoginStatusEnum.LOGIN_SUCCESS.getDescription()));
-
+    
         SysUserEntity entity = redisCache.userCache.getObjectById(loginUser.getUserId());
-
+    
         entity.setLoginIp(JakartaServletUtil.getClientIP(ServletHolderUtil.getRequest()));
         entity.setLoginDate(DateUtil.date());
         entity.updateById();
+    
+        // 删除用户缓存，确保后续获取登录用户信息返回最新数据
+        CacheCenter.userCache.delete(loginUser.getUserId());
     }
 
     public String decryptPassword(String originalPassword) {

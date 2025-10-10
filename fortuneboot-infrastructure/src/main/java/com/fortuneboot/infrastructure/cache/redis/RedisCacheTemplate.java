@@ -56,7 +56,7 @@ public class RedisCacheTemplate<T> {
             Optional<T> optional = guavaCache.get(cachedKey);
 //            log.debug("find the guava cache of key: {}", cachedKey);
 
-            if (!optional.isPresent()) {
+            if (optional.isEmpty()) {
                 T objectFromDb = getObjectFromDb(id);
                 set(id, objectFromDb);
                 return objectFromDb;
@@ -108,7 +108,7 @@ public class RedisCacheTemplate<T> {
 
     public void delete(Object id) {
         redisUtil.deleteObject(generateKey(id));
-        guavaCache.refresh(generateKey(id));
+        guavaCache.invalidate(generateKey(id));
     }
 
     public void refresh(Object id) {
