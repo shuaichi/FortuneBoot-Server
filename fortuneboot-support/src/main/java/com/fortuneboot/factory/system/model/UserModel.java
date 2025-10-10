@@ -62,7 +62,7 @@ public class UserModel extends SysUserEntity {
     public void loadUpdateProfileCommand(UpdateProfileCommand command) {
         if (command != null) {
             this.setSex(command.getSex());
-            this.setNickname(command.getNickName());
+            this.setNickname(command.getNickname());
             this.setPhoneNumber(command.getPhoneNumber());
             this.setEmail(command.getEmail());
         }
