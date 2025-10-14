@@ -145,7 +145,7 @@ public class UserApplicationService {
         groupAddCommand.setEnable(Boolean.TRUE);
         groupAddCommand.setBookTemplate(1L);
         groupAddCommand.setRemark("新建账户创建的默认分组。");
-        fortuneGroupService.add(groupAddCommand, model.getUserId());
+        fortuneGroupService.newUserInit(groupAddCommand, model.getUserId());
     }
 
     public void updateUser(UpdateUserCommand command) {
