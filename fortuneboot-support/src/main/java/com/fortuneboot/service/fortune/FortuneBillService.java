@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
-import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
@@ -106,6 +105,8 @@ public class FortuneBillService {
         this.fillCategory(list);
         this.fillTag(list);
         this.fillPayee(list);
+        // 批量填充是否存在附件，避免N+1
+        this.fillHasFiles(list);
         return new PageDTO<>(list, page.getTotal());
     }
 
@@ -188,6 +189,24 @@ public class FortuneBillService {
             billBo.setCurrencyCode(Optional.ofNullable(account).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
             billBo.setToAccountName(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getAccountName).orElse(StringUtils.EMPTY));
             billBo.setToCurrencyCode(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
+        }
+    }
+
+    /**
+     * 批量填充是否存在附件标志，避免N+1
+     * 逻辑：
+     *  1) 收集当前页billId集合
+     *  2) 一次性查询存在附件的billId集合（过滤逻辑删除）
+     *  3) 回填到每条记录的 hasFile 字段
+     */
+    private void fillHasFiles(List<FortuneBillBo> list) {
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
+        if (CollectionUtils.isEmpty(billIdList)) {
+            return;
+        }
+        Set<Long> hasFileSet = fortuneFileRepo.findBillIdsWithFiles(billIdList);
+        for (FortuneBillBo bo : list) {
+            bo.setHasFile(hasFileSet.contains(bo.getBillId()));
         }
     }
 
