@@ -39,6 +39,7 @@ public class FortuneBillDownloadVo {
         if (Objects.equals(BillTypeEnum.TRANSFER.getValue(),bo.getBillType())){
             this.accountName = bo.getAccountName() + " -> " + bo.getToAccountName();
         }
+        this.hasFileDesc = bo.getHasFile() ? "是" : "否";
     }
 
     /**
@@ -120,6 +121,9 @@ public class FortuneBillDownloadVo {
      */
     @ExcelColumn(name = "是否统计")
     private String include;
+
+    @ExcelColumn(name = "包含附件")
+    private String hasFileDesc;
 
     /**
      * 备注
