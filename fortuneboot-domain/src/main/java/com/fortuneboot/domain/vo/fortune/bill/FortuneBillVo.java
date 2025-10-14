@@ -21,12 +21,6 @@ import java.util.List;
 @Data
 public class FortuneBillVo {
 
-    public FortuneBillVo(FortuneBillEntity entity){
-        if (ObjectUtil.isNotEmpty(entity)) {
-            BeanUtil.copyProperties(entity, this);
-        }
-    }
-
     public FortuneBillVo(FortuneBillBo bo){
         if (ObjectUtil.isNotEmpty(bo)){
             BeanUtil.copyProperties(bo,this);
@@ -35,6 +29,7 @@ public class FortuneBillVo {
             List<FortuneTagVo> tagList = bo.getTagList().stream().map(FortuneTagVo::new).toList();
             this.setTagList(tagList);
         }
+        this.setHasFile(bo.getHasFile());
     }
     /**
      * id
