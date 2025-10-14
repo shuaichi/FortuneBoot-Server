@@ -154,4 +154,10 @@ public class FortuneBillVo {
      * 标签
      */
     private List<FortuneTagVo> tagList;
+
+    /**
+     * 是否存在附件
+     * JSON字段：hasFile；默认false，服务层批量判定后置true
+     */
+    private Boolean hasFile = false;
 }

@@ -11,7 +11,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 账单文件
@@ -51,6 +56,22 @@ public class FortuneFileRepoImpl extends ServiceImpl<FortuneFileMapper, FortuneF
         }
         List<Long> ids = list.stream().map(FortuneFileEntity::getFileId).toList();
         fortuneFileMapper.phyDeleteByIds(ids);
+    }
+
+    @Override
+    public Set<Long> findBillIdsWithFiles(Collection<Long> billIds) {
+        if (CollectionUtils.isEmpty(billIds)) {
+            return Collections.emptySet();
+        }
+        LambdaQueryWrapper<FortuneFileEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneFileEntity.class);
+        // 仅选择 bill_id 字段，且使用逻辑删除自动过滤有效数据
+        queryWrapper.select(FortuneFileEntity::getBillId)
+            .in(FortuneFileEntity::getBillId, billIds);
+        List<FortuneFileEntity> list = this.list(queryWrapper);
+        return list.stream()
+            .map(FortuneFileEntity::getBillId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
 }
