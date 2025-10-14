@@ -91,39 +91,14 @@ public class FortuneGroupService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void newUserInit(FortuneGroupAddCommand groupAddCommand, Long userId) {
-        FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
-        fortuneGroupModel.loadAddCommand(groupAddCommand);
-        fortuneGroupModel.insert();
-        // 设置权限
-        userId = Objects.isNull(userId) ? AuthenticationUtils.getSystemLoginUser().getUserId() : userId;
-        FortuneUserGroupRelationAddCommand fortuneUserGroupRelationAddCommand = new FortuneUserGroupRelationAddCommand();
-        fortuneUserGroupRelationAddCommand.setGroupId(fortuneGroupModel.getGroupId());
-        fortuneUserGroupRelationAddCommand.setUserId(userId);
-        fortuneUserGroupRelationAddCommand.setRoleType(RoleTypeEnum.OWNER.getValue());
-        fortuneUserGroupRelationService.newUserInit(fortuneUserGroupRelationAddCommand);
-        // 新增账本
-        FortuneBookAddCommand fortuneBookAddCommand = new FortuneBookAddCommand();
-        fortuneBookAddCommand.setGroupId(fortuneGroupModel.getGroupId());
-        fortuneBookAddCommand.setBookName(groupAddCommand.getGroupName() + "的默认账本");
-        fortuneBookAddCommand.setDefaultCurrency(groupAddCommand.getDefaultCurrency());
-        fortuneBookAddCommand.setBookTemplate(groupAddCommand.getBookTemplate());
-        FortuneBookModel fortuneBookModel = fortuneBookService.add(fortuneBookAddCommand);
-        // 更新默认账本id
-        fortuneGroupModel.setDefaultBookId(fortuneBookModel.getBookId());
-        fortuneGroupModel.updateById();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
     public void add(FortuneGroupAddCommand groupAddCommand, Long userId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.create();
         fortuneGroupModel.loadAddCommand(groupAddCommand);
         fortuneGroupModel.insert();
         // 设置权限
-        userId = Objects.isNull(userId) ? AuthenticationUtils.getSystemLoginUser().getUserId() : userId;
         FortuneUserGroupRelationAddCommand fortuneUserGroupRelationAddCommand = new FortuneUserGroupRelationAddCommand();
         fortuneUserGroupRelationAddCommand.setGroupId(fortuneGroupModel.getGroupId());
-        fortuneUserGroupRelationAddCommand.setUserId(userId);
+        fortuneUserGroupRelationAddCommand.setUserId(Objects.isNull(userId) ? AuthenticationUtils.getSystemLoginUser().getUserId() : userId);
         fortuneUserGroupRelationAddCommand.setRoleType(RoleTypeEnum.OWNER.getValue());
         fortuneUserGroupRelationService.add(fortuneUserGroupRelationAddCommand);
         // 新增账本
