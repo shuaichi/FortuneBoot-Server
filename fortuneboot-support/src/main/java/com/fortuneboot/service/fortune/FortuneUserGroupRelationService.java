@@ -46,6 +46,15 @@ public class FortuneUserGroupRelationService {
 
     private final FortuneGroupRepo fortuneGroupRepo;
 
+    public void newUserInit(FortuneUserGroupRelationAddCommand addCommand){
+        FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
+        relationModel.loadAddCommand(addCommand);
+        relationModel.checkRepeat(addCommand.getUserId());
+        // 如果不存在分组，则将本分组设置为默认分组
+        relationModel.setDefaultGroup(Boolean.TRUE);
+        relationModel.insert();
+    }
+
     public void add(FortuneUserGroupRelationAddCommand addCommand) {
         FortuneUserGroupRelationModel relationModel = fortuneUserGroupRelationFactory.create();
         relationModel.loadAddCommand(addCommand);
