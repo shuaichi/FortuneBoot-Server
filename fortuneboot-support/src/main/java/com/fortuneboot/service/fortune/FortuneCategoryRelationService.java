@@ -1,6 +1,7 @@
 package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
 import com.fortuneboot.factory.fortune.factory.FortuneCategoryFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneCategoryRelationFactory;
 import com.fortuneboot.factory.fortune.model.FortuneCategoryRelationModel;
@@ -40,7 +41,16 @@ public class FortuneCategoryRelationService {
 
     @Transactional(rollbackFor = Exception.class)
     public void batchAdd(List<FortuneCategoryRelationAddCommand> commands) {
-        // mybatis-plus 的saveBatch底层是for循环一条一条插入的，故这里直接调用 add 方法也一样.
-        commands.forEach(this::add);
+        List<Long> ids = commands.stream().map(FortuneCategoryRelationAddCommand::getCategoryId).toList();
+        // 校验category是否存在，loadByIds中自带校验
+        fortuneCategoryFactory.loadByIds(ids);
+
+        List<FortuneCategoryRelationEntity> entityList = commands.stream().map(command -> {
+            FortuneCategoryRelationModel fortuneCategoryRelationModel = fortuneCategoryRelationFactory.create();
+            fortuneCategoryRelationModel.loadAddCommand(command);
+            return (FortuneCategoryRelationEntity) fortuneCategoryRelationModel;
+        }).toList();
+
+        fortuneCategoryRelationRepository.saveBatch(entityList,1000);
     }
 }
