@@ -53,7 +53,7 @@ public class FileRest {
                 // 返回类型是ResponseEntity 不能捕获异常， 需要手动将错误填到 ResponseEntity
                 ResponseDTO<Object> fail = ResponseDTO.fail(
                     new ApiException(Business.COMMON_FILE_NOT_ALLOWED_TO_DOWNLOAD, fileName));
-                return new ResponseEntity<>(JacksonUtil.to(fail).getBytes(), null, HttpStatus.OK);
+                return new ResponseEntity<>(JacksonUtil.to(fail).getBytes(), FileUploadUtils.getDownloadHeader(fileName), HttpStatus.OK);
             }
 
             String filePath = FileUploadUtils.getFileAbsolutePath(UploadSubDir.DOWNLOAD_PATH, fileName);

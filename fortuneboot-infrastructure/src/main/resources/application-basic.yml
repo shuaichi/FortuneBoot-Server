@@ -73,13 +73,13 @@ spring:
       enabled: false
   # compatible with swagger
   mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
+    path match:
+      matching-strategy: PATH_PATTERN_PARSER
   jackson:
     deserialization:
       fail-on-unknown-properties: false
-    serialization:
-      write-dates-as-timestamps: false
+#    serialization:
+#      write-dates-as-timestamps: false
     date-format: yyyy-MM-dd HH:mm:ss
 
 

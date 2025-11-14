@@ -31,7 +31,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-        <druid.version>1.2.24</druid.version>
+        <druid.version>1.2.27</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <mybatis-spring-boot.version>3.0.4</mybatis-spring-boot.version>
@@ -45,8 +45,9 @@
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.37</hutool.version>
         <lombok.version>1.18.38</lombok.version>
-        <mybatis-plus.version>3.5.11</mybatis-plus.version>
-        <mybatis-plus-generator.version>3.5.11</mybatis-plus-generator.version>
+
+        <mybatis-plus.version>3.5.15-SNAPSHOT</mybatis-plus.version>
+        <mybatis-plus-generator.version>3.5.14</mybatis-plus-generator.version>
         <dynamic-datasource-spring-boot.version>4.3.1</dynamic-datasource-spring-boot.version>
         <springdoc-openapi-starter-webapi.version>2.8.6</springdoc-openapi-starter-webapi.version>
         <mockito.version>1.10.19</mockito.version>
@@ -54,10 +55,11 @@
         <org.lionsoul.version>2.7.0</org.lionsoul.version>
         <com.google.guava.version>33.4.8-jre</com.google.guava.version>
         <mysql-connector-java>8.0.33</mysql-connector-java>
-        <spring.boot.version>3.4.4</spring.boot.version>
+        <spring.boot.version>4.0.0-RC2</spring.boot.version>
         <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
         <maven.war.plugin.version>3.4.0</maven.war.plugin.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -76,8 +78,9 @@
             <!-- 1.2.22开始配置文件读取不到，所以暂时使用1.2.21 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-3-starter</artifactId>
-                <version>${druid.version}</version>
+                <artifactId>druid-spring-boot-4-starter</artifactId>
+                <version>1.2.28-SNAPSHOT</version>
+<!--                <version>${druid.version}</version>-->
             </dependency>
 
             <!-- 解析客户端操作系统、浏览器等 -->
@@ -101,7 +104,7 @@
             <!-- mybatis plus 主依赖 -->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- mybatis plus 代码生成器依赖 -->
@@ -112,7 +115,7 @@
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-jsqlparser</artifactId>
+                <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
@@ -172,6 +175,11 @@
                 <version>${commons.collections.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
             <!-- Token生成与解析-->
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
@@ -272,11 +280,11 @@
             </dependency>
 
             <!-- 多数据源 -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
-                <version>${dynamic-datasource-spring-boot.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.baomidou</groupId>-->
+<!--                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>-->
+<!--                <version>${dynamic-datasource-spring-boot.version}</version>-->
+<!--            </dependency>-->
             <!-- swagger -->
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -307,7 +315,7 @@
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>mybatis-spring</artifactId>
@@ -377,7 +385,24 @@
             </plugin>
         </plugins>
     </build>
+    <repositories>
 
+        <!-- TODO 德鲁伊数据库连接池正式版发版后，删除这个配置 -->
+        <repository>
+            <id>xuxiaowei-druid-gitlab-maven</id>
+            <url>https://gitlab.xuxiaowei.com.cn/api/v4/projects/432/packages/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>baomidou-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
 <!--    <repositories>-->
 <!--        <repository>-->
 <!--            <id>public</id>-->

@@ -1,23 +1,24 @@
 package com.fortuneboot.infrastructure.security.xss;
 
 import cn.hutool.http.HtmlUtil;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+
 
 /**
  * 直接将html标签去掉
  * @author valarchie
  */
-public class JsonHtmlXssTrimSerializer extends JsonDeserializer<String> {
+public class JsonHtmlXssTrimSerializer extends ValueDeserializer<String> {
 
     public JsonHtmlXssTrimSerializer() {
         super();
     }
 
     @Override
-    public String deserialize(JsonParser p, DeserializationContext context) throws IOException {
+    public String deserialize(JsonParser p, DeserializationContext ctxt) throws JacksonException {
         String value = p.getValueAsString();
         if( value != null) {
             // 去除掉html标签    如果想要转义的话  可使用 HtmlUtil.escape()

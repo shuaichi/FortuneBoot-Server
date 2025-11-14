@@ -18,7 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -46,9 +46,6 @@ public class FortuneCurrencyService {
     private final TaskScheduler taskScheduler;
 
     private ScheduledFuture<?> scheduledFuture;
-
-    private final RestTemplate restTemplate;
-
 
     /**
      * 初始化货币
@@ -80,7 +77,13 @@ public class FortuneCurrencyService {
     public void refreshCurrency() {
         try {
             // 刷新汇率
-            String res = restTemplate.getForObject("https://api.exchangerate-api.com/v4/latest/USD", String.class);
+            String res = RestClient.builder()
+                    .baseUrl("https://api.exchangerate-api.com")
+                    .build()
+                    .get()
+                    .uri("/v4/latest/USD")
+                    .retrieve()
+                    .body(String.class);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(res);
             JsonNode rates = root.get("rates");

@@ -4,6 +4,28 @@ spring:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
+            url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
+            username: ${DB_USERNAME:root}
+            password: ${DB_PASSWORD:Jk9Lm2XqPvZt8N7e}
+            # 初始连接数
+            initialSize: 5
+            # 最小连接池数量
+            minIdle: 10
+            # 最大连接池数量
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            # 配置一个连接在池中最大生存的时间，单位是毫秒
+            maxEvictableIdleTimeMillis: 900000
+            # 配置检测连接是否有效
+            validationQuery: SELECT 1 FROM DUAL
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
             webStatFilter:
                 enabled: true
             statViewServlet:
@@ -24,35 +46,36 @@ spring:
                 wall:
                     config:
                         multi-statement-allow: true
-        dynamic:
-            primary: master
-            strict: false
-            druid:
-                # 初始连接数
-                initialSize: 5
-                # 最小连接池数量
-                minIdle: 10
-                # 最大连接池数量
-                maxActive: 20
-                # 配置获取连接等待超时的时间
-                maxWait: 60000
-                # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-                timeBetweenEvictionRunsMillis: 60000
-                # 配置一个连接在池中最小生存的时间，单位是毫秒
-                minEvictableIdleTimeMillis: 300000
-                # 配置一个连接在池中最大生存的时间，单位是毫秒
-                maxEvictableIdleTimeMillis: 900000
-                # 配置检测连接是否有效
-                validationQuery: SELECT 1 FROM DUAL
-                testWhileIdle: true
-                testOnBorrow: false
-                testOnReturn: false
-            datasource:
-                # 主库数据源
-                master:
-                    url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
-                    username: ${DB_USERNAME:root}
-                    password: ${DB_PASSWORD:Jk9Lm2XqPvZt8N7e}
+#
+#        dynamic:
+#            primary: master
+#            strict: false
+#            druid:
+#                # 初始连接数
+#                initialSize: 5
+#                # 最小连接池数量
+#                minIdle: 10
+#                # 最大连接池数量
+#                maxActive: 20
+#                # 配置获取连接等待超时的时间
+#                maxWait: 60000
+#                # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#                timeBetweenEvictionRunsMillis: 60000
+#                # 配置一个连接在池中最小生存的时间，单位是毫秒
+#                minEvictableIdleTimeMillis: 300000
+#                # 配置一个连接在池中最大生存的时间，单位是毫秒
+#                maxEvictableIdleTimeMillis: 900000
+#                # 配置检测连接是否有效
+#                validationQuery: SELECT 1 FROM DUAL
+#                testWhileIdle: true
+#                testOnBorrow: false
+#                testOnReturn: false
+#            datasource:
+#                # 主库数据源
+#                master:
+#                    url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
+#                    username: ${DB_USERNAME:root}
+#                    password: ${DB_PASSWORD:zC@PubMysql123}
                 # 从库数据源
 #                slave:
 #                    url: jdbc:mysql://localhost:33067/fortuneboot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
@@ -65,6 +88,7 @@ spring:
             host: ${REDIS_HOST:redis.fortuneboot.com}
             # 端口，默认为6379
             port: ${REDIS_PORT:62963}
+            password: ${REDIS_PASSWORD:cxXlCE69wzhSbrrq}
             # 数据库索引
             database: 0
             # 连接超时时间

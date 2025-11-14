@@ -13,7 +13,6 @@ import com.fortuneboot.domain.query.system.NoticeQuery;
 import com.fortuneboot.infrastructure.annotations.unrepeatable.Unrepeatable;
 import com.fortuneboot.infrastructure.annotations.unrepeatable.Unrepeatable.CheckType;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
-import com.baomidou.dynamic.datasource.annotation.DS;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -62,7 +61,6 @@ public class SysNoticeRest extends BaseController {
      * 从从库获取数据 例子 仅供参考
      */
     @Operation(summary = "公告列表（从数据库从库获取）", description = "演示主从库的例子")
-    @DS("slave")
     @PreAuthorize("@permission.has('system:notice:list')")
     @GetMapping("/database/slave")
     public ResponseDTO<PageDTO<NoticeDTO>> listFromSlave(NoticeQuery query) {
