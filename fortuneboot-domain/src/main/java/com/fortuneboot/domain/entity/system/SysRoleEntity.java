@@ -56,6 +56,10 @@ public class SysRoleEntity extends BaseEntity<SysRoleEntity> {
     @TableField("allow_register")
     private Boolean allowRegister;
 
+    @Schema(description = "是否是超级管理员")
+    @TableField("is_admin")
+    private Boolean isAdmin;
+
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;

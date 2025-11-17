@@ -126,9 +126,13 @@ public class UserApplicationService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addUser(AddUserCommand command) {
+        SysRoleEntity role = roleRepository.getById(command.getRoleId());
         UserModel model = userModelFactory.create();
+        // 加载数据
         model.loadAddUserCommand(command);
+        model.setIsAdmin(role.getIsAdmin());
 
+        // 校验数据
         model.checkUsernameIsUnique();
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
@@ -149,8 +153,11 @@ public class UserApplicationService {
     }
 
     public void updateUser(UpdateUserCommand command) {
+        SysRoleEntity role = roleRepository.getById(command.getRoleId());
         UserModel model = userModelFactory.loadById(command.getUserId());
+        model.setIsAdmin(role.getIsAdmin());
         command.setSource(model.getSource());
+
         model.loadUpdateUserCommand(command);
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
@@ -231,7 +238,7 @@ public class UserApplicationService {
         return Objects.nonNull(user);
     }
 
-    public String getIcp(){
+    public String getIcp() {
         return sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.ICP.getValue());
     }
 

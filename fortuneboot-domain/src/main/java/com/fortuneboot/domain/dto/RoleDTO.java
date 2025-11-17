@@ -28,6 +28,7 @@ public class RoleDTO {
             this.remark = entity.getRemark();
             this.dataScope = entity.getDataScope();
             this.allowRegister = entity.getAllowRegister();
+            this.isAdmin = entity.getIsAdmin();
         }
     }
 
@@ -49,6 +50,9 @@ public class RoleDTO {
     private Integer dataScope;
     @ExcelColumn(name = "数据范围")
     private Boolean allowRegister;
+    @ExcelColumn(name = "是否是超级管理员")
+    private Boolean isAdmin;
+
 
     private List<Long> selectedMenuList;
 }
