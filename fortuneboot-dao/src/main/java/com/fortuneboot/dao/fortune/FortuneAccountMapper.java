@@ -25,21 +25,6 @@ public interface FortuneAccountMapper extends BaseMapper<FortuneAccountEntity> {
                 fortune_account \n
             WHERE \n
                 group_id = ${groupId}\n
-                AND balance > 0\n
-                AND deleted = FALSE
-                AND include = TRUE;
-            """)
-    List<FortunePieVo> getTotalAssets(Long groupId);
-
-    @Select("""
-            SELECT \n
-                account_name AS name,\n
-                balance AS `value`,\n
-                ROUND((balance / SUM(balance) OVER ()) * 100, 2) AS percent\n
-            FROM \n
-                fortune_account \n
-            WHERE \n
-                group_id = ${groupId}\n
                 AND balance < 0\n
                 AND deleted = FALSE
                 AND include = TRUE;

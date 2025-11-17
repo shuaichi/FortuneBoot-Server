@@ -32,14 +32,6 @@ public interface FortuneAccountRepo extends IService<FortuneAccountEntity> {
     List<FortuneAccountEntity> getByIds(List<Long> accountIdList);
 
     /**
-     * 统计总资产
-     *
-     * @param groupId
-     * @return
-     */
-    List<FortunePieVo> getTotalAssets(Long groupId);
-
-    /**
      * 统计总负债
      *
      * @param groupId
