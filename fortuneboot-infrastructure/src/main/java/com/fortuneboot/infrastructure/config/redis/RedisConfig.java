@@ -1,6 +1,8 @@
 package com.fortuneboot.infrastructure.config.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import jakarta.annotation.Resource;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -8,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -29,11 +31,18 @@ import java.time.Duration;
 @Configuration
 @EnableCaching
 public class RedisConfig {
+    @Resource
+    private DataRedisProperties dataRedisProperties;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        // 如果使用 Spring Boot 默认配置，可直接返回 LettuceConnectionFactory()
-        return new LettuceConnectionFactory();
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName(dataRedisProperties.getHost());
+        configuration.setPort(dataRedisProperties.getPort());
+        configuration.setDatabase(dataRedisProperties.getDatabase());
+        configuration.setPassword(dataRedisProperties.getPassword());
+        configuration.setUsername(dataRedisProperties.getUsername());
+        return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
