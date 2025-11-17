@@ -40,9 +40,6 @@ public class GuavaCacheBean implements Cache {
 
     @Override
     public ValueWrapper get(Object key) {
-        if (Objects.isNull(key)) {
-            return null;
-        }
         Object ifPresent = storage.getIfPresent(key.toString());
         return Objects.isNull(ifPresent) ? null : new SimpleValueWrapper(ifPresent);
     }
@@ -57,9 +54,6 @@ public class GuavaCacheBean implements Cache {
 
     @Override
     public void evict(Object key) {
-        if (key == null) {
-            return;
-        }
 
         storage.invalidate(key);
     }

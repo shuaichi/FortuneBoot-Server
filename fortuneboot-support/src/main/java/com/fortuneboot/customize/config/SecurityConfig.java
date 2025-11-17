@@ -144,7 +144,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/*/checkRepeat", "/getAllowRegisterRoles", "/register",
                                 "/getConfig", "/getRsaPublicKey", "/captchaImage", "/api/**").anonymous()
 //                        .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js",
-                        .requestMatchers(HttpMethod.GET, "/", "/*.html", "/*.css", "/*.js",
+                        .requestMatchers(HttpMethod.GET, "/", "/.*\\.html$", "/.*\\.css", "/.*\\.js",
                                 "/profile/**").permitAll()
                         // 完全公开的接口，不管是否有token都可以访问
                         .requestMatchers("/getApiVersion").permitAll()
