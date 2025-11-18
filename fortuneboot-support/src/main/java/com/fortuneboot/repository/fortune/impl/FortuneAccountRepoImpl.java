@@ -41,13 +41,4 @@ public class FortuneAccountRepoImpl extends ServiceImpl<FortuneAccountMapper, Fo
         return this.list(queryWrapper);
     }
 
-    @Override
-    public List<FortunePieVo> getTotalLiabilities(Long groupId) {
-        return fortuneAccountMapper.getTotalLiabilities(groupId);
-    }
-
-    @Override
-    public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
-        return fortuneAccountMapper.getFortuneAssetsLiabilities(groupId);
-    }
 }

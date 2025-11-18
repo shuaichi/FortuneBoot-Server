@@ -31,19 +31,4 @@ public interface FortuneAccountRepo extends IService<FortuneAccountEntity> {
      */
     List<FortuneAccountEntity> getByIds(List<Long> accountIdList);
 
-    /**
-     * 统计总负债
-     *
-     * @param groupId
-     * @return
-     */
-    List<FortunePieVo> getTotalLiabilities(Long groupId);
-
-    /**
-     * 统计资产负债
-     *
-     * @param groupId
-     * @return
-     */
-    FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId);
 }

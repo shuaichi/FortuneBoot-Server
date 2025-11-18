@@ -1,7 +1,6 @@
 package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
@@ -274,11 +273,105 @@ public class FortuneAccountService {
 
 
     public List<FortunePieVo> getTotalLiabilities(Long groupId) {
-        return fortuneAccountRepo.getTotalLiabilities(groupId);
+        // 1) 获取分组默认币种
+        String defaultCurrency = fortuneGroupFactory.loadById(groupId).getDefaultCurrency();
+
+        // 2) 查询该分组启用账户
+        List<FortuneAccountEntity> accounts = fortuneAccountRepo.getEnableAccountList(groupId);
+
+        // 3) 获取汇率模板（以 USD 为基础：1 USD = rate 本币）
+        List<CurrencyTemplateBo> rateList = applicationScopeBo.getCurrencyTemplateBoList();
+
+        // 4) 将各账户余额按“账户币种 → USD → 分组默认币种”转换，并累计（负债为负数）
+        List<FortunePieVo> result = new ArrayList<>();
+        BigDecimal totalNeg = BigDecimal.ZERO;
+
+        for (FortuneAccountEntity acc : accounts) {
+            if (Boolean.TRUE.equals(acc.getInclude())
+                    && acc.getBalance() != null
+                    && acc.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+
+                BigDecimal converted = convertCurrency(
+                        acc.getBalance(),
+                        acc.getCurrencyCode(),
+                        defaultCurrency,
+                        rateList
+                ).setScale(2, RoundingMode.HALF_UP);
+
+                if (converted.compareTo(BigDecimal.ZERO) < 0) {
+                    FortunePieVo vo = new FortunePieVo();
+                    vo.setName(acc.getAccountName());
+                    vo.setValue(converted);
+                    result.add(vo);
+                    totalNeg = totalNeg.add(converted);
+                }
+            }
+        }
+
+        // 5) 计算百分比（负数/负数 → 正百分比）
+        if (totalNeg.compareTo(BigDecimal.ZERO) != 0) {
+            for (FortunePieVo vo : result) {
+                BigDecimal percent = vo.getValue()
+                        .divide(totalNeg, 10, RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100"))
+                        .setScale(2, RoundingMode.HALF_UP);
+                vo.setPercent(percent);
+            }
+        } else {
+            for (FortunePieVo vo : result) {
+                vo.setPercent(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+            }
+        }
+
+        return result;
     }
 
     public FortuneAssetsLiabilitiesVo getFortuneAssetsLiabilities(Long groupId) {
-        return fortuneAccountRepo.getFortuneAssetsLiabilities(groupId);
+        // 1) 获取分组默认币种
+        String defaultCurrency = fortuneGroupFactory.loadById(groupId).getDefaultCurrency();
+
+        // 2) 查询该分组启用账户
+        List<FortuneAccountEntity> accounts = fortuneAccountRepo.getEnableAccountList(groupId);
+
+        // 3) 获取汇率模板（以 USD 为基础：1 USD = rate 本币）
+        List<CurrencyTemplateBo> rateList = applicationScopeBo.getCurrencyTemplateBoList();
+
+        // 4) 累计资产（>0）与负债（<0，先累负数）
+        BigDecimal assets = BigDecimal.ZERO;
+        BigDecimal liabilitiesNeg = BigDecimal.ZERO;
+
+        for (FortuneAccountEntity acc : accounts) {
+            if (!Boolean.TRUE.equals(acc.getInclude())) {
+                continue;
+            }
+            if (acc.getBalance() == null || acc.getBalance().compareTo(BigDecimal.ZERO) == 0) {
+                continue;
+            }
+
+            BigDecimal converted = convertCurrency(
+                    acc.getBalance(),
+                    acc.getCurrencyCode(),
+                    defaultCurrency,
+                    rateList
+            );
+
+            if (converted.compareTo(BigDecimal.ZERO) > 0) {
+                assets = assets.add(converted);
+            } else if (converted.compareTo(BigDecimal.ZERO) < 0) {
+                liabilitiesNeg = liabilitiesNeg.add(converted); // 累加负数
+            }
+        }
+
+        // 5) 输出口径与原 SQL 一致：负债取绝对值；净资产 = 总资产 + 负债和(负数) = 总资产 - |负债|
+        BigDecimal totalAssets = assets.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totalLiabilities = liabilitiesNeg.abs().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal netAssets = totalAssets.subtract(totalLiabilities).setScale(2, RoundingMode.HALF_UP);
+
+        FortuneAssetsLiabilitiesVo vo = new FortuneAssetsLiabilitiesVo();
+        vo.setTotalAssets(totalAssets);
+        vo.setTotalLiabilities(totalLiabilities);
+        vo.setNetAssets(netAssets);
+        return vo;
     }
 
     @Transactional(rollbackFor = Exception.class)
