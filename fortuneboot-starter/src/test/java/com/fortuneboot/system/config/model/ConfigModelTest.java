@@ -54,7 +54,7 @@ class ConfigModelTest {
     }
 
     @Test
-    void testConfigModelConstructorWhenInvalidJSon() {
+    void testConfigModelConstructorWhenInvalidJson() {
         SysConfigEntity entity = getConfigEntity();
         entity.setConfigOptions("{\"true\",\"false\"}");
         ConfigModel invalid1 = new ConfigModel(entity, configService);

@@ -27,12 +27,12 @@ public class EmbeddedRedisConfig {
     @PostConstruct
     public void postConstruct() {
         try {
-            RedisServer redisServer = RedisServer.newRedisServer().port(port)
+            RedisServer server = RedisServer.newRedisServer().port(port)
                     .setting("maxmemory 32M")
                     .setting("daemonize no")
                     .setting("appendonly no").build();
-            this.redisServer = redisServer;
-            redisServer.start();
+            this.redisServer = server;
+            server.start();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

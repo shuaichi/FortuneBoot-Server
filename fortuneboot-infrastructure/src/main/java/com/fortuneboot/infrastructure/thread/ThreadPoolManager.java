@@ -20,7 +20,7 @@ public class ThreadPoolManager {
             new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
     private static final ScheduledExecutorService SCHEDULED_EXECUTOR = new ScheduledThreadPoolExecutor(
             ThreadConfig.CORE_POOL_SIZE,
-            new BasicThreadFactory.Builder().namingPattern("schedule-pool-%d").daemon(true).build(),
+            BasicThreadFactory.builder().namingPattern("schedule-pool-%d").daemon(true).build(),
             new ThreadPoolExecutor.CallerRunsPolicy()) {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {

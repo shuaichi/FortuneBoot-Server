@@ -68,14 +68,14 @@ public class FortuneTagModel extends FortuneTagEntity {
     }
 
     public void checkHeight() {
-        Long parentId = this.getParentId();
+        Long pId = this.getParentId();
         int height = 1;
-        while (parentId != -1) {
+        while (pId != -1) {
             if (height > 3) {
                 throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
             }
-            FortuneTagEntity parent = fortuneTagRepo.getById(parentId);
-            parentId = parent.getParentId();
+            FortuneTagEntity parent = fortuneTagRepo.getById(pId);
+            pId = parent.getParentId();
             height++;
         }
     }
@@ -87,13 +87,13 @@ public class FortuneTagModel extends FortuneTagEntity {
     }
 
     public void checkParentInRecycleBin() {
-        Long parentId = this.getParentId();
-        while (parentId != -1) {
-            FortuneTagEntity parent = fortuneTagRepo.getById(parentId);
+        Long pId = this.getParentId();
+        while (pId != -1) {
+            FortuneTagEntity parent = fortuneTagRepo.getById(pId);
             if (parent.getRecycleBin()) {
                 throw new ApiException(ErrorCode.Business.TAG_PARENT_IN_RECYCLE, parent.getTagName());
             }
-            parentId = parent.getParentId();
+            pId = parent.getParentId();
         }
     }
 }

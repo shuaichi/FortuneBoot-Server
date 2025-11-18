@@ -98,7 +98,9 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
 
     }
 
+    @Override
     public void operateFinanceOrder(BillStrategyContext context){}
 
+    @Override
     public void refuseFinanceOrder(BillStrategyContext context){}
 }

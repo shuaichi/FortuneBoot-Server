@@ -89,9 +89,11 @@ public class FortuneCurrencyService {
             JsonNode rates = root.get("rates");
             Map<String, BigDecimal> rateMap = new HashMap<>();
             // 转成map
-            rates.fields().forEachRemaining(entry -> {
-                BigDecimal value = entry.getValue().decimalValue();
-                rateMap.put(entry.getKey(), value);
+            rates.properties().forEach(property -> {
+                String key = property.getKey();
+                JsonNode valueNode = property.getValue();
+                BigDecimal value = valueNode.decimalValue();
+                rateMap.put(key, value);
             });
             List<CurrencyTemplateBo> currencyTemplateBoList = applicationScopeBo.getCurrencyTemplateBoList();
             // 刷新内存中数据
@@ -99,10 +101,7 @@ public class FortuneCurrencyService {
                 Optional<CurrencyTemplateBo> currencyTemplateOptional = currencyTemplateBoList.stream()
                         .filter(user -> user.getCurrencyName().equals(key))
                         .findFirst();
-                if (currencyTemplateOptional.isPresent()) {
-                    CurrencyTemplateBo currencyTemplateBo = currencyTemplateOptional.get();
-                    currencyTemplateBo.setRate(value);
-                }
+                currencyTemplateOptional.ifPresent(currencyTemplateBo -> currencyTemplateBo.setRate(value));
             });
             // 持久化到数据库
             List<FortuneCurrencyEntity> list = BeanUtil.copyToList(currencyTemplateBoList, FortuneCurrencyEntity.class);

@@ -37,8 +37,8 @@ public class MenuModel extends SysMenuEntity {
         if (command != null) {
             BeanUtil.copyProperties(command, this, "menuId");
 
-            String metaInfo = JacksonUtil.to(command.getMeta());
-            this.setMetaInfo(metaInfo);
+            String metaInfoStr = JacksonUtil.to(command.getMeta());
+            this.setMetaInfo(metaInfoStr);
         }
     }
 

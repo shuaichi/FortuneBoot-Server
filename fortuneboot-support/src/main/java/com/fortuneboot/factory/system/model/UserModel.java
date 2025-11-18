@@ -85,9 +85,9 @@ public class UserModel extends SysUserEntity {
     public void checkFieldRelatedEntityExist() {
         if (getRoleId() != null) {
             RoleModel roleModel = roleModelFactory.loadById(getRoleId());
-            UserSourceEnum source = UserSourceEnum.getByValue(this.getSource());
+            UserSourceEnum sourceEnum = UserSourceEnum.getByValue(this.getSource());
             // 不同角色来源，做不同的操作
-            switch (source){
+            switch (sourceEnum){
                 case REGISTER:
                     if (!roleModel.getAllowRegister()) {
                         throw new ApiException(Business.USER_ROLE_NOT_ALLOW_REGISTER);

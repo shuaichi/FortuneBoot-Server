@@ -49,14 +49,14 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
     }
 
     public void checkHeight() {
-        Long parentId = this.getParentId();
+        Long pId = this.getParentId();
         int height = 1;
-        while (parentId != -1) {
+        while (pId != -1) {
             if (height > 3) {
                 throw new ApiException(ErrorCode.Business.TAG_HEIGHT_EXCEEDS_THREE);
             }
-            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(parentId);
-            parentId = parent.getParentId();
+            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(pId);
+            pId = parent.getParentId();
             height++;
         }
     }
@@ -74,13 +74,13 @@ public class FortuneCategoryModel extends FortuneCategoryEntity {
     }
 
     public void checkParentInRecycleBin() {
-        Long parentId = this.getParentId();
-        while (parentId != -1) {
-            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(parentId);
+        Long pId = this.getParentId();
+        while (pId != -1) {
+            FortuneCategoryEntity parent = fortuneCategoryRepo.getById(pId);
             if (parent.getRecycleBin()) {
                 throw new ApiException(ErrorCode.Business.CATEGORY_PARENT_IN_RECYCLE,parent.getCategoryName());
             }
-            parentId = parent.getParentId();
+            pId = parent.getParentId();
         }
     }
 }

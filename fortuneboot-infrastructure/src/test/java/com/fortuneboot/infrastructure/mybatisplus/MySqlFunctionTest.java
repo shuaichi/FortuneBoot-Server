@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 class MySqlFunctionTest {
 
     @Test
-    void find_in_set() {
+    void findInSet() {
         String searchStr = ",2,4,5,9";
 
         Assertions.assertTrue(MySqlFunction.findInSet("2", searchStr));

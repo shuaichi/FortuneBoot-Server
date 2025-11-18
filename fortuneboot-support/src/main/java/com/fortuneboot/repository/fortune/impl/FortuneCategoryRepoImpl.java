@@ -58,7 +58,7 @@ public class FortuneCategoryRepoImpl extends ServiceImpl<FortuneCategoryMapper, 
             return;
         }
         List<Long> ids = list.stream().map(FortuneCategoryEntity::getCategoryId).toList();
-        fortuneCategoryMapper.deleteBatchIds(ids);
+        fortuneCategoryMapper.deleteByIds(ids);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class FortuneCategoryRepoImpl extends ServiceImpl<FortuneCategoryMapper, 
         queryWrapper.in(FortuneCategoryEntity::getBookId,bookIds);
         List<FortuneCategoryEntity> list = this.list(queryWrapper);
         List<Long> ids = list.stream().map(FortuneCategoryEntity::getCategoryId).toList();
-        fortuneCategoryMapper.deleteBatchIds(ids);
+        fortuneCategoryMapper.deleteByIds(ids);
     }
 
     @Override

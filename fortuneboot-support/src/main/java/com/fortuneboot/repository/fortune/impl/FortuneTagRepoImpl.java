@@ -65,7 +65,7 @@ public class FortuneTagRepoImpl extends ServiceImpl<FortuneTagMapper, FortuneTag
             return;
         }
         List<Long> ids = list.stream().map(FortuneTagEntity::getTagId).toList();
-        fortuneTagMapper.deleteBatchIds(ids);
+        fortuneTagMapper.deleteByIds(ids);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class FortuneTagRepoImpl extends ServiceImpl<FortuneTagMapper, FortuneTag
         queryWrapper.in(FortuneTagEntity::getBookId,bookIds);
         List<FortuneTagEntity> list = this.list(queryWrapper);
         List<Long> ids = list.stream().map(FortuneTagEntity::getTagId).toList();
-        fortuneTagMapper.deleteBatchIds(ids);
+        fortuneTagMapper.deleteByIds(ids);
     }
 
     @Override

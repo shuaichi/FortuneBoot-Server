@@ -26,8 +26,8 @@ public class FortuneBillVo {
             BeanUtil.copyProperties(bo,this);
         }
         if (CollectionUtils.isNotEmpty(bo.getTagList())){
-            List<FortuneTagVo> tagList = bo.getTagList().stream().map(FortuneTagVo::new).toList();
-            this.setTagList(tagList);
+            List<FortuneTagVo> tags = bo.getTagList().stream().map(FortuneTagVo::new).toList();
+            this.setTagList(tags);
         }
         this.setHasFile(bo.getHasFile());
     }

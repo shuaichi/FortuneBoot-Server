@@ -36,6 +36,7 @@ public class AdjustBillStrategy extends AbstractBillStrategy{
         return BillTypeEnum.ADJUST;
     }
 
+    @Override
     public void convertRate(BillStrategyContext context){
         log.info("[余额调整] 不需要转换汇率");
     }

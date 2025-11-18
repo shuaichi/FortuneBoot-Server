@@ -5,13 +5,13 @@ import com.fortuneboot.repository.system.SysRoleRepo;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest(classes = IntegrationTestApplication.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 class SysRoleRepoImplTest {
 
     @Resource
