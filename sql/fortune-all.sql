@@ -744,6 +744,7 @@ create table if not exists sys_role
     data_scope     smallint   default 1 null comment '数据范围（1：全部数据权限 2：自定数据权限 3: 本部门数据权限 4: 本部门及以下数据权限 5: 本人权限）',
     status         smallint             not null comment '角色状态（1正常 0停用）',
     allow_register tinyint(1) default 0 not null comment '允许注册',
+    is_admin       tinyint(1) default 0 not null comment '是否为超级管理员',
     creator_id     bigint               null comment '创建者ID',
     create_time    datetime             null comment '创建时间',
     updater_id     bigint               null comment '更新者ID',
@@ -753,9 +754,9 @@ create table if not exists sys_role
 )
     comment '角色信息表';
 
-INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (1, '超级管理员', 'admin', 1, 1, 1, 0, null, '2022-05-21 08:30:54', null, null, '超级管理员', 0);
-INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (2, '普通角色', 'common', 3, 5, 1, 1, null, '2022-05-21 08:30:54', 7, '2025-03-06 18:37:48', '普通角色', 0);
-INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (3, '闲置角色', 'unused', 4, 5, 0, 0, null, '2022-05-21 08:30:54', 1, '2025-02-22 17:11:36', '未使用的角色', 0);
+INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, is_admin, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (1, '超级管理员', 'admin', 1, 1, 1, 0, 1, null, '2022-05-21 08:30:54', null, null, '超级管理员', 0);
+INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, is_admin, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (2, '普通角色', 'common', 3, 5, 1, 1, 0, null, '2022-05-21 08:30:54', 7, '2025-03-06 18:37:48', '普通角色', 0);
+INSERT INTO sys_role (role_id, role_name, role_key, role_sort, data_scope, status, allow_register, is_admin, creator_id, create_time, updater_id, update_time, remark, deleted) VALUES (3, '闲置角色', 'unused', 4, 5, 0, 0, 0, null, '2022-05-21 08:30:54', 1, '2025-02-22 17:11:36', '未使用的角色', 0);
 
 create table if not exists sys_role_menu
 (
