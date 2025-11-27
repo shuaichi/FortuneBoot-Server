@@ -75,7 +75,7 @@ spring:
 #                master:
 #                    url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
 #                    username: ${DB_USERNAME:root}
-#                    password: ${DB_PASSWORD:zC@PubMysql123}
+#                    password: ${DB_PASSWORD:Jk9Lm2XqPvZt8N7e}
                 # 从库数据源
 #                slave:
 #                    url: jdbc:mysql://localhost:33067/fortuneboot?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
@@ -88,7 +88,6 @@ spring:
             host: ${REDIS_HOST:redis.fortuneboot.com}
             # 端口，默认为6379
             port: ${REDIS_PORT:62963}
-            password: ${REDIS_PASSWORD:cxXlCE69wzhSbrrq}
             # 数据库索引
             database: 0
             # 连接超时时间
