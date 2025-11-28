@@ -39,7 +39,7 @@ public class BaseLoginUser implements UserDetails {
     /**
      * 登录信息
      */
-    protected final LoginInfo loginInfo = new LoginInfo();
+    protected LoginInfo loginInfo = new LoginInfo();
 
 
     public BaseLoginUser(Long userId, String username, String password) {
