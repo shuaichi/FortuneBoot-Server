@@ -1,9 +1,9 @@
 
 <p align="center">
-      <img src="https://img.shields.io/badge/Release-v1.4.0-green.svg" alt="Downloads">
+      <img src="https://img.shields.io/badge/Release-v1.4.1-green.svg" alt="Downloads">
       <img src="https://img.shields.io/badge/JDK-21+-green.svg" alt="Build Status">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Build Status">
-   <img src="https://img.shields.io/badge/Spring%20Boot-3.3-blue.svg" alt="Downloads">
+   <img src="https://img.shields.io/badge/Spring%20Boot-4.0-blue.svg" alt="Downloads">
    <a target="_blank" href="https://bladex.vip">
    <img src="https://img.shields.io/badge/Author-弛神降临-ff69b4.svg" alt="Downloads">
  </a>
@@ -16,7 +16,7 @@
 [//]: # (暂时注释logo)
 [//]: # (<img alt="logo" height="200" src="">)
 </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot v1.4.0 </h1>
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">FortuneBoot v1.4.1 </h1>
 <h4 align="center">基于AgileBoot开发的记账管理软件</h4>
 <p align="center">
 </p>
