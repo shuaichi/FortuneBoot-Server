@@ -34,7 +34,7 @@ public class RedisCacheTemplate<T> {
             .concurrencyLevel(64)
             // 所有segment的初始总容量大小
             .initialCapacity(128)
-            .build(new CacheLoader<String, Optional<T>>() {
+            .build(new CacheLoader<>() {
                 @Override
                 public Optional<T> load(String cachedKey) {
                     T cacheObject = redisUtil.getCacheObject(cachedKey);

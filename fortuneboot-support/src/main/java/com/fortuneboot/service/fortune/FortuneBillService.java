@@ -1,6 +1,5 @@
 package com.fortuneboot.service.fortune;
 
-import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
@@ -10,6 +9,7 @@ import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
+import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
@@ -277,18 +277,20 @@ public class FortuneBillService {
     /**
      * 批量处理分类关联
      */
-    private void processCategoryRelations(List<Pair<Long, BigDecimal>> categories, FortuneBillModel fortuneBillModel) {
+    private void processCategoryRelations(List<CategoryAmountDTO> categories, FortuneBillModel fortuneBillModel) {
         if (CollectionUtils.isEmpty(categories)) {
             return;
         }
-        List<Long> categoryIds = categories.stream().map(Pair::getKey).toList();
+        List<Long> categoryIds = categories.stream().
+                map(CategoryAmountDTO::getCategoryId)
+                .toList();
         // 加载分类
         List<FortuneCategoryModel> fortuneCategoryModels = fortuneCategoryFactory.loadByIds(categoryIds);
         // 校验分类启用
         fortuneBillModel.checkCategoryListEnable(fortuneCategoryModels);
         // 构建分类-账单关系
         List<FortuneCategoryRelationAddCommand> commands = categories.stream()
-                .map(pair -> new FortuneCategoryRelationAddCommand(fortuneBillModel.getBillId(), pair.getKey(), pair.getValue()))
+                .map(category -> new FortuneCategoryRelationAddCommand(fortuneBillModel.getBillId(), category.getCategoryId(), category.getAmount()))
                 .collect(Collectors.toList());
         // 需要实现批量插入方法
         fortuneCategoryRelationService.batchAdd(commands);

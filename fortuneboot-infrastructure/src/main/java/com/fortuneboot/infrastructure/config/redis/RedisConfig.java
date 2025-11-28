@@ -62,8 +62,10 @@ public class RedisConfig {
                                 .withIsGetterVisibility(JsonAutoDetect.Visibility.ANY)
                                 .withSetterVisibility(JsonAutoDetect.Visibility.ANY)
                                 .withCreatorVisibility(JsonAutoDetect.Visibility.ANY)
-                ).activateDefaultTyping(BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build(), DefaultTyping.NON_FINAL)
-                .build();
+                ).activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build(),
+                        DefaultTyping.NON_FINAL
+                ).build();
 
         GenericJacksonJsonRedisSerializer serializer = new GenericJacksonJsonRedisSerializer(objectMapper);
 

@@ -1,12 +1,8 @@
 package com.fortuneboot.domain.command.fortune;
 
-import cn.hutool.core.lang.Pair;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
-import com.fortuneboot.common.serializer.CategoryAmountPairDeserializer;
-import com.fortuneboot.common.serializer.CategoryAmountPairSerializer;
+import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -16,9 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -61,9 +55,7 @@ public class FortuneBillAddCommand {
      * 分类和金额
      */
     @NotNull(message = "分类和金额不能为空")
-    @JsonDeserialize(using = CategoryAmountPairDeserializer.class)
-    @JsonSerialize(using = CategoryAmountPairSerializer.class)
-    private List<Pair<Long, BigDecimal>> categoryAmountPair;
+    private List<CategoryAmountDTO> categoryAmountPair;
 
     /**
      * 金额

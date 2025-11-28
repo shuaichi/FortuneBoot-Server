@@ -1,10 +1,10 @@
 package com.fortuneboot.strategy.bill.impl;
 
-import cn.hutool.core.lang.Pair;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
+import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
@@ -78,7 +78,7 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
         FortuneBillModel billModel = context.getBillModel();
 
         BigDecimal amount = context.getCommand().getCategoryAmountPair().stream()
-                .map(Pair::getValue)
+                .map(CategoryAmountDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         billModel.setAmount(amount);
 
