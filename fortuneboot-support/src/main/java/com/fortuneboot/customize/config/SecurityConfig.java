@@ -143,8 +143,7 @@ public class SecurityConfig {
                         // 注意： 当携带token请求以下这几个接口时 会返回403的错误
                         .requestMatchers("/login", "/*/checkRepeat", "/getAllowRegisterRoles", "/register",
                                 "/getConfig", "/getRsaPublicKey", "/captchaImage", "/api/**").anonymous()
-//                        .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js",
-                        .requestMatchers(HttpMethod.GET, "/", "/.*\\.html$", "/.*\\.css", "/.*\\.js",
+                        .requestMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js",
                                 "/profile/**").permitAll()
                         // 完全公开的接口，不管是否有token都可以访问
                         .requestMatchers("/getApiVersion").permitAll()
