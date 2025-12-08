@@ -2,8 +2,12 @@ package com.fortuneboot.domain.vo.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangchi118
@@ -18,6 +22,12 @@ public class FortuneBookVo {
      * @param entity
      */
     public FortuneBookVo(FortuneBookEntity entity) {
+        if (ObjectUtil.isNotEmpty(entity)) {
+            BeanUtil.copyProperties(entity, this);
+        }
+    }
+
+    public FortuneBookVo(FortuneBookEntity entity, Map<Long, FortuneAccountEntity> accountMap) {
         if (ObjectUtil.isNotEmpty(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
@@ -49,9 +59,19 @@ public class FortuneBookVo {
     private Long defaultExpenseAccountId;
 
     /**
+     * 默认支出账户名称
+     */
+    private String defaultExpenseAccountName;
+
+    /**
      * 默认收入账户id
      */
     private Long defaultIncomeAccountId;
+
+    /**
+     * 默认收入账户名称
+     */
+    private String defaultIncomeAccountName;
 
     /**
      * 默认转出账户id
@@ -59,9 +79,19 @@ public class FortuneBookVo {
     private Long defaultTransferOutAccountId;
 
     /**
+     * 默认转出账户名称
+     */
+    private String defaultTransferOutAccountName;
+
+    /**
      * 默认转入账户id
      */
     private Long defaultTransferInAccountId;
+
+    /**
+     * 默认转入账户名称
+     */
+    private String defaultTransferInAccountName;
 
     /**
      * 顺序

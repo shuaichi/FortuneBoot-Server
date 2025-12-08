@@ -2,14 +2,18 @@ package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.bo.fortune.*;
 import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CategoryTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.PayeeTemplateBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.TagTemplateBo;
 import com.fortuneboot.domain.command.fortune.*;
+import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBookQuery;
+import com.fortuneboot.domain.vo.fortune.FortuneBookVo;
 import com.fortuneboot.factory.fortune.factory.FortuneBookFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
@@ -25,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 账本service
@@ -59,8 +65,29 @@ public class FortuneBookService {
 
     private final FortuneBillService fortuneBillService;
 
-    public IPage<FortuneBookEntity> getPage(FortuneBookQuery query) {
-        return fortuneBookRepo.page(query.toPage(), query.addQueryCondition());
+    private final FortuneAccountRepo fortuneAccountRepo;
+
+    public PageDTO<FortuneBookVo> getPage(FortuneBookQuery query) {
+        IPage<FortuneBookEntity> page = fortuneBookRepo.page(query.toPage(), query.addQueryCondition());
+
+        List<Long> accountIds = page.getRecords().stream()
+                .flatMap(vo -> Stream.of(
+                        vo.getDefaultExpenseAccountId(),
+                        vo.getDefaultIncomeAccountId(),
+                        vo.getDefaultTransferOutAccountId(),
+                        vo.getDefaultTransferInAccountId()
+                ))
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        List<FortuneAccountEntity> accountList = fortuneAccountRepo.getByIds(accountIds);
+        Map<Long, FortuneAccountEntity> accountMap = accountList.stream()
+                .collect(Collectors.toMap(FortuneAccountEntity::getAccountId, Function.identity()));
+
+        List<FortuneBookVo> records = page.getRecords().stream()
+                .map(item-> new FortuneBookVo(item,accountMap)).toList();
+        return new PageDTO<>(records, page.getTotal());
     }
 
     public List<FortuneBookEntity> getEnableBookList(Long groupId) {

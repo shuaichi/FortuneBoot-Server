@@ -44,9 +44,8 @@ public class FortuneBookRest {
     @GetMapping("/getPage")
     @PreAuthorize("@fortune.groupVisitorPermission(#query.getGroupId())")
     public ResponseDTO<PageDTO<FortuneBookVo>> getPage(@Valid FortuneBookQuery query) {
-        IPage<FortuneBookEntity> page = fortuneBookService.getPage(query);
-        List<FortuneBookVo> records = page.getRecords().stream().map(FortuneBookVo::new).toList();
-        return ResponseDTO.ok(new PageDTO<>(records, page.getTotal()));
+        PageDTO<FortuneBookVo> page = fortuneBookService.getPage(query);
+        return ResponseDTO.ok(page);
     }
 
     @Operation(summary = "查询启用的账本")
