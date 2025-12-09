@@ -5,9 +5,12 @@ import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author zhangchi118
@@ -31,6 +34,27 @@ public class FortuneBookVo {
         if (ObjectUtil.isNotEmpty(entity)) {
             BeanUtil.copyProperties(entity, this);
         }
+
+        FortuneAccountEntity expenseAccount = accountMap.get(defaultExpenseAccountId);
+        FortuneAccountEntity incomeAccount = accountMap.get(defaultIncomeAccountId);
+        FortuneAccountEntity transferInAccount = accountMap.get(defaultTransferInAccountId);
+        FortuneAccountEntity transferOutAccount = accountMap.get(defaultTransferOutAccountId);
+
+        defaultExpenseAccountName = Optional.ofNullable(expenseAccount)
+                .map(FortuneAccountEntity::getAccountName)
+                .orElse(StringUtils.EMPTY);
+
+        defaultIncomeAccountName = Optional.ofNullable(incomeAccount)
+                .map(FortuneAccountEntity::getAccountName)
+                .orElse(StringUtils.EMPTY);
+
+        defaultTransferInAccountName = Optional.ofNullable(transferInAccount)
+                .map(FortuneAccountEntity::getAccountName)
+                .orElse(StringUtils.EMPTY);
+
+        defaultTransferOutAccountName = Optional.ofNullable(transferOutAccount)
+                .map(FortuneAccountEntity::getAccountName)
+                .orElse(StringUtils.EMPTY);
     }
 
     /**
