@@ -23,6 +23,7 @@ import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,12 +82,20 @@ public class FortuneBookService {
                 .distinct()
                 .toList();
 
+        // 如果没有设置账户，直接返回
+        if (CollectionUtils.isEmpty(accountIds)) {
+            return new PageDTO<>(
+                    page.getRecords().stream().map(FortuneBookVo::new).toList(),
+                    page.getTotal()
+            );
+        }
+
+        // 补充账户信息
         List<FortuneAccountEntity> accountList = fortuneAccountRepo.getByIds(accountIds);
         Map<Long, FortuneAccountEntity> accountMap = accountList.stream()
                 .collect(Collectors.toMap(FortuneAccountEntity::getAccountId, Function.identity()));
-
         List<FortuneBookVo> records = page.getRecords().stream()
-                .map(item-> new FortuneBookVo(item,accountMap)).toList();
+                .map(item -> new FortuneBookVo(item, accountMap)).toList();
         return new PageDTO<>(records, page.getTotal());
     }
 
