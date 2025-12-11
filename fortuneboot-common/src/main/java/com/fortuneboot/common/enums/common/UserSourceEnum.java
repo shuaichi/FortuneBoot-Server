@@ -13,6 +13,7 @@ import java.util.Objects;
  **/
 @Getter
 public enum UserSourceEnum implements BasicEnum<Integer> {
+    INIT(0, "初始化"),
     REGISTER(1, "注册"),
     ADMIN_ADD(2, "超管添加"),
     ADMIN_IMPORT(3, "超管导入"),
