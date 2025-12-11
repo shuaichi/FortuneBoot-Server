@@ -82,9 +82,9 @@ public class UserModel extends SysUserEntity {
         }
     }
 
-    public void checkFieldRelatedEntityExist() {
-        if (getRoleId() != null) {
-            RoleModel roleModel = roleModelFactory.loadById(getRoleId());
+    public void checkAddFieldRelatedEntityExist() {
+        if (Objects.nonNull(this.getRoleId())) {
+            RoleModel roleModel = roleModelFactory.loadById(this.getRoleId());
             UserSourceEnum sourceEnum = UserSourceEnum.getByValue(this.getSource());
             // 不同角色来源，做不同的操作
             switch (sourceEnum){
@@ -94,6 +94,29 @@ public class UserModel extends SysUserEntity {
                     }
                     break;
 
+                case ADMIN_ADD:
+                case ADMIN_IMPORT:
+                    break;
+
+                case null:
+                default:
+                    throw new ApiException(Business.USER_ADD_SOURCE_ILLEGALITY);
+            }
+        }
+    }
+
+    public void checkModifyFieldRelatedEntityExist() {
+        if (Objects.nonNull(this.getRoleId())) {
+            RoleModel roleModel = roleModelFactory.loadById(this.getRoleId());
+            UserSourceEnum sourceEnum = UserSourceEnum.getByValue(this.getSource());
+            // 不同角色来源，做不同的操作
+            switch (sourceEnum){
+                case REGISTER:
+                    if (!roleModel.getAllowRegister()) {
+                        throw new ApiException(Business.USER_ROLE_NOT_ALLOW_REGISTER);
+                    }
+                    break;
+                case INIT:
                 case ADMIN_ADD:
                 case ADMIN_IMPORT:
                     break;

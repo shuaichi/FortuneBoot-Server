@@ -136,7 +136,7 @@ public class UserApplicationService {
         model.checkUsernameIsUnique();
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
-        model.checkFieldRelatedEntityExist();
+        model.checkAddFieldRelatedEntityExist();
         model.resetPassword(command.getPassword());
 
         // 新增用户
@@ -161,7 +161,7 @@ public class UserApplicationService {
         model.loadUpdateUserCommand(command);
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
-        model.checkFieldRelatedEntityExist();
+        model.checkModifyFieldRelatedEntityExist();
         model.updateById();
 
         CacheCenter.userCache.delete(model.getUserId());
