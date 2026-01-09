@@ -15,7 +15,8 @@ import com.fortuneboot.domain.query.system.UnallocatedRoleQuery;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.repository.system.SysMenuRepo;
 import com.fortuneboot.repository.system.SysUserRepo;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,14 +24,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
+@AllArgsConstructor
 class SysUserRepoImplTest {
 
-    @Resource
-    SysUserRepo userService;
-    @Resource
-    SysMenuRepo menuService;
+    private final SysUserRepo userService;
+
+    private final SysMenuRepo menuService;
 
     @Test
     @Rollback

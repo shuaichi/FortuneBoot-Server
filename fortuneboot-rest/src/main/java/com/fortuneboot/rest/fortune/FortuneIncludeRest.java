@@ -1,7 +1,9 @@
 package com.fortuneboot.rest.fortune;
 
 import com.fortuneboot.common.core.dto.ResponseDTO;
+import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
@@ -128,5 +130,12 @@ public class FortuneIncludeRest {
     @GetMapping("/getDisplayConfig")
     public ResponseDTO<String> getDisplayConfig(){
         return ResponseDTO.ok(userApplicationService.getDisplayConfig());
+    }
+
+    @Operation(summary = "查询日期统计")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
+    @GetMapping("/getDateInclude")
+    public void getDateInclude(){
+
     }
 }

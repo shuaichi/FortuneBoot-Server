@@ -11,26 +11,24 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
  * @author zhangchi118
  * @date 2025/7/3 19:27
  **/
-@Configuration
 @EnableScheduling
 @AllArgsConstructor
+@Configuration(proxyBeanMethods = false)
 public class QuartzConfig {
 
-    private QuartzJobFactory quartzJobFactory;
+    private final QuartzJobFactory quartzJobFactory;
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean() {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
-        factory.setOverwriteExistingJobs(Boolean.TRUE);
-        // 设置自定义JobFactory，支持Spring依赖注入
+        factory.setOverwriteExistingJobs(true);
+        // 支持 Spring 注入 Job
         factory.setJobFactory(quartzJobFactory);
-        // 延迟60秒启动
-        factory.setStartupDelay(60);
         return factory;
     }
 
     @Bean
-    public Scheduler scheduler() {
-        return schedulerFactoryBean().getScheduler();
+    public Scheduler scheduler(SchedulerFactoryBean schedulerFactoryBean) {
+        return schedulerFactoryBean.getScheduler();
     }
 }

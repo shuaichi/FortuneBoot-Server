@@ -31,7 +31,6 @@ import com.fortuneboot.common.enums.common.LoginStatusEnum;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.google.code.kaptcha.Producer;
 import java.awt.image.BufferedImage;
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,11 +60,9 @@ public class LoginService {
 
     private final AuthenticationManager authenticationManager;
 
-    @Resource(name = "captchaProducer")
-    private Producer captchaProducer;
+    private final Producer captchaProducer;
 
-    @Resource(name = "captchaProducerMath")
-    private Producer captchaProducerMath;
+    private final Producer captchaProducerMath;
 
     /**
      * 登录验证

@@ -10,10 +10,11 @@ import com.fortuneboot.factory.fortune.factory.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepo;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepo;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,7 +97,7 @@ public class FortuneRecurringBillService {
     /**
      * 应用启动时初始化
      */
-    @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     @Transactional(rollbackFor = Exception.class)
     public void initRecurringBills() {
         log.info("开始初始化周期记账任务...");

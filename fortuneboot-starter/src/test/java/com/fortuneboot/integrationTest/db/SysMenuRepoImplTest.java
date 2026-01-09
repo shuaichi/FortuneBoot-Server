@@ -6,7 +6,8 @@ import java.util.List;
 import com.fortuneboot.domain.entity.system.SysMenuEntity;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.repository.system.SysMenuRepo;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,12 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
+@AllArgsConstructor
 class SysMenuRepoImplTest {
 
-    @Resource
-    SysMenuRepo menuService;
+    private final SysMenuRepo menuService;
 
     @Test
     @Rollback

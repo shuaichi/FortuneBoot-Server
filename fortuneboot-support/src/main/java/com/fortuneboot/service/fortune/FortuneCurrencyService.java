@@ -60,7 +60,7 @@ public class FortuneCurrencyService {
                 currencyDetailsList = objectMapper.readValue(resource.getInputStream(), new TypeReference<>() {
                 });
             }else {
-                currencyDetailsList = BeanUtil.copyToList(currencyEntityList, CurrencyTemplateBo.class);
+                currencyDetailsList = currencyEntityList.stream().map(CurrencyTemplateBo::new).toList();
             }
         } catch (Exception e) {
             log.error("初始化货币失败：", e);
@@ -104,7 +104,7 @@ public class FortuneCurrencyService {
                 currencyTemplateOptional.ifPresent(currencyTemplateBo -> currencyTemplateBo.setRate(value));
             });
             // 持久化到数据库
-            List<FortuneCurrencyEntity> list = BeanUtil.copyToList(currencyTemplateBoList, FortuneCurrencyEntity.class);
+            List<FortuneCurrencyEntity> list = currencyTemplateBoList.stream().map(FortuneCurrencyEntity::new ).toList();
             fortuneCurrencyRepo.saveOrUpdateBatch(list);
         } catch (Exception e) {
             log.error("刷新汇率失败: {}", e.getMessage(), e);

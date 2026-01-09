@@ -3,7 +3,7 @@ package com.fortuneboot.integrationTest.db;
 import com.fortuneboot.common.enums.common.ConfigKeyEnum;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.repository.system.SysConfigRepo;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,10 +15,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
-class  SysConfigServiceImplTest {
+@AllArgsConstructor
+public class SysConfigServiceImplTest {
 
-    @Resource
-    SysConfigRepo configRepository;
+    private final SysConfigRepo configRepository;
 
     @Test
     void testGetConfigValueByKey() {

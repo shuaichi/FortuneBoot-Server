@@ -1,24 +1,26 @@
 package com.fortuneboot.admin.config;
 
 
-import com.fortuneboot.admin.ApplicationStarter;
 import java.io.File;
 
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.constant.Constants;
-import jakarta.annotation.Resource;
-import org.junit.Test;
+import com.fortuneboot.integrationTest.IntegrationTestApplication;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(classes = ApplicationStarter.class)
-@RunWith(SpringRunner.class)
+@Slf4j
+@SpringBootTest(classes = IntegrationTestApplication.class)
+@ExtendWith(SpringExtension.class)
+@AllArgsConstructor
 public class FortuneBootConfigTest {
 
-    @Resource
-    private FortuneBootConfig config;
+    private final FortuneBootConfig config;
 
     @Test
     public void testConfig() {

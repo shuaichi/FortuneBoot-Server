@@ -1,7 +1,7 @@
 package com.fortuneboot.infrastructure.config.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
 import org.springframework.boot.data.redis.autoconfigure.DataRedisProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -30,9 +30,10 @@ import java.time.Duration;
 
 @Configuration
 @EnableCaching
+@AllArgsConstructor
 public class RedisConfig {
-    @Resource
-    private DataRedisProperties dataRedisProperties;
+
+    private final DataRedisProperties dataRedisProperties;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {

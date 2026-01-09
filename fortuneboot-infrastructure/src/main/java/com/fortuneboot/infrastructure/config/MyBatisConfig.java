@@ -25,7 +25,8 @@ public class MyBatisConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
-        interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        // 防止全表更新与删除 TODO native打包会启动失败，暂时注释拦截器
+//        interceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
         return interceptor;
     }
 

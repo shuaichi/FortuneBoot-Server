@@ -44,6 +44,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -51,6 +54,18 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <configuration>
+                    <imageName>fortuneboot-starter</imageName>
+                    <mainClass>com.fortuneboot.admin.ApplicationStarter</mainClass>
+                    <buildArgs>
+                        <buildArg>-Djava.specification.version=25</buildArg>
+                        <buildArg>--features=com.fortuneboot.infrastructure.config.natives.MybatisPlusNativeFeature</buildArg>
+                    </buildArgs>
+                </configuration>
             </plugin>
 
         </plugins>

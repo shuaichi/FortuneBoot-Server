@@ -1,5 +1,6 @@
 package com.fortuneboot.domain.bo.fortune.tenplate;
 
+import com.fortuneboot.domain.entity.fortune.FortuneCurrencyEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,31 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CurrencyTemplateBo {
+
+    /**
+     * 构造方法
+     *
+     * @param entity
+     */
+    public CurrencyTemplateBo(FortuneCurrencyEntity entity) {
+        this.currencyId = entity.getCurrencyId();
+        this.currencyName = entity.getCurrencyName();
+        this.rate = entity.getRate();
+        this.remark = entity.getRemark();
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param currencyId
+     * @param currencyName
+     * @param rate
+     */
+    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal rate) {
+        this.currencyId = currencyId;
+        this.currencyName = currencyName;
+        this.rate = rate;
+    }
 
     /**
      * 主键
@@ -37,16 +63,4 @@ public class CurrencyTemplateBo {
      */
     private BigDecimal rate;
 
-    /**
-     * 构造方法
-     *
-     * @param currencyId
-     * @param currencyName
-     * @param rate
-     */
-    public CurrencyTemplateBo(Long currencyId, String currencyName, BigDecimal rate) {
-        this.currencyId = currencyId;
-        this.currencyName = currencyName;
-        this.rate = rate;
-    }
 }

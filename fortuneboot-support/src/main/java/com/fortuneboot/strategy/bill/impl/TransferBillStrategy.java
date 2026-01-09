@@ -22,10 +22,15 @@ import java.util.Objects;
  **/
 @Slf4j
 @Component
-@AllArgsConstructor
 public class TransferBillStrategy extends AbstractBillStrategy {
 
     private final ApplicationScopeBo applicationScopeBo;
+
+    public TransferBillStrategy(ApplicationScopeBo applicationScopeBo) {
+        super(applicationScopeBo);
+        this.applicationScopeBo = applicationScopeBo;
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void confirmBalance(BillStrategyContext context) {
