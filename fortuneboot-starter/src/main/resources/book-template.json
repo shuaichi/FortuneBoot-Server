@@ -1,7 +1,7 @@
 [
   {
     "bookTemplateId": 1,
-    "bookTemplateName": "生活账本1",
+    "bookTemplateName": "生活账本",
     "remark": "用于个人生活记账。将支出分为维持类，消费类，提升类，社交类4个大类，收入分为主动收入，被动收入，社交收入3个大类。",
     "previewUrl": "/api/v1/生活账本1.png",
     "tagList": [
@@ -978,8 +978,8 @@
   },
   {
     "bookTemplateId": 3,
-    "bookTemplateName": "生活账本2",
-    "remark": "参考随手记",
+    "bookTemplateName": "经典账本",
+    "remark": "参考随手记，按“衣食住行”分类，适合刚开始记流水账的用户。",
     "previewUrl": "/api/v1/生活账本2.png",
     "tagList": [],
     "categoryList": [
@@ -1525,8 +1525,8 @@
   },
   {
     "bookTemplateId": 4,
-    "bookTemplateName": "导入账本",
-    "remark": "财务性质流派账本模板",
+    "bookTemplateName": "专业财务分析账本",
+    "remark": "基于财务性质建模的进阶账本。区别于传统的‘买了什么’，本账本专注于‘为何而花’。通过将支出划分为‘生活必要’、‘品质提升’、‘风险保障’等维度，帮助您一眼看清哪些钱是刚需，哪些钱可以削减。适合需要进行资产配置分析及消费结构优化的高阶记账玩家。",
     "previewUrl": null,
     "categoryList": [
       {
