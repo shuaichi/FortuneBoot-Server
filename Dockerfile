@@ -1,30 +1,28 @@
-FROM rockylinux:9.5
-ENV JAVA_HOME /usr/java/jdk-21.0.5
-ENV PATH $JAVA_HOME/bin:$PATH
-# Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
-ENV TZ=Asia/Shanghai
-ENV JAVA_VERSION 21
-COPY ./jdk-21.0.5_linux-x64_bin.tar.gz /root
-RUN set -eux; \
-		yum update -y; \
-		yum install -y fontconfig; \
-        mkdir -p "$JAVA_HOME"; \
-        tar --extract \
-    		--file /root/jdk-21.0.5_linux-x64_bin.tar.gz \
-    		--directory "$JAVA_HOME" \
-    		--strip-components 1 \
-    		--no-same-owner \
-    	; \
-        ln -sfT "$JAVA_HOME" /usr/java/default; \
-        ln -sfT "$JAVA_HOME" /usr/java/latest; \
-    	for bin in "$JAVA_HOME/bin/"*; do \
-    		base="$(basename "$bin")"; \
-    		[ ! -e "/usr/bin/$base" ]; \
-    		alternatives --install "/usr/bin/$base" "$base" "$bin" 20000; \
-    	done; \
-        rm -rf /root/jdk-21.0.5_linux-x64_bin.tar.gz; \
-        java --version
+# syntax=docker/dockerfile:1.4
+# 使用 native-image-community 镜像
+FROM ghcr.io/graalvm/native-image-community:25 AS builder
 
-COPY ./fortuneboot-main/target/fortuneboot-main-1.0.0.jar app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# 手动安装 Maven (避开 microdnf)
+WORKDIR /opt
+RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz | tar xzf -
+ENV PATH="/opt/apache-maven-3.9.9/bin:${PATH}"
+
+WORKDIR /app
+COPY . .
+
+# 先构建父模块，以便生成所有依赖
+RUN mvn clean install -DskipTests
+# 构建特定的模块（fortuneboot-starter）
+RUN  mvn package -Pnative -DskipTests -pl fortuneboot-starter
+
+# -----------------------------------------
+FROM debian:12-slim
+
+WORKDIR /app
+
+# 从构建阶段复制生成的 native image 文件
+COPY --from=builder /app/fortuneboot-starter/target/fortuneboot-starter /app/
+
+RUN chmod +x /app/*
+
+CMD ["./fortuneboot-starter"]

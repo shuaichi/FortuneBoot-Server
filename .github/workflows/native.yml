@@ -1,0 +1,111 @@
+name: Build Native Images
+
+on:
+  push:
+    branches:
+      - "master_native"
+    tags:
+      - "v*"
+
+jobs:
+  build-native:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux/amd64
+            output_dir: linux_amd64
+          # 注意：ubuntu-24.04-arm 仅适用于付费/Team 账户。
+          # 如果你是个人免费账户，这里可能会一直排队或失败，需要改用 QEMU + ubuntu-latest。
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+            output_dir: linux_arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build native image
+        # 确保输出目录存在
+        run: |
+          mkdir -p ./out/${{ matrix.output_dir }}
+          
+          docker buildx build \
+            --platform ${{ matrix.platform }} \
+            -f Dockerfile \
+            --output type=local,dest=./out/${{ matrix.output_dir }} \
+            .
+
+      - name: Clean up lock files and set permissions
+        # 只有当目录存在时才执行清理，避免报错
+        # 打印一下构建结果，看看生成了什么文件
+        run: |
+          if [ -d "out/${{ matrix.output_dir }}/var" ]; then
+            sudo rm -rf out/${{ matrix.output_dir }}/var
+          fi
+          sudo chown -R $USER out/${{ matrix.output_dir }}
+          sudo chmod -R 755 out/${{ matrix.output_dir }}
+          echo "Listing build output:"
+          ls -R out/${{ matrix.output_dir }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-binary-${{ matrix.output_dir }}
+          # 建议直接上传整个目录，保持结构清晰
+          path: out/${{ matrix.output_dir }}/
+          # 如果没有生成文件，直接报错，不要等到 Release 阶段
+          if-no-files-found: error
+
+  release:
+    needs: build-native
+    runs-on: ubuntu-latest
+    # 【修复关键点 1】赋予 Release 写入权限
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version from yaml
+        id: get_version
+        run: |
+          VERSION=$(grep "version:" fortuneboot-infrastructure/src/main/resources/application-basic.yml | awk '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Detected version: $VERSION"
+
+      # 下载制品
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-binary-linux_amd64
+          path: ./out/linux_amd64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-binary-linux_arm64
+          path: ./out/linux_arm64
+
+      # 【修复关键点 2】调试步骤：列出文件结构
+      # 如果再次报错 "Pattern does not match"，请查看此步骤的日志
+      - name: Inspect directories
+        run: |
+          echo "Current directory structure:"
+          ls -R ./out
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master_native'
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          # 确保这里匹配的是文件而不是文件夹
+          files: |
+            ./out/linux_amd64/**/*
+            ./out/linux_arm64/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
