@@ -1075,7 +1075,7 @@
         "categoryId": 50,
         "categoryName": "早午晚餐",
         "categoryType": 1,
-        "remark": null,
+        "remark": "工作日及周末的常规正餐，包括外卖及食堂。",
         "sort": 100,
         "parentId": 39
       },
@@ -1411,7 +1411,7 @@
         "categoryId": 92,
         "categoryName": "烂账损失",
         "categoryType": 1,
-        "remark": null,
+        "remark": "借出去收不回来的钱，或意外丢失的现金。",
         "sort": 300,
         "parentId": 49
       },
@@ -1435,7 +1435,7 @@
         "categoryId": 95,
         "categoryName": "社交收入",
         "categoryType": 2,
-        "remark": null,
+        "remark": "比如收到的红包。",
         "sort": 300,
         "parentId": -1
       },
@@ -1520,6 +1520,1654 @@
         "canExpense": true,
         "canIncome": false,
         "sort": 400
+      }
+    ]
+  },
+  {
+    "bookTemplateId": 4,
+    "bookTemplateName": "导入账本",
+    "remark": "财务性质流派账本模板",
+    "previewUrl": null,
+    "categoryList": [
+      {
+        "categoryId": 103,
+        "categoryName": "主动收入",
+        "categoryType": 2,
+        "remark": "付出劳动/时间获得的收入",
+        "sort": 1,
+        "parentId": -1
+      },
+      {
+        "categoryId": 104,
+        "categoryName": "被动收入",
+        "categoryType": 2,
+        "remark": "无需持续主动投入即可获得的收入",
+        "sort": 2,
+        "parentId": -1
+      },
+      {
+        "categoryId": 105,
+        "categoryName": "工资薪金",
+        "categoryType": 2,
+        "remark": "基本工资、绩效奖金、加班补贴、岗位津贴、年终奖等",
+        "sort": 100,
+        "parentId": 103
+      },
+      {
+        "categoryId": 106,
+        "categoryName": "兼职副业",
+        "categoryType": 2,
+        "remark": "兼职打工收入、自由职业接单收入、自媒体创作分成、网约车/外卖跑单收入等",
+        "sort": 200,
+        "parentId": 103
+      },
+      {
+        "categoryId": 107,
+        "categoryName": "技能变现",
+        "categoryType": 2,
+        "remark": "专业技能培训收入、设计/编程外包收入、家教辅导收入等",
+        "sort": 300,
+        "parentId": 103
+      },
+      {
+        "categoryId": 108,
+        "categoryName": "房产相关",
+        "categoryType": 2,
+        "remark": "房屋租金、商铺租金、车位租金等",
+        "sort": 100,
+        "parentId": 104
+      },
+      {
+        "categoryId": 109,
+        "categoryName": "额外福利",
+        "categoryType": 2,
+        "remark": "公司福利补贴（如交通补、餐补）、平台消费返利、会员权益变现（如闲置会员转卖）等",
+        "sort": 400,
+        "parentId": 103
+      },
+      {
+        "categoryId": 110,
+        "categoryName": "知识产权",
+        "categoryType": 2,
+        "remark": "版权费（书籍/音乐/影视授权）、专利授权费、商标授权费等",
+        "sort": 200,
+        "parentId": 104
+      },
+      {
+        "categoryId": 111,
+        "categoryName": "金融理财",
+        "categoryType": 2,
+        "remark": "存款利息（活期/定期）、债券利息、基金分红、股票分红、REITs分红等",
+        "sort": 300,
+        "parentId": 104
+      },
+      {
+        "categoryId": 112,
+        "categoryName": "资产增值",
+        "categoryType": 2,
+        "remark": "房产/车辆等固定资产增值后出售差价、股权/期权行权收益等",
+        "sort": 400,
+        "parentId": 104
+      },
+      {
+        "categoryId": 113,
+        "categoryName": "其他被动",
+        "categoryType": 2,
+        "remark": "众筹收益、社群会员费、加盟连锁品牌分红（若为小股东）等",
+        "sort": 500,
+        "parentId": 104
+      },
+      {
+        "categoryId": 114,
+        "categoryName": "转移性收入",
+        "categoryType": 2,
+        "remark": "无偿获得的收入",
+        "sort": 3,
+        "parentId": -1
+      },
+      {
+        "categoryId": 115,
+        "categoryName": "家庭支持",
+        "categoryType": 2,
+        "remark": "父母/亲属赠与的生活费、节日红包等",
+        "sort": 100,
+        "parentId": 114
+      },
+      {
+        "categoryId": 116,
+        "categoryName": "社会福利",
+        "categoryType": 2,
+        "remark": "养老金、失业补助金、低保补助、医疗救助金、残疾人补贴等",
+        "sort": 200,
+        "parentId": 114
+      },
+      {
+        "categoryId": 117,
+        "categoryName": "其他转移",
+        "categoryType": 2,
+        "remark": "保险理赔金（非报销型，如身故/重疾理赔）等",
+        "sort": 400,
+        "parentId": 114
+      },
+      {
+        "categoryId": 118,
+        "categoryName": "生活必要支出",
+        "categoryType": 1,
+        "remark": "维持日常生活基础开销",
+        "sort": 1,
+        "parentId": -1
+      },
+      {
+        "categoryId": 119,
+        "categoryName": "住房相关",
+        "categoryType": 1,
+        "remark": "房贷/房租、物业费、水电燃气费、供暖费、房屋维修基金、家电家具维修/更换费",
+        "sort": 100,
+        "parentId": 118
+      },
+      {
+        "categoryId": 120,
+        "categoryName": "饮食消费",
+        "categoryType": 1,
+        "remark": "超市买菜/米面粮油、外卖餐饮、水果零食、餐厅聚餐（家庭外部就餐）、酒水饮料",
+        "sort": 200,
+        "parentId": 118
+      },
+      {
+        "categoryId": 121,
+        "categoryName": "交通出行",
+        "categoryType": 1,
+        "remark": "公共交通（地铁/公交）、打车费、私家车油费/电费、停车费、车辆保养/维修、保险费",
+        "sort": 300,
+        "parentId": 118
+      },
+      {
+        "categoryId": 122,
+        "categoryName": "通讯娱乐",
+        "categoryType": 1,
+        "remark": "手机话费、宽带费、有线电视费、视频会员、游戏充值、直播打赏",
+        "sort": 400,
+        "parentId": 118
+      },
+      {
+        "categoryId": 123,
+        "categoryName": "医疗健康",
+        "categoryType": 1,
+        "remark": "医保外自费药、体检费、牙科/眼科诊疗费、健身卡/私教课、保健品购买",
+        "sort": 500,
+        "parentId": 118
+      },
+      {
+        "categoryId": 124,
+        "categoryName": "教育成长支出",
+        "categoryType": 1,
+        "remark": "个人/子女学习提升",
+        "sort": 2,
+        "parentId": -1
+      },
+      {
+        "categoryId": 125,
+        "categoryName": "子女教育",
+        "categoryType": 1,
+        "remark": "学费（公立/私立学校）、书本费、教辅资料、兴趣班（舞蹈/美术/编程）、校服/文具、研学旅行",
+        "sort": 100,
+        "parentId": 124
+      },
+      {
+        "categoryId": 126,
+        "categoryName": "成人学习",
+        "categoryType": 1,
+        "remark": "职业技能培训、考证辅导（如会计证/教师资格证）、语言学习（雅思/托福）、线上课程订阅",
+        "sort": 200,
+        "parentId": 124
+      },
+      {
+        "categoryId": 127,
+        "categoryName": "教育工具",
+        "categoryType": 1,
+        "remark": "电子设备（平板/电脑用于学习）、学习桌椅、打印机、文具耗材",
+        "sort": 300,
+        "parentId": 124
+      },
+      {
+        "categoryId": 128,
+        "categoryName": "赡养抚养支出",
+        "categoryType": 1,
+        "remark": "对长辈/晚辈的法定或自愿供养",
+        "sort": 3,
+        "parentId": -1
+      },
+      {
+        "categoryId": 129,
+        "categoryName": "赡养父母",
+        "categoryType": 1,
+        "remark": "父母生活费、医药费（医保外）、节日礼物、养老院费用",
+        "sort": 100,
+        "parentId": 128
+      },
+      {
+        "categoryId": 130,
+        "categoryName": "抚养子女",
+        "categoryType": 1,
+        "remark": "奶粉/尿布、童装童鞋、早教班、儿童保险、亲子游",
+        "sort": 200,
+        "parentId": 128
+      },
+      {
+        "categoryId": 131,
+        "categoryName": "其他亲属",
+        "categoryType": 1,
+        "remark": "兄弟姐妹帮扶",
+        "sort": 300,
+        "parentId": 128
+      },
+      {
+        "categoryId": 132,
+        "categoryName": "品质提升支出",
+        "categoryType": 1,
+        "remark": "非必需但改善生活体验",
+        "sort": 4,
+        "parentId": -1
+      },
+      {
+        "categoryId": 133,
+        "categoryName": "时尚美妆",
+        "categoryType": 1,
+        "remark": "服装鞋包、化妆品/护肤品、理发造型、珠宝首饰",
+        "sort": 100,
+        "parentId": 132
+      },
+      {
+        "categoryId": 134,
+        "categoryName": "文化休闲",
+        "categoryType": 1,
+        "remark": "电影票、演唱会门票、话剧/展览、旅游度假、摄影写真",
+        "sort": 200,
+        "parentId": 132
+      },
+      {
+        "categoryId": 135,
+        "categoryName": "家居焕新",
+        "categoryType": 1,
+        "remark": "软装布置（窗帘/地毯）、智能家居设备、绿植花卉、家庭清洁服务",
+        "sort": 300,
+        "parentId": 132
+      },
+      {
+        "categoryId": 136,
+        "categoryName": "汽车消费",
+        "categoryType": 1,
+        "remark": "新车购置（分期/全款）、二手车交易、车载装饰、ETC充值",
+        "sort": 400,
+        "parentId": 132
+      },
+      {
+        "categoryId": 137,
+        "categoryName": "风险保障支出",
+        "categoryType": 1,
+        "remark": "转移未知风险的财务安排",
+        "sort": 5,
+        "parentId": -1
+      },
+      {
+        "categoryId": 138,
+        "categoryName": "保险费用",
+        "categoryType": 1,
+        "remark": "重疾险、医疗险、意外险、寿险、车险、家财险、宠物险",
+        "sort": 100,
+        "parentId": 137
+      },
+      {
+        "categoryId": 139,
+        "categoryName": "债务偿还支出",
+        "categoryType": 1,
+        "remark": "各类负债还款",
+        "sort": 6,
+        "parentId": -1
+      },
+      {
+        "categoryId": 140,
+        "categoryName": "信用卡还款",
+        "categoryType": 1,
+        "remark": "不同银行信用卡账单",
+        "sort": 100,
+        "parentId": 139
+      },
+      {
+        "categoryId": 141,
+        "categoryName": "消费贷款",
+        "categoryType": 1,
+        "remark": "花呗/借呗/京东白条等分期、消费金融公司贷款",
+        "sort": 200,
+        "parentId": 139
+      },
+      {
+        "categoryId": 142,
+        "categoryName": "房贷车贷",
+        "categoryType": 1,
+        "remark": "除本金外的利息部分（也可合并到“住房/交通”支出，若想单独看利息成本可拆分）",
+        "sort": 300,
+        "parentId": 139
+      },
+      {
+        "categoryId": 143,
+        "categoryName": "其他负债",
+        "categoryType": 1,
+        "remark": "亲友借款还款（若属于有息借贷）、小额贷款公司欠款",
+        "sort": 400,
+        "parentId": 139
+      },
+      {
+        "categoryId": 144,
+        "categoryName": "税费及其他支出",
+        "categoryType": 1,
+        "remark": "法定义务或偶发开销",
+        "sort": 7,
+        "parentId": -1
+      },
+      {
+        "categoryId": 145,
+        "categoryName": "房屋税费",
+        "categoryType": 1,
+        "remark": "房产税、契税等",
+        "sort": 100,
+        "parentId": 144
+      },
+      {
+        "categoryId": 146,
+        "categoryName": "车辆税费",
+        "categoryType": 1,
+        "remark": "购置税（新车）、车船使用税",
+        "sort": 200,
+        "parentId": 144
+      },
+      {
+        "categoryId": 147,
+        "categoryName": "公益捐款",
+        "categoryType": 1,
+        "remark": "慈善捐款、公益众筹、社区互助捐款",
+        "sort": 300,
+        "parentId": 144
+      },
+      {
+        "categoryId": 148,
+        "categoryName": "偶发杂项",
+        "categoryType": 1,
+        "remark": "罚款（交通/物业等）、丢失物品赔偿、宠物寄养/绝育",
+        "sort": 400,
+        "parentId": 144
+      },
+      {
+        "categoryId": 149,
+        "categoryName": "社交收入",
+        "categoryType": 2,
+        "remark": "比如收到的红包。",
+        "sort": 300,
+        "parentId": 114
+      }
+    ],
+    "tagList": [
+      {
+        "tagId": 60,
+        "tagName": "餐饮食品",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 61,
+        "tagName": "早餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 62,
+        "tagName": "午餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 63,
+        "tagName": "晚餐",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 64,
+        "tagName": "零食",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 65,
+        "tagName": "蔬菜",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 66,
+        "tagName": "水果",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 67,
+        "tagName": "烟酒",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 68,
+        "tagName": "饮料",
+        "remark": "饮用水、奶茶、牛奶等等饮品",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 69,
+        "tagName": "居家生活",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 70,
+        "tagName": "房租",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 71,
+        "tagName": "水费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 72,
+        "tagName": "电费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 73,
+        "tagName": "天然气",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 74,
+        "tagName": "物业费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 75,
+        "tagName": "话费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 76,
+        "tagName": "房贷",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 77,
+        "tagName": "形象维护",
+        "remark": "维护个人形象方面的支出，比如美容，美甲，衣服，首饰等。",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 78,
+        "tagName": "衣服",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 77
+      },
+      {
+        "tagId": 79,
+        "tagName": "理发",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 77
+      },
+      {
+        "tagId": 80,
+        "tagName": "公共交通",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 81,
+        "tagName": "地铁",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 82,
+        "tagName": "公交",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 83,
+        "tagName": "打车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 84,
+        "tagName": "铁路",
+        "remark": "火车、动车、高铁等等",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 85,
+        "tagName": "飞机",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 86,
+        "tagName": "电子数码",
+        "remark": "数码产品类目",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 87,
+        "tagName": "电脑",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 86
+      },
+      {
+        "tagId": 88,
+        "tagName": "软件",
+        "remark": "购买会员等",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 86
+      },
+      {
+        "tagId": 89,
+        "tagName": "配件耗材",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 86
+      },
+      {
+        "tagId": 90,
+        "tagName": "买车养车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 91,
+        "tagName": "加油",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 92,
+        "tagName": "停车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 93,
+        "tagName": "车辆维修",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 94,
+        "tagName": "洗车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 95,
+        "tagName": "过路费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 96,
+        "tagName": "违章罚款",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 97,
+        "tagName": "车险",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 98,
+        "tagName": "配饰",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 99,
+        "tagName": "年检",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 100,
+        "tagName": "医疗保健",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 101,
+        "tagName": "体检",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 102,
+        "tagName": "保险",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 103,
+        "tagName": "保健品",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 104,
+        "tagName": "牙科",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 105,
+        "tagName": "学习教育",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 106,
+        "tagName": "书籍",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 105
+      },
+      {
+        "tagId": 107,
+        "tagName": "培训考试",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 105
+      },
+      {
+        "tagId": 108,
+        "tagName": "娱乐休闲",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 109,
+        "tagName": "游戏",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 110,
+        "tagName": "电影",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 111,
+        "tagName": "健身",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 112,
+        "tagName": "日用",
+        "remark": "日用消耗品。",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 113,
+        "tagName": "网费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 114,
+        "tagName": "夜宵",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 115,
+        "tagName": "维修",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 116,
+        "tagName": "清洁",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 117,
+        "tagName": "共享单车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 80
+      },
+      {
+        "tagId": 118,
+        "tagName": "人情往来",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 119,
+        "tagName": "药品",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 120,
+        "tagName": "治疗",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 100
+      },
+      {
+        "tagId": 121,
+        "tagName": "学杂费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 105
+      },
+      {
+        "tagId": 122,
+        "tagName": "K歌",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 123,
+        "tagName": "按摩",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 124,
+        "tagName": "送礼",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 125,
+        "tagName": "孝敬家长",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 126,
+        "tagName": "慈善捐助",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 127,
+        "tagName": "礼物",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 128,
+        "tagName": "红包",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 129,
+        "tagName": "宠物宝贝",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 130,
+        "tagName": "食物",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 129
+      },
+      {
+        "tagId": 131,
+        "tagName": "疫苗",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 129
+      },
+      {
+        "tagId": 132,
+        "tagName": "玩具",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 129
+      },
+      {
+        "tagId": 133,
+        "tagName": "医疗护理",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 129
+      },
+      {
+        "tagId": 134,
+        "tagName": "护肤美妆",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 77
+      },
+      {
+        "tagId": 135,
+        "tagName": "鞋帽",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 77
+      },
+      {
+        "tagId": 136,
+        "tagName": "外卖会员",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 137,
+        "tagName": "会员",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 138,
+        "tagName": "旅游",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 108
+      },
+      {
+        "tagId": 139,
+        "tagName": "请客",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 140,
+        "tagName": "电动车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 141,
+        "tagName": "汽车",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 142,
+        "tagName": "萌宠",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 129
+      },
+      {
+        "tagId": 143,
+        "tagName": "家具家电",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 144,
+        "tagName": "恋爱",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 118
+      },
+      {
+        "tagId": 145,
+        "tagName": "资金往来",
+        "remark": "不影响净资产的资金流动，或暂挂账目。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 146,
+        "tagName": "快递",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 147,
+        "tagName": "应收款项",
+        "remark": "别人欠我的钱，或者我帮别人垫付的钱（预期会收回）。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 148,
+        "tagName": "应付款项",
+        "remark": "我欠别人的钱，或者使用信用卡消费产生的待还账单。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 149,
+        "tagName": "校园",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 150,
+        "tagName": "彩票",
+        "remark": "购买彩票的支出，中奖收入建议记在“意外来财”。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 151,
+        "tagName": "计提亏损",
+        "remark": "[虚拟支出] 基金股票下跌导致的账面市值减少，非实际现金流出。",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 152,
+        "tagName": "计提收益",
+        "remark": "[虚拟收入] 基金股票上涨带来的账面市值增加，非实际现金流入。",
+        "canExpense": false,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 153,
+        "tagName": "偿还本金",
+        "remark": "归还贷款（房贷、车贷）的本金部分，不包含利息。",
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 154,
+        "tagName": "偿还利息",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 155,
+        "tagName": "工资",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 156,
+        "tagName": "奖金",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 157,
+        "tagName": "福利",
+        "remark": "公司发的福利，比如京东慧采，xx优选等等",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 158,
+        "tagName": "其它",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": -1
+      },
+      {
+        "tagId": 159,
+        "tagName": "文具",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 105
+      },
+      {
+        "tagId": 160,
+        "tagName": "手续费",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 161,
+        "tagName": "零花钱",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 162,
+        "tagName": "五险一金",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 163,
+        "tagName": "退税",
+        "remark": "个人所得税年度汇算清缴后的退税收入。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 164,
+        "tagName": "兼职",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 165,
+        "tagName": "理财",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 166,
+        "tagName": "租金",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 167,
+        "tagName": "粮油调味",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 60
+      },
+      {
+        "tagId": 168,
+        "tagName": "厨具",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 69
+      },
+      {
+        "tagId": 169,
+        "tagName": "报销",
+        "remark": "帮公司垫付，后续公司会返还的款项。",
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 170,
+        "tagName": "补贴",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 171,
+        "tagName": "储蓄转移",
+        "remark": "自己的左口袋倒右口袋，例如从银行卡转入支付宝。",
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 172,
+        "tagName": "加油充电",
+        "remark": "汽车补能",
+        "canExpense": true,
+        "canIncome": false,
+        "canTransfer": false,
+        "sort": 0,
+        "parentId": 90
+      },
+      {
+        "tagId": 173,
+        "tagName": "投资",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 174,
+        "tagName": "借款",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 145
+      },
+      {
+        "tagId": 175,
+        "tagName": "智能家居",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 143
+      },
+      {
+        "tagId": 176,
+        "tagName": "厨房电器",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 143
+      },
+      {
+        "tagId": 177,
+        "tagName": "卫浴电器",
+        "remark": null,
+        "canExpense": false,
+        "canIncome": false,
+        "canTransfer": true,
+        "sort": 0,
+        "parentId": 143
+      }
+    ],
+    "payeeList": [
+      {
+        "payeeId": 15,
+        "payeeName": "个人",
+        "remark": "自然人个体，而非企业或组织。\n主要类型：\n亲友间交易：与家人、朋友之间的资金往来，如借款、礼物交换等\n个人服务提供者：个人提供的专业服务，如家教、私厨、维修师傅等\n个人卖家：通过二手平台、跳蚤市场等渠道进行个人物品买卖",
+        "canExpense": true,
+        "canIncome": true,
+        "sort": 100
+      },
+      {
+        "payeeId": 16,
+        "payeeName": "公共服务机构",
+        "remark": "水电煤气公司、公共交通等",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 200
+      },
+      {
+        "payeeId": 17,
+        "payeeName": "医疗机构",
+        "remark": "医院、诊所等",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 300
+      },
+      {
+        "payeeId": 18,
+        "payeeName": "平台企业",
+        "remark": "淘宝、京东、美团等",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 400
+      },
+      {
+        "payeeId": 19,
+        "payeeName": "零售商",
+        "remark": "超市、商场、专卖店等直接面向消费者的销售企业",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 500
+      },
+      {
+        "payeeId": 20,
+        "payeeName": "服务商",
+        "remark": "银行、保险公司、电信运营商等提供服务的机构",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 600
+      },
+      {
+        "payeeId": 21,
+        "payeeName": "制造商",
+        "remark": "直接向消费者销售产品的生产厂家",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 700
+      },
+      {
+        "payeeId": 22,
+        "payeeName": "教育机构",
+        "remark": "学校、培训机构等",
+        "canExpense": true,
+        "canIncome": false,
+        "sort": 800
+      },
+      {
+        "payeeId": 23,
+        "payeeName": "税务部门",
+        "remark": "个人所得税、社保费用等",
+        "canExpense": true,
+        "canIncome": true,
+        "sort": 900
+      },
+      {
+        "payeeId": 24,
+        "payeeName": "其它",
+        "remark": null,
+        "canExpense": true,
+        "canIncome": true,
+        "sort": 9900
       }
     ]
   }
