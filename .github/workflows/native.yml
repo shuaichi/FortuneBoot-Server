@@ -41,17 +41,33 @@ jobs:
             --output type=local,dest=./out/${{ matrix.output_dir }} \
             .
 
-      - name: Clean up lock files and set permissions
-        # 只有当目录存在时才执行清理，避免报错
-        # 打印一下构建结果，看看生成了什么文件
+      - name: Clean up and extract binary
+        # 提取二进制文件并清理其他文件
         run: |
-          if [ -d "out/${{ matrix.output_dir }}/var" ]; then
-            sudo rm -rf out/${{ matrix.output_dir }}/var
+          TARGET_DIR="out/${{ matrix.output_dir }}"
+          BINARY_PATH="$TARGET_DIR/app/fortuneboot-starter"
+          
+          if [ -f "$BINARY_PATH" ]; then
+            echo "Found binary at $BINARY_PATH"
+            # 移动二进制文件到临时位置
+            cp "$BINARY_PATH" ./fortuneboot-starter-tmp
+          
+            # 清空输出目录
+            sudo rm -rf "$TARGET_DIR"/*
+          
+            # 将二进制文件移回，并加上架构后缀以免 Release 时文件名冲突
+            mv ./fortuneboot-starter-tmp "$TARGET_DIR/fortuneboot-starter-${{ matrix.output_dir }}"
+          else
+            echo "Error: Binary not found at $BINARY_PATH"
+            ls -R "$TARGET_DIR"
+            exit 1
           fi
-          sudo chown -R $USER out/${{ matrix.output_dir }}
-          sudo chmod -R 755 out/${{ matrix.output_dir }}
-          echo "Listing build output:"
-          ls -R out/${{ matrix.output_dir }}
+
+          sudo chown -R $USER "$TARGET_DIR"
+          sudo chmod -R 755 "$TARGET_DIR"
+          
+          echo "Listing final build output:"
+          ls -R "$TARGET_DIR"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -105,7 +121,7 @@ jobs:
           name: Release v${{ env.VERSION }}
           # 确保这里匹配的是文件而不是文件夹
           files: |
-            ./out/linux_amd64/**/*
-            ./out/linux_arm64/**/*
+            ./out/linux_amd64/*
+            ./out/linux_arm64/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
