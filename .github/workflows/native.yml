@@ -18,8 +18,6 @@ jobs:
           - os: ubuntu-latest
             platform: linux/amd64
             output_dir: linux_amd64
-          # 注意：ubuntu-24.04-arm 仅适用于付费/Team 账户。
-          # 如果你是个人免费账户，这里可能会一直排队或失败，需要改用 QEMU + ubuntu-latest。
           - os: ubuntu-24.04-arm
             platform: linux/arm64
             output_dir: linux_arm64
@@ -31,10 +29,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build native image
-        # 确保输出目录存在
         run: |
           mkdir -p ./out/${{ matrix.output_dir }}
-          
           docker buildx build \
             --platform ${{ matrix.platform }} \
             -f Dockerfile \
@@ -42,20 +38,14 @@ jobs:
             .
 
       - name: Clean up and extract binary
-        # 提取二进制文件并清理其他文件
         run: |
           TARGET_DIR="out/${{ matrix.output_dir }}"
           BINARY_PATH="$TARGET_DIR/app/fortuneboot-starter"
           
           if [ -f "$BINARY_PATH" ]; then
             echo "Found binary at $BINARY_PATH"
-            # 移动二进制文件到临时位置
             cp "$BINARY_PATH" ./fortuneboot-starter-tmp
-          
-            # 清空输出目录
             sudo rm -rf "$TARGET_DIR"/*
-          
-            # 将二进制文件移回，并加上架构后缀以免 Release 时文件名冲突
             mv ./fortuneboot-starter-tmp "$TARGET_DIR/fortuneboot-starter-${{ matrix.output_dir }}"
           else
             echo "Error: Binary not found at $BINARY_PATH"
@@ -69,19 +59,23 @@ jobs:
           echo "Listing final build output:"
           ls -R "$TARGET_DIR"
 
+      # 【新增步骤】将输出目录压缩成 zip
+      - name: Compress output directory into zip
+        run: |
+          zip -r "./out/${{ matrix.output_dir }}.zip" "./out/${{ matrix.output_dir }}"
+
+      # 上传压缩后的文件
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: native-binary-${{ matrix.output_dir }}
-          # 建议直接上传整个目录，保持结构清晰
-          path: out/${{ matrix.output_dir }}/
-          # 如果没有生成文件，直接报错，不要等到 Release 阶段
+          name: native-binary-${{ matrix.output_dir }}.zip
+          path: out/${{ matrix.output_dir }}.zip
           if-no-files-found: error
 
   release:
     needs: build-native
     runs-on: ubuntu-latest
-    # 【修复关键点 1】赋予 Release 写入权限
+    # 赋予 Release 写入权限
     permissions:
       contents: write
 
@@ -95,19 +89,16 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Detected version: $VERSION"
 
-      # 下载制品
       - uses: actions/download-artifact@v4
         with:
-          name: native-binary-linux_amd64
-          path: ./out/linux_amd64
+          name: native-binary-linux_amd64.zip
+          path: ./out/linux_amd64.zip
 
       - uses: actions/download-artifact@v4
         with:
-          name: native-binary-linux_arm64
-          path: ./out/linux_arm64
+          name: native-binary-linux_arm64.zip
+          path: ./out/linux_arm64.zip
 
-      # 【修复关键点 2】调试步骤：列出文件结构
-      # 如果再次报错 "Pattern does not match"，请查看此步骤的日志
       - name: Inspect directories
         run: |
           echo "Current directory structure:"
@@ -119,9 +110,8 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
-          # 确保这里匹配的是文件而不是文件夹
           files: |
-            ./out/linux_amd64/*
-            ./out/linux_arm64/*
+            ./out/linux_amd64.zip
+            ./out/linux_arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
