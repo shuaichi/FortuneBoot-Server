@@ -3061,9 +3061,9 @@
         "tagId": 175,
         "tagName": "智能家居",
         "remark": null,
-        "canExpense": false,
+        "canExpense": true,
         "canIncome": false,
-        "canTransfer": true,
+        "canTransfer": false,
         "sort": 0,
         "parentId": 143
       },
@@ -3071,9 +3071,9 @@
         "tagId": 176,
         "tagName": "厨房电器",
         "remark": null,
-        "canExpense": false,
+        "canExpense": true,
         "canIncome": false,
-        "canTransfer": true,
+        "canTransfer": false,
         "sort": 0,
         "parentId": 143
       },
@@ -3081,9 +3081,9 @@
         "tagId": 177,
         "tagName": "卫浴电器",
         "remark": null,
-        "canExpense": false,
+        "canExpense": true,
         "canIncome": false,
-        "canTransfer": true,
+        "canTransfer": false,
         "sort": 0,
         "parentId": 143
       }
