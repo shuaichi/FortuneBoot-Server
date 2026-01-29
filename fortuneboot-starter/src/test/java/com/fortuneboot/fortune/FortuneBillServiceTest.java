@@ -1,11 +1,14 @@
 package com.fortuneboot.fortune;
 
+import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -70,5 +73,14 @@ public class FortuneBillServiceTest {
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getPayeeIncome(query);
         log.info("[testGetPayeeIncome] result = {}", result);
+    }
+
+    @Test
+    public void testGetPage(){
+        FortuneBillQuery fortuneBillQuery = new FortuneBillQuery();
+        fortuneBillQuery.setOrderField("amount");
+        fortuneBillQuery.setOrderDirection("ascending");
+        PageDTO<FortuneBillBo> result = fortuneBillService.getPage(fortuneBillQuery);
+        log.info("[testGetPage] result = {}", result.toString());
     }
 }

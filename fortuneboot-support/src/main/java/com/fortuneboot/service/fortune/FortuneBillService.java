@@ -95,7 +95,7 @@ public class FortuneBillService {
 
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
-        IPage<FortuneBillEntity> page = fortuneBillRepo.getPage(query.toPage(), query.addQueryCondition());
+        IPage<FortuneBillEntity> page = fortuneBillRepo.getPage(query.toPage(), query.toQueryWrapper());
         List<FortuneBillBo> list = page.getRecords().stream().map(FortuneBillBo::new).toList();
         if (CollectionUtils.isEmpty(list)) {
             return new PageDTO<>(Collections.emptyList());

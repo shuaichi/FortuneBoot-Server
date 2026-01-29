@@ -5,7 +5,7 @@ import cn.hutool.core.math.Calculator;
 import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.infrastructure.config.captcha.CaptchaMathTextCreator;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CaptchaMathTextCreatorTest {
 

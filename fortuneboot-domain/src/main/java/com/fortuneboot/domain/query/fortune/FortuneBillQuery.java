@@ -2,8 +2,11 @@ package com.fortuneboot.domain.query.fortune;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fortuneboot.common.core.base.BaseEntity;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
+import com.fortuneboot.common.enums.common.DeleteEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import jakarta.validation.constraints.NotNull;
@@ -112,6 +115,39 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
      */
     private String remark;
 
+    /**
+     * 排序字段
+     */
+    private String orderField;
+
+    @Override
+    public void addSortCondition(LambdaQueryWrapper<FortuneBillEntity> queryWrapper) {
+        // 获取前端传来的排序方向
+        Boolean sortDirection = this.convertSortDirection();
+        // 默认为倒序（如果 sortDirection 为 null，则 isAsc 为 false）
+        boolean isAsc = sortDirection != null && sortDirection;
+
+        // 获取排序字段，默认为 tradeTime（在 getOrderField 中定义）
+        SFunction<FortuneBillEntity, ?> field = this.getOrderField();
+
+        if (Objects.nonNull(field)) {
+            queryWrapper.orderBy(Boolean.TRUE, isAsc, field);
+        }
+
+        // 固定添加 createTime 倒序
+        queryWrapper.orderByDesc(FortuneBillEntity::getCreateTime);
+    }
+
+    @Override
+    protected SFunction<FortuneBillEntity, ?> getOrderField() {
+        if ("amount".equals(orderField)) {
+            return FortuneBillEntity::getAmount;
+        } else if ("tradeTime".equals(orderField)) {
+            return FortuneBillEntity::getTradeTime;
+        }
+        return FortuneBillEntity::getTradeTime;
+    }
+
     @Override
     public LambdaQueryWrapper<FortuneBillEntity> addQueryCondition() {
         QueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getQueryWrapper(FortuneBillEntity.class, Boolean.FALSE);
@@ -134,7 +170,11 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .eq(Objects.nonNull(include), "bill.include", include)
                 .eq(Objects.nonNull(orderId), "bill.order_id", orderId)
                 .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
-                .eq("bill.deleted", 0);
-        return queryWrapper.lambda();
+                .eq("bill.deleted", DeleteEnum.VALID.getValue());
+
+        // 根据ID进行分组
+        LambdaQueryWrapper<FortuneBillEntity> lambda = queryWrapper.lambda();
+        lambda.groupBy(FortuneBillEntity::getBillId);
+        return lambda;
     }
 }

@@ -7,7 +7,7 @@ import java.io.File;
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.constant.Constants;
 import jakarta.annotation.Resource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
