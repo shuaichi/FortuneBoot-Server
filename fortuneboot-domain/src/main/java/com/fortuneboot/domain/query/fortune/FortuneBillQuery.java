@@ -118,7 +118,7 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     /**
      * 排序字段
      */
-    private String orderField;
+    private String orderColumn;
 
     @Override
     public void addSortCondition(LambdaQueryWrapper<FortuneBillEntity> queryWrapper) {
@@ -140,9 +140,9 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
 
     @Override
     protected SFunction<FortuneBillEntity, ?> getOrderField() {
-        if ("amount".equals(orderField)) {
-            return FortuneBillEntity::getAmount;
-        } else if ("tradeTime".equals(orderField)) {
+        if ("convertedAmount".equals(orderColumn)) {
+            return FortuneBillEntity::getConvertedAmount;
+        } else if ("tradeTime".equals(orderColumn)) {
             return FortuneBillEntity::getTradeTime;
         }
         return FortuneBillEntity::getTradeTime;

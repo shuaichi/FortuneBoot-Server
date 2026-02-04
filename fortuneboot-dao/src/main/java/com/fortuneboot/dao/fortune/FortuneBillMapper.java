@@ -45,7 +45,6 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                 LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id
                 LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id
                 ${ew.customSqlSegment}
-                GROUP BY bill.bill_id
             ) AS t
             """)
     BillStatisticsVo getBillStatistics(@Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
