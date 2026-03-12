@@ -46,7 +46,7 @@
         <pagehelper.boot.version>2.1.0</pagehelper.boot.version>
         <oshi.version>6.8.1</oshi.version>
         <commons.io.version>2.19.0</commons.io.version>
-        <commons.fileupload.version>1.6</commons.fileupload.version>
+        <commons.fileupload.version>1.6.0</commons.fileupload.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <poi.version>5.4.1</poi.version>
         <velocity.version>2.4.1</velocity.version>
