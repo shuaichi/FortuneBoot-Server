@@ -3,9 +3,15 @@ package com.fortuneboot.rest.common;
 import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.core.dto.ResponseDTO;
+import com.fortuneboot.common.enums.common.ConfigKeyEnum;
+import com.fortuneboot.common.enums.common.StatusEnum;
+import com.fortuneboot.common.enums.common.UserSourceEnum;
+import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.common.dto.CurrentLoginUserDTO;
 import com.fortuneboot.domain.common.dto.TokenDTO;
 import com.fortuneboot.domain.dto.RoleDTO;
+import com.fortuneboot.repository.system.SysConfigRepo;
 import com.fortuneboot.service.system.MenuApplicationService;
 import com.fortuneboot.domain.dto.menu.RouterDTO;
 import com.fortuneboot.service.system.UserApplicationService;
@@ -22,7 +28,9 @@ import com.fortuneboot.infrastructure.annotations.ratelimit.RateLimitKey;
 import com.fortuneboot.service.login.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,15 +52,17 @@ public class LoginRest {
 
     private final FortuneBootConfig fortuneBootConfig;
 
+    private final SysConfigRepo sysConfigRepo;
+
     @Operation(summary = "获取API版本号")
     @GetMapping("/getApiVersion")
-    public ResponseDTO<String> getApiVersion(){
+    public ResponseDTO<String> getApiVersion() {
         return ResponseDTO.ok(fortuneBootConfig.getVersion());
     }
 
     @Operation(summary = "获取IPC备案信息", description = "IPC备案")
     @GetMapping("/getIcp")
-    public ResponseDTO<String> getIcp(){
+    public ResponseDTO<String> getIcp() {
         return ResponseDTO.ok(userApplicationService.getIcp());
     }
 
@@ -63,10 +73,10 @@ public class LoginRest {
     @Operation(summary = "首页")
     @GetMapping("/")
     @RateLimit(key = RateLimitKey.TEST_KEY, time = 10, maxCount = 5, cacheType = CacheType.Map,
-        limitType = LimitType.GLOBAL)
+            limitType = LimitType.GLOBAL)
     public String index() {
         return StrUtil.format("欢迎使用{}，当前版本：v{}，请通过前端地址访问。",
-            fortuneBootConfig.getName(), fortuneBootConfig.getVersion());
+                fortuneBootConfig.getName(), fortuneBootConfig.getVersion());
     }
 
 
@@ -91,7 +101,7 @@ public class LoginRest {
      */
     @Operation(summary = "验证码")
     @RateLimit(key = RateLimitKey.LOGIN_CAPTCHA_KEY, time = 10, maxCount = 10, cacheType = CacheType.REDIS,
-        limitType = LimitType.IP)
+            limitType = LimitType.IP)
     @GetMapping("/captchaImage")
     public ResponseDTO<CaptchaDTO> getCaptchaImg() {
         CaptchaDTO captchaImg = loginService.generateCaptchaImg();
@@ -133,6 +143,7 @@ public class LoginRest {
     /**
      * 获取路由信息
      * TODO 如果要在前端开启路由缓存的话 需要在ServerConfig.json 中  设置CachingAsyncRoutes=true  避免一直重复请求路由接口
+     *
      * @return 路由信息
      */
     @Operation(summary = "获取用户对应的菜单路由", description = "用于动态生成路由")
@@ -149,7 +160,7 @@ public class LoginRest {
         return ResponseDTO.ok(userApplicationService.checkRepeat(userName));
     }
 
-    @Operation(summary = "获取允许注册的角色",description = "用于用户注册使用，注册时必选")
+    @Operation(summary = "获取允许注册的角色", description = "用于用户注册使用，注册时必选")
     @GetMapping("/getAllowRegisterRoles")
     public ResponseDTO<List<RoleDTO>> getAllowRegisterRoles() {
         List<RoleDTO> roleDTOList = userApplicationService.getAllowRegisterRoles();
@@ -159,7 +170,17 @@ public class LoginRest {
     @Operation(summary = "注册接口", description = "注册功能")
     @PostMapping("/register")
     public ResponseDTO<Void> register(@RequestBody AddUserCommand command) {
-        userApplicationService.register(command);
+        // 校验是否允许注册
+        String configValue = sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
+        boolean registerUser = Boolean.parseBoolean(configValue);
+        if (!registerUser) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
+        }
+        // 设置注册默认参数
+        command.setSource(UserSourceEnum.REGISTER.getValue());
+        command.setStatus(StatusEnum.ENABLE.getValue());
+        // 注册用户
+        userApplicationService.addUser(command);
         return ResponseDTO.ok();
     }
 
