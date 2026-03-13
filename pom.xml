@@ -37,7 +37,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <druid.version>1.2.28</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
@@ -52,7 +52,7 @@
         <velocity.version>2.4.1</velocity.version>
         <jwt.version>0.12.6</jwt.version>
         <hutool.version>5.8.41</hutool.version>
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <mybatis-plus.version>3.5.15</mybatis-plus.version>
         <mybatis-plus-generator.version>3.5.15</mybatis-plus-generator.version>
         <dynamic-datasource-spring-boot.version>4.3.1</dynamic-datasource-spring-boot.version>
@@ -356,6 +356,16 @@
                             <arg>-parameters</arg>
                         </compilerArgs>
                         <encoding>${project.build.sourceEncoding}</encoding>
+
+                        <annotationProcessorPaths>
+
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
