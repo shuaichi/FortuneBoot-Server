@@ -8,7 +8,6 @@ import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.factory.fortune.model.FortuneFinanceOrderModel;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -46,18 +45,17 @@ public class AdvanceStrategy extends AbstractBillStrategy {
         fromAccount.checkCanExpense();
 
         BigDecimal amount = context.getBillModel().getAmount();
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
-
-        fromAccount.updateById();
+        // 使用原子更新扣除余额 (使用 negate 转为负数进行扣款)
+        fromAccount.addBalanceAtomic(amount.negate());
     }
 
     @Override
     public void refuseBalance(BillStrategyContext context) {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneBillModel billModel = context.getBillModel();
-        BigDecimal newBalance = fromAccount.getBalance().add(billModel.getAmount());
-        fromAccount.setBalance(newBalance);
-        fromAccount.updateById();
+
+        // 使用原子更新退回余额 (正数增加)
+        fromAccount.addBalanceAtomic(billModel.getAmount());
     }
 
     @Override

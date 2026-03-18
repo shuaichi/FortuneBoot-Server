@@ -49,6 +49,10 @@ public abstract class AbstractQuery<T> {
         if (queryWrapper == null || StrUtil.isEmpty(orderColumn)) {
             return;
         }
+        // 白名单校验，仅允许字母、数字和下划线，以防SQL注入
+        if (!orderColumn.matches("^[a-zA-Z0-9_]+$")) {
+            throw new IllegalArgumentException("非法的排序参数");
+        }
 
         Boolean sortDirection = convertSortDirection();
         if (sortDirection != null) {

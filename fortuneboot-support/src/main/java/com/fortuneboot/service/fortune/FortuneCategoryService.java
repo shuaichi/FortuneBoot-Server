@@ -247,8 +247,8 @@ public class FortuneCategoryService {
 
     public void modify(FortuneCategoryModifyCommand modifyCommand) {
         FortuneCategoryModel fortuneCategoryModel = fortuneCategoryFactory.loadById(modifyCommand.getCategoryId());
-        fortuneCategoryModel.loadModifyCommand(modifyCommand);
         fortuneCategoryModel.checkBookId(modifyCommand.getBookId());
+        fortuneCategoryModel.loadModifyCommand(modifyCommand);
         fortuneCategoryModel.checkParentId(modifyCommand.getParentId());
         fortuneCategoryModel.updateById();
     }

@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,9 +62,9 @@ public class FortuneRecurringBillService {
     @Transactional(rollbackFor = Exception.class)
     public void modifyRule(FortuneRecurringBillRuleModifyCommand modifyCommand) {
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(modifyCommand.getRuleId());
+        rule.checkBookId(modifyCommand.getBookId());
         rule.loadModifyCommand(modifyCommand);
         rule.checkCronValid();
-        rule.checkBookId(modifyCommand.getBookId());
         rule.updateById();
         scheduleService.scheduleJob(rule);
     }
@@ -97,6 +98,7 @@ public class FortuneRecurringBillService {
     /**
      * 应用启动时初始化
      */
+    @Async(com.fortuneboot.config.AsyncConfig.ASYNC_EXECUTOR_NAME)
     @EventListener(ApplicationReadyEvent.class)
     @Transactional(rollbackFor = Exception.class)
     public void initRecurringBills() {

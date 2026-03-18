@@ -5,6 +5,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,5 +31,13 @@ public interface FortuneAccountRepo extends IService<FortuneAccountEntity> {
      * @return
      */
     List<FortuneAccountEntity> getByIds(List<Long> accountIdList);
+
+    /**
+     * 利用数据库的行锁保证原子性更新
+     *
+     * @param accountId
+     * @param amount
+     */
+    void addBalanceAtomic(Long accountId, BigDecimal amount);
 
 }

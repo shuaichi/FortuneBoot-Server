@@ -62,4 +62,10 @@ public class FortuneBookModel extends FortuneBookEntity {
             throw new ApiException(ErrorCode.Business.BOOK_PLEASE_MOVE_OUT_RECYCLE_BIN_FIRST);
         }
     }
+
+    public void checkGroupId(Long groupId) {
+        if (!this.getGroupId().equals(groupId)) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
+        }
+    }
 }

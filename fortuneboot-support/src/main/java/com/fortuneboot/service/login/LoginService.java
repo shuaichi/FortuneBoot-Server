@@ -18,6 +18,7 @@ import com.fortuneboot.common.exception.error.ErrorCode.Business;
 import com.fortuneboot.common.utils.ServletHolderUtil;
 import com.fortuneboot.common.utils.i18n.MessageUtils;
 import com.fortuneboot.customize.async.AsyncTaskFactory;
+import com.fortuneboot.infrastructure.cache.RedisUtil;
 import com.fortuneboot.service.cache.GuavaCacheService;
 import com.fortuneboot.service.cache.MapCache;
 import com.fortuneboot.service.cache.RedisCacheService;
@@ -63,6 +64,8 @@ public class LoginService {
     private final Producer captchaProducer;
 
     private final Producer captchaProducerMath;
+
+    private final RedisUtil redisUtil;
 
     /**
      * 登录验证
@@ -176,20 +179,23 @@ public class LoginService {
      * @param captchaCodeKey 验证码对应的缓存key
      */
     public void validateCaptcha(String username, String captchaCode, String captchaCodeKey) {
-        String captcha = redisCache.captchaCache.getObjectById(captchaCodeKey);
+        String fullKey = com.fortuneboot.infrastructure.cache.redis.CacheKeyEnum.CAPTCHA.key() + captchaCodeKey;
+        // 直接查 Redis，绕过 Guava 缓存，以防并发漏洞
+        String captcha = redisUtil.getCacheObject(fullKey);
         redisCache.captchaCache.delete(captchaCodeKey);
+        redisUtil.deleteObject(fullKey);
+
         if (captcha == null) {
             ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(username, LoginStatusEnum.LOGIN_FAIL,
-                ErrorCode.Business.LOGIN_CAPTCHA_CODE_EXPIRE.message()));
+                    ErrorCode.Business.LOGIN_CAPTCHA_CODE_EXPIRE.message()));
             throw new ApiException(ErrorCode.Business.LOGIN_CAPTCHA_CODE_EXPIRE);
         }
         if (!captchaCode.equalsIgnoreCase(captcha)) {
             ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(username, LoginStatusEnum.LOGIN_FAIL,
-                ErrorCode.Business.LOGIN_CAPTCHA_CODE_WRONG.message()));
+                    ErrorCode.Business.LOGIN_CAPTCHA_CODE_WRONG.message()));
             throw new ApiException(ErrorCode.Business.LOGIN_CAPTCHA_CODE_WRONG);
         }
     }
-
     /**
      * 记录登录信息
      * @param loginUser 登录用户

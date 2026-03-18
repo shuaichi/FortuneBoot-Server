@@ -92,7 +92,15 @@ public class RedisConfig {
                                 .withIsGetterVisibility(JsonAutoDetect.Visibility.ANY)
                                 .withSetterVisibility(JsonAutoDetect.Visibility.ANY)
                                 .withCreatorVisibility(JsonAutoDetect.Visibility.ANY)
-                ).activateDefaultTyping(BasicPolymorphicTypeValidator.builder().allowIfSubType(Object.class).build(), DefaultTyping.NON_FINAL)
+                ).activateDefaultTyping(
+                        BasicPolymorphicTypeValidator.builder()
+                                // 仅允许反序列化本系统包和基础 Java 集合/语言包
+                                .allowIfBaseType("com.fortuneboot.domain")
+                                .allowIfBaseType("java.util")
+                                .allowIfBaseType("java.lang")
+                                .build(),
+                        DefaultTyping.NON_FINAL
+                )
                 .build();
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10))

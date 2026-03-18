@@ -115,4 +115,8 @@ public class FortuneAccountModel extends FortuneAccountEntity {
         fortuneBill.setInclude(Boolean.TRUE);
         return fortuneBill;
     }
+
+    public void addBalanceAtomic(BigDecimal amount) {
+        this.getFortuneAccountRepo().addBalanceAtomic(this.getAccountId(), amount);
+    }
 }

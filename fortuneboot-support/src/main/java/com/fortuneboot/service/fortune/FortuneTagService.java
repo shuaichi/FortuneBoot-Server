@@ -258,9 +258,9 @@ public class FortuneTagService {
 
     public void modify(FortuneTagModifyCommand modifyCommand) {
         FortuneTagModel fortuneTagModel = fortuneTagFactory.loadById(modifyCommand.getTagId());
+        fortuneTagModel.checkBookId(modifyCommand.getBookId());
         fortuneTagModel.loadModifyCommand(modifyCommand);
         fortuneTagModel.checkTagExist();
-        fortuneTagModel.checkBookId(modifyCommand.getBookId());
         fortuneTagModel.checkParentId(modifyCommand.getParentId());
         fortuneTagModel.updateById();
     }

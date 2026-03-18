@@ -5,7 +5,6 @@ import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -29,25 +28,24 @@ public class IncomeBillStrategy extends AbstractBillStrategy {
         if (!billModel.getConfirm() || Objects.isNull(billModel.getAccountId())) {
             return;
         }
-        
+
         // 收入账单：增加目标账户余额
         FortuneAccountModel fromAccount = context.getFromAccount();
         fromAccount.checkEnable();
         fromAccount.checkCanIncome();
-        
+
         BigDecimal amount = context.getBillModel().getAmount();
-        fromAccount.setBalance(fromAccount.getBalance().add(amount));
-        
-        fromAccount.updateById();
+        // 使用原子更新增加余额
+        fromAccount.addBalanceAtomic(amount);
     }
 
     @Override
     public void refuseBalance(BillStrategyContext context) {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneBillModel billModel = context.getBillModel();
-        BigDecimal newBalance = fromAccount.getBalance().subtract(billModel.getAmount());
-        fromAccount.setBalance(newBalance);
-        fromAccount.updateById();
+
+        // 使用原子更新退回余额 (使用 negate 转为负数进行扣除)
+        fromAccount.addBalanceAtomic(billModel.getAmount().negate());
     }
 
     @Override

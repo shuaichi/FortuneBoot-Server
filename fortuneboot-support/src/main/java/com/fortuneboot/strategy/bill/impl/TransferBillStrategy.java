@@ -34,31 +34,33 @@ public class TransferBillStrategy extends AbstractBillStrategy {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void confirmBalance(BillStrategyContext context) {
-
         FortuneBillModel billModel = context.getBillModel();
-        if ( Objects.isNull(billModel.getAccountId())|| Objects.isNull(billModel.getToAccountId())) {
-            // TODO 报错
-//            throw new ApiException();
+        if (Objects.isNull(billModel.getAccountId()) || Objects.isNull(billModel.getToAccountId())) {
             return;
         }
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
-        BigDecimal amount = context.getBillModel().getAmount();
 
-        // 转出账户：减少目标账户余额
         fromAccount.checkEnable();
         fromAccount.checkCanTransferOut();
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
-
-        // 转入账户：增加目标账户余额
         toAccount.checkEnable();
         toAccount.checkCanTransferIn();
 
-        toAccount.setBalance(toAccount.getBalance().add(billModel.getAmount()));
+        // 使用原子更新
+        fromAccount.addBalanceAtomic(billModel.getAmount().negate());
+        // 这里必须使用 convertedAmount，否则汇率不对
+        toAccount.addBalanceAtomic(billModel.getConvertedAmount());
+    }
 
-        // 更新账户余额
-        fromAccount.updateById();
-        toAccount.updateById();
+    @Override
+    public void refuseBalance(BillStrategyContext context) {
+        FortuneBillModel billModel = context.getBillModel();
+        FortuneAccountModel fromAccount = context.getFromAccount();
+        FortuneAccountModel toAccount = context.getToAccount();
+
+        // 回滚必须使用原子操作，并区分原币种与目标币种金额
+        fromAccount.addBalanceAtomic(billModel.getAmount());
+        toAccount.addBalanceAtomic(billModel.getConvertedAmount().negate());
     }
 
     @Override
@@ -72,26 +74,6 @@ public class TransferBillStrategy extends AbstractBillStrategy {
                 : super.convertCurrency(billModel.getAmount(), fromAccount.getCurrencyCode(), toAccount.getCurrencyCode(), applicationScopeBo.getCurrencyTemplateBoList());
 
         billModel.setConvertedAmount(convertedAmount);
-    }
-
-    @Override
-    public void refuseBalance(BillStrategyContext context) {
-        FortuneBillModel billModel = context.getBillModel();
-        // 验证转账必要参数
-        if (Objects.isNull(billModel.getToAccountId()) || Objects.isNull(billModel.getConvertedAmount())) {
-            throw new ApiException(ErrorCode.Business.BILL_TRANSFER_PARAMETER_ERROR);
-        }
-
-        FortuneAccountModel fromAccount = context.getFromAccount();
-        BigDecimal fromBalance = fromAccount.getBalance().add(billModel.getAmount());
-        fromAccount.setBalance(fromBalance);
-
-        FortuneAccountModel toAccount = context.getToAccount();
-        BigDecimal toBalance = toAccount.getBalance().subtract(billModel.getAmount());
-        toAccount.setBalance(toBalance);
-
-        fromAccount.updateById();
-        toAccount.updateById();
     }
 
     @Override
