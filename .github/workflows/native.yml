@@ -59,16 +59,17 @@ jobs:
           echo "Listing final build output:"
           ls -R "$TARGET_DIR"
 
-      # 【新增步骤】将输出目录压缩成 zip
+      # 先进入 out 目录再压缩，避免解压时多出一个无关的 out/ 文件夹层级
       - name: Compress output directory into zip
         run: |
-          zip -r "./out/${{ matrix.output_dir }}.zip" "./out/${{ matrix.output_dir }}"
+          cd ./out
+          zip -r "${{ matrix.output_dir }}.zip" "${{ matrix.output_dir }}"
 
-      # 上传压缩后的文件
+      # 去掉 name 里的 .zip 后缀，防止 GitHub Artifacts 生成双重 .zip.zip 文件
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: native-binary-${{ matrix.output_dir }}.zip
+          name: native-binary-${{ matrix.output_dir }}
           path: out/${{ matrix.output_dir }}.zip
           if-no-files-found: error
 
@@ -89,21 +90,23 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Detected version: $VERSION"
 
+      # 下载的 path 应该指定存放的“目录”（./out），而不是指定完整“文件路径”
       - uses: actions/download-artifact@v4
         with:
-          name: native-binary-linux_amd64.zip
-          path: ./out/linux_amd64.zip
+          name: native-binary-linux_amd64
+          path: ./out
 
       - uses: actions/download-artifact@v4
         with:
-          name: native-binary-linux_arm64.zip
-          path: ./out/linux_arm64.zip
+          name: native-binary-linux_arm64
+          path: ./out
 
       - name: Inspect directories
         run: |
           echo "Current directory structure:"
           ls -R ./out
 
+      # 上传具体的 .zip 文件到 Release 资产中
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/master_native'
