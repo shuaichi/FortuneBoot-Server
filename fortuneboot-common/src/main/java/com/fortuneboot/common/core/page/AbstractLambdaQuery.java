@@ -3,12 +3,14 @@ package com.fortuneboot.common.core.page;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fortuneboot.common.utils.time.DatePickUtil;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -50,7 +52,7 @@ public abstract class AbstractLambdaQuery<T> {
         if (ObjectUtil.isEmpty(queryWrapper) || ObjectUtil.isEmpty(this.getOrderField())) {
             return;
         }
-        Boolean sortDirection = convertSortDirection();
+        Boolean sortDirection = this.convertSortDirection();
         if (ObjectUtil.isNotEmpty(sortDirection)) {
             // 使用 if-else 语句来判断使用升序还是降序
             if (sortDirection) {
@@ -62,9 +64,9 @@ public abstract class AbstractLambdaQuery<T> {
     }
 
     public void addTimeCondition(LambdaQueryWrapper<T> queryWrapper) {
-        if (ObjectUtil.isNotEmpty(queryWrapper) && ObjectUtil.isNotEmpty(getTimeRangeField())) {
-            queryWrapper.ge(ObjectUtil.isNotEmpty(beginTime), getTimeRangeField(), DatePickUtil.getBeginOfTheDay(beginTime))
-                    .le(ObjectUtil.isNotEmpty(endTime), getTimeRangeField(), DatePickUtil.getEndOfTheDay(endTime));
+        if (ObjectUtil.isNotEmpty(queryWrapper) && ObjectUtil.isNotEmpty(this.getTimeRangeField())) {
+            queryWrapper.ge(ObjectUtil.isNotEmpty(beginTime), this.getTimeRangeField(), DatePickUtil.getBeginOfTheDay(beginTime))
+                    .le(ObjectUtil.isNotEmpty(endTime), this.getTimeRangeField(), DatePickUtil.getEndOfTheDay(endTime));
         }
     }
 

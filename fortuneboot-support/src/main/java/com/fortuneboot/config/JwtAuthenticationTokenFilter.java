@@ -1,4 +1,4 @@
-package com.fortuneboot.customize.config;
+package com.fortuneboot.config;
 
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;

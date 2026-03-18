@@ -1,5 +1,8 @@
 package com.fortuneboot.fortune;
 
+import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -70,5 +73,14 @@ public class FortuneBillServiceTest {
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getPayeeIncome(query);
         log.info("[testGetPayeeIncome] result = {}", result);
+    }
+
+    @Test
+    public void testGetPage(){
+        FortuneBillQuery fortuneBillQuery = new FortuneBillQuery();
+        fortuneBillQuery.setOrderColumn("amount");
+        fortuneBillQuery.setOrderDirection("ascending");
+        PageDTO<FortuneBillBo> result = fortuneBillService.getPage(fortuneBillQuery);
+        log.info("[testGetPage] result = {}", result.toString());
     }
 }

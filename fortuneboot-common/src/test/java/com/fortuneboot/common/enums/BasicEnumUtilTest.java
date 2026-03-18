@@ -3,7 +3,7 @@ package com.fortuneboot.common.enums;
 
 import com.fortuneboot.common.enums.common.YesOrNoEnum;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BasicEnumUtilTest {
 
