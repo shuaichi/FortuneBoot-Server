@@ -106,6 +106,11 @@ public class FortuneBillAddCommand {
     private List<Long> tagIdList;
 
     /**
+     * 成员id
+     */
+    private List<Long> memberIdList;
+
+    /**
      * 附件
      */
     private List<MultipartFile> fileList;

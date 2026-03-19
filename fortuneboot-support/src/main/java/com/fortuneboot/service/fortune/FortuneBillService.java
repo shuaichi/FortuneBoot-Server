@@ -88,6 +88,10 @@ public class FortuneBillService {
 
     private final BillStrategyFactory strategyFactory;
 
+    private final FortuneMemberRelationRepo fortuneMemberRelationRepo;
+    private final FortuneMemberRepo fortuneMemberRepo;
+    private final FortuneMemberRelationService fortuneMemberRelationService;
+    private final FortuneMemberFactory fortuneMemberFactory;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -104,6 +108,7 @@ public class FortuneBillService {
         this.fillBook(list);
         this.fillCategory(list);
         this.fillTag(list);
+        this.fillMember(list);
         this.fillPayee(list);
         // 批量填充是否存在附件，避免N+1
         this.fillHasFiles(list);
@@ -129,6 +134,24 @@ public class FortuneBillService {
                 vo.setCategoryName(fortuneCategoryEntity.getCategoryName());
                 vo.setAmount(relation.getAmount());
                 billBo.getCategoryAmountPair().add(vo);
+            }
+        }
+    }
+    private void fillMember(List<FortuneBillBo> list) {
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
+        Map<Long, List<com.fortuneboot.domain.entity.fortune.FortuneMemberRelationEntity>> map = fortuneMemberRelationRepo.getByBillIdList(billIdList);
+        if (org.apache.commons.collections4.MapUtils.isEmpty(map)) return;
+
+        List<Long> memberIdList = map.values().stream().flatMap(List::stream).map(com.fortuneboot.domain.entity.fortune.FortuneMemberRelationEntity::getMemberId).distinct().toList();
+        List<com.fortuneboot.domain.entity.fortune.FortuneMemberEntity> memberList = fortuneMemberRepo.getByIds(memberIdList);
+        Map<Long, com.fortuneboot.domain.entity.fortune.FortuneMemberEntity> memberMap = memberList.stream().collect(Collectors.toMap(com.fortuneboot.domain.entity.fortune.FortuneMemberEntity::getMemberId, Function.identity()));
+
+        for (FortuneBillBo billBo : list) {
+            List<com.fortuneboot.domain.entity.fortune.FortuneMemberRelationEntity> relationList = map.get(billBo.getBillId());
+            if (org.apache.commons.collections4.CollectionUtils.isEmpty(relationList)) continue;
+            billBo.setMemberList(new java.util.ArrayList<>(relationList.size()));
+            for (com.fortuneboot.domain.entity.fortune.FortuneMemberRelationEntity relation : relationList) {
+                billBo.getMemberList().add(memberMap.get(relation.getMemberId()));
             }
         }
     }
@@ -250,6 +273,9 @@ public class FortuneBillService {
         // 批量分类处理
         this.processCategoryRelations(addCommand.getCategoryAmountPair(), fortuneBillModel);
 
+        // 批量处理家庭成员
+        this.processMemberRelations(addCommand.getMemberIdList(), fortuneBillModel);
+
         fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
 
         return fortuneBillModel.getBillId();
@@ -295,6 +321,17 @@ public class FortuneBillService {
         // 需要实现批量插入方法
         fortuneCategoryRelationService.batchAdd(commands);
     }
+
+    private void processMemberRelations(List<Long> memberIds, FortuneBillModel fortuneBillModel) {
+        if (org.apache.commons.collections4.CollectionUtils.isEmpty(memberIds)) return;
+        List<com.fortuneboot.factory.fortune.model.FortuneMemberModel> memberModels = fortuneMemberFactory.loadByIds(memberIds);
+        fortuneBillModel.checkMemberListEnable(memberModels);
+        List<com.fortuneboot.domain.command.fortune.FortuneMemberRelationAddCommand> commands = memberIds.stream()
+                .map(memberId -> new com.fortuneboot.domain.command.fortune.FortuneMemberRelationAddCommand(fortuneBillModel.getBillId(), memberId))
+                .collect(Collectors.toList());
+        fortuneMemberRelationService.batchAdd(commands);
+    }
+
 
     /**
      * 修改账单 - 真正的更新操作，而不是删除+新增
@@ -355,7 +392,13 @@ public class FortuneBillService {
             this.processTagRelations(modifyCommand.getTagIdList(), originalBill);
         }
 
-        // 10. 更新文件附件（先删除旧的，再添加新的）
+        // 10. 更新成员关联（先删后加）
+        fortuneMemberRelationRepo.phyRemoveByBillId(modifyCommand.getBillId());
+        if (CollectionUtils.isNotEmpty(modifyCommand.getMemberIdList())) {
+            this.processMemberRelations(modifyCommand.getMemberIdList(), originalBill);
+        }
+
+        // 11. 更新文件附件（先删除旧的，再添加新的）
         fortuneFileService.phyRemoveByBillId(modifyCommand.getBillId());
         fortuneFileService.batchAdd(modifyCommand.getBillId(), modifyCommand.getFileList());
 

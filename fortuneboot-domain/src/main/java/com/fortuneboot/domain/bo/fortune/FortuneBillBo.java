@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneMemberEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
 import lombok.Data;
@@ -143,6 +144,11 @@ public class FortuneBillBo {
      * 标签
      */
     private List<FortuneTagEntity> tagList;
+
+    /**
+     * 成员
+     */
+    private List<FortuneMemberEntity> memberList;
 
     /**
      * 是否存在附件

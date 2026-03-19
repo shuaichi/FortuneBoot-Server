@@ -98,4 +98,11 @@ public class FortuneBillModel extends FortuneBillEntity {
             throw new ApiException(ErrorCode.Business.BILL_ORDER_ID_CAN_NOT_NULL);
         }
     }
+
+    public void checkMemberListEnable(List<FortuneMemberModel> memberModels) {
+        List<String> disables = memberModels.stream().filter(model -> !model.getEnable()).map(FortuneMemberModel::getMemberName).toList();
+        if (CollectionUtils.isNotEmpty(disables)) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "包含已停用成员：" + disables);
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.vo.fortune.FortuneMemberVo;
 import com.fortuneboot.domain.vo.fortune.FortuneTagVo;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,16 +22,21 @@ import java.util.List;
 @Data
 public class FortuneBillVo {
 
-    public FortuneBillVo(FortuneBillBo bo){
-        if (ObjectUtil.isNotEmpty(bo)){
-            BeanUtil.copyProperties(bo,this);
+    public FortuneBillVo(FortuneBillBo bo) {
+        if (ObjectUtil.isNotEmpty(bo)) {
+            BeanUtil.copyProperties(bo, this);
         }
-        if (CollectionUtils.isNotEmpty(bo.getTagList())){
+        if (CollectionUtils.isNotEmpty(bo.getTagList())) {
             List<FortuneTagVo> tags = bo.getTagList().stream().map(FortuneTagVo::new).toList();
             this.setTagList(tags);
         }
+        if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(bo.getMemberList())) {
+            List<FortuneMemberVo> members = bo.getMemberList().stream().map(FortuneMemberVo::new).toList();
+            this.setMemberList(members);
+        }
         this.setHasFile(bo.getHasFile());
     }
+
     /**
      * id
      */
@@ -111,12 +117,13 @@ public class FortuneBillVo {
 
     /**
      * 流水类型
+     *
      * @see BillTypeEnum
      */
     private Integer billType;
 
     /**
-     *转账到的账户
+     * 转账到的账户
      */
     private Long toAccountId;
 
@@ -126,17 +133,17 @@ public class FortuneBillVo {
     private String toAccountName;
 
     /**
-     *是否确认
+     * 是否确认
      */
     private Boolean confirm;
 
     /**
-     *是否统计
+     * 是否统计
      */
     private Boolean include;
 
     /**
-     *备注
+     * 备注
      */
     private String remark;
 
@@ -149,6 +156,12 @@ public class FortuneBillVo {
      * 标签
      */
     private List<FortuneTagVo> tagList;
+
+    /**
+     * 成员
+     */
+    private List<FortuneMemberVo> memberList;
+
 
     /**
      * 是否存在附件

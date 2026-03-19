@@ -79,6 +79,7 @@ public class RoleApplicationService {
                 roleModel.checkRoleCanBeDelete();
 
                 roleModel.deleteById();
+                CacheCenter.roleCache.delete(roleModel.getRoleId());
             }
         }
     }
@@ -92,6 +93,7 @@ public class RoleApplicationService {
         roleModel.checkRoleNameUnique();
 
         roleModel.updateById();
+        CacheCenter.roleCache.delete(roleModel.getRoleId());
     }
 
     public void updateStatus(UpdateStatusCommand command) {
@@ -100,12 +102,14 @@ public class RoleApplicationService {
         roleModel.setStatus(command.getStatus());
 
         roleModel.updateById();
+        CacheCenter.roleCache.delete(roleModel.getRoleId());
     }
 
     public void updateDataScope(UpdateDataScopeCommand command) {
         RoleModel roleModel = roleModelFactory.loadById(command.getRoleId());
         roleModel.setDataScope(command.getDataScope());
         roleModel.updateById();
+        CacheCenter.roleCache.delete(roleModel.getRoleId());
     }
 
 
