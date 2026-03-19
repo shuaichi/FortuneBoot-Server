@@ -1,6 +1,7 @@
 package com.fortuneboot.strategy.bill.impl;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,10 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class LoanOutStrategy extends AbstractBillStrategy {
+    public LoanOutStrategy(ApplicationScopeBo applicationScopeBo) {
+        super(applicationScopeBo);
+    }
+
     @Override
     public void confirmBalance(BillStrategyContext context) {
 

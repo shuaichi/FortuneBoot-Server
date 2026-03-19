@@ -1,9 +1,8 @@
 package com.fortuneboot.strategy.bill;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
-import com.fortuneboot.common.exception.ApiException;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2025/8/25 21:39
  **/
 @Component
+@AllArgsConstructor
 public class BillStrategyFactory {
 
     /**
@@ -24,8 +24,7 @@ public class BillStrategyFactory {
      */
     private final Map<BillTypeEnum, BillProcessStrategy> strategyCache = new ConcurrentHashMap<>();
 
-    @Resource
-    private List<BillProcessStrategy> strategies;
+    private final List<BillProcessStrategy> strategies;
 
     @PostConstruct
     public void initStrategies() {

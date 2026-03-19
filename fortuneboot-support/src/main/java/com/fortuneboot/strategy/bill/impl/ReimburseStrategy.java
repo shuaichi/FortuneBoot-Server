@@ -1,13 +1,13 @@
 package com.fortuneboot.strategy.bill.impl;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.factory.fortune.factory.FortuneFinanceOrderFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.factory.fortune.model.FortuneFinanceOrderModel;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +22,14 @@ import java.util.Objects;
  **/
 @Slf4j
 @Component
-@AllArgsConstructor
 public class ReimburseStrategy extends AbstractBillStrategy {
 
     private final FortuneFinanceOrderFactory fortuneFinanceOrderFactory;
+
+    public ReimburseStrategy(ApplicationScopeBo applicationScopeBo, FortuneFinanceOrderFactory fortuneFinanceOrderFactory) {
+        super(applicationScopeBo);
+        this.fortuneFinanceOrderFactory = fortuneFinanceOrderFactory;
+    }
 
     @Override
     public void confirmBalance(BillStrategyContext context) {
@@ -40,18 +44,17 @@ public class ReimburseStrategy extends AbstractBillStrategy {
         fromAccount.checkCanIncome();
 
         BigDecimal amount = context.getBillModel().getAmount();
-        fromAccount.setBalance(fromAccount.getBalance().add(amount));
-
-        fromAccount.updateById();
+        // 使用原子更新增加余额
+        fromAccount.addBalanceAtomic(amount);
     }
 
     @Override
     public void refuseBalance(BillStrategyContext context) {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneBillModel billModel = context.getBillModel();
-        BigDecimal newBalance = fromAccount.getBalance().subtract(billModel.getAmount());
-        fromAccount.setBalance(newBalance);
-        fromAccount.updateById();
+
+        // 使用原子更新退回余额 (使用 negate 转为负数进行扣除)
+        fromAccount.addBalanceAtomic(billModel.getAmount().negate());
     }
 
     @Override

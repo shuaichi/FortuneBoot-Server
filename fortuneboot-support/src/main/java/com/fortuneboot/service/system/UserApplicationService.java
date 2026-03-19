@@ -3,11 +3,10 @@ package com.fortuneboot.service.system;
 import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.ConfigKeyEnum;
-import com.fortuneboot.common.enums.common.StatusEnum;
 import com.fortuneboot.common.enums.common.TrueFalseEnum;
-import com.fortuneboot.common.enums.common.UserSourceEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.domain.event.UserRegisteredEvent;
 import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
 import com.fortuneboot.repository.system.SysConfigRepo;
@@ -34,8 +33,7 @@ import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.repository.system.SysUserRepo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.fortuneboot.service.fortune.FortuneGroupService;
-import com.fortuneboot.domain.command.fortune.FortuneGroupAddCommand;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -62,8 +60,7 @@ public class UserApplicationService {
 
     private final SysConfigRepo sysConfigRepo;
 
-    private final FortuneGroupService fortuneGroupService;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
         Page<SearchUserDO> userPage = userRepository.getUserList(query);
@@ -128,28 +125,29 @@ public class UserApplicationService {
     public void addUser(AddUserCommand command) {
         SysRoleEntity role = roleRepository.getById(command.getRoleId());
         UserModel model = userModelFactory.create();
-        // 加载数据
+
+        // 1. 加载数据
         model.loadAddUserCommand(command);
         model.setIsAdmin(role.getIsAdmin());
 
-        // 校验数据
+        // 2. 校验数据
         model.checkUsernameIsUnique();
         model.checkPhoneNumberIsUnique();
         model.checkEmailIsUnique();
         model.checkAddFieldRelatedEntityExist();
         model.resetPassword(command.getPassword());
 
-        // 新增用户
+        // 3. 新增用户入库
         model.insert();
 
-        // 自动为新用户创建默认分组与默认账本（模板ID固定为1L，默认币种为CNY）
-        FortuneGroupAddCommand groupAddCommand = new FortuneGroupAddCommand();
-        groupAddCommand.setGroupName(Objects.requireNonNullElse(model.getNickname(), model.getUsername()));
-        groupAddCommand.setDefaultCurrency("CNY");
-        groupAddCommand.setEnable(Boolean.TRUE);
-        groupAddCommand.setBookTemplate(1L);
-        groupAddCommand.setRemark("新建账户创建的默认分组。");
-        fortuneGroupService.add(groupAddCommand, model.getUserId());
+        // 4. 发布用户注册成功事件
+        // 注意：此处不会阻塞，真实的异步逻辑会在当前事务 commit 之后，由我们的自定义线程池接管执行
+        UserRegisteredEvent registeredEvent = new UserRegisteredEvent(
+                model.getUserId(),
+                model.getUsername(),
+                model.getNickname()
+        );
+        eventPublisher.publishEvent(registeredEvent);
     }
 
     public void updateUser(UpdateUserCommand command) {
@@ -208,19 +206,6 @@ public class UserApplicationService {
         userModel.updateById();
 
         CacheCenter.userCache.delete(userModel.getUserId());
-    }
-
-
-    public void register(AddUserCommand command) {
-        String configValue = sysConfigRepo.getConfigValueByKey(ConfigKeyEnum.REGISTER.getValue());
-        boolean registerUser = Boolean.parseBoolean(configValue);
-        if (registerUser) {
-            command.setSource(UserSourceEnum.REGISTER.getValue());
-            command.setStatus(StatusEnum.ENABLE.getValue());
-            this.addUser(command);
-        } else {
-            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
-        }
     }
 
     public List<RoleDTO> getAllowRegisterRoles() {

@@ -9,7 +9,7 @@ import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,10 +21,10 @@ import java.util.Objects;
  * @author zhangchi118
  * @date 2025/8/25 22:00
  **/
+@AllArgsConstructor
 abstract class AbstractBillStrategy implements BillProcessStrategy {
 
-    @Resource
-    private ApplicationScopeBo applicationScopeBo;
+    private final ApplicationScopeBo applicationScopeBo;
 
     /**
      * 货币转换 - 修复版本

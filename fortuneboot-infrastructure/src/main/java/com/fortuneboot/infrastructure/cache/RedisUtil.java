@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.HashOperations;
@@ -21,11 +20,10 @@ import org.springframework.stereotype.Component;
  **/
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
 @Component
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class RedisUtil {
 
-    @Resource
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     /**
      * 缓存基本的对象，Integer、String、实体类等

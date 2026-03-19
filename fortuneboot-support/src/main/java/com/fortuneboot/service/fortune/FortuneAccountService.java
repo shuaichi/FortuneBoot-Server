@@ -67,6 +67,7 @@ public class FortuneAccountService {
 
     public void modify(FortuneAccountModifyCommand modifyCommand) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(modifyCommand.getAccountId());
+        fortuneAccountModel.checkGroupId(modifyCommand.getGroupId());
         fortuneAccountModel.loadModifyCommand(modifyCommand);
         fortuneAccountModel.checkAccountType();
         fortuneAccountModel.updateById();

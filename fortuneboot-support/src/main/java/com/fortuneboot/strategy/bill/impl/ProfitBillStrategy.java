@@ -1,6 +1,7 @@
 package com.fortuneboot.strategy.bill.impl;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
@@ -16,6 +17,10 @@ import java.util.Objects;
  **/
 @Component
 public class ProfitBillStrategy extends AbstractBillStrategy {
+
+    public ProfitBillStrategy(ApplicationScopeBo applicationScopeBo) {
+        super(applicationScopeBo);
+    }
 
     @Override
     public void confirmBalance(BillStrategyContext context) {

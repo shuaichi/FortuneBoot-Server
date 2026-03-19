@@ -11,6 +11,7 @@ import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -39,6 +40,11 @@ public class FortuneAccountRepoImpl extends ServiceImpl<FortuneAccountMapper, Fo
         LambdaQueryWrapper<FortuneAccountEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         queryWrapper.in(FortuneAccountEntity::getAccountId,accountIdList);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public void addBalanceAtomic(Long accountId, BigDecimal amount) {
+        baseMapper.addBalanceAtomic(accountId, amount);
     }
 
 }

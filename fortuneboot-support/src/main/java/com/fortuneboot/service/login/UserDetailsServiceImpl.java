@@ -2,7 +2,7 @@ package com.fortuneboot.service.login;
 
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.customize.config.SecurityConfig;
+import com.fortuneboot.config.SecurityConfig;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.infrastructure.user.web.RoleInfo;
 import com.fortuneboot.infrastructure.user.web.DataScopeEnum;

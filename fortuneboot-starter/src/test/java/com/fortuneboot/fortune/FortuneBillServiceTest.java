@@ -6,7 +6,7 @@ import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,13 +22,13 @@ import java.util.List;
 @Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
+@AllArgsConstructor
 public class FortuneBillServiceTest {
 
-    @Resource
-    private FortuneBillService fortuneBillService;
+    private final FortuneBillService fortuneBillService;
 
     @Test
-    public void testGetCategoryExpense(){
+    public void testGetCategoryExpense() {
         CategoryIncludeQuery query = new CategoryIncludeQuery();
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getCategoryExpense(query);
@@ -36,7 +36,7 @@ public class FortuneBillServiceTest {
     }
 
     @Test
-    public void testGetCategoryIncome(){
+    public void testGetCategoryIncome() {
         CategoryIncludeQuery query = new CategoryIncludeQuery();
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getCategoryIncome(query);
@@ -44,7 +44,7 @@ public class FortuneBillServiceTest {
     }
 
     @Test
-    public void testGetTagExpense(){
+    public void testGetTagExpense() {
         TagIncludeQuery query = new TagIncludeQuery();
         query.setBookId(1L);
         List<FortuneBarVo> result = fortuneBillService.getTagExpense(query);
@@ -52,7 +52,7 @@ public class FortuneBillServiceTest {
     }
 
     @Test
-    public void testGetTagIncome(){
+    public void testGetTagIncome() {
         TagIncludeQuery query = new TagIncludeQuery();
         query.setBookId(1L);
         List<FortuneBarVo> result = fortuneBillService.getTagIncome(query);
@@ -60,7 +60,7 @@ public class FortuneBillServiceTest {
     }
 
     @Test
-    public void testGetPayeeExpense(){
+    public void testGetPayeeExpense() {
         PayeeIncludeQuery query = new PayeeIncludeQuery();
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getPayeeExpense(query);
@@ -68,7 +68,7 @@ public class FortuneBillServiceTest {
     }
 
     @Test
-    public void testGetPayeeIncome(){
+    public void testGetPayeeIncome() {
         PayeeIncludeQuery query = new PayeeIncludeQuery();
         query.setBookId(1L);
         List<FortunePieVo> result = fortuneBillService.getPayeeIncome(query);

@@ -213,6 +213,7 @@ public class FortuneBookService {
 
     public void modify(FortuneBookModifyCommand bookModifyCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookModifyCommand.getBookId());
+        fortuneBookModel.checkGroupId(bookModifyCommand.getGroupId());
         fortuneBookModel.loadModifyCommand(bookModifyCommand);
         fortuneBookModel.checkNotInRecycleBin();
         fortuneBookModel.updateById();

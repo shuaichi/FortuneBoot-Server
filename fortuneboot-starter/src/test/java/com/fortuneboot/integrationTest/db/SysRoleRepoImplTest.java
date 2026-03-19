@@ -2,7 +2,8 @@ package com.fortuneboot.integrationTest.db;
 
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.repository.system.SysRoleRepo;
-import jakarta.annotation.Resource;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,12 +11,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
+@AllArgsConstructor
 class SysRoleRepoImplTest {
 
-    @Resource
-    SysRoleRepo roleService;
+    private final SysRoleRepo roleService;
 
 
     @Test
@@ -42,7 +44,6 @@ class SysRoleRepoImplTest {
         Assertions.assertFalse(updateWithSame);
         Assertions.assertFalse(addWithoutSame);
     }
-
 
 
     @Test

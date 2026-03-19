@@ -1,4 +1,4 @@
-package com.fortuneboot.customize.config;
+package com.fortuneboot.config;
 
 import cn.hutool.json.JSONUtil;
 import com.fortuneboot.customize.async.AsyncTaskFactory;
