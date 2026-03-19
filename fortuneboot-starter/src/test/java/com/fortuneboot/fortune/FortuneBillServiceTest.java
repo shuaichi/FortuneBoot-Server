@@ -78,7 +78,7 @@ public class FortuneBillServiceTest {
     @Test
     public void testGetPage(){
         FortuneBillQuery fortuneBillQuery = new FortuneBillQuery();
-        fortuneBillQuery.setOrderField("amount");
+        fortuneBillQuery.setOrderColumn("amount");
         fortuneBillQuery.setOrderDirection("ascending");
         PageDTO<FortuneBillBo> result = fortuneBillService.getPage(fortuneBillQuery);
         log.info("[testGetPage] result = {}", result.toString());
