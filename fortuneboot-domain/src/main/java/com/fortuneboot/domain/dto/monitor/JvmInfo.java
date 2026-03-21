@@ -4,7 +4,9 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.fortuneboot.common.constant.Constants;
+
 import java.lang.management.ManagementFactory;
+
 import lombok.Data;
 
 /**
@@ -72,7 +74,7 @@ public class JvmInfo {
      */
     public String getStartTime() {
         return DateUtil.format(DateUtil.date(ManagementFactory.getRuntimeMXBean().getStartTime()),
-            DatePattern.NORM_DATETIME_PATTERN);
+                DatePattern.NORM_DATETIME_PATTERN);
     }
 
     /**
@@ -80,13 +82,23 @@ public class JvmInfo {
      */
     public String getRunTime() {
         return DateUtil.formatBetween(DateUtil.date(ManagementFactory.getRuntimeMXBean().getStartTime()),
-            DateUtil.date());
+                DateUtil.date());
     }
 
     /**
      * 运行参数
      */
     public String getInputArgs() {
-        return ManagementFactory.getRuntimeMXBean().getInputArguments().toString();
+        String args = ManagementFactory.getRuntimeMXBean().getInputArguments().toString();
+        // Native 镜像下没有传统的 JVM 启动参数
+        return "[]".equals(args) ? "[Native 机器码执行]" : args;
+    }
+
+    /**
+     * JDK路径 / Native 引擎
+     */
+    public String getHome() {
+        // Native 镜像下脱离 JRE 运行，home 为 null 是正常现象
+        return home != null ? home : "Substrate VM (Native Image 独立运行)";
     }
 }
