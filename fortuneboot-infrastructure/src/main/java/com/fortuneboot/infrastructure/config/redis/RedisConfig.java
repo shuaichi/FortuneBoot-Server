@@ -27,7 +27,10 @@ import tools.jackson.databind.module.SimpleModule;
 
 import java.time.Duration;
 
-
+/**
+ * @author zhangchi118
+ * @date 2026-03-21
+ */
 @Configuration
 @EnableCaching
 @AllArgsConstructor
@@ -47,8 +50,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         // 配置 Jackson3 ObjectMapper
@@ -94,8 +97,8 @@ public class RedisConfig {
                                 .withCreatorVisibility(JsonAutoDetect.Visibility.ANY)
                 ).activateDefaultTyping(
                         BasicPolymorphicTypeValidator.builder()
-                                // 仅允许反序列化本系统包和基础 Java 集合/语言包
-                                .allowIfBaseType("com.fortuneboot.domain")
+                                // 将白名单扩大到顶层包，避免 Cache 中的 SystemLoginUser 反序列化失败
+                                .allowIfBaseType("com.fortuneboot")
                                 .allowIfBaseType("java.util")
                                 .allowIfBaseType("java.lang")
                                 .build(),
