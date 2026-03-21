@@ -40,6 +40,6 @@ public class MemoryInfo {
     }
 
     public double getUsage() {
-        return NumberUtil.div(used * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div(used * 100, total, 2);
     }
 }

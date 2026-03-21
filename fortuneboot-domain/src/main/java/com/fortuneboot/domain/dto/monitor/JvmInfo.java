@@ -57,7 +57,7 @@ public class JvmInfo {
     }
 
     public double getUsage() {
-        return NumberUtil.div((total - free) * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div((total - free) * 100, total, 2);
     }
 
     /**

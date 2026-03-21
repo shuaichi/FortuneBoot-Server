@@ -42,7 +42,13 @@ import org.apache.ibatis.logging.nologging.NoLoggingImpl;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.reflection.TypeParameterResolver;
+import org.apache.ibatis.reflection.wrapper.BaseWrapper;
+import org.apache.ibatis.reflection.wrapper.BeanWrapper;
+import org.apache.ibatis.reflection.wrapper.MapWrapper;
+import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.scripting.defaults.RawLanguageDriver;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -125,7 +131,12 @@ public class MyBatisNativeConfig {
                     HashMap.class,
                     TreeSet.class,
                     HashSet.class,
-                    org.apache.ibatis.reflection.SystemMetaObject.class
+                    SystemMetaObject.class,
+                    MetaObject.class,
+                    ObjectWrapper.class,
+                    MapWrapper.class,
+                    BeanWrapper.class,
+                    BaseWrapper.class
             ).forEach(x -> hints.reflection().registerType(x, MemberCategory.values()));
             Stream.of(
                     "org/apache/ibatis/builder/xml/*.dtd",

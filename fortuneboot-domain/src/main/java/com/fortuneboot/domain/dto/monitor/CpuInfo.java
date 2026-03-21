@@ -46,19 +46,19 @@ public class CpuInfo {
     }
 
     public double getSys() {
-        return NumberUtil.div(sys * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div(sys * 100, total, 2);
     }
 
     public double getUsed() {
-        return NumberUtil.div(used * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div(used * 100, total, 2);
     }
 
     public double getWait() {
-        return NumberUtil.div(wait * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div(wait * 100, total, 2);
     }
 
     public double getFree() {
-        return NumberUtil.div(free * 100, total, 2);
+        return total == 0 ? 0 : NumberUtil.div(free * 100, total, 2);
     }
 }
 

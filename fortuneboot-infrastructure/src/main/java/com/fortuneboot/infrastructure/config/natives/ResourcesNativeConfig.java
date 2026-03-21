@@ -78,6 +78,18 @@ public class ResourcesNativeConfig {
 
             // 7. 补充 Spring Security 权限类反射（防止 Jackson 反序列化由于缺少反射配置报错）
             hints.reflection().registerType(TypeReference.of("org.springframework.security.core.authority.SimpleGrantedAuthority"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
+
+            // 8. 将 JNA 所需的各个操作系统的底层动态链接库资源打包进镜像
+            hints.resources().registerPattern("com/sun/jna/**");
+
+            // 9. 注册 OSHI 硬件监控所需的核心平台反射类（OSHI会根据系统自动反射实例化这些类）
+            hints.reflection().registerType(TypeReference.of("oshi.SystemInfo"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.linux.LinuxHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("oshi.software.os.linux.LinuxOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.windows.WindowsHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("oshi.software.os.windows.WindowsOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.mac.MacHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("oshi.software.os.mac.MacOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
         }
     }
 }
