@@ -55,11 +55,15 @@ public class MybatisPlusNativeFeature implements Feature {
                     return false;
                 }
 
-                // 命名约定（经验法则）
+                // 增加 ServiceImpl，Rest，Controller等后缀。
+                // 只要类里面可能使用 SysMenuEntity::getMenuId 这种 Lambda，就需要被注册。
                 return className.endsWith("RepoImpl")
                         || className.endsWith("Service")
+                        || className.endsWith("ServiceImpl")
                         || className.endsWith("Factory")
-                        || className.endsWith("Util");
+                        || className.endsWith("Util")
+                        || className.endsWith("Rest")
+                        || className.endsWith("Controller");
             });
 
             var candidates = scanner.findCandidateComponents(BASE_PACKAGE);
