@@ -1,6 +1,6 @@
 package com.fortuneboot.config;
 
-import cn.hutool.json.JSONUtil;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.customize.async.AsyncTaskFactory;
 import com.fortuneboot.service.login.LoginService;
 import com.fortuneboot.common.core.dto.ResponseDTO;
@@ -79,7 +79,7 @@ public class SecurityConfig {
             ResponseDTO<Object> responseDTO = ResponseDTO.fail(
                     new ApiException(Client.COMMON_NO_AUTHORIZATION, request.getRequestURI())
             );
-            ServletHolderUtil.renderString(response, JSONUtil.toJsonStr(responseDTO));
+            ServletHolderUtil.renderString(response, JacksonUtil.to(responseDTO));
         };
     }
 
@@ -100,7 +100,7 @@ public class SecurityConfig {
                 ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(
                         userName, LoginStatusEnum.LOGOUT, LoginStatusEnum.LOGOUT.getDescription()));
             }
-            ServletHolderUtil.renderString(response, JSONUtil.toJsonStr(ResponseDTO.ok()));
+            ServletHolderUtil.renderString(response, JacksonUtil.to(ResponseDTO.ok()));
         };
     }
 

@@ -3,21 +3,20 @@ package com.fortuneboot.factory.system.model;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.system.ConfigAddCommand;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import com.fortuneboot.domain.command.system.ConfigUpdateCommand;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import com.fortuneboot.repository.system.SysConfigRepo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author valarchie
@@ -37,9 +36,8 @@ public class ConfigModel extends SysConfigEntity {
     public ConfigModel(SysConfigEntity entity, SysConfigRepo configRepository) {
         BeanUtil.copyProperties(entity, this);
 
-        List<String> options =
-                JSONUtil.isTypeJSONArray(entity.getConfigOptions()) ? JSONUtil.toList(entity.getConfigOptions(),
-                        String.class) : ListUtil.empty();
+        List<String> options = StrUtil.isNotBlank(entity.getConfigOptions()) ?
+                JacksonUtil.fromList(entity.getConfigOptions(), String.class) : ListUtil.empty();
 
         this.configOptionSet = new HashSet<>(options);
 

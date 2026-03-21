@@ -1,8 +1,8 @@
 package com.fortuneboot.infrastructure.annotations.unrepeatable;
 
-import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.infrastructure.cache.RedisUtil;
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -43,7 +43,7 @@ public class UnrepeatableInterceptor extends RequestBodyAdviceAdapter {
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
         Class<? extends HttpMessageConverter<?>> converterType) {
         // 仅获取有RequestBody注解的参数
-        String currentRequest = JSONUtil.toJsonStr(body);
+        String currentRequest = JacksonUtil.to(body);
 
         Unrepeatable resubmitAnno = parameter.getMethodAnnotation(Unrepeatable.class);
         if (resubmitAnno != null) {

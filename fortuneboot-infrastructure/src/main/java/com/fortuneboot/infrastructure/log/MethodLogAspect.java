@@ -1,6 +1,5 @@
 package com.fortuneboot.infrastructure.log;
 
-import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -72,7 +71,7 @@ public class MethodLogAspect {
         try {
             json = JacksonUtil.to(o);
         } catch (Exception e) {
-            json = JSONUtil.toJsonStr(o);
+            json = JacksonUtil.to(o);
         } finally {
             if (json == null) {
                 json = o.toString();

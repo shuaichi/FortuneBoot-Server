@@ -2,15 +2,16 @@ package com.fortuneboot.domain.dto;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.json.JSONUtil;
+import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.common.enums.common.YesOrNoEnum;
 import com.fortuneboot.common.enums.BasicEnumUtil;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.entity.system.SysConfigEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -26,9 +27,8 @@ public class ConfigDTO {
             configName = entity.getConfigName();
             configKey = entity.getConfigKey();
             configValue = entity.getConfigValue();
-            configOptions =
-                JSONUtil.isTypeJSONArray(entity.getConfigOptions()) ? JSONUtil.toList(entity.getConfigOptions(),
-                    String.class) : ListUtil.empty();
+            configOptions = StrUtil.isNotBlank(entity.getConfigOptions()) ?
+                    JacksonUtil.fromList(entity.getConfigOptions(), String.class) : ListUtil.empty();
             isAllowChange = Convert.toInt(entity.getIsAllowChange());
             isAllowChangeStr = BasicEnumUtil.getDescriptionByBool(YesOrNoEnum.class, entity.getIsAllowChange());
             remark = entity.getRemark();

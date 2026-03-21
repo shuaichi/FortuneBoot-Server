@@ -4,8 +4,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.JakartaServletUtil;
-import cn.hutool.json.JSONUtil;
 import com.fortuneboot.common.utils.ServletHolderUtil;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.entity.system.SysOperationLogEntity;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
@@ -20,6 +20,8 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tools.jackson.databind.JsonNode;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -66,7 +68,7 @@ public class OperationLogModel extends SysOperationLogEntity {
         }
         // 是否需要保存response，参数和值
         if (accessLog.isSaveResponseData() && jsonResult != null) {
-            this.setOperationResult(StrUtil.sub(JSONUtil.toJsonStr(jsonResult), 0, MAX_DATA_LENGTH));
+            this.setOperationResult(StrUtil.sub(JacksonUtil.to(jsonResult), 0, MAX_DATA_LENGTH));
         }
     }
 
@@ -119,7 +121,7 @@ public class OperationLogModel extends SysOperationLogEntity {
             for (Object o : paramsArray) {
                 if (o != null && !isCanNotBeParseToJson(o)) {
                     try {
-                        Object jsonObj = JSONUtil.parseObj(o);
+                        Object jsonObj = JacksonUtil.from(JacksonUtil.to(o), JsonNode.class);
                         params.append(jsonObj).append(",");
                     } catch (Exception e) {
                         log.info("参数拼接错误", e);
