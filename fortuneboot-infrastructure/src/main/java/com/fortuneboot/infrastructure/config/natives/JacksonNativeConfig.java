@@ -1,5 +1,6 @@
 package com.fortuneboot.infrastructure.config.natives;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.ClassUtils;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -17,8 +19,8 @@ import java.util.Set;
  * @author zhangchi118
  * @date 2026/1/9 13:15
  **/
+@Slf4j
 @Configuration(proxyBeanMethods = false)
-// 引入刚才写的注册器
 @ImportRuntimeHints(JacksonNativeConfig.JacksonReflectionRegistrar.class)
 public class JacksonNativeConfig {
 
@@ -26,15 +28,10 @@ public class JacksonNativeConfig {
 
         @Override
         public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            // 【核心修复】将作用域扩大到系统根目录，这样即使 DTO 写在了 service 包下也不会报空
+            var scanList = Collections.singletonList("com.fortuneboot");
 
-            // 使用 var 避开前端渲染 BUG，同时将需要序列化的基础包全部囊括
-            var packagesToScan = java.util.Arrays.asList(
-                    "com.fortuneboot.domain",
-                    "com.fortuneboot.common",
-                    "com.fortuneboot.infrastructure"
-            );
-
-            for (Object basePkg : packagesToScan) {
+            for (Object basePkg : scanList) {
                 ClassPathScanningCandidateComponentProvider scanner =
                         new ClassPathScanningCandidateComponentProvider(false);
 
@@ -45,13 +42,14 @@ public class JacksonNativeConfig {
                 for (BeanDefinition bd : definitions) {
                     try {
                         Class<?> clazz = ClassUtils.forName(bd.getBeanClassName(), classLoader);
-                        // 注册 Jackson 序列化需要的反射能力
+                        // 注册 Jackson 和 Hutool 序列化需要的反射能力
                         hints.reflection().registerType(clazz,
                                 MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
                                 MemberCategory.INVOKE_PUBLIC_METHODS,
                                 MemberCategory.ACCESS_DECLARED_FIELDS);
                     } catch (ClassNotFoundException e) {
                         // ignore
+                        log.error("JacksonNativeConfig.registerHints exception = ",e);
                     }
                 }
             }
