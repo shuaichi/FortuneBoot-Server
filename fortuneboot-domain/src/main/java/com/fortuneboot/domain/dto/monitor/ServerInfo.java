@@ -66,7 +66,7 @@ public class ServerInfo {
             serverInfo.fillDiskInfos(si.getOperatingSystem());
         } catch (Throwable t) {
             // 在 Native Image 环境下 OSHI 可能由于缺少 JNA 底层库抛出 Error
-            log.error("Native 模式下 OSHI 获取硬件信息失败，已降级处理: " + t.getMessage());
+            log.error("Native 模式下 OSHI 获取硬件信息失败，已降级处理: {}", String.valueOf(t));
         }
 
         // JVM 和 System 属性使用纯 Java API，不受 OSHI 影响，移出 try-catch 保证必定能拿到这部分数据

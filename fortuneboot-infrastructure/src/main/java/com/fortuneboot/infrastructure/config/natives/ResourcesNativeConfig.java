@@ -80,7 +80,27 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("org.springframework.security.core.authority.SimpleGrantedAuthority"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
 
             // 8. 将 JNA 所需的各个操作系统的底层动态链接库资源打包进镜像
-            hints.resources().registerPattern("com/sun/jna/**");
+            hints.proxies().registerJdkProxy(TypeReference.of("oshi.jna.platform.linux.LinuxLibc"));
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.linux.LibC"));
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.linux.Udev"));
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.Library"));
+
+            // Windows/Mac 的核心代理也加上，方便以后跨平台部署
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.win32.Kernel32"));
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.win32.Advapi32"));
+            hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.mac.SystemB"));
+
+            // 注册 JNA 内存结构体(Structure)的反射 JNA 必须通过反射读取下面这些 Java 类的 public 字段，才能和 C 语言底层的 struct 进行内存对齐
+            hints.reflection().registerType(TypeReference.of("oshi.jna.platform.linux.LinuxLibc$Sysinfo"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.ACCESS_PUBLIC_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.platform.linux.Udev$UdevDevice"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.ACCESS_PUBLIC_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.platform.linux.Udev$UdevListEntry"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.ACCESS_PUBLIC_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.platform.linux.Udev$UdevContext"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.ACCESS_PUBLIC_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.platform.linux.Udev$UdevEnumerate"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.ACCESS_PUBLIC_FIELDS);
+
+            // 注册 JNA 核心底层类的反射调用
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.Native"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.Structure"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.sun.jna.Pointer"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
 
             // 9. 注册 OSHI 硬件监控所需的核心平台反射类（OSHI会根据系统自动反射实例化这些类）
             hints.reflection().registerType(TypeReference.of("oshi.SystemInfo"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
@@ -90,6 +110,7 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("oshi.software.os.windows.WindowsOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
             hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.mac.MacHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
             hints.reflection().registerType(TypeReference.of("oshi.software.os.mac.MacOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+
         }
     }
 }
