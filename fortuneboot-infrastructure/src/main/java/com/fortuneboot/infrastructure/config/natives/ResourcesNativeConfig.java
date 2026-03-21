@@ -39,7 +39,7 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.compression.DeflateCompressionCodec"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.compression.GzipCompressionCodec"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
 
-            // ================= Jwts$SIG 等底层类的反射装配 =================
+            // ================= 补充 Jwts$SIG 等底层类的反射装配 =================
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultJwtBuilder$Supplier"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultJwtParserBuilder$Supplier"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.StandardSecureDigestAlgorithms"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
@@ -47,6 +47,12 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.StandardEncryptionAlgorithms"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.StandardKeyAlgorithms"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.io.StandardCompressionAlgorithms"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+
+            // 追加缺失的 DefaultClaimsBuilder 和 DefaultHeaderBuilder
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultClaimsBuilder"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultHeaderBuilder"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultClaimsBuilder$Supplier"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultHeaderBuilder$Supplier"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
 
             // 3. 注册 Kaptcha (验证码) 反射类
             hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.impl.ShadowGimpy"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
