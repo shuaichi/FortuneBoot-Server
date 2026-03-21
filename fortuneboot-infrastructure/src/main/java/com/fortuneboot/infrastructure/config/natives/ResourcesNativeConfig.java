@@ -70,6 +70,7 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.filter.stat.StatFilter"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.wall.WallFilter"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.filter.logging.Slf4jLogFilter"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.resources().registerPattern("support/http/resources/**");
 
             // 6. 补充 Hutool 常用反射
             hints.reflection().registerType(TypeReference.of("cn.hutool.core.map.MapUtil"), MemberCategory.INVOKE_PUBLIC_METHODS);

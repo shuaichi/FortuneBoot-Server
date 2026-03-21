@@ -124,7 +124,8 @@ public class MyBatisNativeConfig {
                     ArrayList.class,
                     HashMap.class,
                     TreeSet.class,
-                    HashSet.class
+                    HashSet.class,
+                    org.apache.ibatis.reflection.SystemMetaObject.class
             ).forEach(x -> hints.reflection().registerType(x, MemberCategory.values()));
             Stream.of(
                     "org/apache/ibatis/builder/xml/*.dtd",

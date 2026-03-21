@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.CentralProcessor.TickType;
 import oshi.hardware.GlobalMemory;
@@ -23,6 +24,7 @@ import oshi.util.Util;
  * @author valarchie
  */
 @Data
+@Slf4j
 public class ServerInfo {
 
     private static final int OSHI_WAIT_SECOND = 1000;
@@ -55,14 +57,21 @@ public class ServerInfo {
     public static ServerInfo fillInfo() {
         ServerInfo serverInfo = new ServerInfo();
 
-        oshi.SystemInfo si = new oshi.SystemInfo();
-        HardwareAbstractionLayer hal = si.getHardware();
+        try {
+            oshi.SystemInfo si = new oshi.SystemInfo();
+            HardwareAbstractionLayer hal = si.getHardware();
 
-        serverInfo.fillCpuInfo(hal.getProcessor());
-        serverInfo.fillMemoryInfo(hal.getMemory());
+            serverInfo.fillCpuInfo(hal.getProcessor());
+            serverInfo.fillMemoryInfo(hal.getMemory());
+            serverInfo.fillDiskInfos(si.getOperatingSystem());
+        } catch (Throwable t) {
+            // 在 Native Image 环境下 OSHI 可能由于缺少 JNA 底层库抛出 Error
+            log.error("Native 模式下 OSHI 获取硬件信息失败，已降级处理: " + t.getMessage());
+        }
+
+        // JVM 和 System 属性使用纯 Java API，不受 OSHI 影响，移出 try-catch 保证必定能拿到这部分数据
         serverInfo.fillSystemInfo();
         serverInfo.fillJvmInfo();
-        serverInfo.fillDiskInfos(si.getOperatingSystem());
 
         return serverInfo;
     }
