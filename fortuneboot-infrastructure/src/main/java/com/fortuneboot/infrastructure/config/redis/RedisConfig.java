@@ -97,10 +97,9 @@ public class RedisConfig {
                                 .withCreatorVisibility(JsonAutoDetect.Visibility.ANY)
                 ).activateDefaultTyping(
                         BasicPolymorphicTypeValidator.builder()
-                                // 将白名单扩大到顶层包，避免 Cache 中的 SystemLoginUser 反序列化失败
-                                .allowIfBaseType("com.fortuneboot")
-                                .allowIfBaseType("java.util")
-                                .allowIfBaseType("java.lang")
+                                // 将白名单放开到 Object，避免反序列化 SystemLoginUser 时因为包含 SimpleGrantedAuthority、BigDecimal 等类型造成阻拦失败
+                                // 因为我们的 Redis 数据源是可信内部存储
+                                .allowIfSubType(Object.class)
                                 .build(),
                         DefaultTyping.NON_FINAL
                 )
