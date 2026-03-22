@@ -2,6 +2,9 @@
 # 使用 native-image-community 镜像
 FROM ghcr.io/graalvm/native-image-community:25-ol8 AS builder
 
+# 安装 gzip 工具，以便后续能正常解压
+RUN microdnf install -y gzip tar && microdnf clean all
+
 # 手动安装 Maven (避开 microdnf)
 WORKDIR /opt
 RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz | tar xzf -
