@@ -12,8 +12,12 @@ COPY . .
 
 # 先构建父模块，以便生成所有依赖
 RUN mvn clean install -DskipTests
+
+# 👇 设置环境变量，让 GraalVM 采用最大兼容指令集编译
+ENV NATIVE_IMAGE_OPTIONS="-march=compatibility"
+
 # 构建特定的模块（fortuneboot-starter）
-RUN  mvn package -Pnative -DskipTests -pl fortuneboot-starter
+RUN mvn package -Pnative -DskipTests -pl fortuneboot-starter
 
 # -----------------------------------------
 FROM debian:12-slim
