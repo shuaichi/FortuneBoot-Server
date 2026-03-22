@@ -64,6 +64,7 @@
                     <buildArgs>
                         <buildArg>-Djava.specification.version=25</buildArg>
                         <buildArg>--features=com.fortuneboot.infrastructure.config.natives.MybatisPlusNativeFeature</buildArg>
+                        <buildArg>-march=compatibility</buildArg>
                     </buildArgs>
                 </configuration>
             </plugin>
