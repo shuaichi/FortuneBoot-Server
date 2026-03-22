@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 # 使用 native-image-community 镜像
-FROM ghcr.io/graalvm/native-image-community:25 AS builder
+FROM ghcr.io/graalvm/native-image-community:25-ol8 AS builder
 
 # 手动安装 Maven (避开 microdnf)
 WORKDIR /opt
