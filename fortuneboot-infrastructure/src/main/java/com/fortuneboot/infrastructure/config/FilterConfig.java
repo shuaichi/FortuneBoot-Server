@@ -1,6 +1,7 @@
 package com.fortuneboot.infrastructure.config;
 
 import com.fortuneboot.infrastructure.exception.GlobalExceptionFilter;
+import com.fortuneboot.infrastructure.filter.ApiPrefixRewriteFilter;
 import com.fortuneboot.infrastructure.filter.TestFilter;
 import com.fortuneboot.infrastructure.filter.TraceIdFilter;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,9 @@ public class FilterConfig {
     // TODO 后续统一到一个properties 类中比较好
     @Value("${fortuneboot.traceRequestIdKey}")
     private String requestIdKey;
+
+    @Value("${fortuneboot.api-prefix:}")
+    private String apiPrefix;
 
 
 
@@ -53,6 +57,21 @@ public class FilterConfig {
         registration.addUrlPatterns("/*");
         registration.setName("exceptionFilter");
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return registration;
+    }
+
+    /**
+     * API 前缀重写过滤器
+     * 将 /prod-api/xxx 或 /dev-api/xxx 重写为 /xxx，同时支持不带前缀的原生请求
+     */
+    @Bean
+    public FilterRegistrationBean<ApiPrefixRewriteFilter> apiPrefixRewriteFilterRegistrationBean() {
+        FilterRegistrationBean<ApiPrefixRewriteFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new ApiPrefixRewriteFilter(apiPrefix));
+        registration.addUrlPatterns("/*");
+        registration.setName("apiPrefixRewriteFilter");
+        // 在 TraceIdFilter 之后、业务 Filter 之前执行
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return registration;
     }
 

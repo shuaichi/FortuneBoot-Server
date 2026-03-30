@@ -15,6 +15,11 @@ server:
       max: 800
       # Tomcat启动初始化的线程数，默认值10
       min-spare: 100
+  # Gzip 压缩配置（替代 nginx gzip）
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,text/plain,text/xml,application/javascript,application/json,application/xml,image/svg+xml
+    min-response-size: 1024
 
 
 # Spring配置 如果需要无Mysql直接启动的话  dev改为test

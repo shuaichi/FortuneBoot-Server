@@ -37,6 +37,10 @@ nbdist/
 .nb-gradle/
 data/
 ######################################################################
+# Frontend dist (copied into classpath for serving)
+fortuneboot-starter/src/main/resources/static/
+
+######################################################################
 # Others
 *.log
 *.xml.versionsBackup

@@ -33,6 +33,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 首页
@@ -68,15 +69,12 @@ public class LoginRest {
 
 
     /**
-     * 访问首页，提示语
+     * 访问首页，转发到前端 index.html
      */
     @Operation(summary = "首页")
     @GetMapping("/")
-    @RateLimit(key = RateLimitKey.TEST_KEY, time = 10, maxCount = 5, cacheType = CacheType.Map,
-            limitType = LimitType.GLOBAL)
-    public String index() {
-        return StrUtil.format("欢迎使用{}，当前版本：v{}，请通过前端地址访问。",
-                fortuneBootConfig.getName(), fortuneBootConfig.getVersion());
+    public ModelAndView index() {
+        return new ModelAndView("forward:/index.html");
     }
 
 

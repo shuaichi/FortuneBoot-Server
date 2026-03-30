@@ -31,6 +31,9 @@ public class ResourcesNativeConfig {
             hints.resources().registerPattern("support/http/resources/**"); // Druid 监控台静态资源
             hints.resources().registerPattern("com/sun/jna/**"); // 【关键】JNA 底层 C 动态链接库 (.so / .dll)
 
+            // ================= 1.0.1 前端静态资源（Vue3 dist 产物） =================
+            hints.resources().registerPattern("static/**");
+
             // ================= 1.1 Flyway 迁移脚本与内部资源 =================
             hints.resources().registerPattern("db/migration/**/*.sql"); // SQL 迁移脚本（MySQL + SQLite）
             hints.resources().registerPattern("org/flywaydb/**"); // Flyway 内部资源文件（配置、版本信息等）
