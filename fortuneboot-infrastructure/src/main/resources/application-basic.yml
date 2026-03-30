@@ -105,13 +105,14 @@ mybatis-plus:
       useGeneratedKeys: true
       defaultExecutorType: SIMPLE
       logImpl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+      database-id: ${db.type:sqlite}
     global-config:
       refresh: true
 
 
 # PageHelper分页插件
 pagehelper:
-  helperDialect: mysql
+  autoDialect: true
   supportMethodsArguments: true
   params: count=countSql
 

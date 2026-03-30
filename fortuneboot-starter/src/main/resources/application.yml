@@ -21,7 +21,19 @@ server:
 # 生产环境把dev改为prod
 spring:
   profiles:
-    active: basic,prod
+    active: basic,dev
+  flyway:
+    enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+# 数据库类型配置：sqlite（默认）或 mysql
+db:
+  type: ${DB_TYPE:mysql}
+  sqlite:
+    path: ${DB_PATH:./data/fortuneboot.db}
+
 # 如果需要无Mysql直接启动的话  可以将这个参数置为true, 并且spring.profile.active: dev换成test
 fortuneboot:
   embedded:

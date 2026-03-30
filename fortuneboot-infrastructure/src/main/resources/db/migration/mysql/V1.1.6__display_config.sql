@@ -1,0 +1,4 @@
+-- FortuneBoot V1.1.6 增量迁移
+-- 新增首页大屏金额显示/隐藏配置
+
+INSERT IGNORE INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (7, '首页大屏-金额显示/隐藏设置', 'sys.config.display', '["true","false"]', 'true', 1, null, null, null, '2025-06-30 09:44:57', '首页金额默认显示/隐藏设置', 0);

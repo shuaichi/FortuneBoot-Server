@@ -80,6 +80,22 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!-- SQLite驱动包 -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+        </dependency>
+
+        <!-- Flyway数据库迁移 -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+
         <!-- springboot测试模块-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

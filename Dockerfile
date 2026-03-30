@@ -32,4 +32,16 @@ COPY --from=builder /app/fortuneboot-starter/target/fortuneboot-starter /app/
 
 RUN chmod +x /app/*
 
+# 创建数据目录（用于 SQLite 数据文件）
+RUN mkdir -p /data
+
+# 默认 SQLite 模式，零配置开箱即用
+ENV DB_TYPE=sqlite
+ENV DB_PATH=/data/fortuneboot.db
+
+# 声明数据卷，确保容器重启数据不丢失
+VOLUME ["/data"]
+
+EXPOSE 8080
+
 CMD ["./fortuneboot-starter"]

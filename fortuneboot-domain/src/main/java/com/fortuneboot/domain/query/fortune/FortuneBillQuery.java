@@ -172,9 +172,9 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
                 .eq("bill.deleted", DeleteEnum.VALID.getValue());
 
-        // 根据ID进行分组
+        // 根据ID进行分组（使用表前缀避免多表 JOIN 时 SQLite 歧义）
+        queryWrapper.groupBy("bill.bill_id");
         LambdaQueryWrapper<FortuneBillEntity> lambda = queryWrapper.lambda();
-        lambda.groupBy(FortuneBillEntity::getBillId);
         return lambda;
     }
 }

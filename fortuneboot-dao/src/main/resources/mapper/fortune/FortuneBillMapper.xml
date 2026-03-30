@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fortuneboot.dao.fortune.FortuneBillMapper">
+
+    <!-- ==================== getBillTrends - MySQL 版本 ==================== -->
+    <select id="getBillTrends" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        <choose>
+            <!-- 1-周：按天分组 -->
+            <when test="billTrendsQuery.timeGranularity == 1">
+                SELECT DATE(trade_time) AS name, SUM(amount) AS value
+            </when>
+            <!-- 2-月：按天分组 -->
+            <when test="billTrendsQuery.timeGranularity == 2">
+                SELECT DATE(trade_time) AS name, SUM(amount) AS value
+            </when>
+            <!-- 3-年中的月份 -->
+            <when test="billTrendsQuery.timeGranularity == 3">
+                SELECT DATE_FORMAT(trade_time, '%Y-%m') AS name, SUM(amount) AS value
+            </when>
+            <!-- 4-年：年份 -->
+            <when test="billTrendsQuery.timeGranularity == 4">
+                SELECT YEAR(trade_time) AS name, SUM(amount) AS value
+            </when>
+        </choose>
+        FROM fortune_bill
+        WHERE deleted = 0
+            AND book_id = #{billTrendsQuery.bookId}
+            AND include = TRUE
+            AND bill_type = #{billTrendsQuery.billType}
+        <choose>
+            <when test="billTrendsQuery.timeGranularity == 1">
+                AND trade_time >= DATE_SUB(#{billTrendsQuery.timePoint}, INTERVAL 6 DAY)
+                AND trade_time &lt; DATE_ADD(#{billTrendsQuery.timePoint}, INTERVAL 1 DAY)
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 2">
+                AND trade_time >= DATE_SUB(#{billTrendsQuery.timePoint}, INTERVAL 30 DAY)
+                AND trade_time &lt; DATE_ADD(#{billTrendsQuery.timePoint}, INTERVAL 1 DAY)
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 3">
+                AND trade_time >= DATE_SUB(#{billTrendsQuery.timePoint}, INTERVAL 12 MONTH)
+                AND trade_time &lt; DATE_ADD(#{billTrendsQuery.timePoint}, INTERVAL 1 DAY)
+            </when>
+        </choose>
+        GROUP BY name
+        ORDER BY name ASC
+    </select>
+
+    <!-- ==================== getBillTrends - SQLite 版本 ==================== -->
+    <select id="getBillTrends" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        <choose>
+            <when test="billTrendsQuery.timeGranularity == 1">
+                SELECT date(trade_time) AS name, SUM(amount) AS value
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 2">
+                SELECT date(trade_time) AS name, SUM(amount) AS value
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 3">
+                SELECT strftime('%Y-%m', trade_time) AS name, SUM(amount) AS value
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 4">
+                SELECT strftime('%Y', trade_time) AS name, SUM(amount) AS value
+            </when>
+        </choose>
+        FROM fortune_bill
+        WHERE deleted = 0
+            AND book_id = #{billTrendsQuery.bookId}
+            AND include = 1
+            AND bill_type = #{billTrendsQuery.billType}
+        <choose>
+            <when test="billTrendsQuery.timeGranularity == 1">
+                AND trade_time >= date(#{billTrendsQuery.timePoint}, '-6 day')
+                AND trade_time &lt; date(#{billTrendsQuery.timePoint}, '+1 day')
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 2">
+                AND trade_time >= date(#{billTrendsQuery.timePoint}, '-30 day')
+                AND trade_time &lt; date(#{billTrendsQuery.timePoint}, '+1 day')
+            </when>
+            <when test="billTrendsQuery.timeGranularity == 3">
+                AND trade_time >= date(#{billTrendsQuery.timePoint}, '-12 month')
+                AND trade_time &lt; date(#{billTrendsQuery.timePoint}, '+1 day')
+            </when>
+        </choose>
+        GROUP BY name
+        ORDER BY name ASC
+    </select>
+
+    <!-- ==================== 公共 SQL 片段 ==================== -->
+    <sql id="categoryIncludeFilter">
+        <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
+        <if test='query.startDate != null'> AND b.trade_time >= #{query.startDate}</if>
+        <if test='query.accountIds != null and query.accountIds.size() > 0'>
+            AND b.account_id IN
+            <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.payeeIds != null and query.payeeIds.size() > 0'>
+            AND b.payee_id IN
+            <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
+            AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+             WHERE cr.bill_id = b.bill_id AND cr.category_id IN
+             <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.tagIds != null and query.tagIds.size() > 0'>
+            AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
+             WHERE tr.bill_id = b.bill_id AND tr.tag_id IN
+             <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+    </sql>
+
+    <!-- ==================== getCategoryInclude - MySQL 版本 ==================== -->
+    <select id="getCategoryInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortunePieVo">
+        WITH filtered_bills AS (
+          SELECT b.bill_id, b.amount
+          FROM fortune_bill b
+          <where>
+            b.include = TRUE
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+            <include refid="categoryIncludeFilter"/>
+            <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+            <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+          </where>
+        ),
+        total AS (SELECT SUM(amount) AS total_amount FROM filtered_bills)
+        SELECT c.category_name AS name,
+               SUM(fb.amount) AS value,
+               (SUM(fb.amount) / (SELECT total_amount FROM total)) * 100 AS percent
+        FROM filtered_bills fb
+        INNER JOIN fortune_category_relation cr ON fb.bill_id = cr.bill_id
+        INNER JOIN fortune_category c ON cr.category_id = c.category_id
+        CROSS JOIN total t
+        <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
+          WHERE cr.category_id IN
+          <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        GROUP BY c.category_id
+    </select>
+
+    <!-- ==================== getCategoryInclude - SQLite 版本 ==================== -->
+    <select id="getCategoryInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortunePieVo">
+        WITH filtered_bills AS (
+          SELECT b.bill_id, b.amount
+          FROM fortune_bill b
+          <where>
+            b.include = 1
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+            <include refid="categoryIncludeFilter"/>
+            <if test='query.title != null'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+            <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+          </where>
+        ),
+        total AS (SELECT SUM(amount) AS total_amount FROM filtered_bills)
+        SELECT c.category_name AS name,
+               SUM(fb.amount) AS value,
+               (SUM(fb.amount) / (SELECT total_amount FROM total)) * 100 AS percent
+        FROM filtered_bills fb
+        INNER JOIN fortune_category_relation cr ON fb.bill_id = cr.bill_id
+        INNER JOIN fortune_category c ON cr.category_id = c.category_id
+        CROSS JOIN total t
+        <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
+          WHERE cr.category_id IN
+          <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        GROUP BY c.category_id
+    </select>
+
+    <!-- ==================== 公共 SQL 片段 - 标签/对象查询条件 ==================== -->
+    <sql id="tagPayeeBaseFilter">
+        <if test='query.bookId != null'> AND b.book_id = #{query.bookId} </if>
+        <if test='query.startDate != null'> AND b.trade_time >= #{query.startDate} </if>
+        <if test='query.accountIds != null and query.accountIds.size() > 0'>
+            AND b.account_id IN
+            <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.payeeIds != null and query.payeeIds.size() > 0'>
+            AND b.payee_id IN
+            <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.categoryIds != null and query.categoryIds.size() > 0'>
+            AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+              WHERE cr.bill_id = b.bill_id AND cr.category_id IN
+              <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.tagIds != null and query.tagIds.size() > 0'>
+            AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
+              WHERE tr.bill_id = b.bill_id AND tr.tag_id IN
+              <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+    </sql>
+
+    <!-- ==================== getTagInclude - MySQL 版本 ==================== -->
+    <select id="getTagInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT
+          COALESCE(ft.tag_name, '未设置标签') AS name,
+          SUM(b.amount) AS value
+        FROM fortune_bill b
+        LEFT JOIN fortune_tag_relation btr ON b.bill_id = btr.bill_id
+        LEFT JOIN fortune_tag ft ON btr.tag_id = ft.tag_id
+        WHERE b.include = TRUE
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+          <include refid="tagPayeeBaseFilter"/>
+          <if test='query.title != null'> AND b.title LIKE CONCAT('%', #{query.title}, '%') </if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59') </if>
+        GROUP BY ft.tag_id
+    </select>
+
+    <!-- ==================== getTagInclude - SQLite 版本 ==================== -->
+    <select id="getTagInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT
+          COALESCE(ft.tag_name, '未设置标签') AS name,
+          SUM(b.amount) AS value
+        FROM fortune_bill b
+        LEFT JOIN fortune_tag_relation btr ON b.bill_id = btr.bill_id
+        LEFT JOIN fortune_tag ft ON btr.tag_id = ft.tag_id
+        WHERE b.include = 1
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+          <include refid="tagPayeeBaseFilter"/>
+          <if test='query.title != null'> AND b.title LIKE '%' || #{query.title} || '%' </if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59' </if>
+        GROUP BY ft.tag_id
+    </select>
+
+    <!-- ==================== getPayeeInclude - MySQL 版本 ==================== -->
+    <select id="getPayeeInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortunePieVo">
+        SELECT
+            COALESCE(p.payee_name, '未设置交易对象') AS name,
+            SUM(b.amount) AS value,
+            (SUM(b.amount) / SUM(SUM(b.amount)) OVER ()) * 100 AS percent
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id
+        WHERE b.include = TRUE
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+        <include refid="tagPayeeBaseFilter"/>
+        <if test='query.title != null and query.title != ""'>
+            AND b.title LIKE CONCAT('%', #{query.title}, '%')
+        </if>
+        <if test='query.endDate != null'>
+            AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')
+        </if>
+        GROUP BY b.payee_id
+    </select>
+
+    <!-- ==================== getPayeeInclude - SQLite 版本 ==================== -->
+    <select id="getPayeeInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortunePieVo">
+        SELECT
+            COALESCE(p.payee_name, '未设置交易对象') AS name,
+            SUM(b.amount) AS value,
+            CAST(SUM(b.amount) AS REAL) / (SELECT SUM(b2.amount) FROM fortune_bill b2
+                LEFT JOIN fortune_payee p2 ON b2.payee_id = p2.payee_id
+                WHERE b2.include = 1 AND b2.bill_type = #{billType} AND b2.deleted = 0
+                <if test='query.bookId != null'> AND b2.book_id = #{query.bookId}</if>
+            ) * 100 AS percent
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id
+        WHERE b.include = 1
+            AND b.bill_type = #{billType}
+            AND b.deleted = 0
+        <include refid="tagPayeeBaseFilter"/>
+        <if test='query.title != null and query.title != ""'>
+            AND b.title LIKE '%' || #{query.title} || '%'
+        </if>
+        <if test='query.endDate != null'>
+            AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'
+        </if>
+        GROUP BY b.payee_id
+    </select>
+
+</mapper>

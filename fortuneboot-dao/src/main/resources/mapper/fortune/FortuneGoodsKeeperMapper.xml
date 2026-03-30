@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fortuneboot.dao.fortune.FortuneGoodsKeeperMapper">
+
+    <!-- ==================== getGoodsKeeperStatistics - MySQL 版本 ==================== -->
+    <select id="getGoodsKeeperStatistics" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo">
+        SELECT
+            -- 全部物品成本
+            ROUND(SUM(price), 2) AS allPrice,
+
+            -- 日均成本
+            ROUND(SUM(
+                CASE
+                    WHEN use_by_times = 1 AND usage_num > 0 THEN
+                        (price - COALESCE(sold_price, 0)) / usage_num
+                    WHEN use_by_times = 1 AND (usage_num = 0 OR usage_num IS NULL) THEN
+                        price - COALESCE(sold_price, 0)
+                    WHEN use_by_times = 0 THEN
+                        (price - COALESCE(sold_price, 0)) /
+                        (DATEDIFF(CURDATE(), purchase_date) + 1)
+                    ELSE 0
+                END
+            ), 2) AS allDailyPrice,
+
+            -- 在役物品成本
+            ROUND(SUM(CASE WHEN status = 1 THEN price ELSE 0 END), 2) AS activePrice,
+
+            -- 在役物品日均成本
+            ROUND(SUM(
+                CASE
+                    WHEN status = 1 AND use_by_times = 1 AND usage_num > 0 THEN
+                        (price - COALESCE(sold_price, 0)) / usage_num
+                    WHEN status = 1 AND use_by_times = 1 AND (usage_num = 0 OR usage_num IS NULL) THEN
+                        price - COALESCE(sold_price, 0)
+                    WHEN status = 1 AND use_by_times = 0 THEN
+                        (price - COALESCE(sold_price, 0)) /
+                        (DATEDIFF(CURDATE(), purchase_date) + 1)
+                    ELSE 0
+                END
+            ), 2) AS activeDailyPrice
+        FROM
+            fortune_goods_keeper
+        WHERE
+            book_id = #{bookId}
+            AND deleted = 0
+    </select>
+
+    <!-- ==================== getGoodsKeeperStatistics - SQLite 版本 ==================== -->
+    <select id="getGoodsKeeperStatistics" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo">
+        SELECT
+            -- 全部物品成本
+            ROUND(SUM(price), 2) AS allPrice,
+
+            -- 日均成本
+            ROUND(SUM(
+                CASE
+                    WHEN use_by_times = 1 AND usage_num > 0 THEN
+                        (price - COALESCE(sold_price, 0)) / usage_num
+                    WHEN use_by_times = 1 AND (usage_num = 0 OR usage_num IS NULL) THEN
+                        price - COALESCE(sold_price, 0)
+                    WHEN use_by_times = 0 THEN
+                        (price - COALESCE(sold_price, 0)) /
+                        (CAST(julianday('now') - julianday(purchase_date) AS INTEGER) + 1)
+                    ELSE 0
+                END
+            ), 2) AS allDailyPrice,
+
+            -- 在役物品成本
+            ROUND(SUM(CASE WHEN status = 1 THEN price ELSE 0 END), 2) AS activePrice,
+
+            -- 在役物品日均成本
+            ROUND(SUM(
+                CASE
+                    WHEN status = 1 AND use_by_times = 1 AND usage_num > 0 THEN
+                        (price - COALESCE(sold_price, 0)) / usage_num
+                    WHEN status = 1 AND use_by_times = 1 AND (usage_num = 0 OR usage_num IS NULL) THEN
+                        price - COALESCE(sold_price, 0)
+                    WHEN status = 1 AND use_by_times = 0 THEN
+                        (price - COALESCE(sold_price, 0)) /
+                        (CAST(julianday('now') - julianday(purchase_date) AS INTEGER) + 1)
+                    ELSE 0
+                END
+            ), 2) AS activeDailyPrice
+        FROM
+            fortune_goods_keeper
+        WHERE
+            book_id = #{bookId}
+            AND deleted = 0
+    </select>
+
+</mapper>
