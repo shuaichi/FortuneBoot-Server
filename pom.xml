@@ -61,8 +61,8 @@
         <org.lionsoul.version>2.7.0</org.lionsoul.version>
         <com.google.guava.version>33.4.8-jre</com.google.guava.version>
         <mysql-connector-java>8.0.33</mysql-connector-java>
-        <sqlite-jdbc.version>3.47.2.0</sqlite-jdbc.version>
-        <flyway.version>11.8.0</flyway.version>
+        <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
+        <flyway.version>12.2.0</flyway.version>
         <spring.boot.version>4.0.2</spring.boot.version>
         <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
