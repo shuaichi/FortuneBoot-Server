@@ -21,8 +21,7 @@ server:
 # 生产环境把dev改为prod
 spring:
   profiles:
-    active: basic,dev
-
+    active: basic,prod
 # 如果需要无Mysql直接启动的话  可以将这个参数置为true, 并且spring.profile.active: dev换成test
 fortuneboot:
   embedded:
