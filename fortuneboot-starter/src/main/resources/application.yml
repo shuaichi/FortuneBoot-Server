@@ -21,7 +21,7 @@ server:
 # 生产环境把dev改为prod
 spring:
   profiles:
-    active: basic,dev
+    active: basic,prod
   flyway:
     enabled: false
   autoconfigure:
@@ -30,7 +30,7 @@ spring:
 
 # 数据库类型配置：sqlite（默认）或 mysql
 db:
-  type: ${DB_TYPE:mysql}
+  type: ${DB_TYPE:sqlite}
   sqlite:
     path: ${DB_PATH:./data/fortuneboot.db}
 

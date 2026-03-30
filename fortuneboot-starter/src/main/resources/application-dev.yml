@@ -6,7 +6,7 @@ spring:
         druid:
             url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
             username: ${DB_USERNAME:root}
-            password: ${DB_PASSWORD:zC@PubMysql123}
+            password: ${DB_PASSWORD:Jk9Lm2XqPvZt8N7e}
             # 初始连接数
             initialSize: 5
             # 最小连接池数量
