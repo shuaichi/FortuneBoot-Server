@@ -1,12 +1,11 @@
 package com.fortuneboot.infrastructure.annotations.unrepeatable;
 
+import cn.hutool.cache.impl.LRUCache;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.jackson.JacksonUtil;
-import com.fortuneboot.infrastructure.cache.RedisUtil;
 import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 
 /**
  * 重复提交拦截器 如果涉及前后端加解密的话  也可以通过继承RequestBodyAdvice来实现
+ * 使用内存 LRU 缓存替代 Redis 实现防重复提交
  *
  * @author valarchie
  */
@@ -27,7 +27,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 @RequiredArgsConstructor
 public class UnrepeatableInterceptor extends RequestBodyAdviceAdapter {
 
-    private final RedisUtil redisUtil;
+    /**
+     * 内存缓存：key -> 上次请求体内容，最大4096个key，超时自动淘汰
+     */
+    private final LRUCache<String, String> resubmitCache = new LRUCache<>(4096, 10 * 1000L);
 
     @Override
     public boolean supports(MethodParameter methodParameter, Type targetType,
@@ -47,11 +50,11 @@ public class UnrepeatableInterceptor extends RequestBodyAdviceAdapter {
 
         Unrepeatable resubmitAnno = parameter.getMethodAnnotation(Unrepeatable.class);
         if (resubmitAnno != null) {
-            String redisKey = resubmitAnno.checkType().generateResubmitRedisKey(parameter.getMethod());
+            String cacheKey = resubmitAnno.checkType().generateResubmitRedisKey(parameter.getMethod());
 
-            log.info("请求重复提交拦截，当前key:{}, 当前参数：{}", redisKey, currentRequest);
+            log.info("请求重复提交拦截，当前key:{}, 当前参数：{}", cacheKey, currentRequest);
 
-            String preRequest = redisUtil.getCacheObject(redisKey);
+            String preRequest = resubmitCache.get(cacheKey);
             if (preRequest != null) {
                 boolean isSameRequest = Objects.equals(currentRequest, preRequest);
 
@@ -59,7 +62,8 @@ public class UnrepeatableInterceptor extends RequestBodyAdviceAdapter {
                     throw new ApiException(ErrorCode.Client.COMMON_REQUEST_RESUBMIT);
                 }
             }
-            redisUtil.setCacheObject(redisKey, currentRequest, resubmitAnno.interval(), TimeUnit.SECONDS);
+            // interval 单位为秒，LRUCache 超时在构造时已设置为默认值，这里直接放入
+            resubmitCache.put(cacheKey, currentRequest, resubmitAnno.interval() * 1000L);
         }
 
         return body;

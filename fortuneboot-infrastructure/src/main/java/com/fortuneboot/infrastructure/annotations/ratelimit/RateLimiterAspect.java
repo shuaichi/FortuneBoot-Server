@@ -1,7 +1,6 @@
 package com.fortuneboot.infrastructure.annotations.ratelimit;
 
 import com.fortuneboot.infrastructure.annotations.ratelimit.implementation.MapRateLimitChecker;
-import com.fortuneboot.infrastructure.annotations.ratelimit.implementation.RedisRateLimitChecker;
 import java.lang.reflect.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,25 +8,20 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 
 /**
- * 限流切面处理
+ * 限流切面处理（统一使用内存 Map 限流，无需 Redis）
  *
  * @author valarchie
  */
 @Aspect
 @Component
 @Slf4j
-@ConditionalOnExpression("'${fortuneboot.embedded.redis}' != 'true'")
 @RequiredArgsConstructor
 public class RateLimiterAspect {
 
-    private final RedisRateLimitChecker redisRateLimitChecker;
-
     private final MapRateLimitChecker mapRateLimitChecker;
-
 
     @Before("@annotation(rateLimiter)")
     public void doBefore(JoinPoint point, RateLimit rateLimiter) {
@@ -35,17 +29,7 @@ public class RateLimiterAspect {
         Method method = signature.getMethod();
         log.info("当前限流方法:" + method.toGenericString());
 
-        switch (rateLimiter.cacheType()) {
-            case REDIS:
-                redisRateLimitChecker.check(rateLimiter);
-                break;
-            case Map:
-                mapRateLimitChecker.check(rateLimiter);
-                return;
-            default:
-                redisRateLimitChecker.check(rateLimiter);
-        }
-
+        mapRateLimitChecker.check(rateLimiter);
     }
 
 }

@@ -17,18 +17,16 @@ server:
       min-spare: 100
 
 
-# Spring配置 如果需要无Mysql  无Redis直接启动的话  dev改为test
+# Spring配置 如果需要无Mysql直接启动的话  dev改为test
 # 生产环境把dev改为prod
 spring:
   profiles:
-    active: basic,prod
+    active: basic,dev
 
-# 如果需要无Mysql  无Redis直接启动的话  可以将这两个参数置为true, 并且spring.profile.active: dev换成test
-# redis的端口可能会被占用，如果被占用请自己修改一下端口号
+# 如果需要无Mysql直接启动的话  可以将这个参数置为true, 并且spring.profile.active: dev换成test
 fortuneboot:
   embedded:
     mysql: false
-    redis: false
 
 
 

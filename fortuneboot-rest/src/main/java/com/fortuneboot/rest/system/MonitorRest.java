@@ -4,10 +4,9 @@ import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.customize.accessLog.AccessLog;
-import com.fortuneboot.service.cache.CacheCenter;
+import com.fortuneboot.service.cache.RedisCacheService;
 import com.fortuneboot.service.system.MonitorApplicationService;
 import com.fortuneboot.domain.dto.monitor.OnlineUserDTO;
-import com.fortuneboot.domain.dto.monitor.RedisCacheInfoDTO;
 import com.fortuneboot.domain.dto.monitor.ServerInfo;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 缓存监控
+ * 监控
  *
  * @author valarchie
  */
@@ -34,14 +33,7 @@ public class MonitorRest extends BaseController {
 
     private final MonitorApplicationService monitorApplicationService;
 
-    @Operation(summary = "Redis信息")
-    @PreAuthorize("@permission.has('monitor:cache:list')")
-    @GetMapping("/cacheInfo")
-    public ResponseDTO<RedisCacheInfoDTO> getRedisCacheInfo() {
-        RedisCacheInfoDTO redisCacheInfo = monitorApplicationService.getRedisCacheInfo();
-        return ResponseDTO.ok(redisCacheInfo);
-    }
-
+    private final RedisCacheService cacheService;
 
     @Operation(summary = "服务器信息")
     @PreAuthorize("@permission.has('monitor:server:list')")
@@ -74,7 +66,7 @@ public class MonitorRest extends BaseController {
     @AccessLog(title = "在线用户", businessType = BusinessTypeEnum.FORCE_LOGOUT)
     @DeleteMapping("/onlineUser/{tokenId}")
     public ResponseDTO<Void> logoutOnlineUser(@PathVariable String tokenId) {
-        CacheCenter.loginUserCache.delete(tokenId);
+        cacheService.removeLoginUser(tokenId);
         return ResponseDTO.ok();
     }
 

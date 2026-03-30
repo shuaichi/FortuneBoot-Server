@@ -3,7 +3,7 @@ package com.fortuneboot.service.cache;
 import cn.hutool.extra.spring.SpringUtil;
 import com.fortuneboot.domain.registry.CacheRegistry;
 import com.fortuneboot.infrastructure.cache.guava.AbstractGuavaCacheTemplate;
-import com.fortuneboot.infrastructure.cache.redis.RedisCacheTemplate;
+import com.fortuneboot.infrastructure.cache.mem.InMemoryCacheTemplate;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.domain.entity.system.SysRoleEntity;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
@@ -22,24 +22,24 @@ public class CacheCenter {
 
     public static AbstractGuavaCacheTemplate<String> configCache;
 
-    public static RedisCacheTemplate<String> captchaCache;
+    public static InMemoryCacheTemplate<String> captchaCache;
 
-    public static RedisCacheTemplate<SystemLoginUser> loginUserCache;
+    public static InMemoryCacheTemplate<SystemLoginUser> loginUserCache;
 
-    public static RedisCacheTemplate<SysUserEntity> userCache;
+    public static InMemoryCacheTemplate<SysUserEntity> userCache;
 
-    public static RedisCacheTemplate<SysRoleEntity> roleCache;
+    public static InMemoryCacheTemplate<SysRoleEntity> roleCache;
 
 
     @PostConstruct
     public void init() {
         GuavaCacheService guavaCache = SpringUtil.getBean(GuavaCacheService.class);
-        RedisCacheService redisCache = SpringUtil.getBean(RedisCacheService.class);
+        RedisCacheService cacheService = SpringUtil.getBean(RedisCacheService.class);
         configCache = guavaCache.configCache;
-        captchaCache = redisCache.captchaCache;
-        loginUserCache = redisCache.loginUserCache;
-        userCache = redisCache.userCache;
-        roleCache = redisCache.roleCache;
+        captchaCache = cacheService.captchaCache;
+        loginUserCache = cacheService.loginUserCache;
+        userCache = cacheService.userCache;
+        roleCache = cacheService.roleCache;
         CacheRegistry.registerRoleCache((roleId) -> roleCache.getObjectById(roleId));
         CacheRegistry.registerUserCache((userId) -> userCache.getObjectById(userId));
     }

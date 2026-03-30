@@ -58,7 +58,6 @@
         <dynamic-datasource-spring-boot.version>4.3.1</dynamic-datasource-spring-boot.version>
         <springdoc-openapi-starter-webapi.version>3.0.1</springdoc-openapi-starter-webapi.version>
         <mockito.version>1.10.19</mockito.version>
-        <embedded-redis.version>1.4.3</embedded-redis.version>
         <org.lionsoul.version>2.7.0</org.lionsoul.version>
         <com.google.guava.version>33.4.8-jre</com.google.guava.version>
         <mysql-connector-java>8.0.33</mysql-connector-java>
@@ -265,12 +264,6 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- 获取系统信息 -->
-            <dependency>
-                <groupId>com.github.codemonstur</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
-            </dependency>
 
             <!-- 本地ip库 -->
             <dependency>

@@ -1,7 +1,7 @@
 
 <p align="center">
       <img src="https://img.shields.io/badge/Release-v1.4.5-green.svg" alt="Downloads">
-      <img src="https://img.shields.io/badge/JDK-21+-green.svg" alt="Build Status">
+      <img src="https://img.shields.io/badge/JDK-25+-green.svg" alt="Build Status">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Build Status">
    <img src="https://img.shields.io/badge/Spring%20Boot-4.0-blue.svg" alt="Downloads">
    <a target="_blank" href="https://bladex.vip">
@@ -65,17 +65,17 @@ FortuneBoot是一套开源的记账管理系统，毫无保留给个人及企业
 
 ### 技术栈
 
-| 技术             | 说明              | 版本               |
-|----------------|-----------------|------------------|
-| `springboot`   | Java项目必备框架      | 4.0.0            |
-| `druid`        | alibaba数据库连接池   | 1.2.28-SNAPSHOT  |
-| `springdoc`    | 文档生成            | 3.0.0            |
-| `mybatis-plus` | 数据库框架           | 3.5.15   |
-| `hutool`       | 国产工具包（简单易用）     | 5.8.41           |
-| `mockito`      | 单元测试模拟          | 1.10.19          |
-| `guava`        | 谷歌工具包（提供简易缓存实现） | 33.2.0-jre       |
-| `junit`        | 单元测试            | 4.13.2           |
-| `h2`           | 内存数据库           | 2.4.240          |
+| 技术             | 说明              | 版本              |
+|----------------|-----------------|-----------------|
+| `springboot`   | Java项目必备框架      | 4.0.0           |
+| `druid`        | alibaba数据库连接池   | 1.2.28  |
+| `springdoc`    | 文档生成            | 3.0.0           |
+| `mybatis-plus` | 数据库框架           | 3.5.15  |
+| `hutool`       | 国产工具包（简单易用）     | 5.8.41          |
+| `mockito`      | 单元测试模拟          | 1.10.19         |
+| `guava`        | 谷歌工具包（提供简易缓存实现） | 33.2.0-jre      |
+| `junit`        | 单元测试            | 4.13.2          |
+| `h2`           | 内存数据库           | 2.4.240         |
 | `jackson`      | 比较安全的Json框架     | follow springboot |
 | `Spring Task`  | 定时任务框架（适合小型项目）  | follow springboot |
 

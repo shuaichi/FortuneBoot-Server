@@ -18,7 +18,6 @@ import com.fortuneboot.common.exception.error.ErrorCode.Business;
 import com.fortuneboot.common.utils.ServletHolderUtil;
 import com.fortuneboot.common.utils.i18n.MessageUtils;
 import com.fortuneboot.customize.async.AsyncTaskFactory;
-import com.fortuneboot.infrastructure.cache.RedisUtil;
 import com.fortuneboot.service.cache.GuavaCacheService;
 import com.fortuneboot.service.cache.MapCache;
 import com.fortuneboot.service.cache.RedisCacheService;
@@ -55,7 +54,7 @@ public class LoginService {
 
     private final TokenService tokenService;
 
-    private final RedisCacheService redisCache;
+    private final RedisCacheService cacheService;
 
     private final GuavaCacheService guavaCache;
 
@@ -64,8 +63,6 @@ public class LoginService {
     private final Producer captchaProducer;
 
     private final Producer captchaProducerMath;
-
-    private final RedisUtil redisUtil;
 
     /**
      * 登录验证
@@ -157,7 +154,7 @@ public class LoginService {
             // 保存验证码信息
             String imgKey = IdUtil.simpleUUID();
 
-            redisCache.captchaCache.set(imgKey, answer);
+            cacheService.captchaCache.set(imgKey, answer);
             // 转换流信息写出
             FastByteArrayOutputStream os = new FastByteArrayOutputStream();
             ImgUtil.writeJpg(image, os);
@@ -179,11 +176,8 @@ public class LoginService {
      * @param captchaCodeKey 验证码对应的缓存key
      */
     public void validateCaptcha(String username, String captchaCode, String captchaCodeKey) {
-        String fullKey = com.fortuneboot.infrastructure.cache.redis.CacheKeyEnum.CAPTCHA.key() + captchaCodeKey;
-        // 直接查 Redis，绕过 Guava 缓存，以防并发漏洞
-        String captcha = redisUtil.getCacheObject(fullKey);
-        redisCache.captchaCache.delete(captchaCodeKey);
-        redisUtil.deleteObject(fullKey);
+        String captcha = cacheService.captchaCache.getObjectOnlyInCacheById(captchaCodeKey);
+        cacheService.captchaCache.delete(captchaCodeKey);
 
         if (captcha == null) {
             ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(username, LoginStatusEnum.LOGIN_FAIL,
@@ -204,7 +198,7 @@ public class LoginService {
         ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(loginUser.getUsername(), LoginStatusEnum.LOGIN_SUCCESS,
             LoginStatusEnum.LOGIN_SUCCESS.getDescription()));
     
-        SysUserEntity entity = redisCache.userCache.getObjectById(loginUser.getUserId());
+        SysUserEntity entity = cacheService.userCache.getObjectById(loginUser.getUserId());
     
         entity.setLoginIp(JakartaServletUtil.getClientIP(ServletHolderUtil.getRequest()));
         entity.setLoginDate(DateUtil.date());

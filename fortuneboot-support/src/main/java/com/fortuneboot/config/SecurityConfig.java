@@ -13,6 +13,7 @@ import com.fortuneboot.infrastructure.thread.ThreadPoolManager;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.LoginStatusEnum;
 import com.fortuneboot.service.login.UserDetailsServiceImpl;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +55,7 @@ public class SecurityConfig {
 
     private final TokenService tokenService;
 
-    private final RedisCacheService redisCache;
+    private final RedisCacheService cacheService;
 
     /**
      * token认证过滤器
@@ -95,7 +96,7 @@ public class SecurityConfig {
             if (Objects.nonNull(loginUser)) {
                 String userName = loginUser.getUsername();
                 // 删除用户缓存记录
-                redisCache.loginUserCache.delete(loginUser.getCachedKey());
+                cacheService.removeLoginUser(loginUser.getCachedKey());
                 // 记录用户退出日志
                 ThreadPoolManager.execute(AsyncTaskFactory.loginInfoTask(
                         userName, LoginStatusEnum.LOGOUT, LoginStatusEnum.LOGOUT.getDescription()));

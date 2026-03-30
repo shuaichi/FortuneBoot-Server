@@ -66,7 +66,7 @@ public class TokenService {
     @Value("${token.autoRefreshTime}")
     private long autoRefreshTime;
 
-    private final RedisCacheService redisCache;
+    private final RedisCacheService cacheService;
 
     /**
      * 获取用户身份信息
@@ -81,7 +81,7 @@ public class TokenService {
                 Claims claims = parseToken(token);
                 // 解析对应的权限以及用户信息
                 String uuid = (String) claims.get(Token.LOGIN_USER_KEY);
-                SystemLoginUser loginUser = redisCache.loginUserCache.getObjectOnlyInCacheById(uuid);
+                SystemLoginUser loginUser = cacheService.loginUserCache.getObjectById(uuid);
 
                 // 如果 loginUser 为 null，说明缓存过期或用户登出
                 if (loginUser == null) {
@@ -112,7 +112,7 @@ public class TokenService {
                 log.error("parse token failed.", jwtException);
                 throw new ApiException(jwtException, ErrorCode.Client.INVALID_TOKEN);
             } catch (Exception e) {
-                log.error("fail to get cached user from redis", e);
+                log.error("fail to get cached user", e);
                 throw new ApiException(e, ErrorCode.Client.TOKEN_PROCESS_FAILED, e.getMessage());
             }
 
@@ -129,7 +129,7 @@ public class TokenService {
     public String createTokenAndPutUserInCache(SystemLoginUser loginUser) {
         loginUser.setCachedKey(IdUtil.fastUUID());
 
-        redisCache.loginUserCache.set(loginUser.getCachedKey(), loginUser);
+        cacheService.saveLoginUser(loginUser.getCachedKey(), loginUser);
 
         return generateToken(MapUtil.of(Token.LOGIN_USER_KEY, loginUser.getCachedKey()));
     }
@@ -145,7 +145,7 @@ public class TokenService {
         if (currentTime > refreshTime) {
             loginUser.setAutoRefreshCacheTime(currentTime + TimeUnit.MINUTES.toMillis(autoRefreshTime));
             // 根据uuid将loginUser存入缓存
-            redisCache.loginUserCache.set(loginUser.getCachedKey(), loginUser);
+            cacheService.saveLoginUser(loginUser.getCachedKey(), loginUser);
         }
     }
 
