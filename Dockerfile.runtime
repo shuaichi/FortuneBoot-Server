@@ -1,0 +1,36 @@
+# 运行时镜像：基于预构建的 native binary，无需 nginx/jvm/redis 等中间件
+# 用于 GitHub Action 构建 Docker 镜像并推送到镜像仓库
+FROM debian:12-slim
+
+ARG TARGETARCH
+
+WORKDIR /app
+
+# 复制对应架构的预构建 native binary
+# artifact 解压后路径: out/linux_amd64/fortuneboot-starter-linux_amd64
+COPY out/linux_${TARGETARCH}/fortuneboot-starter-linux_${TARGETARCH} /app/fortuneboot-starter
+
+RUN chmod +x /app/fortuneboot-starter
+
+# 创建数据目录（用于 SQLite 数据文件）
+RUN mkdir -p /data
+
+# 时区配置
+ENV TZ=Asia/Shanghai
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tzdata ca-certificates && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 默认 SQLite 模式，零配置开箱即用
+ENV DB_TYPE=sqlite
+ENV DB_PATH=/data/fortuneboot.db
+
+# 声明数据卷，确保容器重启数据不丢失
+VOLUME ["/data"]
+
+EXPOSE 8080
+
+CMD ["./fortuneboot-starter"]
