@@ -1,8 +1,6 @@
 # 开发环境数据源配置（仅在 db.type=mysql 时生效）
 spring:
     datasource:
-        type: com.alibaba.druid.pool.DruidDataSource
-        driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             url: jdbc:mysql://${DB_HOST:mysql.fortuneboot.com}:${DB_PORT:30306}/${DB_NAME:fortune_boot}?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true&useSSL=true&serverTimezone=GMT%2B8
             username: ${DB_USERNAME:root}
@@ -26,19 +24,15 @@ spring:
             testWhileIdle: true
             testOnBorrow: false
             testOnReturn: false
-            webStatFilter:
-                enabled: true
+            # Druid 监控控制台
             statViewServlet:
-                enabled: true
-                # 设置白名单，不填则允许所有访问
-                allow:
                 url-pattern: /druid/*
                 # 控制台管理用户名和密码
                 login-username: fortuneboot
                 login-password: 123456
+            # Druid 过滤器
             filter:
                 stat:
-                    enabled: true
                     # 慢SQL记录
                     log-slow-sql: true
                     slow-sql-millis: 1000

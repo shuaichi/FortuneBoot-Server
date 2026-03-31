@@ -97,6 +97,17 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.proxy.jdbc.ConnectionProxyImpl"),
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
                     MemberCategory.INVOKE_PUBLIC_METHODS);
+            // Druid 监控 Servlet 和 Web 过滤器（手动注册，替代被排除的 DruidDataSourceAutoConfigure）
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.support.jakarta.StatViewServlet"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.support.jakarta.WebStatFilter"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.wall.WallConfig"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                    MemberCategory.ACCESS_DECLARED_FIELDS);
 
             // ================= 2.4 MySQL JDBC 驱动 =================
             hints.reflection().registerType(TypeReference.of("com.mysql.cj.jdbc.Driver"),
