@@ -161,7 +161,31 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.StandardHashAlgorithms"),
                     MemberCategory.values());
 
-            // 3.7 压缩算法（0.13.0 类名从 *Codec 改为 *Algorithm）
+            // 3.7 security $Supplier 类（通过 Class.forName 动态加载，初始化链必须）
+            // 错误链：Jwts.builder() → DefaultJwtBuilder → DefaultProtectedHeader → AbstractJwk
+            //       → KeyOperationConverter → Jwks$OP → DefaultKeyOperationBuilder$Supplier
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultKeyOperationBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultKeyOperationPolicyBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultDynamicJwkBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultJwkSetBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultJwkParserBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.DefaultJwkSetParserBuilder$Supplier"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
+
+            // 3.8 初始化链中用到的关键内部类
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.KeyOperationConverter"),
+                    MemberCategory.values());
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.AbstractJwk"),
+                    MemberCategory.values());
+            hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultProtectedHeader"),
+                    MemberCategory.values());
+
+            // 3.9 压缩算法（0.13.0 类名从 *Codec 改为 *Algorithm）
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.compression.DeflateCompressionAlgorithm"),
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.compression.GzipCompressionAlgorithm"),
