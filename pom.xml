@@ -42,8 +42,9 @@
         <druid.version>1.2.28</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <mybatis-spring-boot.version>4.0.1</mybatis-spring-boot.version>
-        <pagehelper.boot.version>6.1.1</pagehelper.boot.version>
+        <mybatis-spring-boot.version>4.0.0</mybatis-spring-boot.version>
+        <pagehelper.boot.version>2.1.1</pagehelper.boot.version>
+        <pagehelper.version>6.1.1</pagehelper.version>
         <oshi.version>6.10.0</oshi.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.fileupload.version>1.6.0</commons.fileupload.version>
@@ -59,7 +60,7 @@
         <mockito.version>1.10.19</mockito.version>
         <org.lionsoul.version>3.3.6</org.lionsoul.version>
         <com.google.guava.version>33.5.0-jre</com.google.guava.version>
-        <mysql-connector-java>8.4.0</mysql-connector-java>
+        <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
         <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
         <flyway.version>12.2.0</flyway.version>
         <spring.boot.version>4.0.5</spring.boot.version>
@@ -138,7 +139,11 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>${pagehelper.boot.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
             <!-- 获取系统信息 -->
             <dependency>
                 <groupId>com.github.oshi</groupId>
@@ -176,9 +181,9 @@
 
             <!-- Mysql驱动包 -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java}</version>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
             </dependency>
 
             <!-- SQLite驱动包 -->
@@ -335,16 +340,6 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mybatis-spring</artifactId>
-                    <groupId>org.mybatis</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis-spring</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
