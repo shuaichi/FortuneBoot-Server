@@ -17,3 +17,6 @@ create table if not exists sys_login_token
     index idx_expire_time (expire_time),
     index idx_user_id (user_id)
 ) comment '登录令牌持久化表';
+
+DELETE FROM sys_menu
+WHERE menu_id = 16 OR menu_name = '缓存监控';
