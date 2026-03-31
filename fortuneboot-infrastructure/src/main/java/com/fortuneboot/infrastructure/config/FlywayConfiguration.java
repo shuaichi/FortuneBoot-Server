@@ -1,6 +1,5 @@
 package com.fortuneboot.infrastructure.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.ResourceProvider;
 import org.flywaydb.core.api.resource.LoadableResource;
@@ -9,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Flyway 数据库迁移配置
@@ -45,6 +46,29 @@ public class FlywayConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(FlywayConfiguration.class);
 
+    /**
+     * GraalVM native image 下无法通过目录枚举发现 SQL 文件，
+     * 因此需要显式列出每个数据库类型对应的迁移脚本文件名。
+     * <p>
+     * 【注意】新增迁移脚本时，必须同步更新此列表！
+     */
+    private static final Map<String, String[]> MIGRATION_FILES = Map.of(
+            "sqlite", new String[]{
+                    "V1.5.0__init_schema.sql",
+                    "V1.5.1__init_data.sql"
+            },
+            "mysql", new String[]{
+                    "V1.0.0__init_schema.sql",
+                    "V1.0.1__init_data.sql",
+                    "V1.1.0__goods_keeper_and_indexes.sql",
+                    "V1.1.6__display_config.sql",
+                    "V1.2.0__recurring_bill.sql",
+                    "V1.3.0__finance_order.sql",
+                    "V1.4.0__admin_flag.sql",
+                    "V1.5.0__login_token.sql"
+            }
+    );
+
     @Bean
     public Flyway flyway(DataSource dataSource,
                          @Value("${db.type:sqlite}") String dbType) {
@@ -56,7 +80,7 @@ public class FlywayConfiguration {
 
         // 使用 Spring ResourcePatternResolver 显式枚举 SQL 文件
         // 解决 GraalVM native image 下 Flyway ClassPathScanner 无法枚举目录的问题
-        ResourceProvider resourceProvider = buildSpringResourceProvider(locationPath);
+        ResourceProvider resourceProvider = buildSpringResourceProvider(locationPath, dbType);
 
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
@@ -74,27 +98,50 @@ public class FlywayConfiguration {
     }
 
     /**
-     * 使用 Spring 的 PathMatchingResourcePatternResolver 枚举 SQL 文件，
-     * 构建 Flyway 自定义 ResourceProvider。
+     * 构建 Flyway 自定义 ResourceProvider，兼容 JVM 和 GraalVM native image。
      * <p>
-     * Spring 的资源解析器能正确配合 AOT resource hints 工作，
-     * 在 native image 中也能发现被注册的资源文件。
+     * 策略 1（JVM 模式）：使用 Spring PathMatchingResourcePatternResolver 自动枚举 SQL 文件。
+     * 策略 2（Native Image 降级）：枚举失败时，通过 MIGRATION_FILES 显式列表逐个加载。
      */
-    private ResourceProvider buildSpringResourceProvider(String locationPath) {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    private ResourceProvider buildSpringResourceProvider(String locationPath, String dbType) {
         List<LoadableResource> loadableResources = new ArrayList<>();
 
+        // 策略 1: 尝试通过 Spring ResourcePatternResolver 自动发现（JVM 模式下有效）
         try {
+            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource[] resources = resolver.getResources("classpath:" + locationPath + "/*.sql");
-            log.info(">>> Spring ResourceResolver 发现 {} 个 SQL 迁移文件", resources.length);
-            for (Resource resource : resources) {
-                String filename = resource.getFilename();
-                log.info(">>>   - {}", filename);
-                loadableResources.add(new SpringLoadableResource(locationPath, resource));
+            if (resources.length > 0) {
+                for (Resource resource : resources) {
+                    if (resource.exists()) {
+                        log.info(">>>   [自动发现] {}", resource.getFilename());
+                        loadableResources.add(new SpringLoadableResource(locationPath, resource));
+                    }
+                }
             }
         } catch (IOException e) {
-            log.error(">>> 枚举 SQL 迁移文件失败: {}", e.getMessage(), e);
+            log.debug(">>> ResourcePatternResolver 枚举失败 (native image 下预期行为): {}", e.getMessage());
         }
+
+        // 策略 2: 自动发现失败，使用显式文件列表逐个加载（native image 降级）
+        if (loadableResources.isEmpty()) {
+            log.info(">>> 使用显式文件列表加载 SQL 迁移脚本 (native image 兼容模式)");
+            String[] files = MIGRATION_FILES.get(dbType);
+            if (files != null) {
+                for (String filename : files) {
+                    ClassPathResource cpr = new ClassPathResource(locationPath + "/" + filename);
+                    if (cpr.exists()) {
+                        log.info(">>>   [显式加载] {}", filename);
+                        loadableResources.add(new SpringLoadableResource(locationPath, cpr));
+                    } else {
+                        log.warn(">>>   [未找到] {}，跳过", filename);
+                    }
+                }
+            } else {
+                log.error(">>> 未知的数据库类型: {}，无法加载迁移脚本", dbType);
+            }
+        }
+
+        log.info(">>> 共加载 {} 个 SQL 迁移文件", loadableResources.size());
 
         return new ResourceProvider() {
             @Override
@@ -161,7 +208,7 @@ public class FlywayConfiguration {
 
         @Override
         public String getAbsolutePathOnDisk() {
-            return StringUtils.EMPTY;
+            return "";
         }
 
         @Override
