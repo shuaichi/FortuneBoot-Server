@@ -1,5 +1,6 @@
 package com.fortuneboot.infrastructure.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.ResourceProvider;
 import org.flywaydb.core.api.resource.LoadableResource;
@@ -156,6 +157,11 @@ public class FlywayConfiguration {
         @Override
         public String getRelativePath() {
             return getAbsolutePath();
+        }
+
+        @Override
+        public String getAbsolutePathOnDisk() {
+            return StringUtils.EMPTY;
         }
 
         @Override
