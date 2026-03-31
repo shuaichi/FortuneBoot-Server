@@ -1,16 +1,27 @@
 package com.fortuneboot.infrastructure.config;
 
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.ResourceProvider;
+import org.flywaydb.core.api.resource.LoadableResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Flyway 数据库迁移配置
@@ -21,6 +32,10 @@ import java.sql.ResultSet;
  * <p>
  * 对于已有的 MySQL 数据库（无 flyway_schema_history），
  * 通过表/列存在性智能检测当前版本并设置 baseline。
+ * <p>
+ * 注意：在 GraalVM native image 环境下，Flyway 内置的 ClassPathScanner 无法通过
+ * 目录枚举发现 SQL 文件。因此使用 Spring 的 PathMatchingResourcePatternResolver
+ * 显式解析 SQL 资源，并通过自定义 ResourceProvider 提供给 Flyway。
  *
  * @author fortuneboot
  */
@@ -32,15 +47,19 @@ public class FlywayConfiguration {
     @Bean
     public Flyway flyway(DataSource dataSource,
                          @Value("${db.type:sqlite}") String dbType) {
-        String location = "classpath:db/migration/" + dbType;
-        log.info(">>> Flyway 迁移脚本目录: {}", location);
+        String locationPath = "db/migration/" + dbType;
+        log.info(">>> Flyway 迁移脚本目录: classpath:{}", locationPath);
 
         String baselineVersion = detectBaselineVersion(dataSource, dbType);
         log.info(">>> Flyway baseline 版本: {}", baselineVersion);
 
+        // 使用 Spring ResourcePatternResolver 显式枚举 SQL 文件
+        // 解决 GraalVM native image 下 Flyway ClassPathScanner 无法枚举目录的问题
+        ResourceProvider resourceProvider = buildSpringResourceProvider(locationPath);
+
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
-                .locations(location)
+                .resourceProvider(resourceProvider)
                 .baselineOnMigrate(true)
                 .baselineVersion(baselineVersion)
                 .validateOnMigrate(true)
@@ -51,6 +70,98 @@ public class FlywayConfiguration {
         flyway.migrate();
         log.info(">>> Flyway 数据库迁移完成");
         return flyway;
+    }
+
+    /**
+     * 使用 Spring 的 PathMatchingResourcePatternResolver 枚举 SQL 文件，
+     * 构建 Flyway 自定义 ResourceProvider。
+     * <p>
+     * Spring 的资源解析器能正确配合 AOT resource hints 工作，
+     * 在 native image 中也能发现被注册的资源文件。
+     */
+    private ResourceProvider buildSpringResourceProvider(String locationPath) {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        List<LoadableResource> loadableResources = new ArrayList<>();
+
+        try {
+            Resource[] resources = resolver.getResources("classpath:" + locationPath + "/*.sql");
+            log.info(">>> Spring ResourceResolver 发现 {} 个 SQL 迁移文件", resources.length);
+            for (Resource resource : resources) {
+                String filename = resource.getFilename();
+                log.info(">>>   - {}", filename);
+                loadableResources.add(new SpringLoadableResource(locationPath, resource));
+            }
+        } catch (IOException e) {
+            log.error(">>> 枚举 SQL 迁移文件失败: {}", e.getMessage(), e);
+        }
+
+        return new ResourceProvider() {
+            @Override
+            public LoadableResource getResource(String name) {
+                return loadableResources.stream()
+                        .filter(r -> r.getFilename().equals(name)
+                                || r.getAbsolutePath().equals(name)
+                                || r.getRelativePath().equals(name))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            @Override
+            public Collection<LoadableResource> getResources(String prefix, String[] suffixes) {
+                return loadableResources.stream()
+                        .filter(r -> {
+                            String filename = r.getFilename();
+                            if (!filename.startsWith(prefix)) {
+                                return false;
+                            }
+                            for (String suffix : suffixes) {
+                                if (filename.endsWith(suffix)) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        })
+                        .map(r -> (LoadableResource) r)
+                        .toList();
+            }
+        };
+    }
+
+    /**
+     * 将 Spring Resource 适配为 Flyway LoadableResource
+     */
+    private static class SpringLoadableResource extends LoadableResource {
+        private final String locationPath;
+        private final Resource resource;
+
+        SpringLoadableResource(String locationPath, Resource resource) {
+            this.locationPath = locationPath;
+            this.resource = resource;
+        }
+
+        @Override
+        public Reader read() {
+            try {
+                return new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException("无法读取迁移脚本: " + getFilename(), e);
+            }
+        }
+
+        @Override
+        public String getAbsolutePath() {
+            return locationPath + "/" + getFilename();
+        }
+
+        @Override
+        public String getRelativePath() {
+            return getAbsolutePath();
+        }
+
+        @Override
+        public String getFilename() {
+            return resource.getFilename();
+        }
     }
 
     /**
