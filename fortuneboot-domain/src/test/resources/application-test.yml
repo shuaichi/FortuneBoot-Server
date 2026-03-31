@@ -1,31 +1,9 @@
 
-# 数据源配置
+# 测试环境配置（使用 SQLite）
+db:
+    type: sqlite
+
 spring:
     datasource:
-        #  驱动
-        driver-class-name: org.h2.Driver
-        dynamic:
-            primary: master
-            strict: false
-            datasource:
-                master:
-                    # h2 内存数据库 内存模式连接配置 库名: fortuneboot
-                    url: jdbc:h2:mem:fortuneboot;DB_CLOSE_DELAY=-1
-                    h2:
-                        # 开启console 访问 默认false
-                        console:
-                            enabled: true
-                            settings:
-                                #  开启h2 console 跟踪 方便调试  默认 false
-                                trace: true
-                                #  允许console 远程访问 默认false
-                                web-allow-others: true
-                            #  h2 访问路径上下文
-                            path: /h2-console
-
-    sql:
-        init:
-            platform: mysql
-            # 初始化数据
-            schema-locations: classpath:h2sql/fortuneboot_schema.sql
-            data-locations: classpath:h2sql/fortuneboot_data.sql
+        driver-class-name: org.sqlite.JDBC
+        url: jdbc:sqlite:data/fortuneboot-test.db

@@ -6,9 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import java.util.List;
 
 /**
- * 由于H2不支持大部分Mysql的函数  所以要自己实现
- * 在H2的初始化 h2sql/fortuneboot_schema.sql加上这句
- * CREATE ALIAS FIND_IN_SET FOR "com.fortuneboot.infrastructure.mybatisplus.MySqlFunction.find_in_set";
+ * MySQL 函数的自定义实现
  *
  * @author valarchie
  */

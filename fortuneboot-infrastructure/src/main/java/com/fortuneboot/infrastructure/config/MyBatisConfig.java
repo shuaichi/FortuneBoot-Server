@@ -80,7 +80,6 @@ public class MyBatisConfig {
         Properties properties = new Properties();
         properties.setProperty("MySQL", DbType.MYSQL.getDb());
         properties.setProperty("SQLite", DbType.SQLITE.getDb());
-        properties.setProperty("H2", DbType.H2.getDb());
         provider.setProperties(properties);
         return provider;
     }
