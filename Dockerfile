@@ -42,7 +42,7 @@ ENV NATIVE_IMAGE_OPTIONS="-march=compatibility"
 RUN mvn package -Pnative -DskipTests -pl fortuneboot-starter
 
 # ========== 第三阶段：运行时镜像 ==========
-FROM debian:12-slim
+FROM debian:13-slim
 
 WORKDIR /app
 

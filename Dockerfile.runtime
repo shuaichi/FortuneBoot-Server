@@ -1,6 +1,6 @@
 # 运行时镜像：基于预构建的 native binary，无需 nginx/jvm/redis 等中间件
 # 用于 GitHub Action 构建 Docker 镜像并推送到镜像仓库
-FROM debian:12-slim
+FROM debian:13-slim
 
 ARG TARGETARCH
 
