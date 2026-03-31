@@ -43,7 +43,7 @@ public @interface Unrepeatable {
          */
         APP_USER {
             @Override
-            public String generateResubmitRedisKey(Method method) {
+            public String generateResubmitCacheKey(Method method) {
                 String username;
 
                 try {
@@ -54,7 +54,7 @@ public @interface Unrepeatable {
                     log.error("could not find the related user to check repeatable submit.");
                 }
 
-                return StrUtil.format(RESUBMIT_REDIS_KEY,
+                return StrUtil.format(RESUBMIT_CACHE_KEY,
                     this.name(),
                     method.getDeclaringClass().getName(),
                     method.getName(),
@@ -66,7 +66,7 @@ public @interface Unrepeatable {
          */
         SYSTEM_USER {
             @Override
-            public String generateResubmitRedisKey(Method method) {
+            public String generateResubmitCacheKey(Method method) {
                 String username;
 
                 try {
@@ -77,7 +77,7 @@ public @interface Unrepeatable {
                     log.error("could not find the related user to check repeatable submit.");
                 }
 
-                return StrUtil.format(RESUBMIT_REDIS_KEY,
+                return StrUtil.format(RESUBMIT_CACHE_KEY,
                     this.name(),
                     method.getDeclaringClass().getName(),
                     method.getName(),
@@ -86,9 +86,9 @@ public @interface Unrepeatable {
         };
 
         public static final String NO_LOGIN = "Anonymous";
-        public static final String RESUBMIT_REDIS_KEY = "resubmit:{}:{}:{}:{}";
+        public static final String RESUBMIT_CACHE_KEY = "resubmit:{}:{}:{}:{}";
 
-        public abstract String generateResubmitRedisKey(Method method);
+        public abstract String generateResubmitCacheKey(Method method);
 
     }
 

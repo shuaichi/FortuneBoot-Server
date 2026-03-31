@@ -98,7 +98,7 @@ public class LoginRest {
      * 生成验证码
      */
     @Operation(summary = "验证码")
-    @RateLimit(key = RateLimitKey.LOGIN_CAPTCHA_KEY, time = 10, maxCount = 10, cacheType = CacheType.REDIS,
+    @RateLimit(key = RateLimitKey.LOGIN_CAPTCHA_KEY, time = 10, maxCount = 10, cacheType = CacheType.MEMORY,
             limitType = LimitType.IP)
     @GetMapping("/captchaImage")
     public ResponseDTO<CaptchaDTO> getCaptchaImg() {

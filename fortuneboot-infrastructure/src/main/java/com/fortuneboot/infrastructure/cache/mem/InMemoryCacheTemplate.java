@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 纯内存缓存模板（基于 Guava Cache），用于替代 RedisCacheTemplate
+ * 纯内存缓存模板（基于 Guava Cache）
  * <p>
  * 适用于验证码、用户/角色实体等不需要跨进程共享的缓存场景。
  * 对于需要持久化的场景（如登录Token），请使用子类覆盖 getObjectFromDb 方法实现 DB 回源。

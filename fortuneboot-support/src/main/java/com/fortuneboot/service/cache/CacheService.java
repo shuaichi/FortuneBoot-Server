@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 缓存服务（替代原 RedisCacheService）
+ * 缓存服务
  * 使用 Guava 内存缓存 + 数据库持久化（用于登录 Token）
  *
  * @author fortuneboot
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class RedisCacheService {
+public class CacheService {
 
     private final SysLoginTokenRepo loginTokenRepo;
 

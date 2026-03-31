@@ -46,7 +46,7 @@ public @interface RateLimit {
     /**
      * 限流使用的缓存类型
      */
-    CacheType cacheType() default CacheType.REDIS;
+    CacheType cacheType() default CacheType.MEMORY;
 
 
 
@@ -108,9 +108,9 @@ public @interface RateLimit {
     enum CacheType {
 
         /**
-         * 使用redis做缓存
+         * 使用内存做缓存
          */
-        REDIS,
+        MEMORY,
 
         /**
          * 使用map做缓存

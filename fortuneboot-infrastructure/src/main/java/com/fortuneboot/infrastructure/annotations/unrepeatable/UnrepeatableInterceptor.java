@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 
 /**
  * 重复提交拦截器 如果涉及前后端加解密的话  也可以通过继承RequestBodyAdvice来实现
- * 使用内存 LRU 缓存替代 Redis 实现防重复提交
+ * 使用内存 LRU 缓存实现防重复提交
  *
  * @author valarchie
  */
@@ -50,7 +50,7 @@ public class UnrepeatableInterceptor extends RequestBodyAdviceAdapter {
 
         Unrepeatable resubmitAnno = parameter.getMethodAnnotation(Unrepeatable.class);
         if (resubmitAnno != null) {
-            String cacheKey = resubmitAnno.checkType().generateResubmitRedisKey(parameter.getMethod());
+            String cacheKey = resubmitAnno.checkType().generateResubmitCacheKey(parameter.getMethod());
 
             log.info("请求重复提交拦截，当前key:{}, 当前参数：{}", cacheKey, currentRequest);
 

@@ -8,7 +8,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode.Client;
 import com.fortuneboot.common.utils.ServletHolderUtil;
 import com.fortuneboot.service.login.TokenService;
-import com.fortuneboot.service.cache.RedisCacheService;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.infrastructure.thread.ThreadPoolManager;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.LoginStatusEnum;
@@ -55,7 +55,7 @@ public class SecurityConfig {
 
     private final TokenService tokenService;
 
-    private final RedisCacheService cacheService;
+    private final CacheService cacheService;
 
     /**
      * token认证过滤器

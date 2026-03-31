@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.fortuneboot.common.constant.Constants.Token;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.service.cache.RedisCacheService;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -66,7 +66,7 @@ public class TokenService {
     @Value("${token.autoRefreshTime}")
     private long autoRefreshTime;
 
-    private final RedisCacheService cacheService;
+    private final CacheService cacheService;
 
     /**
      * 获取用户身份信息

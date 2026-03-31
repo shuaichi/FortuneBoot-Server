@@ -4,7 +4,7 @@ import com.fortuneboot.common.core.base.BaseController;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.customize.accessLog.AccessLog;
-import com.fortuneboot.service.cache.RedisCacheService;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.service.system.MonitorApplicationService;
 import com.fortuneboot.domain.dto.monitor.OnlineUserDTO;
 import com.fortuneboot.domain.dto.monitor.ServerInfo;
@@ -33,7 +33,7 @@ public class MonitorRest extends BaseController {
 
     private final MonitorApplicationService monitorApplicationService;
 
-    private final RedisCacheService cacheService;
+    private final CacheService cacheService;
 
     @Operation(summary = "服务器信息")
     @PreAuthorize("@permission.has('monitor:server:list')")

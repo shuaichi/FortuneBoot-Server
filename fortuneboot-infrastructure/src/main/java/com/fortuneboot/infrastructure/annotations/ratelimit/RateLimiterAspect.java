@@ -11,7 +11,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 /**
- * 限流切面处理（统一使用内存 Map 限流，无需 Redis）
+ * 限流切面处理（统一使用内存 Map 限流）
  *
  * @author valarchie
  */

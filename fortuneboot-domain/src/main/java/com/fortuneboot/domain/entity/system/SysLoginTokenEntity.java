@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 登录令牌持久化表，用于替代 Redis 存储登录用户信息
+ * 登录令牌持久化表，用于存储登录用户信息
  *
  * @author fortuneboot
  */

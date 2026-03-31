@@ -20,7 +20,7 @@ import com.fortuneboot.common.utils.i18n.MessageUtils;
 import com.fortuneboot.customize.async.AsyncTaskFactory;
 import com.fortuneboot.service.cache.GuavaCacheService;
 import com.fortuneboot.service.cache.MapCache;
-import com.fortuneboot.service.cache.RedisCacheService;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.infrastructure.thread.ThreadPoolManager;
 import com.fortuneboot.service.login.dto.CaptchaDTO;
 import com.fortuneboot.service.login.dto.ConfigDTO;
@@ -54,7 +54,7 @@ public class LoginService {
 
     private final TokenService tokenService;
 
-    private final RedisCacheService cacheService;
+    private final CacheService cacheService;
 
     private final GuavaCacheService guavaCache;
 
