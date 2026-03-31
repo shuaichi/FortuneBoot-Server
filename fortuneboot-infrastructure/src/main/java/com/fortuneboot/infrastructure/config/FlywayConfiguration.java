@@ -1,5 +1,6 @@
 package com.fortuneboot.infrastructure.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.ResourceProvider;
 import org.flywaydb.core.api.resource.LoadableResource;
@@ -53,11 +54,11 @@ public class FlywayConfiguration {
      * 【注意】新增迁移脚本时，必须同步更新此列表！
      */
     private static final Map<String, String[]> MIGRATION_FILES = Map.of(
-            "sqlite", new String[]{
+            DbType.SQLITE.getDb(), new String[]{
                     "V1.5.0__init_schema.sql",
                     "V1.5.1__init_data.sql"
             },
-            "mysql", new String[]{
+            DbType.MYSQL.getDb(), new String[]{
                     "V1.0.0__init_schema.sql",
                     "V1.0.1__init_data.sql",
                     "V1.1.0__goods_keeper_and_indexes.sql",
@@ -110,12 +111,10 @@ public class FlywayConfiguration {
         try {
             PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
             Resource[] resources = resolver.getResources("classpath:" + locationPath + "/*.sql");
-            if (resources.length > 0) {
-                for (Resource resource : resources) {
-                    if (resource.exists()) {
-                        log.info(">>>   [自动发现] {}", resource.getFilename());
-                        loadableResources.add(new SpringLoadableResource(locationPath, resource));
-                    }
+            for (Resource resource : resources) {
+                if (resource.exists()) {
+                    log.info(">>>   [自动发现] {}", resource.getFilename());
+                    loadableResources.add(new SpringLoadableResource(locationPath, resource));
                 }
             }
         } catch (IOException e) {
@@ -246,7 +245,7 @@ public class FlywayConfiguration {
             }
 
             // SQLite 只有全量脚本，已有数据库 baseline 到 V1.5.1
-            if ("sqlite".equals(dbType)) {
+            if (DbType.SQLITE.getDb().equals(dbType)) {
                 log.info(">>> SQLite 已有数据库，baseline 到 V1.5.1");
                 return "1.5.1";
             }

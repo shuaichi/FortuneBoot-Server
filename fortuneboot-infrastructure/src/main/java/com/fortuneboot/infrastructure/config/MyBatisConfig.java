@@ -34,7 +34,7 @@ public class MyBatisConfig {
     public MybatisPlusInterceptor mybatisPlusInterceptor(
             @Value("${db.type:sqlite}") String dbType) {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        DbType type = "mysql".equals(dbType) ? DbType.MYSQL : DbType.SQLITE;
+        DbType type = DbType.MYSQL.getDb().equals(dbType) ? DbType.MYSQL : DbType.SQLITE;
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(type));
         return interceptor;
     }
@@ -59,7 +59,7 @@ public class MyBatisConfig {
 
             // SQLite 模式：注册自定义日期类型处理器，替代默认的 DateTypeHandler
             // 确保日期以 'yyyy-MM-dd HH:mm:ss' 字符串格式存储/读取
-            if ("sqlite".equals(dbType)) {
+            if (DbType.SQLITE.getDb().equals(dbType)) {
                 log.info(">>> SQLite 模式：注册 SqliteDateTypeHandler");
                 SqliteDateTypeHandler handler = new SqliteDateTypeHandler();
                 configuration.getTypeHandlerRegistry().register(Date.class, handler);
@@ -78,9 +78,9 @@ public class MyBatisConfig {
     public VendorDatabaseIdProvider databaseIdProvider() {
         VendorDatabaseIdProvider provider = new VendorDatabaseIdProvider();
         Properties properties = new Properties();
-        properties.setProperty("MySQL", "mysql");
-        properties.setProperty("SQLite", "sqlite");
-        properties.setProperty("H2", "h2");
+        properties.setProperty("MySQL", DbType.MYSQL.getDb());
+        properties.setProperty("SQLite", DbType.SQLITE.getDb());
+        properties.setProperty("H2", DbType.H2.getDb());
         provider.setProperties(properties);
         return provider;
     }
