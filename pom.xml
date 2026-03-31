@@ -43,7 +43,7 @@
         <bitwalker.version>1.21</bitwalker.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <mybatis-spring-boot.version>4.0.1</mybatis-spring-boot.version>
-        <pagehelper.boot.version>2.1.1</pagehelper.boot.version>
+        <pagehelper.boot.version>6.1.1</pagehelper.boot.version>
         <oshi.version>6.10.0</oshi.version>
         <commons.io.version>2.21.0</commons.io.version>
         <commons.fileupload.version>1.6.0</commons.fileupload.version>
