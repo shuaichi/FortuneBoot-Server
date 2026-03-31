@@ -5,7 +5,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -44,31 +43,45 @@ public class DatabaseAutoConfiguration {
 
     /**
      * MySQL 数据源（使用 Druid 连接池）
+     * 注意：不使用 Binder 绑定，因为 Binder 依赖反射在 GraalVM native image 中会失败
      */
     private DataSource createMysqlDataSource(Environment environment) {
         log.info(">>> 初始化 MySQL 数据源 (Druid)");
         DruidDataSource dataSource = new DruidDataSource();
-        // 通过 Binder 绑定 spring.datasource.druid.* 配置
-        Binder binder = Binder.get(environment);
-        binder.bind("spring.datasource.druid", DruidDataSource.class)
-                .ifBound(props -> {
-                    dataSource.setUrl(props.getUrl());
-                    dataSource.setUsername(props.getUsername());
-                    dataSource.setPassword(props.getPassword());
-                    dataSource.setInitialSize(props.getInitialSize());
-                    dataSource.setMinIdle(props.getMinIdle());
-                    dataSource.setMaxActive(props.getMaxActive());
-                    dataSource.setMaxWait(props.getMaxWait());
-                    dataSource.setTimeBetweenEvictionRunsMillis(props.getTimeBetweenEvictionRunsMillis());
-                    dataSource.setMinEvictableIdleTimeMillis(props.getMinEvictableIdleTimeMillis());
-                    dataSource.setMaxEvictableIdleTimeMillis(props.getMaxEvictableIdleTimeMillis());
-                    dataSource.setValidationQuery(props.getValidationQuery());
-                    dataSource.setTestWhileIdle(props.isTestWhileIdle());
-                    dataSource.setTestOnBorrow(props.isTestOnBorrow());
-                    dataSource.setTestOnReturn(props.isTestOnReturn());
-                });
+        // 直接从 Environment 读取属性，避免 Binder 反射问题
+        dataSource.setUrl(environment.getProperty("spring.datasource.druid.url"));
+        dataSource.setUsername(environment.getProperty("spring.datasource.druid.username"));
+        dataSource.setPassword(environment.getProperty("spring.datasource.druid.password"));
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setInitialSize(getIntProperty(environment, "spring.datasource.druid.initialSize", 5));
+        dataSource.setMinIdle(getIntProperty(environment, "spring.datasource.druid.minIdle", 10));
+        dataSource.setMaxActive(getIntProperty(environment, "spring.datasource.druid.maxActive", 20));
+        dataSource.setMaxWait(getLongProperty(environment, "spring.datasource.druid.maxWait", 60000L));
+        dataSource.setTimeBetweenEvictionRunsMillis(
+                getLongProperty(environment, "spring.datasource.druid.timeBetweenEvictionRunsMillis", 60000L));
+        dataSource.setMinEvictableIdleTimeMillis(
+                getLongProperty(environment, "spring.datasource.druid.minEvictableIdleTimeMillis", 300000L));
+        dataSource.setMaxEvictableIdleTimeMillis(
+                getLongProperty(environment, "spring.datasource.druid.maxEvictableIdleTimeMillis", 900000L));
+        dataSource.setValidationQuery(
+                environment.getProperty("spring.datasource.druid.validationQuery", "SELECT 1 FROM DUAL"));
+        dataSource.setTestWhileIdle(
+                Boolean.parseBoolean(environment.getProperty("spring.datasource.druid.testWhileIdle", "true")));
+        dataSource.setTestOnBorrow(
+                Boolean.parseBoolean(environment.getProperty("spring.datasource.druid.testOnBorrow", "false")));
+        dataSource.setTestOnReturn(
+                Boolean.parseBoolean(environment.getProperty("spring.datasource.druid.testOnReturn", "false")));
         return dataSource;
+    }
+
+    private int getIntProperty(Environment env, String key, int defaultValue) {
+        String value = env.getProperty(key);
+        return value != null ? Integer.parseInt(value) : defaultValue;
+    }
+
+    private long getLongProperty(Environment env, String key, long defaultValue) {
+        String value = env.getProperty(key);
+        return value != null ? Long.parseLong(value) : defaultValue;
     }
 
     /**

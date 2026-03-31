@@ -1,5 +1,6 @@
 package com.fortuneboot.admin;
 
+import com.alibaba.druid.spring.boot4.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
  * http://life.chacuo.net/convertfont2char
  * @author valarchie
  */
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 @ComponentScan(basePackages = "com.fortuneboot.*")
 public class ApplicationStarter {
 

@@ -85,6 +85,26 @@ public class ResourcesNativeConfig {
                     MemberCategory.INVOKE_PUBLIC_METHODS,
                     MemberCategory.ACCESS_DECLARED_FIELDS);
 
+            // ================= 2.3 Druid（MySQL 模式连接池）=================
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.pool.DruidDataSource"),
+                    MemberCategory.values());
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.pool.DruidAbstractDataSource"),
+                    MemberCategory.values());
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.pool.DruidPooledConnection"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                    MemberCategory.ACCESS_DECLARED_FIELDS);
+            hints.reflection().registerType(TypeReference.of("com.alibaba.druid.proxy.jdbc.ConnectionProxyImpl"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS);
+
+            // ================= 2.4 MySQL JDBC 驱动 =================
+            hints.reflection().registerType(TypeReference.of("com.mysql.cj.jdbc.Driver"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
+            hints.reflection().registerType(TypeReference.of("com.mysql.cj.jdbc.ConnectionImpl"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS);
+
             // ================= 3. JWT (JSON Web Token) 相关反射 =================
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.security.KeysBridge"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.DefaultJwtParserBuilder"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
