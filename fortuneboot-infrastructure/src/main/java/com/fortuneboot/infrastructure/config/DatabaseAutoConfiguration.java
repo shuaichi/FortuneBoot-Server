@@ -19,6 +19,7 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -57,19 +58,23 @@ public class DatabaseAutoConfiguration {
 
     /**
      * 注册 Druid 监控控制台 Servlet（/druid/*）
-     * 非 MySQL 模式下自动禁用
+     * 非 MySQL 模式下返回友好提示
      */
     @Bean
     public ServletRegistrationBean<StatViewServlet> druidStatViewServlet(
             @Value("${db.type:sqlite}") String dbType,
             Environment env) {
-        ServletRegistrationBean<StatViewServlet> reg = new ServletRegistrationBean<>();
-        // 即使禁用也必须设置 Servlet，否则会报'filter/servlet must not be null' 错误
-        reg.setServlet(new StatViewServlet());
+
         if (!"mysql".equalsIgnoreCase(dbType)) {
-            reg.setEnabled(false);
+            ServletRegistrationBean<StatViewServlet> reg = new ServletRegistrationBean<>();
+            reg.setServlet(new DruidUnavailableServlet());
+            reg.addUrlMappings("/druid/*");
+            log.info(">>> 当前为 {} 模式，Druid 监控不可用，已注册提示页", dbType);
             return reg;
         }
+
+        ServletRegistrationBean<StatViewServlet> reg = new ServletRegistrationBean<>();
+        reg.setServlet(new StatViewServlet());
         reg.addUrlMappings(env.getProperty("spring.datasource.druid.statViewServlet.url-pattern", "/druid/*"));
 
         String loginUsername = env.getProperty("spring.datasource.druid.statViewServlet.login-username", "admin");
@@ -216,5 +221,20 @@ public class DatabaseAutoConfiguration {
     private long getLongProperty(Environment env, String key, long defaultValue) {
         String value = env.getProperty(key);
         return value != null ? Long.parseLong(value) : defaultValue;
+    }
+    /**
+     * 非 MySQL 模式下，替代 Druid StatViewServlet，返回友好 JSON 提示
+     */
+    private static class DruidUnavailableServlet extends StatViewServlet {
+
+        @Override
+        public void service(jakarta.servlet.http.HttpServletRequest request,
+                            jakarta.servlet.http.HttpServletResponse response)
+                throws IOException {
+            response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_OK);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write(
+                    "{\"code\":2,\"msg\":\"Druid 监控仅在 MySQL 模式下可用，当前为 SQLite 模式\",\"data\":null}");
+        }
     }
 }
