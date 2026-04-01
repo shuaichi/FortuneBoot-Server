@@ -1,6 +1,11 @@
+// Based on valarchie/AgileBoot-Back-End (MIT License)
+// Original: https://github.com/valarchie/AgileBoot-Back-End
+// Modifications Copyright (c) 2025 shuaichi
+
 MIT License
 
 Copyright (c) 2022 valarchie
+Copyright (c) 2025 shuaichi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
