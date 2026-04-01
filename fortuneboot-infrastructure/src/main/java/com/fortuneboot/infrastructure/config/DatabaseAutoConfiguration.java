@@ -64,11 +64,12 @@ public class DatabaseAutoConfiguration {
             @Value("${db.type:sqlite}") String dbType,
             Environment env) {
         ServletRegistrationBean<StatViewServlet> reg = new ServletRegistrationBean<>();
+        // 即使禁用也必须设置 Servlet，否则会报'filter/servlet must not be null' 错误
+        reg.setServlet(new StatViewServlet());
         if (!"mysql".equalsIgnoreCase(dbType)) {
             reg.setEnabled(false);
             return reg;
         }
-        reg.setServlet(new StatViewServlet());
         reg.addUrlMappings(env.getProperty("spring.datasource.druid.statViewServlet.url-pattern", "/druid/*"));
 
         String loginUsername = env.getProperty("spring.datasource.druid.statViewServlet.login-username", "admin");
@@ -94,11 +95,12 @@ public class DatabaseAutoConfiguration {
     public FilterRegistrationBean<WebStatFilter> druidWebStatFilter(
             @Value("${db.type:sqlite}") String dbType) {
         FilterRegistrationBean<WebStatFilter> reg = new FilterRegistrationBean<>();
+        // 即使禁用也必须设置 Filter，否则会报 'filter must not be null' 错误
+        reg.setFilter(new WebStatFilter());
         if (!"mysql".equalsIgnoreCase(dbType)) {
             reg.setEnabled(false);
             return reg;
         }
-        reg.setFilter(new WebStatFilter());
         reg.addUrlPatterns("/*");
         reg.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
         log.info(">>> 注册 Druid WebStatFilter");
