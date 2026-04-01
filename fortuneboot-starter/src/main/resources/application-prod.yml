@@ -43,7 +43,10 @@ spring:
 
 logging:
   file:
-    path: /home/fortuneboot/logs/fortuneboot-dev
+    path: /home/fortuneboot/logs/fortuneboot-prod
+  level:
+    com.fortuneboot: info
+    org.springframework: warn
 
 
 springdoc:
