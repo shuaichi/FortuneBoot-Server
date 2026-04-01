@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 
 # ========== 第一阶段：构建前端应用 ==========
-FROM --platform=$BUILDPLATFORM node:18-alpine AS node-builder
+FROM --platform=$BUILDPLATFORM node:22-alpine AS node-builder
 
 RUN apk add --no-cache git
 
@@ -11,7 +11,7 @@ ARG VUE_BRANCH=master
 RUN git clone --branch ${VUE_BRANCH} --depth 1 ${VUE_REPO} /app/ui
 
 WORKDIR /app/ui
-RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+RUN corepack enable && corepack prepare pnpm@10 --activate
 RUN pnpm install --force
 RUN pnpm build
 
