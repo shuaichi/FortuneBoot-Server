@@ -204,16 +204,7 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("io.jsonwebtoken.impl.io.StandardCompressionAlgorithms"),
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
 
-            // ================= 4. Kaptcha (验证码) 相关反射 =================
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.impl.ShadowGimpy"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.impl.NoNoise"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.impl.WaterRipple"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.text.impl.DefaultWordRenderer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.impl.DefaultBackground"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-            hints.reflection().registerType(TypeReference.of("com.google.code.kaptcha.util.Config"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
-            hints.reflection().registerType(TypeReference.of("com.fortuneboot.infrastructure.config.captcha.CaptchaMathTextCreator"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
-
-            // ================= 5. 定时任务、第三方基础工具、Druid 过滤器 =================
+            // ================= 4. 定时任务、第三方基础工具、Druid 过滤器 =================
             hints.reflection().registerType(TypeReference.of("com.fortuneboot.job.FortuneRecurringBillJob"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.filter.stat.StatFilter"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("com.alibaba.druid.wall.WallFilter"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
@@ -222,9 +213,9 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("cn.hutool.core.util.StrUtil"), MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("org.springframework.security.core.authority.SimpleGrantedAuthority"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
 
-            // ================= 6. OSHI 与 JNA (服务器监控核心) =================
+            // ================= 5. OSHI 与 JNA (服务器监控核心) =================
 
-            // 6.1 注册 JNA JDK 动态代理 (C语言接口代理)
+            // 5.1 注册 JNA JDK 动态代理 (C语言接口代理)
             hints.proxies().registerJdkProxy(TypeReference.of("oshi.jna.platform.linux.LinuxLibc"));
             hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.linux.LibC"));
             hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.linux.LibRT"));
@@ -235,7 +226,7 @@ public class ResourcesNativeConfig {
             hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.win32.Kernel32"));
             hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.win32.Advapi32"));
             hints.proxies().registerJdkProxy(TypeReference.of("com.sun.jna.platform.mac.SystemB"));
-            // 6.2 注册 JNA 结构体 (Structure) 反射（解决磁盘读取时的 getFieldOrder 报错）
+            // 5.2 注册 JNA 结构体 (Structure) 反射（解决磁盘读取时的 getFieldOrder 报错）
             String[] jnaStructures = new String[]{
                     "oshi.jna.platform.linux.LinuxLibc$Sysinfo",
                     "oshi.jna.platform.linux.LinuxLibc$Statvfs",
@@ -255,12 +246,12 @@ public class ResourcesNativeConfig {
                         MemberCategory.ACCESS_DECLARED_FIELDS);
             }
 
-            // 6.3 注册 JNA 核心底层类的反射调用
+            // 5.3 注册 JNA 核心底层类的反射调用
             hints.reflection().registerType(TypeReference.of("com.sun.jna.Native"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
             hints.reflection().registerType(TypeReference.of("com.sun.jna.Structure"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
             hints.reflection().registerType(TypeReference.of("com.sun.jna.Pointer"), MemberCategory.INVOKE_PUBLIC_METHODS, MemberCategory.ACCESS_DECLARED_FIELDS);
 
-            // 6.4 注册 OSHI 硬件监控所需的核心平台反射类（OSHI会根据系统自动反射实例化这些类）
+            // 5.4 注册 OSHI 硬件监控所需的核心平台反射类（OSHI会根据系统自动反射实例化这些类）
             hints.reflection().registerType(TypeReference.of("oshi.SystemInfo"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS);
             hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.linux.LinuxHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
             hints.reflection().registerType(TypeReference.of("oshi.software.os.linux.LinuxOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);

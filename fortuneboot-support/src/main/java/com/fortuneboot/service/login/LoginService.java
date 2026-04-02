@@ -1,15 +1,14 @@
 package com.fortuneboot.service.login;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.extra.servlet.JakartaServletUtil;
+import cn.hutool.core.codec.Base64;
 import com.fortuneboot.common.config.FortuneBootConfig;
 import com.fortuneboot.common.constant.Constants.Captcha;
 import com.fortuneboot.common.exception.ApiException;
@@ -22,6 +21,7 @@ import com.fortuneboot.service.cache.GuavaCacheService;
 import com.fortuneboot.service.cache.MapCache;
 import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.infrastructure.thread.ThreadPoolManager;
+import com.fortuneboot.infrastructure.config.captcha.SvgCaptchaUtil;
 import com.fortuneboot.service.login.dto.CaptchaDTO;
 import com.fortuneboot.service.login.dto.ConfigDTO;
 import com.fortuneboot.service.login.command.LoginCommand;
@@ -29,8 +29,6 @@ import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.ConfigKeyEnum;
 import com.fortuneboot.common.enums.common.LoginStatusEnum;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
-import com.google.code.kaptcha.Producer;
-import java.awt.image.BufferedImage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,7 +38,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.FastByteArrayOutputStream;
 
 /**
  * 登录校验方法
@@ -59,10 +56,6 @@ public class LoginService {
     private final GuavaCacheService guavaCache;
 
     private final AuthenticationManager authenticationManager;
-
-    private final Producer captchaProducer;
-
-    private final Producer captchaProducerMath;
 
     /**
      * 登录验证
@@ -128,40 +121,24 @@ public class LoginService {
         captchaDTO.setIsCaptchaOn(isCaptchaOn);
 
         if (isCaptchaOn) {
-            String expression;
-            String answer = null;
-            BufferedImage image = null;
+            SvgCaptchaUtil.CaptchaResult captchaResult;
 
-            // 生成验证码
+            // 生成验证码（纯 SVG，不依赖 AWT，兼容 GraalVM native image）
             String captchaType = FortuneBootConfig.getCaptchaType();
             if (Captcha.MATH_TYPE.equals(captchaType)) {
-                String capText = captchaProducerMath.createText();
-                String[] expressionAndAnswer = capText.split("@");
-                expression = expressionAndAnswer[0];
-                answer = expressionAndAnswer[1];
-                image = captchaProducerMath.createImage(expression);
-            }
-
-            if (Captcha.CHAR_TYPE.equals(captchaType)) {
-                expression = answer = captchaProducer.createText();
-                image = captchaProducer.createImage(expression);
-            }
-
-            if (image == null) {
+                captchaResult = SvgCaptchaUtil.createMathCaptcha();
+            } else if (Captcha.CHAR_TYPE.equals(captchaType)) {
+                captchaResult = SvgCaptchaUtil.createCharCaptcha(4);
+            } else {
                 throw new ApiException(ErrorCode.Internal.LOGIN_CAPTCHA_GENERATE_FAIL);
             }
 
             // 保存验证码信息
             String imgKey = IdUtil.simpleUUID();
-
-            cacheService.captchaCache.set(imgKey, answer);
-            // 转换流信息写出
-            FastByteArrayOutputStream os = new FastByteArrayOutputStream();
-            ImgUtil.writeJpg(image, os);
+            cacheService.captchaCache.set(imgKey, captchaResult.getAnswer());
 
             captchaDTO.setCaptchaCodeKey(imgKey);
-            captchaDTO.setCaptchaCodeImg(Base64.encode(os.toByteArray()));
-
+            captchaDTO.setCaptchaCodeImg(captchaResult.getImageBase64());
         }
 
         return captchaDTO;

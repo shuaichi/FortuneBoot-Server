@@ -224,12 +224,7 @@
                 <version>${jwt.version}</version>
             </dependency>
 
-            <!-- 验证码 -->
-            <dependency>
-                <groupId>com.github.penggle</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>${kaptcha.version}</version>
-            </dependency>
+            <!-- 验证码：已替换为纯 SVG 实现，不再依赖 kaptcha -->
 
             <dependency>
                 <groupId>com.fortuneboot</groupId>

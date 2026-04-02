@@ -2,16 +2,16 @@ package com.fortuneboot.infrastructure.config.captcha;
 
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.google.code.kaptcha.text.impl.DefaultTextCreator;
 
 /**
  * verification code of math Generator
+ * <p>
+ * 不再依赖 kaptcha 的 DefaultTextCreator，纯文本生成，兼容 GraalVM native image。
  *
  * @author valarchie
  */
-public class CaptchaMathTextCreator extends DefaultTextCreator {
+public class CaptchaMathTextCreator {
 
-    @Override
     public String getText() {
         int x = RandomUtil.randomInt(13);
         int y = RandomUtil.randomInt(13);

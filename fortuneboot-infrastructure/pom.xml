@@ -31,17 +31,7 @@
             <artifactId>druid-spring-boot-4-starter</artifactId>
         </dependency>
 
-        <!-- 验证码 -->
-        <dependency>
-            <groupId>com.github.penggle</groupId>
-            <artifactId>kaptcha</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jakarta.servlet-api</artifactId>
-                    <groupId>jakarta.servlet</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- 验证码：已替换为纯 SVG 实现（SvgCaptchaUtil），不再依赖 kaptcha -->
 
         <!-- 获取系统信息 -->
         <dependency>
