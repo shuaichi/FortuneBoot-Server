@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Release-v1.5.0-green.svg" alt="Release">
+  <img src="https://img.shields.io/badge/Release-v1.5.1-green.svg" alt="Release">
   <img src="https://img.shields.io/badge/JDK-25+-green.svg" alt="JDK">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License">
   <img src="https://img.shields.io/badge/Spring%20Boot-4.0.5-blue.svg" alt="Spring Boot">
@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Copyright-@FortuneBoot-%23ff3f59.svg" alt="Copyright">
 </p>
 
-<h1 align="center">FortuneBoot v1.5.0</h1>
+<h1 align="center">FortuneBoot v1.5.1</h1>
 <h4 align="center">好记 —— 你的家庭财务管家</h4>
 
 ---
