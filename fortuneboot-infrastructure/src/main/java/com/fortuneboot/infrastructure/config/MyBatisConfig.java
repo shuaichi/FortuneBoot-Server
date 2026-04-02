@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.fortuneboot.infrastructure.handler.SqliteBlobTypeHandler;
 import com.fortuneboot.infrastructure.handler.SqliteDateTypeHandler;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
 import org.apache.ibatis.type.JdbcType;
@@ -66,6 +67,14 @@ public class MyBatisConfig {
                 configuration.getTypeHandlerRegistry().register(Date.class, JdbcType.TIMESTAMP, handler);
                 configuration.getTypeHandlerRegistry().register(Date.class, JdbcType.DATE, handler);
                 configuration.getTypeHandlerRegistry().register(Date.class, JdbcType.TIME, handler);
+
+                log.info(">>> SQLite 模式：注册 SqliteBlobTypeHandler");
+                SqliteBlobTypeHandler blobHandler = new SqliteBlobTypeHandler();
+                configuration.getTypeHandlerRegistry().register(byte[].class, blobHandler);
+                configuration.getTypeHandlerRegistry().register(byte[].class, JdbcType.BLOB, blobHandler);
+                configuration.getTypeHandlerRegistry().register(byte[].class, JdbcType.BINARY, blobHandler);
+                configuration.getTypeHandlerRegistry().register(byte[].class, JdbcType.VARBINARY, blobHandler);
+                configuration.getTypeHandlerRegistry().register(byte[].class, JdbcType.LONGVARBINARY, blobHandler);
             }
         };
     }

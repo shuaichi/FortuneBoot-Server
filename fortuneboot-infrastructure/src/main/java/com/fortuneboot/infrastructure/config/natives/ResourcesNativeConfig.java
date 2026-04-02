@@ -79,6 +79,12 @@ public class ResourcesNativeConfig {
                     MemberCategory.INVOKE_PUBLIC_METHODS,
                     MemberCategory.ACCESS_DECLARED_FIELDS);
 
+            // ================= 2.1.1 自定义 SQLite BLOB 处理器 =================
+            hints.reflection().registerType(TypeReference.of("com.fortuneboot.infrastructure.handler.SqliteBlobTypeHandler"),
+                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                    MemberCategory.ACCESS_DECLARED_FIELDS);
+
             // ================= 2.2 HikariCP（SQLite 模式连接池）=================
             hints.reflection().registerType(TypeReference.of("com.zaxxer.hikari.HikariDataSource"),
                     MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
