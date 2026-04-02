@@ -94,6 +94,7 @@ class UserModelTest {
         UserModel userModel = userModelFactory.create();
         long adminId = 1L;
         userModel.setUserId(adminId);
+        userModel.setIsAdmin(true);
         SystemLoginUser loginUser = new SystemLoginUser();
         loginUser.setUserId(2L);
 

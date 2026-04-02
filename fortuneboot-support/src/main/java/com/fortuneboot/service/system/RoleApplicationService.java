@@ -5,7 +5,9 @@ import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.factory.system.factory.RoleModelFactory;
 import com.fortuneboot.factory.system.model.RoleModel;
 import com.fortuneboot.repository.system.SysMenuRepo;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.fortuneboot.service.cache.CacheCenter;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.domain.command.system.AddRoleCommand;
 import com.fortuneboot.domain.command.system.UpdateDataScopeCommand;
 import com.fortuneboot.domain.command.system.UpdateRoleCommand;
@@ -45,6 +47,8 @@ public class RoleApplicationService {
     private final SysUserRepo userRepository;
 
     private final SysMenuRepo menuRepository;
+
+    private final CacheService cacheService;
 
 
     public PageDTO<RoleDTO> getRoleList(RoleQuery query) {
@@ -92,6 +96,8 @@ public class RoleApplicationService {
         roleModel.checkRoleNameUnique();
 
         roleModel.updateById();
+        // 角色权限变更，踢出所有使用该角色的用户会话
+        invalidateLoginCacheByRoleId(updateCommand.getRoleId());
     }
 
     public void updateStatus(UpdateStatusCommand command) {
@@ -100,12 +106,16 @@ public class RoleApplicationService {
         roleModel.setStatus(command.getStatus());
 
         roleModel.updateById();
+        // 角色状态变更（禁用），踢出所有使用该角色的用户会话
+        invalidateLoginCacheByRoleId(command.getRoleId());
     }
 
     public void updateDataScope(UpdateDataScopeCommand command) {
         RoleModel roleModel = roleModelFactory.loadById(command.getRoleId());
         roleModel.setDataScope(command.getDataScope());
         roleModel.updateById();
+        // 数据范围变更，踢出所有使用该角色的用户会话
+        invalidateLoginCacheByRoleId(command.getRoleId());
     }
 
 
@@ -133,6 +143,8 @@ public class RoleApplicationService {
             userRepository.update(updateWrapper);
 
             CacheCenter.userCache.delete(userId);
+            // 用户角色被移除，踢出其登录会话
+            cacheService.removeLoginUserByUserId(userId);
         }
     }
 
@@ -150,8 +162,24 @@ public class RoleApplicationService {
             user.updateById();
 
             CacheCenter.userCache.delete(userId);
+            // 用户角色变更，踢出其旧的登录会话，下次登录将使用新角色权限
+            cacheService.removeLoginUserByUserId(userId);
         }
     }
 
+    /**
+     * 查找指定角色的所有用户，批量使其登录会话失效
+     */
+    private void invalidateLoginCacheByRoleId(Long roleId) {
+        List<Long> userIds = userRepository.list(
+                Wrappers.<SysUserEntity>lambdaQuery()
+                        .select(SysUserEntity::getUserId)
+                        .eq(SysUserEntity::getRoleId, roleId)
+        ).stream().map(SysUserEntity::getUserId).collect(Collectors.toList());
+
+        if (!userIds.isEmpty()) {
+            cacheService.removeLoginUsersByUserIds(userIds);
+        }
+    }
 
 }

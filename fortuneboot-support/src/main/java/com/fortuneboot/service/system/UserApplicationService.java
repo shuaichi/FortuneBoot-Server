@@ -12,6 +12,7 @@ import com.fortuneboot.factory.system.model.UserModel;
 import com.fortuneboot.repository.system.SysConfigRepo;
 import com.fortuneboot.repository.system.SysRoleRepo;
 import com.fortuneboot.service.cache.CacheCenter;
+import com.fortuneboot.service.cache.CacheService;
 import com.fortuneboot.domain.common.command.BulkOperationCommand;
 import com.fortuneboot.domain.common.dto.CurrentLoginUserDTO;
 import com.fortuneboot.domain.dto.RoleDTO;
@@ -61,6 +62,8 @@ public class UserApplicationService {
     private final SysConfigRepo sysConfigRepo;
 
     private final ApplicationEventPublisher eventPublisher;
+
+    private final CacheService cacheService;
 
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
         Page<SearchUserDO> userPage = userRepository.getUserList(query);
@@ -163,6 +166,8 @@ public class UserApplicationService {
         model.updateById();
 
         CacheCenter.userCache.delete(model.getUserId());
+        // 角色/权限变更，强制使该用户的登录会话失效，权限立即生效
+        cacheService.removeLoginUserByUserId(model.getUserId());
     }
 
     public void deleteUsers(SystemLoginUser loginUser, BulkOperationCommand<Long> command) {
@@ -170,6 +175,8 @@ public class UserApplicationService {
             UserModel userModel = userModelFactory.loadById(id);
             userModel.checkCanBeDelete(loginUser);
             userModel.deleteById();
+            // 用户被删除，同步清除其登录会话
+            cacheService.removeLoginUserByUserId(id);
         }
     }
 
@@ -197,6 +204,8 @@ public class UserApplicationService {
         userModel.updateById();
 
         CacheCenter.userCache.delete(userModel.getUserId());
+        // 用户状态变更（禁用），强制使其登录会话失效
+        cacheService.removeLoginUserByUserId(userModel.getUserId());
     }
 
     public void updateUserAvatar(UpdateUserAvatarCommand command) {

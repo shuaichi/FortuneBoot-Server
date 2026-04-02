@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -119,6 +120,38 @@ public class CacheService {
             loginTokenRepo.removeByTokenKey(tokenKey);
         } catch (Exception e) {
             log.error("删除登录令牌失败, tokenKey: {}", tokenKey, e);
+        }
+    }
+
+    /**
+     * 根据 userId 删除该用户所有登录会话（内存缓存 + DB），使权限变更立即生效
+     */
+    public void removeLoginUserByUserId(Long userId) {
+        if (userId == null) {
+            return;
+        }
+        try {
+            List<String> tokenKeys = loginTokenRepo.listTokenKeysByUserId(userId);
+            tokenKeys.forEach(loginUserCache::delete);
+            loginTokenRepo.removeByUserId(userId);
+        } catch (Exception e) {
+            log.error("删除用户登录令牌失败, userId: {}", userId, e);
+        }
+    }
+
+    /**
+     * 根据 userIds 批量删除登录会话（内存缓存 + DB），使权限变更立即生效
+     */
+    public void removeLoginUsersByUserIds(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return;
+        }
+        try {
+            List<String> tokenKeys = loginTokenRepo.listTokenKeysByUserIds(userIds);
+            tokenKeys.forEach(loginUserCache::delete);
+            loginTokenRepo.removeByUserIds(userIds);
+        } catch (Exception e) {
+            log.error("批量删除用户登录令牌失败, userIds: {}", userIds, e);
         }
     }
 }

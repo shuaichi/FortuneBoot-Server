@@ -72,12 +72,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return loginUser;
     }
 
-    public RoleInfo getRoleInfo(Long roleId, boolean isAdmin) {
+    public RoleInfo getRoleInfo(Long roleId, Boolean isAdmin) {
         if (roleId == null) {
             return RoleInfo.EMPTY_ROLE;
         }
 
-        if (isAdmin) {
+        if (Boolean.TRUE.equals(isAdmin)) {
             LambdaQueryWrapper<SysMenuEntity> menuQuery = Wrappers.lambdaQuery();
             menuQuery.select(SysMenuEntity::getMenuId);
             List<SysMenuEntity> allMenus = menuService.list(menuQuery);

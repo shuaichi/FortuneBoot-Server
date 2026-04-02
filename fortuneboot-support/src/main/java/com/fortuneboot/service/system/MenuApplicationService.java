@@ -51,7 +51,7 @@ public class MenuApplicationService {
 
     public List<Tree<Long>> getDropdownList(SystemLoginUser loginUser) {
         List<SysMenuEntity> menuEntityList =
-            loginUser.isAdmin() ? menuRepository.list() : menuRepository.getMenuListByUserId(loginUser.getUserId());
+            Boolean.TRUE.equals(loginUser.getIsAdmin()) ? menuRepository.list() : menuRepository.getMenuListByUserId(loginUser.getUserId());
 
         return buildMenuTreeSelect(menuEntityList);
     }
@@ -115,7 +115,7 @@ public class MenuApplicationService {
 
     public List<Tree<Long>> buildMenuEntityTree(SystemLoginUser loginUser) {
         List<SysMenuEntity> allMenus;
-        if (loginUser.isAdmin()) {
+        if (Boolean.TRUE.equals(loginUser.getIsAdmin())) {
             allMenus = menuRepository.list();
         } else {
             allMenus = menuRepository.getMenuListByUserId(loginUser.getUserId());

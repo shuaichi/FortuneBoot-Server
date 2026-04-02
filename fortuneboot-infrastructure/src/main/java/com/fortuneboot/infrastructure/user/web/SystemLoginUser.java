@@ -16,7 +16,7 @@ public class SystemLoginUser extends BaseLoginUser {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean isAdmin;
+    private Boolean isAdmin;
 
     private RoleInfo roleInfo;
 

@@ -36,4 +36,24 @@ public interface SysLoginTokenRepo extends IService<SysLoginTokenEntity> {
      * 根据 tokenKey 模糊查询匹配的令牌
      */
     List<SysLoginTokenEntity> listByTokenKeyPrefix(String prefix);
+
+    /**
+     * 根据 userId 查询所有 tokenKey 列表
+     */
+    List<String> listTokenKeysByUserId(Long userId);
+
+    /**
+     * 根据 userId 批量查询 tokenKey 列表
+     */
+    List<String> listTokenKeysByUserIds(List<Long> userIds);
+
+    /**
+     * 根据 userId 删除所有登录令牌
+     */
+    boolean removeByUserId(Long userId);
+
+    /**
+     * 根据 userIds 批量删除登录令牌
+     */
+    boolean removeByUserIds(List<Long> userIds);
 }
