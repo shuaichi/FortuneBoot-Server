@@ -1,5 +1,7 @@
 package com.fortuneboot.infrastructure.user.web;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fortuneboot.infrastructure.user.base.BaseLoginUser;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,6 +18,8 @@ public class SystemLoginUser extends BaseLoginUser {
 
     private static final long serialVersionUID = 1L;
 
+    // 序列化时使用 isAdmin
+    @JsonProperty("isAdmin")
     private Boolean isAdmin;
 
     private RoleInfo roleInfo;
