@@ -83,6 +83,7 @@ public class RoleApplicationService {
                 roleModel.checkRoleCanBeDelete();
 
                 roleModel.deleteById();
+                CacheCenter.roleCache.delete(roleModel.getRoleId());
             }
         }
     }
