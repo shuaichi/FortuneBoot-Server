@@ -53,7 +53,7 @@ public class FortuneMemberService {
 
     public void modify(FortuneMemberModifyCommand modifyCommand) {
         FortuneMemberModel model = fortuneMemberFactory.loadById(modifyCommand.getMemberId());
-        model.checkBookId(modifyCommand.getBookId()); // 修复：防越权鉴权
+        model.checkBookId(modifyCommand.getBookId());
         model.loadModifyCommand(modifyCommand);
         model.checkMemberExist();
         model.updateById();
@@ -69,7 +69,7 @@ public class FortuneMemberService {
     public void remove(Long bookId, Long memberId) {
         Boolean used = fortuneMemberRelationRepo.existByMemberId(memberId);
         if (used) {
-            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "成员已被账单使用，无法删除");
+            throw new ApiException(ErrorCode.Business.MEMBER_ALREADY_USED);
         }
         FortuneMemberModel model = fortuneMemberFactory.loadById(memberId);
         model.checkBookId(bookId);

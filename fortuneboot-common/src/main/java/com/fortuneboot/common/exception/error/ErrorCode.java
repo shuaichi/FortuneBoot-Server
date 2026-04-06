@@ -346,6 +346,15 @@ public enum ErrorCode implements ErrorCodeInterface {
 
         RECURRING_BILL_INIT_FAILED(31008,"初始化周期记账失败，规则ID为：{}","Business.RECURRING_BILL_INIT_FAILED"),
 
+        // ---------------------------------- MEMBER -----------------------------------------------
+
+        MEMBER_ADD_EXIST(32001, "成员{}已存在，请勿重复添加", "Business.MEMBER_ADD_EXIST"),
+
+        MEMBER_ADD_EXIST_IN_RECYCLE_BIN(32002, "成员{}在回收站中，请从回收站删除后再试", "Business.MEMBER_ADD_EXIST_IN_RECYCLE_BIN"),
+
+        MEMBER_NOT_MATCH_BOOK(32003, "成员与账本不匹配", "Business.MEMBER_NOT_MATCH_BOOK"),
+
+        MEMBER_ALREADY_USED(32004, "成员已被使用，不能删除，请删除账单后再试", "Business.MEMBER_ALREADY_USED"),
         ;
 
         private final int code;

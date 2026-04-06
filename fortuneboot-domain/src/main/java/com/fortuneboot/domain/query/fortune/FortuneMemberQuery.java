@@ -26,6 +26,7 @@ public class FortuneMemberQuery extends AbstractLambdaPageQuery<FortuneMemberEnt
     private Long bookId;
 
     private String memberName;
+
     private Boolean enable;
 
     @NotNull

@@ -353,6 +353,48 @@ INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_incom
 INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (3, 1, '淘宝商城', 1, 0, 1, 0, 400, null, 1, null, null, '2025-09-28 17:45:12', 0);
 INSERT INTO fortune_payee (payee_id, book_id, payee_name, can_expense, can_income, enable, recycle_bin, sort, remark, creator_id, updater_id, update_time, create_time, deleted) VALUES (4, 1, '拼多多', 1, 0, 1, 0, 300, null, 1, null, null, '2025-09-28 17:45:12', 0);
 
+CREATE TABLE `fortune_member`
+(
+    `member_id`   bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `book_id`     bigint(20) NOT NULL COMMENT '账本ID',
+    `member_name` varchar(50) NOT NULL COMMENT '成员名称',
+    `sort`        int(11) DEFAULT '0' COMMENT '排序',
+    `enable`      tinyint(1) DEFAULT '1' COMMENT '是否启用',
+    `remark`      varchar(512) DEFAULT NULL COMMENT '备注',
+    `recycle_bin` tinyint(1) DEFAULT '0' COMMENT '回收站',
+    `creator_id`  bigint(20) DEFAULT NULL COMMENT '创建者ID',
+    `create_time` datetime     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updater_id`  bigint(20) DEFAULT NULL COMMENT '更新者ID',
+    `update_time` datetime     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted`     tinyint(1) DEFAULT '0' COMMENT '删除标志',
+    PRIMARY KEY (`member_id`),
+    KEY           `idx_book_id` (`book_id`),
+    -- 优化：覆盖常见查询条件（按账本查未删除、启用的成员，并按排序字段排序）
+    KEY           `idx_book_deleted_enable_sort` (`book_id`, `deleted`, `enable`, `sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账单成员表';
+
+-- ----------------------------
+-- 2. 账单与成员关系表
+-- ----------------------------
+CREATE TABLE `fortune_member_relation`
+(
+    `member_relation_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `bill_id`            bigint(20) NOT NULL COMMENT '账单ID',
+    `member_id`          bigint(20) NOT NULL COMMENT '成员ID',
+    `creator_id`         bigint(20) DEFAULT NULL COMMENT '创建者ID',
+    `create_time`        datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updater_id`         bigint(20) DEFAULT NULL COMMENT '更新者ID',
+    `update_time`        datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted`            tinyint(1) DEFAULT '0' COMMENT '删除标志',
+    PRIMARY KEY (`member_relation_id`),
+    -- 优化：防止同一账单重复关联同一成员
+    UNIQUE KEY `uk_bill_member` (`bill_id`, `member_id`),
+    -- 优化：查询某账单下未删除的成员列表
+    KEY                  `idx_bill_deleted` (`bill_id`, `deleted`),
+    -- 优化：查询某成员参与的未删除账单
+    KEY                  `idx_member_deleted` (`member_id`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账单成员关系表';
+
 create table if not exists fortune_recurring_bill_log
 (
     log_id             bigint auto_increment comment '主键'
@@ -675,6 +717,7 @@ INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, pat
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (67, '分组管理', 1, 'FortuneGroup', 66, '/fortune/group/index', 0, '', '{"title":"分组管理","icon":"fa:group","showLink":true,"showParent":true,"rank":1}', 1, '', 1, '2025-02-06 21:49:50', 1, '2025-04-12 19:47:40', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (68, '账本管理', 1, 'FortuneBook', 66, '/fortune/book/index', 0, '', '{"title":"账本管理","icon":"fa:book","showLink":true,"showParent":true,"rank":2}', 1, '', 1, '2025-02-06 21:00:26', 1, '2025-04-12 19:47:46', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (69, '周期记账', 1, 'FortuneRecurringBill', 66, '/fortune/recurring-bill/index', 0, '', '{"title":"周期记账","icon":"fa-solid:recycle","showLink":true,"showParent":true,"rank":10}', 1, '', 1, '2025-07-08 21:48:37', 1, '2025-07-08 21:48:37', 0);
+INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (80, '成员管理', 1, 'FortuneBookMember', 84, '/fortune/member/index', 0, '', '{"title":"成员管理","showLink":false,"showParent":true}', 1, '', 1, '2025-02-15 02:41:14', 1, '2025-02-22 17:09:19', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (81, '账户管理', 1, 'FortuneAccount', 66, '/fortune/account/index', 0, '', '{"title":"账户管理","icon":"fa:credit-card","showLink":true,"showParent":true,"rank":3}', 1, '', 1, '2025-02-07 15:46:23', 1, '2025-04-12 19:47:52', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (82, '账单管理', 1, 'FortuneBill', 66, '/fortune/bill/index', 0, '', '{"title":"账单管理","icon":"fa-solid:money-bill-alt","showLink":true,"showParent":true,"rank":4}', 1, '', 1, '2025-02-08 23:14:36', 1, '2025-04-12 19:47:58', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (83, '交易对象', 1, 'FortuneBookPayee', 84, '/fortune/payee/index', 0, '', '{"title":"交易对象","showLink":false,"showParent":true}', 1, '', 1, '2025-02-13 16:04:57', 1, '2025-02-22 17:09:26', 0);

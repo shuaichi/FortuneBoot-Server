@@ -49,15 +49,18 @@ public class FortuneMemberModel extends FortuneMemberEntity {
 
     public void checkMemberExist() {
         FortuneMemberEntity exist = fortuneMemberRepo.getByBookIdAndName(this.getBookId(), this.getMemberName());
-        if (Objects.nonNull(exist) && !Objects.equals(exist.getMemberId(), this.getMemberId())) {
-            // 借用之前异常类的设计，这里复用 TAG_ADD_EXIST (也可以在 ErrorCode 里加新的成员枚举)
-            throw new ApiException(ErrorCode.Business.TAG_ADD_EXIST, this.getMemberName());
+        if (Objects.isNull(exist)) {
+            return;
         }
+        if (exist.getRecycleBin()) {
+            throw new ApiException(ErrorCode.Business.MEMBER_ADD_EXIST_IN_RECYCLE_BIN, this.getMemberName());
+        }
+        throw new ApiException(ErrorCode.Business.MEMBER_ADD_EXIST, this.getMemberName());
     }
 
     public void checkBookId(Long bookId) {
         if (!Objects.equals(this.getBookId(), bookId)) {
-            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION);
+            throw new ApiException(ErrorCode.Business.MEMBER_NOT_MATCH_BOOK);
         }
     }
 }
