@@ -115,4 +115,9 @@ public class FortuneBillAddCommand {
      */
     private List<MultipartFile> fileList;
 
+    /**
+     * 附加费用列表（手续费/优惠）
+     */
+    private List<FortuneBillExtraAddCommand> extras;
+
 }

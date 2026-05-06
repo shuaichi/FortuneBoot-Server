@@ -34,6 +34,10 @@ public class FortuneBillVo {
             List<FortuneMemberVo> members = bo.getMemberList().stream().map(FortuneMemberVo::new).toList();
             this.setMemberList(members);
         }
+        if (CollectionUtils.isNotEmpty(bo.getExtras())) {
+            List<FortuneBillExtraVo> extraVos = bo.getExtras().stream().map(FortuneBillExtraVo::new).toList();
+            this.setExtras(extraVos);
+        }
         this.setHasFile(bo.getHasFile());
     }
 
@@ -168,4 +172,9 @@ public class FortuneBillVo {
      * JSON字段：hasFile；默认false，服务层批量判定后置true
      */
     private Boolean hasFile = false;
+
+    /**
+     * 附加费用（手续费/优惠）
+     */
+    private List<FortuneBillExtraVo> extras;
 }

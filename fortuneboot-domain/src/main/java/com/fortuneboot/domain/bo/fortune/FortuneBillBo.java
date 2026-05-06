@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneBillExtraEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneMemberEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
@@ -155,5 +156,10 @@ public class FortuneBillBo {
      * 分页接口派生字段，默认 false；由服务批量判定填充，避免N+1
      */
     private Boolean hasFile = false;
+
+    /**
+     * 附加费用（手续费/优惠）
+     */
+    private List<FortuneBillExtraEntity> extras;
 
 }

@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- *
  * @author zhangchi118
  * @date 2025/8/25 21:38
  **/
@@ -46,10 +45,13 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         toAccount.checkEnable();
         toAccount.checkCanTransferIn();
 
-        // 使用原子更新
-        fromAccount.addBalanceAtomic(billModel.getAmount().negate());
-        // 这里必须使用 convertedAmount，否则汇率不对
-        toAccount.addBalanceAtomic(billModel.getConvertedAmount());
+        // 转出账户扣款 = 原转出金额 + from侧手续费 - from侧优惠
+        BigDecimal fromDeduct = this.calcFromDeductAmount(context);
+        fromAccount.addBalanceAtomic(fromDeduct.negate());
+
+        // 转入账户入账 = 原转入金额(convertedAmount) - to侧手续费 + to侧优惠
+        BigDecimal toCredit = this.calcToCreditAmount(context);
+        toAccount.addBalanceAtomic(toCredit);
     }
 
     @Override
@@ -58,9 +60,32 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
 
-        // 回滚必须使用原子操作，并区分原币种与目标币种金额
-        fromAccount.addBalanceAtomic(billModel.getAmount());
-        toAccount.addBalanceAtomic(billModel.getConvertedAmount().negate());
+        // 回滚必须与 confirmBalance 保持对称
+        BigDecimal fromDeduct = this.calcFromDeductAmount(context);
+        fromAccount.addBalanceAtomic(fromDeduct);
+
+        BigDecimal toCredit = this.calcToCreditAmount(context);
+        toAccount.addBalanceAtomic(toCredit.negate());
+    }
+
+    /**
+     * 转出账户实际扣款 = 转出金额 + from侧手续费 - from侧优惠
+     */
+    private BigDecimal calcFromDeductAmount(BillStrategyContext context) {
+        BigDecimal amount = Objects.requireNonNullElse(context.getBillModel().getAmount(), BigDecimal.ZERO);
+        BigDecimal fee = Objects.requireNonNullElse(context.getFromTotalFee(), BigDecimal.ZERO);
+        BigDecimal discount = Objects.requireNonNullElse(context.getFromTotalDiscount(), BigDecimal.ZERO);
+        return amount.add(fee).subtract(discount);
+    }
+
+    /**
+     * 转入账户实际入账 = 转入金额(convertedAmount) - to侧手续费 + to侧优惠
+     */
+    private BigDecimal calcToCreditAmount(BillStrategyContext context) {
+        BigDecimal convertedAmount = Objects.requireNonNullElse(context.getBillModel().getConvertedAmount(), BigDecimal.ZERO);
+        BigDecimal fee = Objects.requireNonNullElse(context.getToTotalFee(), BigDecimal.ZERO);
+        BigDecimal discount = Objects.requireNonNullElse(context.getToTotalDiscount(), BigDecimal.ZERO);
+        return convertedAmount.subtract(fee).add(discount);
     }
 
     @Override

@@ -92,6 +92,8 @@ public class FortuneBillService {
     private final FortuneMemberRepo fortuneMemberRepo;
     private final FortuneMemberRelationService fortuneMemberRelationService;
     private final FortuneMemberFactory fortuneMemberFactory;
+    private final FortuneBillExtraService fortuneBillExtraService;
+    private final FortuneBillExtraRepo fortuneBillExtraRepo;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -112,6 +114,8 @@ public class FortuneBillService {
         this.fillPayee(list);
         // 批量填充是否存在附件，避免N+1
         this.fillHasFiles(list);
+        // 批量填充附加费用（手续费/优惠）
+        this.fillExtras(list);
         return new PageDTO<>(list, page.getTotal());
     }
 
@@ -233,6 +237,23 @@ public class FortuneBillService {
         }
     }
 
+    /**
+     * 批量填充附加费用（手续费/优惠），避免N+1
+     */
+    private void fillExtras(List<FortuneBillBo> list) {
+        List<Long> billIdList = list.stream().map(FortuneBillBo::getBillId).filter(Objects::nonNull).toList();
+        if (CollectionUtils.isEmpty(billIdList)) {
+            return;
+        }
+        Map<Long, List<FortuneBillExtraEntity>> extrasMap = fortuneBillExtraRepo.getByBillIdList(billIdList);
+        for (FortuneBillBo bo : list) {
+            List<FortuneBillExtraEntity> extras = extrasMap.get(bo.getBillId());
+            if (CollectionUtils.isNotEmpty(extras)) {
+                bo.setExtras(extras);
+            }
+        }
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public Long add(FortuneBillAddCommand addCommand) {
         // 主模型操作
@@ -277,6 +298,9 @@ public class FortuneBillService {
         this.processMemberRelations(addCommand.getMemberIdList(), fortuneBillModel);
 
         fortuneFileService.batchAdd(fortuneBillModel.getBillId(), addCommand.getFileList());
+
+        // 保存附加费用（手续费/优惠）
+        fortuneBillExtraService.batchAdd(fortuneBillModel.getBillId(), addCommand.getExtras());
 
         return fortuneBillModel.getBillId();
     }
@@ -402,6 +426,10 @@ public class FortuneBillService {
         fortuneFileService.phyRemoveByBillId(modifyCommand.getBillId());
         fortuneFileService.batchAdd(modifyCommand.getBillId(), modifyCommand.getFileList());
 
+        // 12. 更新账单附加费用（先物理删除旧的，再添加新的）
+        fortuneBillExtraService.phyRemoveByBillId(modifyCommand.getBillId());
+        fortuneBillExtraService.batchAdd(modifyCommand.getBillId(), modifyCommand.getExtras());
+
 
     }
 
@@ -417,6 +445,8 @@ public class FortuneBillService {
         fortuneTagRelationRepo.removeByBillId(billId);
         // 删除分类
         fortuneCategoryRelationRepo.removeByBillId(billId);
+        // 物理删除附加费用（手续费/优惠）
+        fortuneBillExtraService.phyRemoveByBillId(billId);
         // 删除账单
         fortuneBillModel.deleteById();
         // 删除账单附件
@@ -425,6 +455,10 @@ public class FortuneBillService {
 
     /**
      * 构建策略执行上下文
+     * <p>
+     * 默认会将账单已有的附加费用（手续费/优惠）从 DB 加载并回填到 context.command 中，
+     * 保证 refuseBalance 等回滚场景能正确计算原始手续费/优惠。
+     * 后续 add/modify 流程可通过 context.setCommand(...) 覆盖为最新的命令。
      */
     private BillStrategyContext buildContext(FortuneBillModel bill) {
         BillStrategyContext context = new BillStrategyContext();
@@ -443,7 +477,37 @@ public class FortuneBillService {
             context.setToAccount(fortuneAccountFactory.loadById(bill.getToAccountId()));
         }
 
+        // 回填原始附加费用（手续费/优惠）到 command，便于回滚时使用
+        context.setCommand(this.buildOriginalCommand(bill.getBillId()));
+
         return context;
+    }
+
+    /**
+     * 根据已存在的账单id构建仅包含 extras 的临时 command，
+     * 用于 refuseBalance/unConfirm/remove 等场景下的回滚计算。
+     */
+    private FortuneBillAddCommand buildOriginalCommand(Long billId) {
+        FortuneBillAddCommand original = new FortuneBillAddCommand();
+        if (Objects.isNull(billId)) {
+            return original;
+        }
+        List<FortuneBillExtraEntity> existing = fortuneBillExtraRepo.getByBillId(billId);
+        if (CollectionUtils.isEmpty(existing)) {
+            return original;
+        }
+        List<com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand> extras = existing.stream().map(entity -> {
+            com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand cmd = new com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand();
+            cmd.setBillId(entity.getBillId());
+            cmd.setExtraType(entity.getExtraType());
+            cmd.setAmount(entity.getAmount());
+            cmd.setAccountSide(entity.getAccountSide());
+            cmd.setCategoryId(entity.getCategoryId());
+            cmd.setRemark(entity.getRemark());
+            return cmd;
+        }).toList();
+        original.setExtras(extras);
+        return original;
     }
 
     @Transactional(rollbackFor = Exception.class)
