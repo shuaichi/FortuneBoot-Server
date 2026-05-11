@@ -58,12 +58,12 @@ public class FortuneBillAddCommand {
     private List<CategoryAmountDTO> categoryAmountPair;
 
     /**
-     * 金额
+     * 金额（由后端从 categoryAmountPair 累加计算，前端传入的值会被忽略）
      */
     private BigDecimal amount;
 
     /**
-     * 汇率转换后的金额
+     * 汇率转换后的金额（由后端根据汇率重新计算，前端传入的值会被忽略）
      */
     private BigDecimal convertedAmount;
 

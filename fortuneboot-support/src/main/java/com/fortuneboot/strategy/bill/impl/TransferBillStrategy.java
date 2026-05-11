@@ -1,9 +1,8 @@
 package com.fortuneboot.strategy.bill.impl;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
+import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
@@ -96,10 +95,17 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
 
-        // 始终基于 amount 和账户币种重新计算，不信任前端传入的 convertedAmount
+        // amount 由分类明细累加得出，不信任前端传入的 amount
+        // （前端复制账单时可能携带旧的 amount，与 categoryAmountPair 不一致）
+        BigDecimal amount = context.getCommand().getCategoryAmountPair().stream()
+                .map(CategoryAmountDTO::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        billModel.setAmount(amount);
+
+        // convertedAmount 始终基于 amount 和账户币种重新计算，不信任前端传入的值
         // （前端复制账单时可能携带旧的 convertedAmount，导致转入账户入账金额错误）
         BigDecimal convertedAmount = super.convertCurrency(
-                billModel.getAmount(),
+                amount,
                 fromAccount.getCurrencyCode(),
                 toAccount.getCurrencyCode(),
                 applicationScopeBo.getCurrencyTemplateBoList()
