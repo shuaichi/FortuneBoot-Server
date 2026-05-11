@@ -38,7 +38,8 @@ public class FortuneBillModel extends FortuneBillEntity {
 
     public void loadAddCommand(FortuneBillAddCommand addCommand) {
         if (Objects.nonNull(addCommand)) {
-            BeanUtil.copyProperties(addCommand, this,"billId");
+            // 排除 convertedAmount：由后端策略统一计算，不信任前端传入的值
+            BeanUtil.copyProperties(addCommand, this, "billId", "convertedAmount");
         }
     }
 

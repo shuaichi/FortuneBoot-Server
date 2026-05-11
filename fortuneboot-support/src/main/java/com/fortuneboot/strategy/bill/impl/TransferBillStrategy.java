@@ -34,7 +34,9 @@ public class TransferBillStrategy extends AbstractBillStrategy {
     @Transactional(rollbackFor = Exception.class)
     public void confirmBalance(BillStrategyContext context) {
         FortuneBillModel billModel = context.getBillModel();
-        if (Objects.isNull(billModel.getAccountId()) || Objects.isNull(billModel.getToAccountId())) {
+        if (!billModel.getConfirm()
+                || Objects.isNull(billModel.getAccountId())
+                || Objects.isNull(billModel.getToAccountId())) {
             return;
         }
         FortuneAccountModel fromAccount = context.getFromAccount();
@@ -94,9 +96,14 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
 
-        BigDecimal convertedAmount = Objects.nonNull(billModel.getConvertedAmount())
-                ? billModel.getConvertedAmount()
-                : super.convertCurrency(billModel.getAmount(), fromAccount.getCurrencyCode(), toAccount.getCurrencyCode(), applicationScopeBo.getCurrencyTemplateBoList());
+        // 始终基于 amount 和账户币种重新计算，不信任前端传入的 convertedAmount
+        // （前端复制账单时可能携带旧的 convertedAmount，导致转入账户入账金额错误）
+        BigDecimal convertedAmount = super.convertCurrency(
+                billModel.getAmount(),
+                fromAccount.getCurrencyCode(),
+                toAccount.getCurrencyCode(),
+                applicationScopeBo.getCurrencyTemplateBoList()
+        );
 
         billModel.setConvertedAmount(convertedAmount);
     }
