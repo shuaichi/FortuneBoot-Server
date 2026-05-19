@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  *
@@ -44,6 +45,11 @@ public class AdjustBillStrategy extends AbstractBillStrategy{
 
     @Override
     public void convertRate(BillStrategyContext context){
-        log.info("[余额调整] 不需要转换汇率");
+        // 余额调整不需要汇率转换，但需要从 command 中获取金额设置到 billModel
+        // 因为 loadAddCommand 排除了 amount 和 convertedAmount，所以这里必须手动设置
+        FortuneBillModel billModel = context.getBillModel();
+        BigDecimal amount = Objects.requireNonNullElse(context.getCommand().getAmount(), BigDecimal.ZERO);
+        billModel.setAmount(amount);
+        billModel.setConvertedAmount(amount);
     }
 }
