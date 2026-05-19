@@ -93,11 +93,12 @@ public class TransferBillStrategy extends AbstractBillStrategy {
         FortuneBillModel billModel = context.getBillModel();
         FortuneAccountModel fromAccount = context.getFromAccount();
         FortuneAccountModel toAccount = context.getToAccount();
-
+        BigDecimal amount = Objects.requireNonNullElse(context.getCommand().getAmount(), BigDecimal.ZERO);
+        billModel.setAmount(amount);
         // 始终基于 amount 和账户币种重新计算，不信任前端传入的 convertedAmount
         // （前端复制账单时可能携带旧的 convertedAmount，导致转入账户入账金额错误）
         BigDecimal convertedAmount = super.convertCurrency(
-                billModel.getAmount(),
+                amount,
                 fromAccount.getCurrencyCode(),
                 toAccount.getCurrencyCode(),
                 applicationScopeBo.getCurrencyTemplateBoList()
