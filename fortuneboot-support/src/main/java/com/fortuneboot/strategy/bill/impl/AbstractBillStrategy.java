@@ -10,6 +10,7 @@ import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,6 +22,7 @@ import java.util.Objects;
  * @author zhangchi118
  * @date 2025/8/25 22:00
  **/
+@Slf4j
 @AllArgsConstructor
 abstract class AbstractBillStrategy implements BillProcessStrategy {
 
@@ -77,6 +79,7 @@ abstract class AbstractBillStrategy implements BillProcessStrategy {
     public void convertRate(BillStrategyContext context) {
         FortuneBillModel billModel = context.getBillModel();
 
+        // 支出/收入场景：金额从 categoryAmountPair 累加计算
         BigDecimal amount = context.getCommand().getCategoryAmountPair().stream()
                 .map(CategoryAmountDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
