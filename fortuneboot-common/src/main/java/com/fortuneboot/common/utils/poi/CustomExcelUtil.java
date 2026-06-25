@@ -115,6 +115,8 @@ public class CustomExcelUtil {
             ExcelColumn annotation = field.getAnnotation(ExcelColumn.class);
             if (annotation != null) {
                 reader.addHeaderAlias(annotation.name(), field.getName());
+                String simpleHeaderName = annotation.name().replaceFirst("[（(].*$", "");
+                reader.addHeaderAlias(simpleHeaderName, field.getName());
             }
         }
 
