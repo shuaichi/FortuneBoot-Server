@@ -69,6 +69,7 @@ public class AdvanceStrategy extends AbstractBillStrategy {
         FortuneBillModel billModel = context.getBillModel();
         billModel.checkOrderId();
         FortuneFinanceOrderModel orderModel = fortuneFinanceOrderFactory.loadById(command.getOrderId());
+        orderModel.checkBookId(command.getBookId());
         orderModel.checkUsingOperateStatus();
         orderModel.setOutAmount(orderModel.getOutAmount().add(billModel.getAmount()));
         orderModel.updateById();

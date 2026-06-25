@@ -68,6 +68,7 @@ public class ReimburseStrategy extends AbstractBillStrategy {
         FortuneBillModel billModel = context.getBillModel();
         billModel.checkOrderId();
         FortuneFinanceOrderModel orderModel = fortuneFinanceOrderFactory.loadById(command.getOrderId());
+        orderModel.checkBookId(command.getBookId());
         orderModel.setInAmount(orderModel.getInAmount().add(billModel.getAmount()));
         orderModel.updateById();
     }

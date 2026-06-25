@@ -6,8 +6,11 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.common.annotation.ExcelSheet;
 import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.exception.error.ErrorCode.Internal;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,6 +48,19 @@ public class CustomExcelUtil {
         }
     }
 
+    public static <T> List<T> readFromRequest(Class<T> clazz, MultipartFile file, int maxRows) {
+        List<T> sources;
+        try {
+            sources = readFromInputStream(clazz, file.getInputStream(), maxRows);
+        } catch (IOException e) {
+            throw new ApiException(e, Internal.EXCEL_PROCESS_ERROR, e.getMessage());
+        }
+        if (CollectionUtils.isEmpty(sources)) {
+            throw new ApiException(ErrorCode.Business.UPLOAD_IMPORT_EXCEL_FAILED, "导入文件没有有效账单数据");
+        }
+        return sources;
+    }
+
     public static <T> void writeToOutputStream(List<T> list, Class<T> clazz, OutputStream outputStream) {
 
         // 通过工具类创建writer
@@ -79,7 +95,16 @@ public class CustomExcelUtil {
 
 
     public static <T> List<T> readFromInputStream(Class<T> clazz, InputStream inputStream) {
+        return readFromInputStream(clazz, inputStream, 0);
+    }
+
+    public static <T> List<T> readFromInputStream(Class<T> clazz, InputStream inputStream, int maxRows) {
+        ZipSecureFile.setMinInflateRatio(0.01d);
+        ZipSecureFile.setMaxEntrySize(100 * 1024 * 1024L);
         ExcelReader reader = ExcelUtil.getReader(inputStream);
+        if (maxRows > 0 && reader.getRowCount() - 1 > maxRows) {
+            throw new ApiException(Internal.EXCEL_PROCESS_ERROR, "导入数据不能超过" + maxRows + "行");
+        }
         // 去除掉excel中的html标签语言  避免xss攻击
         reader.setCellEditor(new TrimXssEditor());
 

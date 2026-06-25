@@ -3,6 +3,7 @@ package com.fortuneboot.rest.fortune;
 import com.fortuneboot.common.core.dto.ResponseDTO;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
+import com.fortuneboot.common.utils.file.FileUploadUtils;
 import com.fortuneboot.common.utils.poi.CustomExcelUtil;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
@@ -10,14 +11,20 @@ import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillDownloadVo;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportResultVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillVo;
 import com.fortuneboot.service.fortune.FortuneBillService;
+import com.fortuneboot.service.fortune.importer.FortuneBillImportResponse;
+import com.fortuneboot.service.fortune.importer.FortuneBillImportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +42,8 @@ import java.util.List;
 public class FortuneBillRest {
 
     private final FortuneBillService fortuneBillService;
+
+    private final FortuneBillImportService fortuneBillImportService;
 
     @Operation(summary = "分页查询账单")
     @GetMapping("/getPage")
@@ -123,5 +132,30 @@ public class FortuneBillRest {
         PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
         List<FortuneBillDownloadVo> list = page.getRows().stream().map(FortuneBillDownloadVo::new).toList();
         CustomExcelUtil.writeToResponse(list, FortuneBillDownloadVo.class, response);
+    }
+
+    @Operation(summary = "账单列表导入")
+    @PostMapping("/{bookId}/import")
+    @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.IMPORT)
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseEntity<?> importByExcel(@PathVariable @Positive Long bookId, @RequestPart("file") MultipartFile file) {
+        FortuneBillImportResponse importResponse = fortuneBillImportService.importByExcel(bookId, file);
+        if (importResponse.isSuccess()) {
+            ResponseDTO<FortuneBillImportResultVo> body = ResponseDTO.ok(importResponse.getResult());
+            return ResponseEntity.ok(body);
+        }
+        HttpHeaders headers = FileUploadUtils.getDownloadHeader("账单导入错误.xlsx");
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok().headers(headers).body(importResponse.getErrorFile());
+    }
+
+    @Operation(summary = "账单导入模板下载")
+    @GetMapping("/{bookId}/excelTemplate")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseEntity<byte[]> downloadImportTemplate(@PathVariable @Positive Long bookId) {
+        byte[] fileBytes = fortuneBillImportService.template();
+        HttpHeaders headers = FileUploadUtils.getDownloadHeader("账单导入模板.xlsx");
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok().headers(headers).body(fileBytes);
     }
 }
