@@ -1,11 +1,11 @@
 <div align="center">
 
-# 🌟 FortuneBoot v1.6.2
+# 🌟 FortuneBoot v1.6.3
 
 **基于领域驱动设计 (DDD) 与 GraalVM 构建的现代化精要财务记账平台**
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Release-v1.6.2-green.svg" alt="Release">
+  <img src="https://img.shields.io/badge/Release-v1.6.3-green.svg" alt="Release">
   <img src="https://img.shields.io/badge/JDK-25+-green.svg" alt="JDK">
   <img src="https://img.shields.io/badge/Spring%20Boot-4.0.5-blue.svg" alt="Spring Boot">
   <img src="https://img.shields.io/badge/GraalVM-Native_Image-orange.svg" alt="GraalVM">
