@@ -103,4 +103,59 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
         queryWrapper.eq(FortuneBillEntity::getOrderId, orderId);
         return this.list(queryWrapper);
     }
+
+    @Override
+    public List<FortuneLineVo> getDateInclude(BillIncludeQuery query) {
+        return fortuneBillMapper.getDateInclude(query);
+    }
+
+    @Override
+    public List<FortuneBarVo> getMemberInclude(BillIncludeQuery query) {
+        return fortuneBillMapper.getMemberInclude(query);
+    }
+
+    @Override
+    public List<BillCompareVo> getBillCompare(BillCompareQuery query) {
+        return fortuneBillMapper.getBillCompare(query);
+    }
+
+    @Override
+    public List<FortuneBarVo> getBillRank(BillRankQuery query) {
+        return fortuneBillMapper.getBillRank(query);
+    }
+
+    @Override
+    public List<HeatmapVo> getCalendarHeatmap(CalendarHeatmapQuery query) {
+        return fortuneBillMapper.getCalendarHeatmap(query);
+    }
+
+    @Override
+    public List<AccountIncludeVo> getAccountInclude(BillIncludeQuery query) {
+        return fortuneBillMapper.getAccountInclude(query);
+    }
+
+    @Override
+    public List<BillTypeDistributionVo> getBillTypeDistribution(BillIncludeQuery query) {
+        return fortuneBillMapper.getBillTypeDistribution(query);
+    }
+
+    @Override
+    public List<LoanDetailVo> getLoanReceivableDetails(Long bookId) {
+        return fortuneBillMapper.getLoanReceivableDetails(bookId);
+    }
+
+    @Override
+    public List<LoanDetailVo> getLoanPayableDetails(Long bookId) {
+        return fortuneBillMapper.getLoanPayableDetails(bookId);
+    }
+
+    @Override
+    public java.math.BigDecimal getMaxSingleExpense(BillIncludeQuery query) {
+        return fortuneBillMapper.getMaxSingleExpense(query);
+    }
+
+    @Override
+    public Integer countUnconfirmedBills(BillIncludeQuery query) {
+        return fortuneBillMapper.countUnconfirmedBills(query);
+    }
 }

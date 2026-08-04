@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper">
+
+    <select id="getFinanceProfit" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo">
+        SELECT order_id AS orderId,
+               title,
+               COALESCE(out_amount, 0) AS outAmount,
+               COALESCE(in_amount, 0) AS inAmount,
+               COALESCE(in_amount, 0) - COALESCE(out_amount, 0) AS profit,
+               CASE WHEN COALESCE(out_amount, 0) = 0 THEN 0
+                    ELSE (COALESCE(in_amount, 0) - COALESCE(out_amount, 0)) / out_amount * 100 END AS profitRate
+        FROM fortune_finance_order
+        WHERE deleted = 0
+          AND book_id = #{bookId}
+          AND type IN (2, 3)
+          AND status = 1000
+          <if test='query.startDate != null'>AND submit_time &gt;= #{query.startDate}</if>
+          <if test='query.endDate != null'>AND submit_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        ORDER BY submit_time DESC, order_id DESC
+    </select>
+
+    <select id="getFinanceProfit" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo">
+        SELECT order_id AS orderId,
+               title,
+               COALESCE(out_amount, 0) AS outAmount,
+               COALESCE(in_amount, 0) AS inAmount,
+               COALESCE(in_amount, 0) - COALESCE(out_amount, 0) AS profit,
+               CASE WHEN COALESCE(out_amount, 0) = 0 THEN 0
+                    ELSE CAST((COALESCE(in_amount, 0) - COALESCE(out_amount, 0)) AS REAL) / out_amount * 100 END AS profitRate
+        FROM fortune_finance_order
+        WHERE deleted = 0
+          AND book_id = #{bookId}
+          AND type IN (2, 3)
+          AND status = 1000
+          <if test='query.startDate != null'>AND submit_time &gt;= #{query.startDate}</if>
+          <if test='query.endDate != null'>AND submit_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        ORDER BY submit_time DESC, order_id DESC
+    </select>
+</mapper>

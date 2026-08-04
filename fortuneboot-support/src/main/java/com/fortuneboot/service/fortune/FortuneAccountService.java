@@ -1,6 +1,7 @@
 package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fortuneboot.common.enums.fortune.AccountTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneAccountAddCommand;
@@ -9,6 +10,8 @@ import com.fortuneboot.domain.command.fortune.FortuneAccountModifyCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.query.fortune.FortuneAccountQuery;
+import com.fortuneboot.domain.vo.fortune.include.AccountTypeAssetsVo;
+import com.fortuneboot.domain.vo.fortune.include.CreditCardVo;
 import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.factory.fortune.factory.FortuneAccountFactory;
@@ -24,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.fortuneboot.domain.bo.fortune.tenplate.CurrencyTemplateBo;
@@ -373,6 +378,77 @@ public class FortuneAccountService {
         vo.setTotalLiabilities(totalLiabilities);
         vo.setNetAssets(netAssets);
         return vo;
+    }
+
+    public List<AccountTypeAssetsVo> getAssetsByAccountType(Long groupId) {
+        String defaultCurrency = fortuneGroupFactory.loadById(groupId).getDefaultCurrency();
+        List<CurrencyTemplateBo> rateList = applicationScopeBo.getCurrencyTemplateBoList();
+        Map<Integer, AccountTypeAssetsVo> resultMap = new LinkedHashMap<>();
+        for (AccountTypeEnum typeEnum : AccountTypeEnum.values()) {
+            AccountTypeAssetsVo vo = new AccountTypeAssetsVo();
+            vo.setAccountType(typeEnum.getValue());
+            vo.setAccountTypeName(typeEnum.getDescription());
+            vo.setAssets(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+            vo.setLiabilities(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+            vo.setAccountCount(0);
+            resultMap.put(typeEnum.getValue(), vo);
+        }
+
+        for (FortuneAccountEntity account : fortuneAccountRepo.getEnableAccountList(groupId)) {
+            if (!Boolean.TRUE.equals(account.getInclude()) || account.getBalance() == null) {
+                continue;
+            }
+            AccountTypeAssetsVo vo = resultMap.computeIfAbsent(account.getAccountType(), accountType -> {
+                AccountTypeAssetsVo item = new AccountTypeAssetsVo();
+                item.setAccountType(accountType);
+                item.setAccountTypeName(String.valueOf(accountType));
+                item.setAssets(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+                item.setLiabilities(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
+                item.setAccountCount(0);
+                return item;
+            });
+            BigDecimal converted = convertCurrency(account.getBalance(), account.getCurrencyCode(), defaultCurrency, rateList)
+                    .setScale(2, RoundingMode.HALF_UP);
+            if (converted.compareTo(BigDecimal.ZERO) >= 0) {
+                vo.setAssets(vo.getAssets().add(converted).setScale(2, RoundingMode.HALF_UP));
+            } else {
+                vo.setLiabilities(vo.getLiabilities().add(converted.abs()).setScale(2, RoundingMode.HALF_UP));
+            }
+            vo.setAccountCount(vo.getAccountCount() + 1);
+        }
+        return resultMap.values().stream().filter(vo -> vo.getAccountCount() > 0).toList();
+    }
+
+    public List<CreditCardVo> getCreditCardOverview(Long groupId) {
+        return fortuneAccountRepo.getEnableAccountList(groupId).stream()
+                .filter(account -> Boolean.TRUE.equals(account.getInclude()))
+                .filter(account -> AccountTypeEnum.CREDIT.getValue().equals(account.getAccountType()))
+                .map(account -> {
+                    BigDecimal creditLimit = account.getCreditLimit() == null ? BigDecimal.ZERO : account.getCreditLimit();
+                    BigDecimal balance = account.getBalance() == null ? BigDecimal.ZERO : account.getBalance();
+                    BigDecimal usedAmount = balance.compareTo(BigDecimal.ZERO) < 0 ? balance.abs() : BigDecimal.ZERO;
+                    CreditCardVo vo = new CreditCardVo();
+                    vo.setAccountId(account.getAccountId());
+                    vo.setAccountName(account.getAccountName());
+                    vo.setCreditLimit(creditLimit.setScale(2, RoundingMode.HALF_UP));
+                    vo.setUsedAmount(usedAmount.setScale(2, RoundingMode.HALF_UP));
+                    vo.setAvailable(creditLimit.subtract(usedAmount).setScale(2, RoundingMode.HALF_UP));
+                    vo.setUsageRate(creditLimit.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO :
+                            usedAmount.divide(creditLimit, 4, RoundingMode.HALF_UP)
+                                    .multiply(new BigDecimal("100"))
+                                    .setScale(2, RoundingMode.HALF_UP));
+                    return vo;
+                }).toList();
+    }
+
+    public BigDecimal convertToGroupCurrency(Long groupId, FortuneAccountEntity account) {
+        if (account.getBalance() == null) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        String defaultCurrency = fortuneGroupFactory.loadById(groupId).getDefaultCurrency();
+        List<CurrencyTemplateBo> rateList = applicationScopeBo.getCurrencyTemplateBoList();
+        return convertCurrency(account.getBalance(), account.getCurrencyCode(), defaultCurrency, rateList)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Transactional(rollbackFor = Exception.class)

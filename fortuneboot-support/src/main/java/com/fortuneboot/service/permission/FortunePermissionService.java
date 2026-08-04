@@ -2,6 +2,7 @@ package com.fortuneboot.service.permission;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
+import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
@@ -30,6 +31,8 @@ public class FortunePermissionService {
     private final FortuneBookRepo fortuneBookRepo;
 
     private final FortuneBillRepo fortuneBillRepo;
+
+    private final FortuneAccountRepo fortuneAccountRepo;
 
     /**
      * 验证是否是登录用户
@@ -134,5 +137,13 @@ public class FortunePermissionService {
             return Boolean.FALSE;
         }
         return this.bookVisitorPermission(billEntity.getBookId());
+    }
+
+    public Boolean accountVisitorPermission(@NotNull(message = "账户不能为空") @Positive(message = "账户必须是正数") Long accountId) {
+        FortuneAccountEntity account = fortuneAccountRepo.getById(accountId);
+        if (ObjectUtil.isEmpty(account)) {
+            return Boolean.FALSE;
+        }
+        return this.groupVisitorPermission(account.getGroupId());
     }
 }

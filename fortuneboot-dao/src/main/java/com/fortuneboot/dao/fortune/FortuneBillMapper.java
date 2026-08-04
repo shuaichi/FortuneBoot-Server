@@ -68,4 +68,59 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
      * 交易对象统计 - 使用 XML 中的 databaseId 分发
      */
     List<FortunePieVo> getPayeeInclude(@Param("billType") Integer billType, @Param("query") PayeeIncludeQuery query);
+
+    /**
+     * 统计日期支出
+     */
+    List<FortuneLineVo> getDateInclude(@Param("query") BillIncludeQuery query);
+
+    /**
+     * 成员维度统计
+     */
+    List<FortuneBarVo> getMemberInclude(@Param("query") BillIncludeQuery query);
+
+    /**
+     * 收支对比
+     */
+    List<BillCompareVo> getBillCompare(@Param("query") BillCompareQuery query);
+
+    /**
+     * 收支排行
+     */
+    List<FortuneBarVo> getBillRank(@Param("query") BillRankQuery query);
+
+    /**
+     * 日历热力图
+     */
+    List<HeatmapVo> getCalendarHeatmap(@Param("query") CalendarHeatmapQuery query);
+
+    /**
+     * 账户维度统计
+     */
+    List<AccountIncludeVo> getAccountInclude(@Param("query") BillIncludeQuery query);
+
+    /**
+     * 账单类型分布
+     */
+    List<BillTypeDistributionVo> getBillTypeDistribution(@Param("query") BillIncludeQuery query);
+
+    /**
+     * 借贷待收明细
+     */
+    List<LoanDetailVo> getLoanReceivableDetails(@Param("bookId") Long bookId);
+
+    /**
+     * 借贷待还明细
+     */
+    List<LoanDetailVo> getLoanPayableDetails(@Param("bookId") Long bookId);
+
+    /**
+     * 最大单笔支出
+     */
+    java.math.BigDecimal getMaxSingleExpense(@Param("query") BillIncludeQuery query);
+
+    /**
+     * 未确认账单数量
+     */
+    Integer countUnconfirmedBills(@Param("query") BillIncludeQuery query);
 }

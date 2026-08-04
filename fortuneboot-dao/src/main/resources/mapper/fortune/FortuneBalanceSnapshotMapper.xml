@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fortuneboot.dao.fortune.FortuneBalanceSnapshotMapper">
+
+    <select id="getNetAssetsTrend" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        WITH latest_snapshot AS (
+            SELECT
+            <choose>
+                <when test="periodType == 4">DATE_FORMAT(snapshot_date, '%Y') AS period_name,</when>
+                <otherwise>DATE_FORMAT(snapshot_date, '%Y-%m') AS period_name,</otherwise>
+            </choose>
+                   MAX(snapshot_date) AS latest_date
+            FROM fortune_balance_snapshot
+            WHERE deleted = 0
+              AND group_id = #{groupId}
+              <choose>
+                  <when test="periodType == 4">AND snapshot_date &gt;= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)</when>
+                  <otherwise>AND snapshot_date &gt;= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)</otherwise>
+              </choose>
+            GROUP BY period_name
+        )
+        SELECT ls.period_name AS name, MAX(s.net_assets) AS value
+        FROM latest_snapshot ls
+        INNER JOIN fortune_balance_snapshot s ON s.group_id = #{groupId}
+            AND s.snapshot_date = ls.latest_date
+            AND s.deleted = 0
+        GROUP BY ls.period_name
+        ORDER BY ls.period_name ASC
+    </select>
+
+    <select id="getNetAssetsTrend" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        WITH latest_snapshot AS (
+            SELECT
+            <choose>
+                <when test="periodType == 4">strftime('%Y', snapshot_date) AS period_name,</when>
+                <otherwise>strftime('%Y-%m', snapshot_date) AS period_name,</otherwise>
+            </choose>
+                   MAX(snapshot_date) AS latest_date
+            FROM fortune_balance_snapshot
+            WHERE deleted = 0
+              AND group_id = #{groupId}
+              <choose>
+                  <when test="periodType == 4">AND snapshot_date &gt;= date('now', '-5 year')</when>
+                  <otherwise>AND snapshot_date &gt;= date('now', '-12 month')</otherwise>
+              </choose>
+            GROUP BY period_name
+        )
+        SELECT ls.period_name AS name, MAX(s.net_assets) AS value
+        FROM latest_snapshot ls
+        INNER JOIN fortune_balance_snapshot s ON s.group_id = #{groupId}
+            AND s.snapshot_date = ls.latest_date
+            AND s.deleted = 0
+        GROUP BY ls.period_name
+        ORDER BY ls.period_name ASC
+    </select>
+
+    <select id="getAccountBalanceTrend" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        WITH latest_snapshot AS (
+            SELECT
+            <choose>
+                <when test="periodType == 4">DATE_FORMAT(snapshot_date, '%Y') AS period_name,</when>
+                <otherwise>DATE_FORMAT(snapshot_date, '%Y-%m') AS period_name,</otherwise>
+            </choose>
+                   MAX(snapshot_date) AS latest_date
+            FROM fortune_balance_snapshot
+            WHERE deleted = 0
+              AND account_id = #{accountId}
+              <choose>
+                  <when test="periodType == 4">AND snapshot_date &gt;= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)</when>
+                  <otherwise>AND snapshot_date &gt;= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)</otherwise>
+              </choose>
+            GROUP BY period_name
+        )
+        SELECT ls.period_name AS name, s.converted_balance AS value
+        FROM latest_snapshot ls
+        INNER JOIN fortune_balance_snapshot s ON s.account_id = #{accountId}
+            AND s.snapshot_date = ls.latest_date
+            AND s.deleted = 0
+        ORDER BY ls.period_name ASC
+    </select>
+
+    <select id="getAccountBalanceTrend" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        WITH latest_snapshot AS (
+            SELECT
+            <choose>
+                <when test="periodType == 4">strftime('%Y', snapshot_date) AS period_name,</when>
+                <otherwise>strftime('%Y-%m', snapshot_date) AS period_name,</otherwise>
+            </choose>
+                   MAX(snapshot_date) AS latest_date
+            FROM fortune_balance_snapshot
+            WHERE deleted = 0
+              AND account_id = #{accountId}
+              <choose>
+                  <when test="periodType == 4">AND snapshot_date &gt;= date('now', '-5 year')</when>
+                  <otherwise>AND snapshot_date &gt;= date('now', '-12 month')</otherwise>
+              </choose>
+            GROUP BY period_name
+        )
+        SELECT ls.period_name AS name, s.converted_balance AS value
+        FROM latest_snapshot ls
+        INNER JOIN fortune_balance_snapshot s ON s.account_id = #{accountId}
+            AND s.snapshot_date = ls.latest_date
+            AND s.deleted = 0
+        ORDER BY ls.period_name ASC
+    </select>
+</mapper>

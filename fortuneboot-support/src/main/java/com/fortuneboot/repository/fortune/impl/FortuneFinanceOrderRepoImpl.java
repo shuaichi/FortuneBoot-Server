@@ -6,6 +6,8 @@ import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
+import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
+import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,5 +32,10 @@ public class FortuneFinanceOrderRepoImpl
         queryWrapper.eq(FortuneFinanceOrderEntity::getBookId, bookId)
                 .eq(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.USING.getValue());
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query) {
+        return baseMapper.getFinanceProfit(bookId, query);
     }
 }

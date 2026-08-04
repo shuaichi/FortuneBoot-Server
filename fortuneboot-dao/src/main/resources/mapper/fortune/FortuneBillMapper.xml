@@ -270,4 +270,387 @@
         GROUP BY b.payee_id
     </select>
 
+    <!-- ==================== 统计模块公共查询条件 ==================== -->
+    <sql id="billIncludeBaseFilter">
+        <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
+        <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
+        <if test='query.accountIds != null and query.accountIds.size() &gt; 0'>
+            AND b.account_id IN
+            <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.payeeIds != null and query.payeeIds.size() &gt; 0'>
+            AND b.payee_id IN
+            <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.categoryIds != null and query.categoryIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+                WHERE cr.bill_id = b.bill_id AND cr.deleted = 0 AND cr.category_id IN
+                <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.tagIds != null and query.tagIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
+                WHERE tr.bill_id = b.bill_id AND tr.deleted = 0 AND tr.tag_id IN
+                <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.memberIds != null and query.memberIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_member_relation mr
+                WHERE mr.bill_id = b.bill_id AND mr.deleted = 0 AND mr.member_id IN
+                <foreach collection='query.memberIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.confirm != null'> AND b.confirm = #{query.confirm}</if>
+        <if test='query.include != null'> AND b.include = #{query.include}</if>
+    </sql>
+
+    <sql id="billIncludeBaseFilterForB2">
+        <if test='query.bookId != null'> AND b2.book_id = #{query.bookId}</if>
+        <if test='query.startDate != null'> AND b2.trade_time &gt;= #{query.startDate}</if>
+        <if test='query.accountIds != null and query.accountIds.size() &gt; 0'>
+            AND b2.account_id IN
+            <foreach collection='query.accountIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.payeeIds != null and query.payeeIds.size() &gt; 0'>
+            AND b2.payee_id IN
+            <foreach collection='query.payeeIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>
+        </if>
+        <if test='query.categoryIds != null and query.categoryIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_category_relation cr
+                WHERE cr.bill_id = b2.bill_id AND cr.deleted = 0 AND cr.category_id IN
+                <foreach collection='query.categoryIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.tagIds != null and query.tagIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_tag_relation tr
+                WHERE tr.bill_id = b2.bill_id AND tr.deleted = 0 AND tr.tag_id IN
+                <foreach collection='query.tagIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.memberIds != null and query.memberIds.size() &gt; 0'>
+            AND EXISTS (SELECT 1 FROM fortune_member_relation mr
+                WHERE mr.bill_id = b2.bill_id AND mr.deleted = 0 AND mr.member_id IN
+                <foreach collection='query.memberIds' item='item' open='(' separator=',' close=')'>#{item}</foreach>)
+        </if>
+        <if test='query.confirm != null'> AND b2.confirm = #{query.confirm}</if>
+        <if test='query.include != null'> AND b2.include = #{query.include}</if>
+    </sql>
+
+    <!-- ==================== getDateInclude ==================== -->
+    <select id="getDateInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        SELECT DATE(b.trade_time) AS name, COALESCE(SUM(b.amount), 0) AS value
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        GROUP BY DATE(b.trade_time)
+        ORDER BY name ASC
+    </select>
+
+    <select id="getDateInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneLineVo">
+        SELECT date(b.trade_time) AS name, COALESCE(SUM(b.amount), 0) AS value
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        GROUP BY date(b.trade_time)
+        ORDER BY name ASC
+    </select>
+
+    <!-- ==================== getMemberInclude ==================== -->
+    <select id="getMemberInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT COALESCE(m.member_name, '未设置成员') AS name, COALESCE(SUM(b.amount), 0) AS value
+        FROM fortune_bill b
+        LEFT JOIN fortune_member_relation mr ON b.bill_id = mr.bill_id AND mr.deleted = 0
+        LEFT JOIN fortune_member m ON mr.member_id = m.member_id AND m.deleted = 0
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        GROUP BY m.member_id, m.member_name
+        ORDER BY value DESC
+    </select>
+
+    <select id="getMemberInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT COALESCE(m.member_name, '未设置成员') AS name, COALESCE(SUM(b.amount), 0) AS value
+        FROM fortune_bill b
+        LEFT JOIN fortune_member_relation mr ON b.bill_id = mr.bill_id AND mr.deleted = 0
+        LEFT JOIN fortune_member m ON mr.member_id = m.member_id AND m.deleted = 0
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        GROUP BY m.member_id, m.member_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- ==================== getBillCompare ==================== -->
+    <select id="getBillCompare" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.BillCompareVo">
+        SELECT
+        <choose>
+            <when test="query.compareType == 2">DATE_FORMAT(b.trade_time, '%Y') AS name,</when>
+            <otherwise>DATE_FORMAT(b.trade_time, '%Y-%m') AS name,</otherwise>
+        </choose>
+               COALESCE(SUM(CASE WHEN b.bill_type = 2 THEN b.amount ELSE 0 END), 0) AS income,
+               COALESCE(SUM(CASE WHEN b.bill_type = 1 THEN b.amount ELSE 0 END), 0) AS expense
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type IN (1, 2)
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        GROUP BY name
+        ORDER BY name ASC
+    </select>
+
+    <select id="getBillCompare" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.BillCompareVo">
+        SELECT
+        <choose>
+            <when test="query.compareType == 2">strftime('%Y', b.trade_time) AS name,</when>
+            <otherwise>strftime('%Y-%m', b.trade_time) AS name,</otherwise>
+        </choose>
+               COALESCE(SUM(CASE WHEN b.bill_type = 2 THEN b.amount ELSE 0 END), 0) AS income,
+               COALESCE(SUM(CASE WHEN b.bill_type = 1 THEN b.amount ELSE 0 END), 0) AS expense
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type IN (1, 2)
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        GROUP BY name
+        ORDER BY name ASC
+    </select>
+
+    <!-- ==================== getBillRank ==================== -->
+    <select id="getBillRank" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT COALESCE(NULLIF(b.title, ''), CONCAT('账单#', b.bill_id)) AS name, b.amount AS value
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        ORDER BY b.amount DESC, b.trade_time DESC
+        LIMIT #{query.topN}
+    </select>
+
+    <select id="getBillRank" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
+        SELECT COALESCE(NULLIF(b.title, ''), '账单#' || b.bill_id) AS name, b.amount AS value
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type = #{query.billType}
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        ORDER BY b.amount DESC, b.trade_time DESC
+        LIMIT #{query.topN}
+    </select>
+
+    <!-- ==================== getCalendarHeatmap ==================== -->
+    <select id="getCalendarHeatmap" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.HeatmapVo">
+        SELECT DATE(b.trade_time) AS date, COALESCE(SUM(b.amount), 0) AS amount, COUNT(1) AS count
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type = #{query.billType}
+          AND b.trade_time &gt;= CONCAT(#{query.year}, '-01-01')
+          AND b.trade_time &lt;= CONCAT(#{query.year}, '-12-31 23:59:59')
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+        GROUP BY DATE(b.trade_time)
+        ORDER BY date ASC
+    </select>
+
+    <select id="getCalendarHeatmap" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.HeatmapVo">
+        SELECT date(b.trade_time) AS date, COALESCE(SUM(b.amount), 0) AS amount, COUNT(1) AS count
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type = #{query.billType}
+          AND b.trade_time &gt;= #{query.year} || '-01-01'
+          AND b.trade_time &lt;= #{query.year} || '-12-31 23:59:59'
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+        GROUP BY date(b.trade_time)
+        ORDER BY date ASC
+    </select>
+
+    <!-- ==================== getAccountInclude ==================== -->
+    <select id="getAccountInclude" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.AccountIncludeVo">
+        WITH account_amount AS (
+            SELECT a.account_id AS accountId,
+                   a.account_name AS accountName,
+                   a.account_type AS accountType,
+                   COALESCE(SUM(b.amount), 0) AS amount
+            FROM fortune_bill b
+            INNER JOIN fortune_account a ON b.account_id = a.account_id AND a.deleted = 0
+            WHERE b.deleted = 0
+              AND b.include = TRUE
+              AND b.bill_type = #{query.billType}
+              <include refid="billIncludeBaseFilter"/>
+              <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+              <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+            GROUP BY a.account_id, a.account_name, a.account_type
+        ), total AS (SELECT SUM(amount) AS total_amount FROM account_amount)
+        SELECT accountId, accountName, accountType, amount,
+               CASE WHEN (SELECT total_amount FROM total) IS NULL OR (SELECT total_amount FROM total) = 0 THEN 0
+                    ELSE amount / (SELECT total_amount FROM total) * 100 END AS percent
+        FROM account_amount
+        ORDER BY amount DESC
+    </select>
+
+    <select id="getAccountInclude" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.AccountIncludeVo">
+        WITH account_amount AS (
+            SELECT a.account_id AS accountId,
+                   a.account_name AS accountName,
+                   a.account_type AS accountType,
+                   COALESCE(SUM(b.amount), 0) AS amount
+            FROM fortune_bill b
+            INNER JOIN fortune_account a ON b.account_id = a.account_id AND a.deleted = 0
+            WHERE b.deleted = 0
+              AND b.include = 1
+              AND b.bill_type = #{query.billType}
+              <include refid="billIncludeBaseFilter"/>
+              <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+              <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+            GROUP BY a.account_id, a.account_name, a.account_type
+        ), total AS (SELECT SUM(amount) AS total_amount FROM account_amount)
+        SELECT accountId, accountName, accountType, amount,
+               CASE WHEN (SELECT total_amount FROM total) IS NULL OR (SELECT total_amount FROM total) = 0 THEN 0
+                    ELSE CAST(amount AS REAL) / (SELECT total_amount FROM total) * 100 END AS percent
+        FROM account_amount
+        ORDER BY amount DESC
+    </select>
+
+    <!-- ==================== getBillTypeDistribution ==================== -->
+    <select id="getBillTypeDistribution" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.BillTypeDistributionVo">
+        WITH type_amount AS (
+            SELECT b.bill_type AS billType, COALESCE(SUM(b.amount), 0) AS value
+            FROM fortune_bill b
+            WHERE b.deleted = 0
+              AND b.include = TRUE
+              <include refid="billIncludeBaseFilter"/>
+              <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+              <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+            GROUP BY b.bill_type
+        ), total AS (SELECT SUM(value) AS total_amount FROM type_amount)
+        SELECT billType, value,
+               CASE WHEN (SELECT total_amount FROM total) IS NULL OR (SELECT total_amount FROM total) = 0 THEN 0
+                    ELSE value / (SELECT total_amount FROM total) * 100 END AS percent
+        FROM type_amount
+        ORDER BY billType ASC
+    </select>
+
+    <select id="getBillTypeDistribution" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.BillTypeDistributionVo">
+        WITH type_amount AS (
+            SELECT b.bill_type AS billType, COALESCE(SUM(b.amount), 0) AS value
+            FROM fortune_bill b
+            WHERE b.deleted = 0
+              AND b.include = 1
+              <include refid="billIncludeBaseFilter"/>
+              <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+              <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+            GROUP BY b.bill_type
+        ), total AS (SELECT SUM(value) AS total_amount FROM type_amount)
+        SELECT billType, value,
+               CASE WHEN (SELECT total_amount FROM total) IS NULL OR (SELECT total_amount FROM total) = 0 THEN 0
+                    ELSE CAST(value AS REAL) / (SELECT total_amount FROM total) * 100 END AS percent
+        FROM type_amount
+        ORDER BY billType ASC
+    </select>
+
+    <!-- ==================== getLoanOverview helpers ==================== -->
+    <select id="getLoanReceivableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
+        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
+               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
+               MAX(b.trade_time) AS lastTradeTime
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
+        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
+        GROUP BY b.payee_id, p.payee_name
+        HAVING amount &gt; 0
+        ORDER BY amount DESC
+    </select>
+
+    <select id="getLoanReceivableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
+        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
+               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
+               MAX(b.trade_time) AS lastTradeTime
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
+        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
+        GROUP BY b.payee_id, p.payee_name
+        HAVING amount &gt; 0
+        ORDER BY amount DESC
+    </select>
+
+    <select id="getLoanPayableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
+        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
+               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
+               MAX(b.trade_time) AS lastTradeTime
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
+        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
+        GROUP BY b.payee_id, p.payee_name
+        HAVING amount &gt; 0
+        ORDER BY amount DESC
+    </select>
+
+    <select id="getLoanPayableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
+        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
+               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
+               MAX(b.trade_time) AS lastTradeTime
+        FROM fortune_bill b
+        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
+        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
+        GROUP BY b.payee_id, p.payee_name
+        HAVING amount &gt; 0
+        ORDER BY amount DESC
+    </select>
+
+    <select id="getMaxSingleExpense" databaseId="mysql" resultType="java.math.BigDecimal">
+        SELECT COALESCE(MAX(b.amount), 0)
+        FROM fortune_bill b
+        WHERE b.deleted = 0 AND b.include = TRUE AND b.bill_type = 1
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+    </select>
+
+    <select id="getMaxSingleExpense" databaseId="sqlite" resultType="java.math.BigDecimal">
+        SELECT COALESCE(MAX(b.amount), 0)
+        FROM fortune_bill b
+        WHERE b.deleted = 0 AND b.include = 1 AND b.bill_type = 1
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+    </select>
+
+    <select id="countUnconfirmedBills" databaseId="mysql" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM fortune_bill b
+        WHERE b.deleted = 0 AND b.include = TRUE AND b.confirm = FALSE
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+    </select>
+
+    <select id="countUnconfirmedBills" databaseId="sqlite" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM fortune_bill b
+        WHERE b.deleted = 0 AND b.include = 1 AND b.confirm = 0
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+    </select>
+
 </mapper>

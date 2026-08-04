@@ -125,4 +125,26 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
      * @return
      */
     List<FortuneBillEntity> getByOrderId(Long orderId);
+
+    List<FortuneLineVo> getDateInclude(BillIncludeQuery query);
+
+    List<FortuneBarVo> getMemberInclude(BillIncludeQuery query);
+
+    List<BillCompareVo> getBillCompare(BillCompareQuery query);
+
+    List<FortuneBarVo> getBillRank(BillRankQuery query);
+
+    List<HeatmapVo> getCalendarHeatmap(CalendarHeatmapQuery query);
+
+    List<AccountIncludeVo> getAccountInclude(BillIncludeQuery query);
+
+    List<BillTypeDistributionVo> getBillTypeDistribution(BillIncludeQuery query);
+
+    List<LoanDetailVo> getLoanReceivableDetails(Long bookId);
+
+    List<LoanDetailVo> getLoanPayableDetails(Long bookId);
+
+    java.math.BigDecimal getMaxSingleExpense(BillIncludeQuery query);
+
+    Integer countUnconfirmedBills(BillIncludeQuery query);
 }
