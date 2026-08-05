@@ -41,6 +41,11 @@ public class FortuneGroupVo {
     private String defaultCurrency;
 
     /**
+     * 权限
+     */
+    private String roleType;
+
+    /**
      * 权限名称
      */
     private String roleTypeDesc;

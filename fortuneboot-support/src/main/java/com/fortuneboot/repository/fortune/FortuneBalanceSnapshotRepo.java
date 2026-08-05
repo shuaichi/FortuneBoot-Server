@@ -17,6 +17,14 @@ public interface FortuneBalanceSnapshotRepo extends IService<FortuneBalanceSnaps
 
     void removeBySnapshotDate(LocalDate snapshotDate);
 
+    void removeBySnapshotDateBetween(LocalDate startDate, LocalDate endDate);
+
+    void removeAllSnapshots();
+
+    boolean tryLock(String lockName, int timeoutSeconds);
+
+    void releaseLock(String lockName);
+
     List<FortuneLineVo> getNetAssetsTrend(Long groupId, Integer periodType);
 
     List<FortuneLineVo> getAccountBalanceTrend(Long accountId, Integer periodType);

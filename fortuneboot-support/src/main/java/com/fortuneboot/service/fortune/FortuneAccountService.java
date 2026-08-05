@@ -442,12 +442,16 @@ public class FortuneAccountService {
     }
 
     public BigDecimal convertToGroupCurrency(Long groupId, FortuneAccountEntity account) {
-        if (account.getBalance() == null) {
+        return convertToGroupCurrency(groupId, account, account.getBalance());
+    }
+
+    public BigDecimal convertToGroupCurrency(Long groupId, FortuneAccountEntity account, BigDecimal balance) {
+        if (balance == null) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
         String defaultCurrency = fortuneGroupFactory.loadById(groupId).getDefaultCurrency();
         List<CurrencyTemplateBo> rateList = applicationScopeBo.getCurrencyTemplateBoList();
-        return convertCurrency(account.getBalance(), account.getCurrencyCode(), defaultCurrency, rateList)
+        return convertCurrency(balance, account.getCurrencyCode(), defaultCurrency, rateList)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 

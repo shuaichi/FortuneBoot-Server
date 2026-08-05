@@ -31,6 +31,27 @@ public class FortuneBalanceSnapshotRepoImpl
     }
 
     @Override
+    public void removeBySnapshotDateBetween(LocalDate startDate, LocalDate endDate) {
+        fortuneBalanceSnapshotMapper.deleteBySnapshotDateBetween(startDate, endDate);
+    }
+
+    @Override
+    public void removeAllSnapshots() {
+        fortuneBalanceSnapshotMapper.deleteAllSnapshots();
+    }
+
+    @Override
+    public boolean tryLock(String lockName, int timeoutSeconds) {
+        Integer result = fortuneBalanceSnapshotMapper.tryLock(lockName, timeoutSeconds);
+        return Integer.valueOf(1).equals(result);
+    }
+
+    @Override
+    public void releaseLock(String lockName) {
+        fortuneBalanceSnapshotMapper.releaseLock(lockName);
+    }
+
+    @Override
     public List<FortuneLineVo> getNetAssetsTrend(Long groupId, Integer periodType) {
         return fortuneBalanceSnapshotMapper.getNetAssetsTrend(groupId, periodType);
     }

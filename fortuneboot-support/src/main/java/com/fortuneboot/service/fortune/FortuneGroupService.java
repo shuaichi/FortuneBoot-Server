@@ -22,6 +22,7 @@ import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
+import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneGroupRepo;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
@@ -80,6 +81,7 @@ public class FortuneGroupService {
      */
     private final SysUserRepo sysUserRepo;
     private final FortuneBookFactory fortuneBookFactory;
+    private final FortuneAccountRepo fortuneAccountRepo;
 
 
     public FortuneGroupVo getByGroupId(Long groupId) {
