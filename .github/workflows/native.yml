@@ -7,6 +7,8 @@ jobs:
   build-native:
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -20,6 +22,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -33,11 +43,36 @@ jobs:
             --output type=local,dest=./out/${{ matrix.output_dir }} \
             .
 
+      - name: Verify native Excel workflow
+        env:
+          E2E_PASSWORD: ${{ secrets.NATIVE_E2E_ADMIN_PASSWORD }}
+          E2E_PORT: 18080
+          E2E_ARTIFACT_DIR: ${{ github.workspace }}/native-e2e-artifacts
+        run: |
+          test -n "$E2E_PASSWORD" || { echo "Missing NATIVE_E2E_ADMIN_PASSWORD secret"; exit 1; }
+          chmod +x scripts/native-excel-e2e.sh
+          NATIVE_BINARY="$PWD/out/${{ matrix.output_dir }}/app/fortuneboot-starter" \
+            scripts/native-excel-e2e.sh
+
+      - name: Upload native Excel diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-excel-diagnostics-${{ matrix.output_dir }}
+          path: |
+            native-e2e-artifacts/application.out
+            native-e2e-artifacts/application.err
+            native-e2e-artifacts/logs
+            native-e2e-artifacts/template.xlsx
+            native-e2e-artifacts/invalid-response.xlsx
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Clean up and extract binary
         run: |
           TARGET_DIR="out/${{ matrix.output_dir }}"
           BINARY_PATH="$TARGET_DIR/app/fortuneboot-starter"
-          
+
           if [ -f "$BINARY_PATH" ]; then
             echo "Found binary at $BINARY_PATH"
             cp "$BINARY_PATH" ./fortuneboot-starter-tmp
@@ -51,7 +86,7 @@ jobs:
 
           sudo chown -R $USER "$TARGET_DIR"
           sudo chmod -R 755 "$TARGET_DIR"
-          
+
           echo "Listing final build output:"
           ls -R "$TARGET_DIR"
 

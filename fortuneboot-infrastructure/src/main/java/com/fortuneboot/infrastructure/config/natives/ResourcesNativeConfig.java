@@ -7,6 +7,11 @@ import org.springframework.aot.hint.TypeReference;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportRuntimeHints;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.jar.JarFile;
+
 /**
  * 集中注册资源文件及第三方强依赖反射的类
  *
@@ -33,6 +38,22 @@ public class ResourcesNativeConfig {
 
             // ================= 1.0.1 前端静态资源（Vue3 dist 产物） =================
             hints.resources().registerPattern("static/**");
+
+            // ================= 1.0.2 Apache POI / XMLBeans 资源（Excel 模板下载/上传）=================
+            // XSSFWorkbook 构造链触发 XMLBeans SchemaRegularExpression.<clinit>，其中 RegexParser
+            // 会 ResourceBundle.getBundle("org.apache.xmlbeans.impl.regex.message")；native image 下
+            // ResourceBundle 需显式注册，否则 MissingResourceException -> ExceptionInInitializerError。
+            hints.resources().registerResourceBundle("org.apache.xmlbeans.impl.regex.message");
+            hints.resources().registerResourceBundle("org.apache.xmlbeans.message");
+            // XMLBeans schema 类型系统资源（.xsb）与 POI OOXML schema 资源，确保 XSSF 读写可达
+            hints.resources().registerPattern("org/apache/xmlbeans/**");
+            hints.resources().registerPattern("org/apache/poi/schemas/**");
+            hints.resources().registerPattern("org/apache/poi/**");
+            registerPoiOoxmlSchemaImplementations(hints, classLoader);
+            hints.reflection().registerType(TypeReference.of("org.apache.poi.schemas.ooxml.system.ooxml.TypeSystemHolder"),
+                    MemberCategory.ACCESS_PUBLIC_FIELDS);
+            // POI 函数元数据资源（FunctionMetadataReader 运行时初始化时读取）
+            hints.resources().registerPattern("org/apache/poi/ss/formula/function/functionMetadata*.txt");
 
             // ================= 1.1 Flyway 迁移脚本与内部资源 =================
             hints.resources().registerPattern("db/migration/**/*.sql"); // SQL 迁移脚本（MySQL + SQLite）
@@ -266,6 +287,27 @@ public class ResourcesNativeConfig {
             hints.reflection().registerType(TypeReference.of("oshi.hardware.platform.mac.MacHardwareAbstractionLayer"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
             hints.reflection().registerType(TypeReference.of("oshi.software.os.mac.MacOperatingSystem"), MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS);
 
+        }
+
+        private void registerPoiOoxmlSchemaImplementations(RuntimeHints hints, ClassLoader classLoader) {
+            try {
+                Class<?> workbookType = classLoader.loadClass(
+                        "org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook");
+                Path schemaJarPath = Path.of(workbookType.getProtectionDomain().getCodeSource().getLocation().toURI());
+                try (JarFile schemaJar = new JarFile(schemaJarPath.toFile())) {
+                    schemaJar.stream()
+                            .map(entry -> entry.getName())
+                            .filter(name -> name.startsWith("org/openxmlformats/schemas/"))
+                            .filter(name -> name.endsWith("Impl.class") || name.endsWith("$Enum.class"))
+                            .map(name -> name.substring(0, name.length() - ".class".length()).replace('/', '.'))
+                            .forEach(name -> hints.reflection().registerType(TypeReference.of(name),
+                                    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+                                    MemberCategory.INVOKE_PUBLIC_METHODS,
+                                    MemberCategory.ACCESS_PUBLIC_FIELDS));
+                }
+            } catch (ClassNotFoundException | IOException | URISyntaxException e) {
+                throw new IllegalStateException("注册 Apache POI OOXML schema native hints 失败", e);
+            }
         }
     }
 }

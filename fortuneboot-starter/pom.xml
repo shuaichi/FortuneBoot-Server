@@ -75,9 +75,9 @@
                         <buildArg>-Djava.specification.version=25</buildArg>
                         <buildArg>--features=com.fortuneboot.infrastructure.config.natives.MybatisPlusNativeFeature</buildArg>
                         <buildArg>-march=compatibility</buildArg>
-                        <!-- POI 公式/UDF 相关类静态初始化依赖运行时资源，需延迟到运行时初始化，
-                             否则 native image 构建期初始化失败会导致运行时 NoClassDefFoundError。
-                             仅精确指定报错类链，避免整包延迟初始化引发 build-time/run-time 冲突 -->
+                        <!-- Spring AOT 会重写 starter 下 META-INF/native-image 的 Args 文件，
+                             因此 POI 的 native 参数必须由 Maven plugin 直接传给 native-image。 -->
+                        <buildArg>-H:+AddAllCharsets</buildArg>
                         <buildArg>--initialize-at-run-time=org.apache.poi.ss.formula.udf.IndexedUDFFinder</buildArg>
                         <buildArg>--initialize-at-run-time=org.apache.poi.ss.formula.udf.AggregatingUDFFinder</buildArg>
                         <buildArg>--initialize-at-run-time=org.apache.poi.ss.formula.function.FunctionMetadataRegistry</buildArg>

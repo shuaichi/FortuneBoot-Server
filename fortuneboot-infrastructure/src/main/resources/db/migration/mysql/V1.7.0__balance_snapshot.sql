@@ -21,8 +21,8 @@ CREATE TABLE `fortune_balance_snapshot`
     `deleted`           tinyint(1)     NOT NULL DEFAULT '0' COMMENT '删除标志',
     PRIMARY KEY (`snapshot_id`),
     UNIQUE KEY `uk_snapshot_account` (`snapshot_date`, `account_id`),
-    KEY `idx_group_date_deleted` (`group_id`, `snapshot_date`, `deleted`),
-    KEY `idx_account_date_deleted` (`account_id`, `snapshot_date`, `deleted`)
+    KEY `idx_group_deleted_date` (`group_id`, `deleted`, `snapshot_date`),
+    KEY `idx_account_deleted_date` (`account_id`, `deleted`, `snapshot_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='账户余额快照表';
 
 -- ----------------------------
@@ -37,25 +37,60 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_config WHERE config_key = 'fortune.include.e
 UNION ALL
 SELECT '统计口径-包含未确认账单', 'fortune.include.includeUnconfirmed', '["true","false"]', 'true', 1, '统计模块口径说明：默认包含未确认账单', 1, NOW(), 1, NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM sys_config WHERE config_key = 'fortune.include.includeUnconfirmed');
--- 1. 定位「报表中心」目录 id（若你想挂到别处，改这里的 path 即可）
-SET @report_id = (
-  SELECT menu_id FROM sys_menu
-  WHERE path = '/report' AND deleted = 0
-  LIMIT 1
-);
+-- ----------------------------
+-- 3. 复用旧报表菜单为统计菜单
+-- ----------------------------
+UPDATE sys_menu
+SET menu_name = '收支报表',
+    menu_type = 1,
+    router_name = 'FortuneStatisticsBill',
+    parent_id = (SELECT menu_id FROM (SELECT menu_id FROM sys_menu WHERE path = '/report' AND deleted = 0 LIMIT 1) report_menu),
+    path = '/fortune/statistics/bill/index',
+    is_button = 0,
+    permission = '',
+    meta_info = '{"title":"收支报表","icon":"fa:bar-chart","showLink":true,"showParent":true,"rank":1}',
+    status = 1,
+    remark = '收支报表统计',
+    updater_id = 1,
+    update_time = NOW(),
+    deleted = 0
+WHERE menu_id = 91;
 
--- 2. 取当前最大 menu_id 作为递增基准
-SET @base_id = (SELECT COALESCE(MAX(menu_id), 0) FROM sys_menu);
+UPDATE sys_menu
+SET menu_name = '资产负债',
+    menu_type = 1,
+    router_name = 'FortuneStatisticsAssetsLiabilities',
+    parent_id = (SELECT menu_id FROM (SELECT menu_id FROM sys_menu WHERE path = '/report' AND deleted = 0 LIMIT 1) report_menu),
+    path = '/fortune/statistics/assets-liabilities/index',
+    is_button = 0,
+    permission = '',
+    meta_info = '{"title":"资产负债","icon":"fa:balance-scale","showLink":true,"showParent":true,"rank":2}',
+    status = 1,
+    remark = '资产负债统计',
+    updater_id = 1,
+    update_time = NOW(),
+    deleted = 0
+WHERE menu_id = 92;
 
--- 3. 插入三个统计菜单（menu_type=1 菜单，is_button=0，无按钮权限）
-INSERT INTO sys_menu
-(menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted)
-VALUES
-    (@base_id + 1, '收支报表', 1, 'FortuneStatisticsBill', @report_id, '/fortune/statistics/bill/index', 0, '',
-     '{"title":"收支报表","icon":"fa:bar-chart","showLink":true,"showParent":true,"rank":7}', 1, '收支报表统计', 1, NOW(), NULL, NULL, 0),
+UPDATE sys_menu
+SET menu_name = '借贷理财',
+    menu_type = 1,
+    router_name = 'FortuneStatisticsLoanFinance',
+    parent_id = (SELECT menu_id FROM (SELECT menu_id FROM sys_menu WHERE path = '/report' AND deleted = 0 LIMIT 1) report_menu),
+    path = '/fortune/statistics/loan-finance/index',
+    is_button = 0,
+    permission = '',
+    meta_info = '{"title":"借贷理财","icon":"fa:handshake-o","showLink":true,"showParent":true,"rank":3}',
+    status = 1,
+    remark = '借贷理财统计',
+    updater_id = 1,
+    update_time = NOW(),
+    deleted = 0
+WHERE menu_id = 93;
 
-    (@base_id + 2, '资产负债', 1, 'FortuneStatisticsAssetsLiabilities', @report_id, '/fortune/statistics/assets-liabilities/index', 0, '',
-     '{"title":"资产负债","icon":"fa:balance-scale","showLink":true,"showParent":true,"rank":8}', 1, '资产负债统计', 1, NOW(), NULL, NULL, 0),
+-- 删除旧报表中心下已废弃的多余菜单及其角色授权
+DELETE FROM sys_role_menu
+WHERE menu_id IN (94, 95, 96);
 
-    (@base_id + 3, '借贷理财', 1, 'FortuneStatisticsLoanFinance', @report_id, '/fortune/statistics/loan-finance/index', 0, '',
-     '{"title":"借贷理财","icon":"fa:handshake-o","showLink":true,"showParent":true,"rank":9}', 1, '借贷理财统计', 1, NOW(), NULL, NULL, 0);
+DELETE FROM sys_menu
+WHERE menu_id IN (94, 95, 96);

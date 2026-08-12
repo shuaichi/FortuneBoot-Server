@@ -42,6 +42,36 @@ create index idx_fortune_account_deleted
 create index idx_fortune_account_main
     on fortune_account (group_id, recycle_bin, account_type, sort);
 
+
+create table if not exists fortune_balance_snapshot
+(
+    snapshot_id       bigint auto_increment comment '主键'
+        primary key,
+    group_id          bigint                        not null comment '分组ID',
+    book_id           bigint                        null comment '账本ID',
+    account_id        bigint                        not null comment '账户ID',
+    snapshot_date     date                          not null comment '快照日期',
+    currency_code     varchar(16)                   null comment '账户币种',
+    balance           decimal(15, 2) default 0.00   not null comment '账户余额',
+    converted_balance decimal(15, 2) default 0.00   not null comment '转换后余额',
+    total_assets      decimal(15, 2) default 0.00   not null comment '总资产',
+    total_liabilities decimal(15, 2) default 0.00   not null comment '总负债',
+    net_assets        decimal(15, 2) default 0.00   not null comment '净资产',
+    creator_id        bigint                        null comment '创建者ID',
+    create_time       datetime       default CURRENT_TIMESTAMP null comment '创建时间',
+    updater_id        bigint                        null comment '更新者ID',
+    update_time       datetime       default CURRENT_TIMESTAMP null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted           tinyint(1)     default 0      not null comment '删除标志',
+    unique key uk_snapshot_account (snapshot_date, account_id)
+)
+    comment '账户余额快照表';
+
+create index idx_account_deleted_date
+    on fortune_balance_snapshot (account_id, deleted, snapshot_date);
+
+create index idx_group_deleted_date
+    on fortune_balance_snapshot (group_id, deleted, snapshot_date);
+
 create table if not exists fortune_alert
 (
     alert_id        bigint auto_increment comment '主键'
@@ -625,6 +655,9 @@ INSERT INTO sys_config (config_id, config_name, config_key, config_options, conf
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (5, '账号自助-是否开启用户注册功能', 'sys.account.registerUser', '["true","false"]', 'true', 0, null, 1, '2025-02-17 16:51:16', '2022-05-21 08:30:55', '是否开启注册用户功能（true开启，false关闭）', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (6, '系统配置-ICP备案', 'sys.config.icp', '', '暂未配置ICP备案信息', 1, null, 1, '2025-05-13 22:57:42', '2025-05-13 22:57:42', 'ICP备案号', 0);
 INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (7, '首页大屏-金额显示/隐藏设置', 'sys.config.display', '["true","false"]', 'true', 1, null, null, null, '2025-06-30 09:44:57', '首页金额默认显示/隐藏设置', 0);
+INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (8, '统计口径-转账不计入支出', 'fortune.include.excludeTransferFromExpense', '["true","false"]', 'true', 1, 1, 1, '2025-08-05 00:00:00', '2025-08-05 00:00:00', '统计模块口径说明：转账默认不计入支出', 0);
+INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (9, '统计口径-借贷不计入支出', 'fortune.include.excludeLoanFromExpense', '["true","false"]', 'true', 1, 1, 1, '2025-08-05 00:00:00', '2025-08-05 00:00:00', '统计模块口径说明：借贷默认不计入支出', 0);
+INSERT INTO sys_config (config_id, config_name, config_key, config_options, config_value, is_allow_change, creator_id, updater_id, update_time, create_time, remark, deleted) VALUES (10, '统计口径-包含未确认账单', 'fortune.include.includeUnconfirmed', '["true","false"]', 'true', 1, 1, 1, '2025-08-05 00:00:00', '2025-08-05 00:00:00', '统计模块口径说明：默认包含未确认账单', 0);
 create table if not exists sys_login_info
 (
     info_id          bigint auto_increment comment '访问ID'
@@ -728,12 +761,9 @@ INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, pat
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (88, '归物', 1, 'FortuneGoodsKeeper', 66, '/fortune/goods-keeper/index', 0, '', '{"title":"归物","icon":"fa:dropbox","showLink":true,"showParent":true,"rank":6}', 1, '', 1, '2025-05-06 16:50:46', 1, '2025-05-06 19:49:38', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (89, '报表中心', 2, '', 0, '/report', 0, '', '{"title":"报表中心","icon":"fa:pie-chart","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-02-22 23:30:10', 1, '2025-02-22 23:30:52', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (90, '单据管理', 1, 'FortuneFinanceOrder', 66, '/fortune/finance-order/index', 0, '', '{"title":"单据管理","icon":"fa:first-order","showLink":true,"showParent":true,"rank":11}', 1, '', 1, '2025-10-07 16:40:44', 1, '2025-10-07 16:41:23', 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (91, '支出分类', 1, 'FortuneCategoryExpense', 89, '/fortune/report/category/expense', 0, '', '{"title":"支出分类","icon":"fa:bookmark","showLink":true,"showParent":true,"rank":1}', 1, '', 1, '2025-03-05 21:03:59', 1, '2025-03-06 16:40:42', 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (92, '收入分类', 1, 'FortuneCategoryIncome', 89, '/fortune/report/category/income', 0, '', '{"title":"收入分类","icon":"fa:bookmark-o","showLink":true,"showParent":true,"rank":2}', 1, '', 1, '2025-03-06 17:50:41', null, null, 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (93, '支出标签', 1, 'FortuneTagExpense', 89, '/fortune/report/tag/expense', 0, '', '{"title":"支出标签","icon":"fa:calendar-minus-o","showLink":true,"showParent":true,"rank":3}', 1, '', 1, '2025-03-06 17:57:55', null, null, 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (94, '收入标签', 1, 'FortuneTagIncome', 89, '/fortune/report/tag/income', 0, '', '{"title":"收入标签","icon":"fa:calendar-plus-o","showLink":true,"showParent":true,"rank":4}', 1, '', 1, '2025-03-06 17:58:45', null, null, 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (95, '支出对象', 1, 'FortunePayeeExpense', 89, '/fortune/report/payee/expense', 0, '', '{"title":"支出对象","icon":"fa:paperclip","showLink":true,"showParent":true,"rank":5}', 1, '', 1, '2025-03-06 18:14:29', null, null, 0);
-INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (96, '收入对象', 1, 'FortunePayeeIncome', 89, '/fortune/report/payee/income', 0, '', '{"title":"收入对象","icon":"ep:paperclip","showParent":true,"rank":6}', 1, '', 1, '2025-03-06 18:33:49', 1, '2025-03-06 18:59:03', 0);
+INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (91, '收支报表', 1, 'FortuneStatisticsBill', 89, '/fortune/statistics/bill/index', 0, '', '{"title":"收支报表","icon":"fa:bar-chart","showLink":true,"showParent":true,"rank":1}', 1, '收支报表统计', 1, '2025-03-05 21:03:59', 1, '2025-08-05 00:00:00', 0);
+INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (92, '资产负债', 1, 'FortuneStatisticsAssetsLiabilities', 89, '/fortune/statistics/assets-liabilities/index', 0, '', '{"title":"资产负债","icon":"fa:balance-scale","showLink":true,"showParent":true,"rank":2}', 1, '资产负债统计', 1, '2025-03-06 17:50:41', 1, '2025-08-05 00:00:00', 0);
+INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (93, '借贷理财', 1, 'FortuneStatisticsLoanFinance', 89, '/fortune/statistics/loan-finance/index', 0, '', '{"title":"借贷理财","icon":"fa:handshake-o","showLink":true,"showParent":true,"rank":3}', 1, '借贷理财统计', 1, '2025-03-06 17:57:55', 1, '2025-08-05 00:00:00', 0);
 INSERT INTO sys_menu (menu_id, menu_name, menu_type, router_name, parent_id, path, is_button, permission, meta_info, status, remark, creator_id, create_time, updater_id, update_time, deleted) VALUES (97, '汇率中心', 1, 'FortuneCurrency', 66, '/fortune/currency/index', 0, '', '{"title":"汇率中心","icon":"fa:dollar","showLink":true,"showParent":true,"rank":7}', 1, '', 1, '2025-04-12 19:47:04', 1, '2025-04-12 19:50:31', 0);
 
 create table if not exists sys_notice
@@ -824,9 +854,6 @@ INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 89);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 91);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 92);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 93);
-INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 94);
-INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 95);
-INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 96);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (2, 97);
 INSERT INTO sys_role_menu (role_id, menu_id) VALUES (111, 1);
 

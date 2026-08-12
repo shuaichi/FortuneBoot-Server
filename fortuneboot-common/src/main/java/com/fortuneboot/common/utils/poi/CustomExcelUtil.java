@@ -117,6 +117,8 @@ public class CustomExcelUtil {
                 reader.addHeaderAlias(annotation.name(), field.getName());
                 String simpleHeaderName = annotation.name().replaceFirst("[（(].*$", "");
                 reader.addHeaderAlias(simpleHeaderName, field.getName());
+                String legacyHeaderName = annotation.name().replace("/true/false/1/0", "");
+                reader.addHeaderAlias(legacyHeaderName, field.getName());
             }
         }
 

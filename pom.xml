@@ -56,14 +56,14 @@
         <lombok.version>1.18.44</lombok.version>
         <mybatis-plus.version>3.5.16</mybatis-plus.version>
         <mybatis-plus-generator.version>3.5.16</mybatis-plus-generator.version>
-        <springdoc-openapi-starter-webapi.version>3.0.2</springdoc-openapi-starter-webapi.version>
+        <springdoc-openapi-starter-webapi.version>3.1.0</springdoc-openapi-starter-webapi.version>
         <mockito.version>1.10.19</mockito.version>
         <org.lionsoul.version>3.3.6</org.lionsoul.version>
         <com.google.guava.version>33.5.0-jre</com.google.guava.version>
         <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
         <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
         <flyway.version>12.2.0</flyway.version>
-        <spring.boot.version>4.0.5</spring.boot.version>
+        <spring.boot.version>4.1.0</spring.boot.version>
         <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.5.5</maven.surefire.plugin.version>
         <maven.war.plugin.version>3.5.1</maven.war.plugin.version>
