@@ -187,7 +187,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/fortuneboot:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/fortuneboot:${{ env.MINOR_VERSION }}
-            registry.cn-hangzhou.aliyuncs.com/${{ secrets.ALIYUN_REGISTRY_NAMESPACE }}/fortuneboot:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/fortuneboot:latest
             registry.cn-hangzhou.aliyuncs.com/${{ secrets.ALIYUN_REGISTRY_NAMESPACE }}/fortuneboot:${{ env.MINOR_VERSION }}
+            registry.cn-hangzhou.aliyuncs.com/${{ secrets.ALIYUN_REGISTRY_NAMESPACE }}/fortuneboot:latest
