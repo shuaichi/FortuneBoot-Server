@@ -173,6 +173,13 @@ public class FortuneIncludeRest {
         return ResponseDTO.ok(fortuneIncludeService.getBillCompare(query));
     }
 
+    @Operation(summary = "收支日历")
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
+    @GetMapping("/getIncomeExpenseCalendar")
+    public ResponseDTO<IncomeExpenseCalendarVo> getIncomeExpenseCalendar(@Valid IncomeExpenseCalendarQuery query) {
+        return ResponseDTO.ok(fortuneIncludeService.getIncomeExpenseCalendar(query));
+    }
+
     @Operation(summary = "收支排行")
     @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
     @GetMapping("/getBillRank")

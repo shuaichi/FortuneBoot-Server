@@ -132,6 +132,8 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
 
     List<BillCompareVo> getBillCompare(BillCompareQuery query);
 
+    List<IncomeExpenseCalendarItemVo> getIncomeExpenseCalendar(IncomeExpenseCalendarQuery query);
+
     List<FortuneBarVo> getBillRank(BillRankQuery query);
 
     List<HeatmapVo> getCalendarHeatmap(CalendarHeatmapQuery query);

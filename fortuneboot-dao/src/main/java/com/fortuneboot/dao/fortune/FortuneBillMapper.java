@@ -85,6 +85,11 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
     List<BillCompareVo> getBillCompare(@Param("query") BillCompareQuery query);
 
     /**
+     * 收支日历
+     */
+    List<IncomeExpenseCalendarItemVo> getIncomeExpenseCalendar(@Param("query") IncomeExpenseCalendarQuery query);
+
+    /**
      * 收支排行
      */
     List<FortuneBarVo> getBillRank(@Param("query") BillRankQuery query);

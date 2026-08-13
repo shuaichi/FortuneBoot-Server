@@ -120,6 +120,11 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     }
 
     @Override
+    public List<IncomeExpenseCalendarItemVo> getIncomeExpenseCalendar(IncomeExpenseCalendarQuery query) {
+        return fortuneBillMapper.getIncomeExpenseCalendar(query);
+    }
+
+    @Override
     public List<FortuneBarVo> getBillRank(BillRankQuery query) {
         return fortuneBillMapper.getBillRank(query);
     }

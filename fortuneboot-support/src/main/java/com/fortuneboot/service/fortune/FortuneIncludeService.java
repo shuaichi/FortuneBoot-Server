@@ -1,6 +1,7 @@
 package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.IncomeExpenseCalendarGranularityEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.utils.poi.CustomExcelUtil;
@@ -51,6 +52,8 @@ public class FortuneIncludeService {
     private static final int MAX_DAILY_RANGE_DAYS = 366;
     private static final int MAX_MONTH_RANGE = 60;
     private static final int MAX_YEAR_RANGE = 10;
+    private static final int MAX_FILTER_ID_COUNT = 100;
+    private static final int MAX_TITLE_LENGTH = 100;
     private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
     private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
@@ -128,6 +131,21 @@ public class FortuneIncludeService {
         validateCompareRange(query);
         query.setInclude(Boolean.TRUE);
         return completeCompareSeries(fortuneBillRepo.getBillCompare(query), query);
+    }
+
+    public IncomeExpenseCalendarVo getIncomeExpenseCalendar(IncomeExpenseCalendarQuery query) {
+        validateCalendarFilters(query);
+        DateRange range = resolveCalendarRange(query);
+        IncomeExpenseCalendarQuery normalized = copyCalendarQuery(query, range);
+        List<IncomeExpenseCalendarItemVo> items = completeCalendarSeries(
+                fortuneBillRepo.getIncomeExpenseCalendar(normalized), normalized.getGranularity(), range);
+
+        IncomeExpenseCalendarVo vo = new IncomeExpenseCalendarVo();
+        vo.setGranularity(normalized.getGranularity());
+        vo.setStartDate(range.startDate());
+        vo.setEndDate(range.endDate());
+        vo.setItems(items);
+        return vo;
     }
 
     public List<FortuneBarVo> getBillRank(BillRankQuery query) {
@@ -271,6 +289,127 @@ public class FortuneIncludeService {
         if (months > MAX_MONTH_RANGE) {
             throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按月对比跨度不能超过" + MAX_MONTH_RANGE + "个月");
         }
+    }
+
+    private void validateCalendarFilters(IncomeExpenseCalendarQuery query) {
+        if (StringUtils.length(query.getTitle()) > MAX_TITLE_LENGTH) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "账单标题筛选长度不能超过" + MAX_TITLE_LENGTH + "个字符");
+        }
+        validateFilterIds(query.getCategoryIds(), "分类");
+        validateFilterIds(query.getTagIds(), "标签");
+        validateFilterIds(query.getPayeeIds(), "交易对象");
+        validateFilterIds(query.getAccountIds(), "账户");
+        validateFilterIds(query.getMemberIds(), "成员");
+    }
+
+    private void validateFilterIds(List<Long> ids, String filterName) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        if (ids.size() > MAX_FILTER_ID_COUNT) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION,
+                    filterName + "筛选数量不能超过" + MAX_FILTER_ID_COUNT);
+        }
+        if (ids.stream().anyMatch(id -> id == null || id <= 0)) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, filterName + "筛选ID必须是正数");
+        }
+    }
+
+    private DateRange resolveCalendarRange(IncomeExpenseCalendarQuery query) {
+        IncomeExpenseCalendarGranularityEnum granularity = IncomeExpenseCalendarGranularityEnum.getByValue(query.getGranularity());
+        if (granularity == null) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "不支持的日历粒度");
+        }
+        return switch (granularity) {
+            case DAY -> resolveDayCalendarRange(query);
+            case MONTH -> resolveMonthCalendarRange(query);
+            case YEAR -> resolveYearCalendarRange(query);
+        };
+    }
+
+    private DateRange resolveDayCalendarRange(IncomeExpenseCalendarQuery query) {
+        if (query.getYear() == null) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按日日历必须指定年份");
+        }
+        if (query.getMonth() == null) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按日日历必须指定月份");
+        }
+        YearMonth yearMonth = YearMonth.of(query.getYear(), query.getMonth());
+        return new DateRange(yearMonth.atDay(1), yearMonth.atEndOfMonth());
+    }
+
+    private DateRange resolveMonthCalendarRange(IncomeExpenseCalendarQuery query) {
+        if (query.getYear() == null) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按月日历必须指定年份");
+        }
+        return new DateRange(LocalDate.of(query.getYear(), 1, 1), LocalDate.of(query.getYear(), 12, 31));
+    }
+
+    private DateRange resolveYearCalendarRange(IncomeExpenseCalendarQuery query) {
+        if (query.getStartYear() == null || query.getEndYear() == null) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按年日历必须指定起止年份");
+        }
+        if (query.getEndYear() < query.getStartYear()) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "结束年份不能早于开始年份");
+        }
+        int years = query.getEndYear() - query.getStartYear() + 1;
+        if (years > MAX_YEAR_RANGE) {
+            throw new ApiException(ErrorCode.Business.COMMON_UNSUPPORTED_OPERATION, "按年日历跨度不能超过" + MAX_YEAR_RANGE + "年");
+        }
+        return new DateRange(LocalDate.of(query.getStartYear(), 1, 1), LocalDate.of(query.getEndYear(), 12, 31));
+    }
+
+    private IncomeExpenseCalendarQuery copyCalendarQuery(IncomeExpenseCalendarQuery source, DateRange range) {
+        IncomeExpenseCalendarQuery target = new IncomeExpenseCalendarQuery();
+        copyBaseQuery(source, target);
+        target.setGranularity(source.getGranularity());
+        target.setYear(source.getYear());
+        target.setMonth(source.getMonth());
+        target.setStartYear(source.getStartYear());
+        target.setEndYear(source.getEndYear());
+        target.setStartDate(range.startDate());
+        target.setEndDate(range.endDate());
+        target.setInclude(Boolean.TRUE);
+        target.setBillType(null);
+        return target;
+    }
+
+    private List<IncomeExpenseCalendarItemVo> completeCalendarSeries(List<IncomeExpenseCalendarItemVo> originData,
+                                                                       Integer granularity,
+                                                                       DateRange range) {
+        Map<String, IncomeExpenseCalendarItemVo> dataMap = originData.stream()
+                .filter(item -> StringUtils.isNotBlank(item.getPeriod()))
+                .collect(Collectors.toMap(IncomeExpenseCalendarItemVo::getPeriod, Function.identity(), (left, right) -> right));
+        IncomeExpenseCalendarGranularityEnum calendarGranularity = IncomeExpenseCalendarGranularityEnum.getByValue(granularity);
+        return switch (calendarGranularity) {
+            case DAY -> range.startDate().datesUntil(range.endDate().plusDays(1))
+                    .map(date -> calendarItem(dataMap, DAY_FORMATTER.format(date))).toList();
+            case MONTH -> {
+                YearMonth start = YearMonth.from(range.startDate());
+                YearMonth end = YearMonth.from(range.endDate());
+                List<IncomeExpenseCalendarItemVo> items = new ArrayList<>();
+                for (YearMonth cursor = start; !cursor.isAfter(end); cursor = cursor.plusMonths(1)) {
+                    items.add(calendarItem(dataMap, MONTH_FORMATTER.format(cursor)));
+                }
+                yield items;
+            }
+            case YEAR -> IntStream.rangeClosed(range.startDate().getYear(), range.endDate().getYear())
+                    .mapToObj(year -> calendarItem(dataMap, String.valueOf(year))).toList();
+        };
+    }
+
+    private IncomeExpenseCalendarItemVo calendarItem(Map<String, IncomeExpenseCalendarItemVo> dataMap, String period) {
+        return dataMap.getOrDefault(period, emptyCalendarItem(period));
+    }
+
+    private IncomeExpenseCalendarItemVo emptyCalendarItem(String period) {
+        IncomeExpenseCalendarItemVo item = new IncomeExpenseCalendarItemVo();
+        item.setPeriod(period);
+        item.setIncome(BigDecimal.ZERO);
+        item.setExpense(BigDecimal.ZERO);
+        item.setIncomeCount(0);
+        item.setExpenseCount(0);
+        return item;
     }
 
     private BillIncludeQuery normalizeBillQuery(BillIncludeQuery query, Integer defaultBillType) {

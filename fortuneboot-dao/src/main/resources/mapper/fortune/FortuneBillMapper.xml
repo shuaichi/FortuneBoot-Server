@@ -428,6 +428,51 @@
         ORDER BY name ASC
     </select>
 
+    <!-- ==================== getIncomeExpenseCalendar ==================== -->
+    <select id="getIncomeExpenseCalendar" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.IncomeExpenseCalendarItemVo">
+        SELECT
+        <choose>
+            <when test="query.granularity == 1">DATE(b.trade_time) AS period,</when>
+            <when test="query.granularity == 2">DATE_FORMAT(b.trade_time, '%Y-%m') AS period,</when>
+            <otherwise>DATE_FORMAT(b.trade_time, '%Y') AS period,</otherwise>
+        </choose>
+               COALESCE(SUM(CASE WHEN b.bill_type = 2 THEN b.converted_amount ELSE 0 END), 0) AS income,
+               COALESCE(SUM(CASE WHEN b.bill_type = 1 THEN b.converted_amount ELSE 0 END), 0) AS expense,
+               SUM(CASE WHEN b.bill_type = 2 AND b.converted_amount IS NOT NULL THEN 1 ELSE 0 END) AS incomeCount,
+               SUM(CASE WHEN b.bill_type = 1 AND b.converted_amount IS NOT NULL THEN 1 ELSE 0 END) AS expenseCount
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = TRUE
+          AND b.bill_type IN (1, 2)
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
+        GROUP BY period
+        ORDER BY period ASC
+    </select>
+
+    <select id="getIncomeExpenseCalendar" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.IncomeExpenseCalendarItemVo">
+        SELECT
+        <choose>
+            <when test="query.granularity == 1">date(b.trade_time) AS period,</when>
+            <when test="query.granularity == 2">strftime('%Y-%m', b.trade_time) AS period,</when>
+            <otherwise>strftime('%Y', b.trade_time) AS period,</otherwise>
+        </choose>
+               COALESCE(SUM(CASE WHEN b.bill_type = 2 THEN b.converted_amount ELSE 0 END), 0) AS income,
+               COALESCE(SUM(CASE WHEN b.bill_type = 1 THEN b.converted_amount ELSE 0 END), 0) AS expense,
+               SUM(CASE WHEN b.bill_type = 2 AND b.converted_amount IS NOT NULL THEN 1 ELSE 0 END) AS incomeCount,
+               SUM(CASE WHEN b.bill_type = 1 AND b.converted_amount IS NOT NULL THEN 1 ELSE 0 END) AS expenseCount
+        FROM fortune_bill b
+        WHERE b.deleted = 0
+          AND b.include = 1
+          AND b.bill_type IN (1, 2)
+          <include refid="billIncludeBaseFilter"/>
+          <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
+          <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
+        GROUP BY period
+        ORDER BY period ASC
+    </select>
+
     <!-- ==================== getBillRank ==================== -->
     <select id="getBillRank" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.FortuneBarVo">
         SELECT COALESCE(NULLIF(b.title, ''), CONCAT('账单#', b.bill_id)) AS name, b.amount AS value
