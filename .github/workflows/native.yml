@@ -186,6 +186,9 @@ jobs:
           file: Dockerfile.runtime
           platforms: linux/amd64,linux/arm64
           push: true
+          # 阿里云镜像仓库不支持 Buildx 默认生成的 OCI provenance/SBOM 附件。
+          provenance: false
+          sbom: false
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/fortuneboot:${{ env.MINOR_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/fortuneboot:latest
