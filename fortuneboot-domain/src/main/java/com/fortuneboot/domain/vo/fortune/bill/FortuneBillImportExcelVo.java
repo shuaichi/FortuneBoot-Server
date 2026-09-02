@@ -56,7 +56,7 @@ public class FortuneBillImportExcelVo {
     @ExcelColumn(name = "备注（选填，512字以内）")
     private String remark;
 
-    @ExcelColumn(name = "附加费用（选填，仅支出/转账，类型:金额:账户方向:分类:备注）")
+    @ExcelColumn(name = "附加费用（选填，仅支出/转账，类型:金额:账户方向:分类:备注；非转账分类必填）")
     private String extras;
 
     @ExcelColumn(name = "附件（暂不支持，请留空）")

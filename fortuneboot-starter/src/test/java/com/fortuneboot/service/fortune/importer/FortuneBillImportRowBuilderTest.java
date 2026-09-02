@@ -3,6 +3,7 @@ package com.fortuneboot.service.fortune.importer;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
+import com.fortuneboot.service.fortune.FortuneBillExtraCategoryValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FortuneBillImportRowBuilderTest {
 
-    private final FortuneBillImportRowBuilder rowBuilder = new FortuneBillImportRowBuilder(new FortuneBillImportConverter());
+    private final FortuneBillImportRowBuilder rowBuilder = new FortuneBillImportRowBuilder(
+            new FortuneBillImportConverter(new FortuneBillExtraCategoryValidator()));
 
     @Test
     @DisplayName("跳过全空行并保留 Excel 实际行号")

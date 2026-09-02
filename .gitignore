@@ -50,3 +50,4 @@ fortuneboot-starter/src/main/resources/static/
 !*/build/*.html
 !*/build/*.xml
 
+*.md

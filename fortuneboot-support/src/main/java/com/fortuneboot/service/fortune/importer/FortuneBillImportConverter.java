@@ -1,11 +1,13 @@
 package com.fortuneboot.service.fortune.importer;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
+import com.fortuneboot.service.fortune.FortuneBillExtraCategoryValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +37,8 @@ public class FortuneBillImportConverter {
     private static final int ACCOUNT_SIDE_FROM = 1;
     private static final int ACCOUNT_SIDE_TO = 2;
 
+    private final FortuneBillExtraCategoryValidator extraCategoryValidator;
+
     void convert(FortuneBillImportRow row, FortuneBillImportContext context) {
         FortuneBillImportExcelVo source = row.getSource();
         FortuneBillAddCommand command = new FortuneBillAddCommand();
@@ -59,6 +63,7 @@ public class FortuneBillImportConverter {
             fillTags(row, context, command);
             fillMembers(row, context, command);
             fillExtras(row, context, command);
+            validateExtraCategories(row, command);
             validateExtraNetAmount(row, command, source);
             validateTypeRules(row, command, source);
         }
@@ -87,6 +92,14 @@ public class FortuneBillImportConverter {
         ) && Objects.isNull(source.getTradeTime())
                 && Objects.isNull(source.getOrderId())
                 && Objects.isNull(source.getAmount());
+    }
+
+    private void validateExtraCategories(FortuneBillImportRow row, FortuneBillAddCommand command) {
+        try {
+            extraCategoryValidator.validate(command);
+        } catch (ApiException e) {
+            row.addError("第" + row.getRowNum() + "行：" + e.getMessage());
+        }
     }
 
     private void validateTitle(FortuneBillImportRow row, String title) {

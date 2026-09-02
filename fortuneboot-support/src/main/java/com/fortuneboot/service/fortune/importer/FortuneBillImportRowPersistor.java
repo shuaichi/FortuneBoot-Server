@@ -4,6 +4,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.factory.fortune.factory.FortuneBillFactory;
+import com.fortuneboot.service.fortune.FortuneBillExtraCategoryValidator;
 import com.fortuneboot.factory.fortune.model.FortuneBillModel;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
@@ -25,12 +26,14 @@ class FortuneBillImportRowPersistor {
     private final BillStrategyFactory strategyFactory;
     private final FortuneBillImportStrategyContextBuilder strategyContextBuilder;
     private final FortuneBillImportNetAmountValidator netAmountValidator;
+    private final FortuneBillExtraCategoryValidator extraCategoryValidator;
     private final FortuneBillImportRelationBatch relationBatch;
 
     void persist(FortuneBillImportRow row, FortuneBillImportContext importContext,
                  FortuneBillImportRelationBatch.Relations relations, List<Long> billIds) {
         try {
             FortuneBillAddCommand command = row.getCommand();
+            extraCategoryValidator.validate(command);
             FortuneBillModel billModel = fortuneBillFactory.create();
             billModel.loadAddCommand(command);
             BillStrategyContext context = strategyContextBuilder.build(command, billModel, importContext);

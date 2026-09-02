@@ -94,6 +94,7 @@ public class FortuneBillService {
     private final FortuneMemberFactory fortuneMemberFactory;
     private final FortuneBillExtraService fortuneBillExtraService;
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
+    private final FortuneBillExtraCategoryValidator extraCategoryValidator;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -256,6 +257,7 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long add(FortuneBillAddCommand addCommand) {
+        extraCategoryValidator.validate(addCommand);
         // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
         fortuneBillModel.loadAddCommand(addCommand);
@@ -362,6 +364,7 @@ public class FortuneBillService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillModifyCommand modifyCommand) {
+        extraCategoryValidator.validate(modifyCommand);
         // 1. 加载原账单
         FortuneBillModel originalBill = fortuneBillFactory.loadById(modifyCommand.getBillId());
         originalBill.checkBookId(modifyCommand.getBookId());

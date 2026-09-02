@@ -9,6 +9,7 @@ import com.fortuneboot.domain.query.fortune.FortuneRecurringBillRuleQuery;
 import com.fortuneboot.factory.fortune.factory.FortuneRecurringBillRuleFactory;
 import com.fortuneboot.factory.fortune.model.FortuneRecurringBillRuleModel;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillLogRepo;
+import com.fortuneboot.service.fortune.FortuneBillExtraCategoryValidator;
 import com.fortuneboot.repository.fortune.FortuneRecurringBillRuleRepo;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,7 @@ public class FortuneRecurringBillService {
 
     private final FortuneRecurringBillScheduleService scheduleService;
     private final FortuneRecurringBillRecoveryService recoveryService;
+    private final FortuneBillExtraCategoryValidator extraCategoryValidator;
 
     public IPage<FortuneRecurringBillRuleEntity> getRulePage(FortuneRecurringBillRuleQuery query) {
         return fortuneRecurringBillRuleRepo.page(query.toPage(), query.addQueryCondition());
@@ -52,6 +54,7 @@ public class FortuneRecurringBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addNewRule(FortuneRecurringBillRuleAddCommand addCommand) {
+        extraCategoryValidator.validate(addCommand.getBillRequest());
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.create();
         rule.loadAddCommand(addCommand);
         rule.checkCronValid();
@@ -61,6 +64,7 @@ public class FortuneRecurringBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public void modifyRule(FortuneRecurringBillRuleModifyCommand modifyCommand) {
+        extraCategoryValidator.validate(modifyCommand.getBillRequest());
         FortuneRecurringBillRuleModel rule = fortuneRecurringBillRuleFactory.loadById(modifyCommand.getRuleId());
         rule.checkBookId(modifyCommand.getBookId());
         rule.loadModifyCommand(modifyCommand);

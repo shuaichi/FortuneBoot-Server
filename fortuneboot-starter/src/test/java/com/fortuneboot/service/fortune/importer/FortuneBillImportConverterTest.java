@@ -6,6 +6,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
 import com.fortuneboot.factory.fortune.model.FortuneBookModel;
+import com.fortuneboot.service.fortune.FortuneBillExtraCategoryValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FortuneBillImportConverterTest {
 
-    private final FortuneBillImportConverter converter = new FortuneBillImportConverter();
+    private final FortuneBillImportConverter converter = new FortuneBillImportConverter(
+            new FortuneBillExtraCategoryValidator());
 
     @Test
     @DisplayName("布尔值支持中文、英文和数字表达")
@@ -86,10 +88,22 @@ class FortuneBillImportConverterTest {
     }
 
     @Test
+    @DisplayName("非转账账单的附加费用缺少分类时聚合错误")
+    void convert_nonTransferExtraWithoutCategory_addsError() {
+        FortuneBillImportExcelVo source = baseExpense();
+        source.setExtras("手续费:1:转出账户");
+        FortuneBillImportRow row = new FortuneBillImportRow(2, source);
+
+        converter.convert(row, context());
+
+        assertThat(row.getErrors()).contains("第2行：非转账账单的附加费用分类不能为空");
+    }
+
+    @Test
     @DisplayName("优惠金额不能大于或等于账单金额与手续费合计")
     void convert_discountGreaterThanAmount_addsError() {
         FortuneBillImportExcelVo source = baseExpense();
-        source.setExtras("优惠:20:转出账户");
+        source.setExtras("优惠:20:转出账户:餐饮");
         FortuneBillImportRow row = new FortuneBillImportRow(2, source);
 
         converter.convert(row, context());
