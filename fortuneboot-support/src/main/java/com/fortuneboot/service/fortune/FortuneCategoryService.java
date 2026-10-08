@@ -70,6 +70,11 @@ public class FortuneCategoryService {
             // 递归查找所有关联的根节点ID（优化点：批量查询代替逐级递归）
             Set<Long> rootIdSet = this.findRootIdsEfficiently(list);
 
+            // 无匹配节点时直接返回空结果，避免 MyBatis-Plus 生成非法的 category_id IN () 条件
+            if (CollectionUtils.isEmpty(rootIdSet)) {
+                return PageDTO.empty();
+            }
+
             // 根据根节点ID进行分页查询
             Page<FortuneCategoryEntity> result = fortuneCategoryRepo.page(
                     query.toPage(),
