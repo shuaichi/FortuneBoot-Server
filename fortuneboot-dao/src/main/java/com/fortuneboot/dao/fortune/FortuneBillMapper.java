@@ -26,6 +26,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
             FROM fortune_bill AS bill\n
             LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id\n
             LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id\n
+            LEFT JOIN fortune_member_relation AS fmr ON bill.bill_id = fmr.bill_id AND fmr.deleted = 0\n
              ${ew.customSqlSegment}
             """)
     IPage<FortuneBillEntity> getPage(Page<FortuneBillEntity> page, @Param(Constants.WRAPPER) Wrapper<FortuneBillEntity> wrapper);
@@ -44,6 +45,7 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
                 FROM fortune_bill AS bill
                 LEFT JOIN fortune_category_relation AS fcr ON bill.bill_id = fcr.bill_id
                 LEFT JOIN fortune_tag_relation AS ftr ON bill.bill_id = ftr.bill_id
+                LEFT JOIN fortune_member_relation AS fmr ON bill.bill_id = fmr.bill_id AND fmr.deleted = 0
                 ${ew.customSqlSegment}
             ) AS t
             """)

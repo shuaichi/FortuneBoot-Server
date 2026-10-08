@@ -922,6 +922,7 @@
 | orderId | Long | 否 | - | 单据 ID |
 | categoryIds | List\<Integer\> | 否 | - | 分类 id 列表 |
 | tagIds | List\<Integer\> | 否 | - | 标签 id 列表 |
+| memberIds | List\<Long\> | 否 | - | 成员 id 列表 |
 | payeeId | Integer | 否 | - | 交易对象 id |
 | confirm | Boolean | 否 | - | 是否确认 |
 | include | Boolean | 否 | - | 是否统计 |

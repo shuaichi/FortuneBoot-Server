@@ -90,6 +90,11 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     private List<Integer> tagIds;
 
     /**
+     * 成员id
+     */
+    private List<Long> memberIds;
+
+    /**
      * 交易对象
      */
     private Integer payeeId;
@@ -165,6 +170,7 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .le(Objects.nonNull(amountMax), "bill.amount", amountMax)
                 .in(CollectionUtils.isNotEmpty(categoryIds), "fcr.category_id", categoryIds)
                 .in(CollectionUtils.isNotEmpty(tagIds), "ftr.tag_id", tagIds)
+                .in(CollectionUtils.isNotEmpty(memberIds), "fmr.member_id", memberIds)
                 .eq(Objects.nonNull(payeeId), "bill.payee_id", payeeId)
                 .eq(Objects.nonNull(confirm), "bill.confirm", confirm)
                 .eq(Objects.nonNull(include), "bill.include", include)
