@@ -492,6 +492,7 @@
 | 修改个人信息 | PUT | `/system/user/profile` | command(UpdateProfileCommand,Body，userId 由后端注入) | ResponseDTO&lt;Void&gt; | 无（登录即可） | @AccessLog: MODIFY |
 | 重置个人密码 | PUT | `/system/user/profile/password` | command(UpdateUserPasswordCommand,Body，userId 由后端注入) | ResponseDTO&lt;Void&gt; | 无（登录即可） | @AccessLog: MODIFY |
 | 修改个人头像 | POST | `/system/user/profile/avatar` | avatarfile(MultipartFile,multipart) | ResponseDTO&lt;UploadFileDTO&gt; | 无（登录即可） | @AccessLog: MODIFY，multipart 头像上传，空文件抛 USER_UPLOAD_FILE_FAILED |
+| 注销账号 | DELETE | `/system/user/profile` | command(DeleteAccountCommand,Body，password 必填且 RSA 加密) | ResponseDTO&lt;Void&gt; | 无（登录即可） | @AccessLog: DELETE；解密并校验密码后匿名化用户、清理分组关系并失效全部会话；限流 10 次/小时/用户 |
 
 ---
 

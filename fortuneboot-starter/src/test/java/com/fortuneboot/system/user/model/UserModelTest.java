@@ -161,4 +161,65 @@ class UserModelTest {
 
         Assertions.assertTrue(AuthenticationUtils.matchesPassword("admin456", userModel.getPassword()));
     }
+
+    @Test
+    void testCheckPasswordWhenPasswordWrong() {
+        UserModel userModel = userModelFactory.create();
+        userModel.setPassword("$2a$10$rb1wRoEIkLbIknREEN1LH.FGs4g0oOS5t6l5LQ793nRaFO.SPHDHy");
+
+        ApiException exception = assertThrows(ApiException.class, () -> userModel.checkPassword("admin999"));
+        Assertions.assertEquals(Business.USER_PASSWORD_IS_NOT_CORRECT, exception.getErrorCode());
+    }
+
+    @Test
+    void testCheckPasswordWhenPasswordCorrect() {
+        UserModel userModel = userModelFactory.create();
+        userModel.setPassword("$2a$10$rb1wRoEIkLbIknREEN1LH.FGs4g0oOS5t6l5LQ793nRaFO.SPHDHy");
+
+        Assertions.assertDoesNotThrow(() -> userModel.checkPassword("admin123"));
+    }
+
+    @Test
+    void testCheckSelfDeletionAllowedWhenAdmin() {
+        UserModel userModel = userModelFactory.create();
+        userModel.setUserId(1L);
+        userModel.setIsAdmin(true);
+
+        ApiException exception = assertThrows(ApiException.class, userModel::checkSelfDeletionAllowed);
+        Assertions.assertEquals(Business.USER_ADMIN_CAN_NOT_BE_DELETE, exception.getErrorCode());
+    }
+
+    @Test
+    void testCheckSelfDeletionAllowedWhenNormalUser() {
+        UserModel userModel = userModelFactory.create();
+        userModel.setUserId(2L);
+        userModel.setIsAdmin(false);
+
+        Assertions.assertDoesNotThrow(userModel::checkSelfDeletionAllowed);
+    }
+
+    @Test
+    void testAnonymizeForDeletion() {
+        UserModel userModel = userModelFactory.create();
+        userModel.setUserId(100L);
+        userModel.setUsername("zhangsan");
+        userModel.setNickname("张三");
+        userModel.setEmail("zhangsan@example.com");
+        userModel.setPhoneNumber("13800000000");
+        userModel.setAvatar("/profile/avatar/1.png");
+        userModel.setPassword("encoded-password");
+        userModel.setLoginIp("127.0.0.1");
+        userModel.setRemark("个人备注");
+
+        userModel.anonymizeForDeletion();
+
+        Assertions.assertEquals("deleted_user_100", userModel.getUsername());
+        Assertions.assertEquals("已注销用户", userModel.getNickname());
+        Assertions.assertEquals("", userModel.getEmail());
+        Assertions.assertEquals("", userModel.getPhoneNumber());
+        Assertions.assertEquals("", userModel.getAvatar());
+        Assertions.assertEquals("", userModel.getPassword());
+        Assertions.assertEquals("", userModel.getLoginIp());
+        Assertions.assertEquals("", userModel.getRemark());
+    }
 }

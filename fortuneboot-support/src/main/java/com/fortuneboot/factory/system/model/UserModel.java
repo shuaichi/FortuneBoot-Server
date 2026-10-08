@@ -135,6 +135,38 @@ public class UserModel extends SysUserEntity {
         }
     }
 
+    /**
+     * 校验自助注销时的密码
+     */
+    public void checkPassword(String rawPassword) {
+        if (!AuthenticationUtils.matchesPassword(rawPassword, getPassword())) {
+            throw new ApiException(Business.USER_PASSWORD_IS_NOT_CORRECT);
+        }
+    }
+
+    /**
+     * 管理员账号是系统的最后管理入口 不允许自助注销
+     */
+    public void checkSelfDeletionAllowed() {
+        if (Boolean.TRUE.equals(this.getIsAdmin())) {
+            throw new ApiException(Business.USER_ADMIN_CAN_NOT_BE_DELETE);
+        }
+    }
+
+    /**
+     * 注销时匿名化个人数据 用户名/昵称为非空字段 使用占位符
+     */
+    public void anonymizeForDeletion() {
+        this.setUsername("deleted_user_" + this.getUserId());
+        this.setNickname("已注销用户");
+        this.setEmail(StrUtil.EMPTY);
+        this.setPhoneNumber(StrUtil.EMPTY);
+        this.setAvatar(StrUtil.EMPTY);
+        this.setPassword(StrUtil.EMPTY);
+        this.setLoginIp(StrUtil.EMPTY);
+        this.setRemark(StrUtil.EMPTY);
+    }
+
     public void checkCanBeDelete(SystemLoginUser loginUser) {
         if (Objects.equals(getUserId(), loginUser.getUserId())
             || Boolean.TRUE.equals(this.getIsAdmin())) {

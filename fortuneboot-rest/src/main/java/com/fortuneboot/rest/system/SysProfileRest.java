@@ -12,7 +12,12 @@ import com.fortuneboot.service.system.UserApplicationService;
 import com.fortuneboot.domain.command.user.UpdateProfileCommand;
 import com.fortuneboot.domain.command.user.UpdateUserAvatarCommand;
 import com.fortuneboot.domain.command.user.UpdateUserPasswordCommand;
+import com.fortuneboot.domain.command.user.DeleteAccountCommand;
 import com.fortuneboot.domain.dto.user.UserProfileDTO;
+import com.fortuneboot.infrastructure.annotations.ratelimit.RateLimit;
+import com.fortuneboot.infrastructure.annotations.ratelimit.RateLimit.CacheType;
+import com.fortuneboot.infrastructure.annotations.ratelimit.RateLimit.LimitType;
+import com.fortuneboot.infrastructure.annotations.ratelimit.RateLimitKey;
 import com.fortuneboot.infrastructure.user.AuthenticationUtils;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
@@ -20,12 +25,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -93,5 +100,19 @@ public class SysProfileRest extends BaseController {
 
         userApplicationService.updateUserAvatar(new UpdateUserAvatarCommand(loginUser.getUserId(), avatarUrl));
         return ResponseDTO.ok(new UploadFileDTO(avatarUrl));
+    }
+
+    /**
+     * 注销当前登录账号 (App Store 要求账号可自助注销)
+     */
+    @Operation(summary = "注销账号", description = "当前登录用户自助注销 需要验证登录密码")
+    @AccessLog(title = "个人信息", businessType = BusinessTypeEnum.DELETE)
+    @RateLimit(key = RateLimitKey.ACCOUNT_DELETE_KEY, time = 3600, maxCount = 10,
+            cacheType = CacheType.MEMORY, limitType = LimitType.SYSTEM_USER)
+    @DeleteMapping
+    public ResponseDTO<Void> deleteAccount(@Validated @RequestBody DeleteAccountCommand command) {
+        SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
+        userApplicationService.deleteAccountBySelf(loginUser, command);
+        return ResponseDTO.ok();
     }
 }

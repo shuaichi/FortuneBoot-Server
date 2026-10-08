@@ -42,8 +42,13 @@ public class FortuneUserGroupRelationRepoImpl extends ServiceImpl<FortuneUserGro
     @Override
     public List<FortuneUserGroupRelationEntity> getByUserId() {
         SystemLoginUser loginUser = AuthenticationUtils.getSystemLoginUser();
+        return this.getByUserId(loginUser.getUserId());
+    }
+
+    @Override
+    public List<FortuneUserGroupRelationEntity> getByUserId(Long userId) {
         LambdaQueryWrapper<FortuneUserGroupRelationEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneUserGroupRelationEntity.class);
-        queryWrapper.eq(FortuneUserGroupRelationEntity::getUserId,loginUser.getUserId());
+        queryWrapper.eq(FortuneUserGroupRelationEntity::getUserId, userId);
         return this.list(queryWrapper);
     }
 

@@ -3,12 +3,18 @@ package com.fortuneboot.service.system;
 import cn.hutool.core.convert.Convert;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.ConfigKeyEnum;
+import com.fortuneboot.common.enums.fortune.RoleTypeEnum;
 import com.fortuneboot.common.enums.common.TrueFalseEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.domain.command.user.DeleteAccountCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneUserGroupRelationEntity;
 import com.fortuneboot.domain.event.UserRegisteredEvent;
 import com.fortuneboot.factory.system.factory.UserModelFactory;
 import com.fortuneboot.factory.system.model.UserModel;
+import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
+import com.fortuneboot.service.fortune.FortuneGroupService;
+import com.fortuneboot.service.login.LoginService;
 import com.fortuneboot.repository.system.SysConfigRepo;
 import com.fortuneboot.repository.system.SysRoleRepo;
 import com.fortuneboot.service.cache.CacheCenter;
@@ -65,6 +71,12 @@ public class UserApplicationService {
 
     private final CacheService cacheService;
 
+    private final FortuneUserGroupRelationRepo fortuneUserGroupRelationRepo;
+
+    private final FortuneGroupService fortuneGroupService;
+
+    private final LoginService loginService;
+
     public PageDTO<UserDTO> getUserList(SearchUserQuery<SearchUserDO> query) {
         Page<SearchUserDO> userPage = userRepository.getUserList(query);
         List<UserDTO> userDTOList = userPage.getRecords().stream().map(UserDTO::new).collect(Collectors.toList());
@@ -106,6 +118,60 @@ public class UserApplicationService {
         userModel.updateById();
 
         CacheCenter.userCache.delete(userModel.getUserId());
+    }
+
+    /**
+     * 当前登录用户自助注销账号
+     * 1. 校验密码 防止误操作或共用设备上的恶意注销
+     * 2. 清理分组关系: 仅剩本人时删除整个分组 否则移除本人关系并将 OWNER 移交给其他成员
+     * 3. 匿名化个人信息并逻辑删除用户
+     * 4. 清理用户缓存和全部登录会话
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteAccountBySelf(SystemLoginUser loginUser, DeleteAccountCommand command) {
+        UserModel userModel = userModelFactory.loadById(loginUser.getUserId());
+
+        // 客户端与登录一致使用 RSA 加密传输密码 服务端解密后再校验
+        String rawPassword = loginService.decryptPassword(command.getPassword());
+        userModel.checkPassword(rawPassword);
+        userModel.checkSelfDeletionAllowed();
+
+        cleanupUserGroups(loginUser.getUserId());
+
+        userModel.anonymizeForDeletion();
+        userModel.updateById();
+        userModel.deleteById();
+
+        CacheCenter.userCache.delete(loginUser.getUserId());
+        cacheService.removeLoginUserByUserId(loginUser.getUserId());
+    }
+
+    private void cleanupUserGroups(Long userId) {
+        List<FortuneUserGroupRelationEntity> relations = fortuneUserGroupRelationRepo.getByUserId(userId);
+
+        for (FortuneUserGroupRelationEntity relation : relations) {
+            List<FortuneUserGroupRelationEntity> members = fortuneUserGroupRelationRepo.getByGroupId(relation.getGroupId());
+
+            boolean soleMember = members.size() == 1
+                    && Objects.equals(userId, members.get(0).getUserId());
+
+            if (soleMember) {
+                // 仅本人使用的分组 直接删除分组及其账本等关联数据
+                fortuneGroupService.remove(relation.getGroupId());
+                continue;
+            }
+
+            // 共享分组保留给其他成员 如本人是 OWNER 则将权限移交给其他成员 避免分组无管理者
+            members.stream()
+                    .filter(member -> !Objects.equals(userId, member.getUserId()))
+                    .findFirst()
+                    .ifPresent(member -> {
+                        member.setRoleType(RoleTypeEnum.OWNER.getValue());
+                        fortuneUserGroupRelationRepo.updateById(member);
+                    });
+
+            fortuneUserGroupRelationRepo.removeById(relation.getUserGroupRelationId());
+        }
     }
 
     public UserDetailDTO getUserDetailInfo(Long userId) {
