@@ -2,8 +2,16 @@ package com.fortuneboot.service.fortune;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.IncomeExpenseCalendarGranularityEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.mybatis.WrapperUtil;
+import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerEntry;
+import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerSnapshot;
+import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.common.utils.poi.CustomExcelUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
@@ -13,6 +21,7 @@ import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.system.SysConfigRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderLedgerCalculator;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,9 +34,12 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -64,6 +76,7 @@ public class FortuneIncludeService {
     private final FortuneBillRepo fortuneBillRepo;
     private final FortuneBookRepo fortuneBookRepo;
     private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
+    private final FinanceOrderLedgerCalculator financeOrderLedgerCalculator;
     private final FortuneBalanceSnapshotRepo fortuneBalanceSnapshotRepo;
     private final SysConfigRepo sysConfigRepo;
 
@@ -114,16 +127,59 @@ public class FortuneIncludeService {
     }
 
     public LoanOverviewVo getLoanOverview(Long bookId) {
-        List<LoanDetailVo> receivables = fortuneBillRepo.getLoanReceivableDetails(bookId);
-        List<LoanDetailVo> payables = fortuneBillRepo.getLoanPayableDetails(bookId);
+        List<FortuneFinanceOrderEntity> orders = fortuneFinanceOrderRepo.list(
+                WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class)
+                        .eq(FortuneFinanceOrderEntity::getBookId, bookId)
+                        .eq(FortuneFinanceOrderEntity::getReconciliationStatus,
+                                FinanceOrderReconciliationStatusEnum.READY.getValue())
+                        .in(FortuneFinanceOrderEntity::getType,
+                                FinanceOrderTypeEnum.LOAN_OUT.getValue(), FinanceOrderTypeEnum.LOAN_IN.getValue()));
+        Map<String, LoanDetailVo> receivables = new HashMap<>();
+        Map<String, LoanDetailVo> payables = new HashMap<>();
+        for (FortuneFinanceOrderEntity order : orders) {
+            boolean receivable = Objects.equals(order.getType(), FinanceOrderTypeEnum.LOAN_OUT.getValue());
+            BigDecimal pending = receivable
+                    ? nullSafe(order.getOutAmount()).subtract(nullSafe(order.getInAmount()))
+                    .subtract(nullSafe(order.getAdjustedAmount()))
+                    : nullSafe(order.getInAmount()).subtract(nullSafe(order.getOutAmount()))
+                    .subtract(nullSafe(order.getAdjustedAmount()));
+            if (pending.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+            Map<String, LoanDetailVo> target = receivable ? receivables : payables;
+            String key = order.getCounterpartyId() == null
+                    ? "name:" + Optional.ofNullable(order.getCounterpartyName()).orElse("未填写")
+                    : "id:" + order.getCounterpartyId();
+            LoanDetailVo detail = target.computeIfAbsent(key, ignored -> {
+                LoanDetailVo value = new LoanDetailVo();
+                value.setPayeeName(Optional.ofNullable(order.getCounterpartyName()).orElse("未填写"));
+                value.setAmount(BigDecimal.ZERO);
+                return value;
+            });
+            detail.setAmount(detail.getAmount().add(pending));
+            if (detail.getLastTradeTime() == null || order.getSubmitTime() != null
+                    && order.getSubmitTime().isAfter(detail.getLastTradeTime())) {
+                detail.setLastTradeTime(order.getSubmitTime());
+            }
+        }
+        List<LoanDetailVo> receivableRows = receivables.values().stream()
+                .sorted(Comparator.comparing(LoanDetailVo::getAmount).reversed()).toList();
+        List<LoanDetailVo> payableRows = payables.values().stream()
+                .sorted(Comparator.comparing(LoanDetailVo::getAmount).reversed()).toList();
 
         LoanOverviewVo vo = new LoanOverviewVo();
-        vo.setTotalReceivable(sumLoanAmount(receivables));
-        vo.setTotalPayable(sumLoanAmount(payables));
-        vo.setReceivableCount(receivables.size());
-        vo.setPayableCount(payables.size());
-        vo.setTopReceivables(receivables.stream().limit(DEFAULT_TOP_N).toList());
+        vo.setTotalReceivable(sumLoanAmount(receivableRows));
+        vo.setTotalPayable(sumLoanAmount(payableRows));
+        vo.setReceivableCount(receivableRows.size());
+        vo.setPayableCount(payableRows.size());
+        vo.setTopReceivables(receivableRows.stream().limit(DEFAULT_TOP_N).toList());
+        vo.setReviewRequiredCount(fortuneFinanceOrderRepo.countReviewRequired(bookId));
+        vo.setOrphanLegacyBillCount(fortuneFinanceOrderRepo.countOrphanBills(bookId));
         return vo;
+    }
+
+    private BigDecimal nullSafe(BigDecimal value) {
+        return value == null ? BigDecimal.ZERO : value;
     }
 
     public List<BillCompareVo> getBillCompare(BillCompareQuery query) {
@@ -199,7 +255,47 @@ public class FortuneIncludeService {
     }
 
     public List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query) {
-        return fortuneFinanceOrderRepo.getFinanceProfit(bookId, query);
+        List<FortuneFinanceOrderEntity> orders = fortuneFinanceOrderRepo.list(
+                WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class)
+                        .eq(FortuneFinanceOrderEntity::getBookId, bookId)
+                        .eq(FortuneFinanceOrderEntity::getReconciliationStatus,
+                                FinanceOrderReconciliationStatusEnum.READY.getValue())
+                        .in(FortuneFinanceOrderEntity::getType,
+                                FinanceOrderTypeEnum.LOAN_OUT.getValue(), FinanceOrderTypeEnum.LOAN_IN.getValue())
+                        .eq(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.CLOSE.getValue()));
+        List<FinanceProfitVo> result = new ArrayList<>();
+        for (FortuneFinanceOrderEntity order : orders) {
+            if (query != null && query.getStartDate() != null && (order.getSubmitTime() == null
+                    || order.getSubmitTime().toLocalDate().isBefore(query.getStartDate()))) {
+                continue;
+            }
+            if (query != null && query.getEndDate() != null && (order.getSubmitTime() == null
+                    || order.getSubmitTime().toLocalDate().isAfter(query.getEndDate()))) {
+                continue;
+            }
+            List<FinanceOrderLedgerEntry> entries = fortuneBillRepo.getByOrderId(order.getOrderId()).stream()
+                    .map(this::ledgerEntry)
+                    .toList();
+            FinanceOrderLedgerSnapshot snapshot = financeOrderLedgerCalculator.calculate(order.getType(), entries);
+            FinanceProfitVo vo = new FinanceProfitVo();
+            vo.setOrderId(order.getOrderId());
+            vo.setTitle(order.getTitle());
+            vo.setOutAmount(snapshot.outAmount());
+            vo.setInAmount(snapshot.inAmount());
+            vo.setProfit(snapshot.netCostOrIncome());
+            vo.setProfitRate(snapshot.issuedAmount().compareTo(BigDecimal.ZERO) > 0
+                    ? snapshot.netCostOrIncome().divide(snapshot.issuedAmount(), 2, RoundingMode.HALF_UP)
+                    .multiply(ONE_HUNDRED) : BigDecimal.ZERO);
+            result.add(vo);
+        }
+        return result;
+    }
+
+    private FinanceOrderLedgerEntry ledgerEntry(FortuneBillEntity bill) {
+        return new FinanceOrderLedgerEntry(bill.getBillId(), bill.getBillType(), bill.getOrderComponent(),
+                bill.getAmount(), bill.getTradeTime(), Boolean.TRUE.equals(bill.getConfirm()),
+                Boolean.TRUE.equals(bill.getDeleted()), Boolean.TRUE.equals(bill.getRecycleBin()),
+                bill.getOrderLedgerVersion() == null ? 0 : bill.getOrderLedgerVersion());
     }
 
     public IncludePolicyVo getIncludePolicy() {

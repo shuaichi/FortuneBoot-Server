@@ -60,6 +60,8 @@ public class FortuneBillService {
 
     private final FortuneBillRepo fortuneBillRepo;
 
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
+
     private final FortuneBillFactory fortuneBillFactory;
 
     private final FortuneAccountFactory fortuneAccountFactory;
@@ -122,6 +124,7 @@ public class FortuneBillService {
         this.fillTag(list);
         this.fillMember(list);
         this.fillPayee(list);
+        this.fillOrder(list);
         // 批量填充是否存在附件，避免N+1
         this.fillHasFiles(list);
         // 批量填充附加费用（手续费/优惠）
@@ -244,6 +247,27 @@ public class FortuneBillService {
         Set<Long> hasFileSet = fortuneFileRepo.findBillIdsWithFiles(billIdList);
         for (FortuneBillBo bo : list) {
             bo.setHasFile(hasFileSet.contains(bo.getBillId()));
+        }
+    }
+
+    private void fillOrder(List<FortuneBillBo> list) {
+        List<Long> orderIds = list.stream()
+                .map(FortuneBillBo::getOrderId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return;
+        }
+        Map<Long, FortuneFinanceOrderEntity> orderMap = fortuneFinanceOrderRepo.listByIds(orderIds).stream()
+                .collect(Collectors.toMap(FortuneFinanceOrderEntity::getOrderId, Function.identity()));
+        for (FortuneBillBo billBo : list) {
+            FortuneFinanceOrderEntity order = orderMap.get(billBo.getOrderId());
+            if (order == null) {
+                continue;
+            }
+            billBo.setOrderType(order.getType());
+            billBo.setOrderCurrencyCode(order.getCurrencyCode());
         }
     }
 
@@ -645,7 +669,14 @@ public class FortuneBillService {
 
     public BillStatisticsVo getBillStatistics(FortuneBillQuery query) {
         query.setInclude(Boolean.TRUE);
-        return fortuneBillRepo.getBillStatistics(query);
+        BillStatisticsVo statistics = fortuneBillRepo.getBillStatistics(query);
+        if (statistics == null) {
+            statistics = new BillStatisticsVo();
+        }
+        statistics.setIncome(Objects.requireNonNullElse(statistics.getIncome(), BigDecimal.ZERO));
+        statistics.setExpense(Objects.requireNonNullElse(statistics.getExpense(), BigDecimal.ZERO));
+        statistics.setSurplus(Objects.requireNonNullElse(statistics.getSurplus(), BigDecimal.ZERO));
+        return statistics;
     }
 
     public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {

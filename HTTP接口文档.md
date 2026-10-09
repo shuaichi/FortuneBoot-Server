@@ -302,7 +302,7 @@
 | 首页聚合看板 | GET | `/fortune/include/dashboard` | DashboardQuery（bookId、periodType、startDate、endDate） | ResponseDTO<DashboardVo> | bookVisitorPermission(#query.getBookId()) | groupId 从账本反查，避免跨组读取资产 |
 | 查询日期统计 | GET | `/fortune/include/getDateInclude` | BillIncludeQuery（含 bookId、startDate、endDate） | ResponseDTO<List<FortuneLineVo>> | bookVisitorPermission(#query.getBookId()) | 每日支出，服务层补零 |
 | 成员维度统计 | GET | `/fortune/include/getMemberInclude` | BillIncludeQuery（含 bookId、billType） | ResponseDTO<List<FortuneBarVo>> | bookVisitorPermission(#query.getBookId()) | 多成员账单每个成员计全额 |
-| 借贷总览 | GET | `/fortune/include/{bookId}/getLoanOverview` | @PathVariable bookId | ResponseDTO<LoanOverviewVo> | bookVisitorPermission(#bookId) | 按 payee 计算待收/待还净额 |
+| 借贷总览 | GET | `/fortune/include/{bookId}/getLoanOverview` | @PathVariable bookId | ResponseDTO<LoanOverviewVo> | bookVisitorPermission(#bookId) | 仅 READY 借款单；按 counterpartyId/name 聚合待收/待还，返回待核对与孤立历史流水计数 |
 | 收支对比 | GET | `/fortune/include/getBillCompare` | BillCompareQuery | ResponseDTO<List<BillCompareVo>> | bookVisitorPermission(#query.getBookId()) | compareType=1按月，2按年 |
 | 收支排行 | GET | `/fortune/include/getBillRank` | BillRankQuery（topN默认10） | ResponseDTO<List<FortuneBarVo>> | bookVisitorPermission(#query.getBookId()) | SQL层排序并限制TopN |
 | 日历热力图 | GET | `/fortune/include/getCalendarHeatmap` | CalendarHeatmapQuery（year 1900-2100） | ResponseDTO<List<HeatmapVo>> | bookVisitorPermission(#query.getBookId()) | 返回全年日期，缺失补0 |
@@ -312,7 +312,7 @@
 | 信用卡额度看板 | GET | `/fortune/include/{groupId}/getCreditCardOverview` | @PathVariable groupId | ResponseDTO<List<CreditCardVo>> | groupVisitorPermission(#groupId) | usedAmount=负余额绝对值 |
 | 净资产趋势 | GET | `/fortune/include/{groupId}/netAssetsTrend` | NetAssetsTrendQuery(periodType=3/4) | ResponseDTO<List<FortuneLineVo>> | groupVisitorPermission(#groupId) | 基于 fortune_balance_snapshot |
 | 账户余额趋势 | GET | `/fortune/include/getAccountBalanceTrend` | AccountBalanceTrendQuery | ResponseDTO<List<FortuneLineVo>> | accountVisitorPermission(#query.getAccountId()) | 基于 fortune_balance_snapshot |
-| 理财收益统计 | GET | `/fortune/include/{bookId}/getFinanceProfit` | FinanceProfitQuery | ResponseDTO<List<FinanceProfitVo>> | bookVisitorPermission(#bookId) | 统计关闭的借出/借入单收益 |
+| 理财收益统计 | GET | `/fortune/include/{bookId}/getFinanceProfit` | FinanceProfitQuery | ResponseDTO<List<FinanceProfitVo>> | bookVisitorPermission(#bookId) | 仅 READY 已归档债权/债务单；profit=netCostOrIncome，日期按 submitTime 过滤 |
 | 统计口径说明 | GET | `/fortune/include/getIncludePolicy` | 无 | ResponseDTO<IncludePolicyVo> | 无 | 默认转账/借贷不计入支出，包含未确认账单 |
 | 导出统计报表 | GET | `/fortune/include/exportReport` | ReportExportQuery | Excel文件流 | bookVisitorPermission(#query.getBookId()) | 单Sheet汇总导出 |
 ---
@@ -996,6 +996,12 @@
 | include | String | 是否统计 | 是/否 |
 | hasFileDesc | String | 包含附件 | 是/否 |
 | remark | String | 备注 | 备注 |
+| orderId | Long | 单据ID | 关联单据 id；普通流水为空 |
+| orderTypeDesc | String | 单据类型 | 费用报销单/债权单/债务单；普通流水为空 |
+| orderComponent | String | 单据组件 | PRINCIPAL/INTEREST/FEE/WRITE_OFF；普通流水为空 |
+| orderConfirm | String | 确认状态 | 关联流水是否确认（是/否） |
+| orderVoided | String | 作废状态 | 关联流水是否作废（是/否） |
+| orderCurrencyCode | String | 单据币种 | 关联单据币种；普通流水为空 |
 
 ### FortuneBillImportExcelVo（账单导入模板/入参行，Excel 单行）
 | 字段 | 类型 | Excel 列名 | 说明 |
@@ -1016,6 +1022,12 @@
 | remark | String | 备注（选填，512字以内） | 备注 |
 | extras | String | 附加费用（选填，仅支出/转账，类型:金额:账户方向:分类:备注） | 附加费用串 |
 | files | String | 附件（暂不支持，请留空） | 附件（暂不支持） |
+
+导入规则补充：
+
+- 当前支持流水类型仍为支出（1）/收入（2）/转账（3）/垫付（7）/报销到账（8）；借出（9）、收回本金（10）、借入（11）、归还本金（12）及利息、手续费、差额结清均不支持 Excel 导入。
+- 垫付/报销到账必须填写 `orderId`；目标单据必须属于当前账本、类型为费用报销单、`reconciliationStatus=READY`，且状态为草稿（100，首笔成功后自动转为进行中）或进行中（200）。
+- 整批导入保持单一事务；任一行校验或落库失败时，普通行和单据行全部回滚，不产生部分入账。
 
 ### FortuneBillImportErrorVo（账单导入错误行出参，Excel 单行）
 | 字段 | 类型 | Excel 列名 | 说明 |
@@ -2302,7 +2314,7 @@
 - **权限**：读接口 `@fortune.bookVisitorPermission`，写接口 `@fortune.bookActorPermission`；服务内部再次校验单据归属（路径 bookId/orderId 与数据不一致返回 `ORDER_BOOK_NOT_MATCH` 30003）。
 - **幂等**：V2 写请求 `requestId` 必填（UUID）。同 `bookId + requestId` 重放：内容一致返回原结果并 `replayed=true`；内容不一致返回 `ORDER_REQUEST_CONFLICT` 30016。
 - **乐观锁**：`expectedVersion` 必填；CAS 失败返回 `ORDER_VERSION_CONFLICT` 30011。`requestHash` 不包含 `expectedVersion`。
-- **报告路由**：`GET /{bookId}/reconciliation` 与导出路由由阶段04实现，当前版本不存在，不返回空占位数据。
+- **历史核对报告**：`GET /{bookId}/reconciliation` 分页返回仅查询报告；`GET /{bookId}/reconciliation/export` 导出 UTF-8 CSV（RFC4180 转义，用户文本以 `=`、`+`、`-`、`@` 开头时加 `'` 前缀防公式注入）。报告只输出候选结果，不自动修改历史现金。
 
 ## C08 方法一览
 
@@ -2314,6 +2326,8 @@
 | 单据详情 | GET /{bookId}/{orderId} | 路径 ID | FinanceOrderDetailVo | visitor |
 | 分页查询单据流水 | GET /{bookId}/{orderId}/entries | query：pageNum、pageSize、entryStatus（ACTIVE/VOIDED/ALL，默认 ACTIVE） | PageDTO&lt;FinanceOrderEntryVo&gt; | visitor |
 | 分页查询操作审计 | GET /{bookId}/{orderId}/audit | query：pageNum、pageSize | PageDTO&lt;FinanceOrderAuditVo&gt; | visitor |
+| 分页查询单据历史核对报告 | GET /{bookId}/reconciliation | query：pageNum、pageSize | PageDTO&lt;FinanceOrderReconciliationVo&gt; | visitor |
+| 导出单据历史核对报告 | GET /{bookId}/reconciliation/export | 路径 bookId | CSV 文件流（`text/csv;charset=UTF-8`） | visitor |
 | 新建单据 | POST /create | JSON FinanceOrderCreateCommand | FinanceOrderMutationVo | actor |
 | 修改单据元数据 | PUT /modify | JSON FinanceOrderMetadataCommand | FinanceOrderMutationVo | actor |
 | 生命周期转换 | POST /{bookId}/{orderId}/{action} | action=close/reopen/remove；JSON requestId/expectedVersion | FinanceOrderMutationVo | actor |
@@ -2392,6 +2406,27 @@
 ### FinanceOrderSummaryVo（全账本口径，数据库按 book 聚合）
 
 currencyCode、receivableAmount、payableAmount、reimbursementAmount、三个逾期金额、receivableCount/payableCount/reimbursementCount（pending>0 的单据数）、pendingEntryCount、reviewRequiredCount、orphanLegacyBillCount、asOfDate。只汇总 READY 单据；异常数量单独显示，不伪装为已核对总额。
+
+### FinanceOrderReconciliationVo（历史核对报告出参）
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| orderId | Long | 单据 id；孤立流水报告为空 |
+| billId | Long | 流水 id；单据级报告为空 |
+| bookId | Long | 账本 id |
+| issueCodes | String[] | 异常代码；多个异常全部返回 |
+| originalStatus | Integer | 原单据状态 |
+| originalOutAmount | String | 原单据 outAmount |
+| originalInAmount | String | 原单据 inAmount |
+| candidateIssuedAmount | String | 按原始流水计算的候选形成金额；无法安全计算为 null |
+| candidateSettledAmount | String | 按原始流水计算的候选结算金额；无法安全计算为 null |
+| candidatePendingAmount | String | 按原始流水计算的候选待结清金额；无法安全计算为 null |
+| accountIds | Long[] | 相关账户 id |
+| currencyCodes | String[] | 相关币种 |
+| cashEffectKnown | boolean | 历史现金效果是否可证明已知 |
+| note | String | 核对说明；可能为空 |
+
+金额均为十进制字符串。CSV 与上表同列，额外在末尾追加 `generatedAt` 生成时间；报告不自动修复异常历史。
 
 ### FinanceOrderEntryVo
 

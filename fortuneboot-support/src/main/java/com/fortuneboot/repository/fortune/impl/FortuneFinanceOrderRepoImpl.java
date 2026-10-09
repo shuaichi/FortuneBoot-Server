@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -64,5 +65,28 @@ public class FortuneFinanceOrderRepoImpl
     @Override
     public int countOrphanBills(Long bookId) {
         return baseMapper.countOrphanBills(bookId);
+    }
+
+    @Override
+    public List<FortuneFinanceOrderEntity> listByBookIdIncludeDeleted(Long bookId) {
+        return baseMapper.listByBookIdIncludeDeleted(bookId);
+    }
+
+    @Override
+    public boolean existAnyByBookIdsIncludeDeleted(Collection<Long> bookIds) {
+        if (bookIds == null || bookIds.isEmpty()) {
+            return false;
+        }
+        return baseMapper.countByBookIdsIncludeDeleted(bookIds) > 0;
+    }
+
+    @Override
+    public boolean existAnyByBookIdIncludeDeleted(Long bookId) {
+        return baseMapper.countByBookIdIncludeDeleted(bookId) > 0;
+    }
+
+    @Override
+    public boolean existAnyByCounterpartyIdIncludeDeleted(Long counterpartyId) {
+        return baseMapper.countByCounterpartyIdIncludeDeleted(counterpartyId) > 0;
     }
 }

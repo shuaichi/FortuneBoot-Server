@@ -110,6 +110,11 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     private Boolean include;
 
     /**
+     * 是否作废；为空时不过滤，普通导出固定false
+     */
+    private Boolean recycleBin;
+
+    /**
      * 是否有文件
      * TODO 待开发
      */
@@ -174,9 +179,12 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .eq(Objects.nonNull(payeeId), "bill.payee_id", payeeId)
                 .eq(Objects.nonNull(confirm), "bill.confirm", confirm)
                 .eq(Objects.nonNull(include), "bill.include", include)
+                .eq(Objects.nonNull(recycleBin), "bill.recycle_bin", recycleBin)
                 .eq(Objects.nonNull(orderId), "bill.order_id", orderId)
                 .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
                 .eq("bill.deleted", DeleteEnum.VALID.getValue());
+        queryWrapper.apply("(bill.order_id IS NULL OR (bill.order_ledger_version = 1 AND bill.recycle_bin = 0 "
+                + "AND bill.confirm = 1 AND bill.include = 1))");
 
         // 根据ID进行分组（使用表前缀避免多表 JOIN 时 SQLite 歧义）
         queryWrapper.groupBy("bill.bill_id");

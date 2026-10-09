@@ -9,6 +9,7 @@ import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.system.SysConfigRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderLedgerCalculator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +41,7 @@ class FortuneIncludeServiceTest {
             fortuneBillRepo,
             mock(FortuneBookRepo.class),
             mock(FortuneFinanceOrderRepo.class),
+            mock(FinanceOrderLedgerCalculator.class),
             mock(FortuneBalanceSnapshotRepo.class),
             mock(SysConfigRepo.class));
 

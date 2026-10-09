@@ -127,6 +127,7 @@ public class FortuneBillRest {
     @GetMapping("/excel")
     public void exportUserByExcel(HttpServletResponse response, @Valid FortuneBillQuery query) {
         query.setPageNum(1);
+        query.setRecycleBin(Boolean.FALSE);
         // 限制最大导出数量为 10000，不要使用 Integer.MAX_VALUE，否则可能OOM
         query.setPageSize(10000);
         PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);

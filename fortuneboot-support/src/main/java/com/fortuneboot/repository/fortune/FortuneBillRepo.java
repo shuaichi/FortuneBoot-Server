@@ -119,6 +119,21 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
     Boolean existByOrderId(Long orderId);
 
     /**
+     * 查询账本全部关联历史流水，包含逻辑删除与作废记录。
+     */
+    List<FortuneBillEntity> listByBookIdIncludeDeleted(Long bookId);
+
+    /**
+     * 判断账户是否被任意历史流水引用（含逻辑删除与作废）。
+     */
+    boolean existAnyAccountReferenceIncludeDeleted(Long accountId);
+
+    /**
+     * 判断交易对象是否被任意历史流水引用（含逻辑删除与作废）。
+     */
+    boolean existAnyPayeeReferenceIncludeDeleted(Long payeeId);
+
+    /**
      * 校验单据是否有关联流水；包含已作废和逻辑删除的历史流水，绕过默认逻辑删除过滤。
      *
      * @param orderId 单据id

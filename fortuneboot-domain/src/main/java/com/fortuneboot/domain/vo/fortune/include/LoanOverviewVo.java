@@ -23,4 +23,14 @@ public class LoanOverviewVo {
     private Integer payableCount;
 
     private List<LoanDetailVo> topReceivables;
+
+    /**
+     * 待核对单据数
+     */
+    private Integer reviewRequiredCount;
+
+    /**
+     * 孤立历史借贷流水数
+     */
+    private Integer orphanLegacyBillCount;
 }

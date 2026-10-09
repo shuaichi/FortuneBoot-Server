@@ -13,6 +13,8 @@ import com.fortuneboot.repository.fortune.FortuneBalanceSnapshotRepo;
 import com.fortuneboot.repository.fortune.FortuneBillExtraRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
+import com.fortuneboot.repository.fortune.FortuneGroupRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderScopeLock;
 import com.fortuneboot.service.fortune.snapshot.AccountBalanceChange;
 import com.fortuneboot.service.fortune.snapshot.FortuneBillBalanceDeltaCalculator;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +52,14 @@ public class FortuneBalanceSnapshotService {
     private static final int REBUILD_YEARS = 5;
 
     private final FortuneBookRepo fortuneBookRepo;
+    private final FortuneGroupRepo fortuneGroupRepo;
     private final FortuneAccountRepo fortuneAccountRepo;
     private final FortuneBalanceSnapshotRepo fortuneBalanceSnapshotRepo;
     private final ObjectProvider<FortuneAccountService> fortuneAccountServiceProvider;
     private final FortuneBillRepo fortuneBillRepo;
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
     private final FortuneBillBalanceDeltaCalculator balanceDeltaCalculator;
+    private final FinanceOrderScopeLock financeOrderScopeLock;
 
     @Transactional(rollbackFor = Exception.class)
     public void generateMonthEndSnapshot() {
@@ -74,6 +78,12 @@ public class FortuneBalanceSnapshotService {
 
     @Transactional(rollbackFor = Exception.class)
     public void rebuildDailySnapshots(LocalDate anchorDate) {
+        List<Long> groupIds = fortuneGroupRepo.list().stream()
+                .map(entity -> entity.getGroupId())
+                .filter(Objects::nonNull)
+                .sorted()
+                .toList();
+        groupIds.forEach(financeOrderScopeLock::lockGroup);
         List<FortuneAccountEntity> accounts = listSnapshotAccounts();
         if (accounts.isEmpty()) {
             fortuneBalanceSnapshotRepo.removeAllSnapshots();

@@ -24,6 +24,18 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
     @Select("select count(*) from fortune_bill where order_id = #{orderId}")
     int countByOrderIdIncludeDeleted(@Param("orderId") Long orderId);
 
+    @Select("select * from fortune_bill where book_id = #{bookId} order by bill_id")
+    List<FortuneBillEntity> listByBookIdIncludeDeleted(@Param("bookId") Long bookId);
+
+    @Select("""
+            select count(*) from fortune_bill
+            where account_id = #{accountId} or to_account_id = #{accountId}
+            """)
+    int countAccountReferencesIncludeDeleted(@Param("accountId") Long accountId);
+
+    @Select("select count(*) from fortune_bill where payee_id = #{payeeId}")
+    int countPayeeReferencesIncludeDeleted(@Param("payeeId") Long payeeId);
+
     @Select("""
             <script>
             select distinct order_id from fortune_bill

@@ -46,11 +46,13 @@ public final class FinanceOrderStage03TestSupport {
                     enable, include, can_expense, can_income, deleted)
                 values (1001, 900, '账户A', 1, 10000.00, 'CNY', 1, 1, 1, 1, 0)
                 """);
+        jdbcTemplate.update("update fortune_account set can_transfer_out = 1, can_transfer_in = 1 where account_id = 1001");
         jdbcTemplate.update("""
                 insert into fortune_account(account_id, group_id, account_name, account_type, balance, currency_code,
                     enable, include, can_expense, can_income, deleted)
                 values (1002, 900, '账户B', 1, 5000.00, 'CNY', 1, 1, 1, 1, 0)
                 """);
+        jdbcTemplate.update("update fortune_account set can_transfer_out = 1, can_transfer_in = 1 where account_id = 1002");
         jdbcTemplate.update("""
                 insert into fortune_account(account_id, group_id, account_name, account_type, balance, currency_code,
                     enable, include, can_expense, can_income, deleted)

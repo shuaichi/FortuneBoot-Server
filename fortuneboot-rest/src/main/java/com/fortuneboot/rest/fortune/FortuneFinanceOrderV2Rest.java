@@ -20,13 +20,16 @@ import com.fortuneboot.domain.vo.fortune.order.FinanceOrderAuditVo;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderDetailVo;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderEntryVo;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
+import com.fortuneboot.domain.vo.fortune.order.FinanceOrderReconciliationVo;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderSummaryVo;
 import com.fortuneboot.service.fortune.order.FinanceOrderQueryService;
+import com.fortuneboot.service.fortune.order.FinanceOrderReconciliationService;
 import com.fortuneboot.service.fortune.order.FinanceOrderRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -59,6 +63,7 @@ public class FortuneFinanceOrderV2Rest {
 
     private final FinanceOrderQueryService financeOrderQueryService;
     private final FinanceOrderRequestService financeOrderRequestService;
+    private final FinanceOrderReconciliationService financeOrderReconciliationService;
     private final ObjectMapper objectMapper;
 
     @Operation(summary = "分页查询单据")
@@ -73,6 +78,26 @@ public class FortuneFinanceOrderV2Rest {
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     public ResponseDTO<FinanceOrderSummaryVo> summary(@PathVariable @Positive Long bookId) {
         return ResponseDTO.ok(financeOrderQueryService.summary(bookId));
+    }
+
+    @Operation(summary = "分页查询单据历史核对报告")
+    @GetMapping("/{bookId}/reconciliation")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<PageDTO<FinanceOrderReconciliationVo>> reconciliation(
+            @PathVariable @Positive Long bookId,
+            @RequestParam(required = false) Integer pageNum,
+            @RequestParam(required = false) Integer pageSize) {
+        return ResponseDTO.ok(financeOrderReconciliationService.page(bookId, pageNum, pageSize));
+    }
+
+    @Operation(summary = "导出单据历史核对CSV报告")
+    @GetMapping("/{bookId}/reconciliation/export")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public void exportReconciliation(HttpServletResponse response, @PathVariable @Positive Long bookId)
+            throws IOException {
+        response.setContentType("text/csv;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=finance-order-reconciliation.csv");
+        financeOrderReconciliationService.writeCsv(bookId, response.getOutputStream());
     }
 
     @Operation(summary = "查询单据选择器")

@@ -7,6 +7,7 @@ import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,4 +44,24 @@ public interface FortuneFinanceOrderRepo extends IService<FortuneFinanceOrderEnt
     int countReviewRequired(Long bookId);
 
     int countOrphanBills(Long bookId);
+
+    /**
+     * 查询账本全部单据历史，包含逻辑删除记录。
+     */
+    List<FortuneFinanceOrderEntity> listByBookIdIncludeDeleted(Long bookId);
+
+    /**
+     * 判断账本是否存在任意单据历史（含逻辑删除）。
+     */
+    boolean existAnyByBookIdsIncludeDeleted(Collection<Long> bookIds);
+
+    /**
+     * 判断单个账本是否存在任意单据历史（含逻辑删除）。
+     */
+    boolean existAnyByBookIdIncludeDeleted(Long bookId);
+
+    /**
+     * 判断交易对象是否被任意单据历史引用（含逻辑删除）。
+     */
+    boolean existAnyByCounterpartyIdIncludeDeleted(Long counterpartyId);
 }

@@ -34,6 +34,7 @@ class FortuneBillImportContextLoader {
     private final FortuneTagRepo fortuneTagRepo;
     private final FortunePayeeRepo fortunePayeeRepo;
     private final FortuneMemberRepo fortuneMemberRepo;
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
 
     FortuneBillImportContext load(FortuneBookModel bookModel) {
         FortuneBillImportContext context = new FortuneBillImportContext();
@@ -41,15 +42,34 @@ class FortuneBillImportContextLoader {
         List<FortuneAccountEntity> accounts = fortuneAccountRepo.getEnableAccountList(bookModel.getGroupId());
         context.setAccountMap(toUniqueMap(accounts, FortuneAccountEntity::getAccountName, "账户"));
         context.setAccountIdMap(accounts.stream().collect(Collectors.toMap(FortuneAccountEntity::getAccountId, Function.identity())));
+        List<FortuneFinanceOrderEntity> orders = Objects.requireNonNullElse(fortuneFinanceOrderRepo.list(
+                com.fortuneboot.common.utils.mybatis.WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class)
+                        .eq(FortuneFinanceOrderEntity::getBookId, bookModel.getBookId())), List.of());
+        context.setOrderMap(orders.stream()
+                .collect(Collectors.toMap(FortuneFinanceOrderEntity::getOrderId, Function.identity())));
         for (Integer billType : SUPPORTED_BILL_TYPES) {
             String billTypeName = BillTypeEnum.getDescByValue(billType);
-            context.putCategories(billType, toUniqueMap(fortuneCategoryRepo.getEnableCategoryList(bookModel.getBookId(), billType), FortuneCategoryEntity::getCategoryName, billTypeName + "分类"));
+            context.putCategories(billType, toUniqueMap(
+                    fortuneCategoryRepo.getEnableCategoryList(bookModel.getBookId(), categoryType(billType)),
+                    FortuneCategoryEntity::getCategoryName, billTypeName + "分类"));
             context.putTags(billType, toUniqueMap(fortuneTagRepo.getEnableTagList(bookModel.getBookId(), billType), FortuneTagEntity::getTagName, billTypeName + "标签"));
             context.putPayees(billType, toUniqueMap(fortunePayeeRepo.getEnablePayeeList(bookModel.getBookId(), billType), FortunePayeeEntity::getPayeeName, billTypeName + "交易对象"));
         }
         List<FortuneMemberEntity> members = fortuneMemberRepo.getEnableMemberList(bookModel.getBookId());
         context.setMemberMap(toUniqueMap(members, FortuneMemberEntity::getMemberName, "成员"));
         return context;
+    }
+
+    private Integer categoryType(Integer billType) {
+        if (Objects.equals(billType, BillTypeEnum.EXPENSE.getValue())
+                || Objects.equals(billType, BillTypeEnum.ADVANCE.getValue())) {
+            return 1;
+        }
+        if (Objects.equals(billType, BillTypeEnum.INCOME.getValue())
+                || Objects.equals(billType, BillTypeEnum.REIMBURSE.getValue())) {
+            return 2;
+        }
+        return null;
     }
 
     private <T> Map<String, T> toUniqueMap(List<T> list, Function<T, String> keyMapper, String name) {

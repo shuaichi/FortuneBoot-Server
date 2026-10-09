@@ -99,6 +99,21 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     }
 
     @Override
+    public List<FortuneBillEntity> listByBookIdIncludeDeleted(Long bookId) {
+        return fortuneBillMapper.listByBookIdIncludeDeleted(bookId);
+    }
+
+    @Override
+    public boolean existAnyAccountReferenceIncludeDeleted(Long accountId) {
+        return fortuneBillMapper.countAccountReferencesIncludeDeleted(accountId) > 0;
+    }
+
+    @Override
+    public boolean existAnyPayeeReferenceIncludeDeleted(Long payeeId) {
+        return fortuneBillMapper.countPayeeReferencesIncludeDeleted(payeeId) > 0;
+    }
+
+    @Override
     public Boolean existAnyByOrderIdIncludeDeleted(Long orderId) {
         return fortuneBillMapper.countByOrderIdIncludeDeleted(orderId) > 0;
     }

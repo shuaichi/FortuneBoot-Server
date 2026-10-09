@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -60,6 +61,7 @@ public interface FortuneFinanceOrderMapper extends BaseMapper<FortuneFinanceOrde
     @Select("""
             select count(*) from fortune_bill b
             where b.book_id = #{bookId} and b.deleted = 0 and b.order_id is not null
+              and b.bill_type in (9, 10, 11, 12)
               and not exists (select 1 from fortune_finance_order o where o.order_id = b.order_id and o.deleted = 0)
             """)
     int countOrphanBills(@Param("bookId") Long bookId);
@@ -75,6 +77,26 @@ public interface FortuneFinanceOrderMapper extends BaseMapper<FortuneFinanceOrde
     int compareAndIncrementVersion(@Param("orderId") Long orderId,
                                    @Param("bookId") Long bookId,
                                    @Param("expectedVersion") Long expectedVersion);
+
+    @Select("select * from fortune_finance_order where book_id = #{bookId} order by order_id")
+    List<FortuneFinanceOrderEntity> listByBookIdIncludeDeleted(@Param("bookId") Long bookId);
+
+    @Select("""
+            <script>
+            select count(*) from fortune_finance_order
+            where book_id in
+            <foreach collection="bookIds" item="bookId" open="(" separator="," close=")">
+                #{bookId}
+            </foreach>
+            </script>
+            """)
+    int countByBookIdsIncludeDeleted(@Param("bookIds") Collection<Long> bookIds);
+
+    @Select("select count(*) from fortune_finance_order where book_id = #{bookId}")
+    int countByBookIdIncludeDeleted(@Param("bookId") Long bookId);
+
+    @Select("select count(*) from fortune_finance_order where counterparty_id = #{counterpartyId}")
+    int countByCounterpartyIdIncludeDeleted(@Param("counterpartyId") Long counterpartyId);
 
     List<FinanceProfitVo> getFinanceProfit(@Param("bookId") Long bookId, @Param("query") FinanceProfitQuery query);
 
