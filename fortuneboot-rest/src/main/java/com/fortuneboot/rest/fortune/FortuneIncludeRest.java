@@ -12,6 +12,7 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.service.fortune.FortuneAccountService;
 import com.fortuneboot.service.fortune.FortuneBillService;
 import com.fortuneboot.service.fortune.FortuneIncludeService;
+import com.fortuneboot.service.fortune.order.FinanceOrderReportService;
 import com.fortuneboot.service.system.UserApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +41,8 @@ public class FortuneIncludeRest {
     private final FortuneAccountService fortuneAccountService;
 
     private final FortuneIncludeService fortuneIncludeService;
+
+    private final FinanceOrderReportService financeOrderReportService;
 
     private final UserApplicationService userApplicationService;
 
@@ -163,7 +166,7 @@ public class FortuneIncludeRest {
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     @GetMapping("/{bookId}/getLoanOverview")
     public ResponseDTO<LoanOverviewVo> getLoanOverview(@PathVariable @Positive Long bookId) {
-        return ResponseDTO.ok(fortuneIncludeService.getLoanOverview(bookId));
+        return ResponseDTO.ok(financeOrderReportService.getLoanOverview(bookId));
     }
 
     @Operation(summary = "收支对比")
@@ -240,7 +243,7 @@ public class FortuneIncludeRest {
     @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
     @GetMapping("/{bookId}/getFinanceProfit")
     public ResponseDTO<List<FinanceProfitVo>> getFinanceProfit(@PathVariable @Positive Long bookId, FinanceProfitQuery query) {
-        return ResponseDTO.ok(fortuneIncludeService.getFinanceProfit(bookId, query));
+        return ResponseDTO.ok(financeOrderReportService.getFinanceProfit(bookId, query));
     }
 
     @Operation(summary = "统计口径说明")

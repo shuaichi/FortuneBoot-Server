@@ -139,16 +139,6 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
     List<BillTypeDistributionVo> getBillTypeDistribution(@Param("query") BillIncludeQuery query);
 
     /**
-     * 借贷待收明细
-     */
-    List<LoanDetailVo> getLoanReceivableDetails(@Param("bookId") Long bookId);
-
-    /**
-     * 借贷待还明细
-     */
-    List<LoanDetailVo> getLoanPayableDetails(@Param("bookId") Long bookId);
-
-    /**
      * 最大单笔支出
      */
     java.math.BigDecimal getMaxSingleExpense(@Param("query") BillIncludeQuery query);

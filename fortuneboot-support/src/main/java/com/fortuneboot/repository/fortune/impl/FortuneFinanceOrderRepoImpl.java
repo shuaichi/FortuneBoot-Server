@@ -9,11 +9,11 @@ import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper;
+import com.fortuneboot.domain.dto.fortune.order.FinanceOrderSummaryRow;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderOptionQuery;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageQuery;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
-import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -56,8 +56,37 @@ public class FortuneFinanceOrderRepoImpl
     }
 
     @Override
-    public List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query) {
-        return baseMapper.getFinanceProfit(bookId, query);
+    public List<FortuneFinanceOrderEntity> listLoanOverviewOrders(Long bookId) {
+        LambdaQueryWrapper<FortuneFinanceOrderEntity> wrapper =
+                WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class);
+        wrapper.eq(FortuneFinanceOrderEntity::getBookId, bookId)
+                .eq(FortuneFinanceOrderEntity::getReconciliationStatus,
+                        FinanceOrderReconciliationStatusEnum.READY.getValue())
+                .in(FortuneFinanceOrderEntity::getType,
+                        FinanceOrderTypeEnum.LOAN_OUT.getValue(), FinanceOrderTypeEnum.LOAN_IN.getValue());
+        return this.list(wrapper);
+    }
+
+    @Override
+    public List<FortuneFinanceOrderEntity> listClosedLoanProfitOrders(Long bookId, FinanceProfitQuery query) {
+        LambdaQueryWrapper<FortuneFinanceOrderEntity> wrapper =
+                WrapperUtil.getLambdaQueryWrapper(FortuneFinanceOrderEntity.class);
+        wrapper.eq(FortuneFinanceOrderEntity::getBookId, bookId)
+                .eq(FortuneFinanceOrderEntity::getReconciliationStatus,
+                        FinanceOrderReconciliationStatusEnum.READY.getValue())
+                .in(FortuneFinanceOrderEntity::getType,
+                        FinanceOrderTypeEnum.LOAN_OUT.getValue(), FinanceOrderTypeEnum.LOAN_IN.getValue())
+                .eq(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.CLOSE.getValue());
+        if (query != null) {
+            if (query.getStartDate() != null) {
+                wrapper.ge(FortuneFinanceOrderEntity::getSubmitTime, query.getStartDate().atStartOfDay());
+            }
+            if (query.getEndDate() != null) {
+                wrapper.lt(FortuneFinanceOrderEntity::getSubmitTime,
+                        query.getEndDate().plusDays(1).atStartOfDay());
+            }
+        }
+        return this.list(wrapper);
     }
 
     @Override
@@ -66,14 +95,18 @@ public class FortuneFinanceOrderRepoImpl
     }
 
     @Override
-    public com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper.FinanceOrderSummaryRow summarizeReadyOrders(
-            Long bookId, LocalDate today) {
-        return baseMapper.summarizeReadyOrders(bookId, today);
+    public FinanceOrderSummaryRow summarizeReadyOrders(Long bookId, LocalDate today) {
+        return baseMapper.summarizeReadyOrders(bookId, today,
+                FinanceOrderTypeEnum.EXPENSE_CLAIM.getValue(),
+                FinanceOrderTypeEnum.LOAN_OUT.getValue(),
+                FinanceOrderTypeEnum.LOAN_IN.getValue(),
+                FinanceOrderReconciliationStatusEnum.READY.getValue());
     }
 
     @Override
     public int countPendingReadyEntries(Long bookId) {
-        return baseMapper.countPendingReadyEntries(bookId);
+        return baseMapper.countPendingReadyEntries(bookId,
+                FinanceOrderReconciliationStatusEnum.READY.getValue());
     }
 
     @Override
@@ -88,7 +121,7 @@ public class FortuneFinanceOrderRepoImpl
 
     @Override
     public int countOrphanBills(Long bookId) {
-        return baseMapper.countOrphanBills(bookId);
+        return baseMapper.countOrphanBills(bookId, BillTypeEnum.loanTypeValues());
     }
 
     @Override

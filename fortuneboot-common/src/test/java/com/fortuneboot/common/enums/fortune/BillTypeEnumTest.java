@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.fortuneboot.common.enums.fortune.BillTypeEnum.ADVANCE;
 import static com.fortuneboot.common.enums.fortune.BillTypeEnum.EXPENSE;
+import static com.fortuneboot.common.enums.fortune.BillTypeEnum.LOSS;
 import static com.fortuneboot.common.enums.fortune.BillTypeEnum.LOAN_IN;
 import static com.fortuneboot.common.enums.fortune.BillTypeEnum.LOAN_OUT;
 import static com.fortuneboot.common.enums.fortune.BillTypeEnum.LOAN_RECOVER;
@@ -88,5 +89,19 @@ class BillTypeEnumTest {
         assertThat(BillTypeEnum.isInterestIncomeValue(EXPENSE.getValue())).isFalse();
         assertThat(BillTypeEnum.isInterestExpenseValue(EXPENSE.getValue())).isTrue();
         assertThat(BillTypeEnum.isInterestExpenseValue(BillTypeEnum.INCOME.getValue())).isFalse();
+    }
+
+    @Test
+    @DisplayName("单据托管类型由报销与借贷枚举推导，禁止手写7到12区间")
+    void orderManagedTypesAreDerivedFromClaimAndLoanEnums() {
+        assertThat(BillTypeEnum.values())
+                .filteredOn(BillTypeEnum::isOrderManaged)
+                .containsExactlyInAnyOrder(ADVANCE, REIMBURSE, LOAN_OUT, LOAN_RECOVER, LOAN_IN, LOAN_REPAY);
+        assertThat(BillTypeEnum.orderManagedValues())
+                .containsExactlyInAnyOrder(ADVANCE.getValue(), REIMBURSE.getValue(), LOAN_OUT.getValue(),
+                        LOAN_RECOVER.getValue(), LOAN_IN.getValue(), LOAN_REPAY.getValue());
+        assertThat(BillTypeEnum.isOrderManagedValue(LOAN_REPAY.getValue())).isTrue();
+        assertThat(BillTypeEnum.isOrderManagedValue(LOSS.getValue())).isFalse();
+        assertThat(BillTypeEnum.isOrderManagedValue(null)).isFalse();
     }
 }

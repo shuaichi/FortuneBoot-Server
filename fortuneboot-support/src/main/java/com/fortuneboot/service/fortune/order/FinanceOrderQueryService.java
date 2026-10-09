@@ -3,12 +3,11 @@ package com.fortuneboot.service.fortune.order;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
-import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper.FinanceOrderSummaryRow;
+import com.fortuneboot.domain.dto.fortune.order.FinanceOrderSummaryRow;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerEntry;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerSnapshot;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -64,6 +63,7 @@ public class FinanceOrderQueryService {
     private final FinanceOrderDetailAssembler detailAssembler;
     private final FinanceOrderEntryAssembler entryAssembler;
     private final FinanceOrderAuditAssembler auditAssembler;
+    private final FinanceOrderLedgerEntryFactory ledgerEntryFactory;
 
     public FinanceOrderDetailVo detail(Long bookId, Long orderId) {
         accessGuard.loadBook(bookId);
@@ -171,15 +171,7 @@ public class FinanceOrderQueryService {
         }
         return billRepo.listByOrderIds(orderIds).stream()
                 .collect(Collectors.groupingBy(FortuneBillEntity::getOrderId,
-                        Collectors.mapping(this::ledgerEntry, Collectors.toList())));
-    }
-
-    private FinanceOrderLedgerEntry ledgerEntry(FortuneBillEntity bill) {
-        return new FinanceOrderLedgerEntry(bill.getBillId(), bill.getBillType(), bill.getOrderComponent(),
-                bill.getAmount(), bill.getTradeTime(), Boolean.TRUE.equals(bill.getConfirm()),
-                Boolean.TRUE.equals(bill.getDeleted()), Boolean.TRUE.equals(bill.getRecycleBin()),
-                bill.getOrderLedgerVersion() == null
-                        ? FinanceOrderLedgerVersionEnum.LEGACY.getValue() : bill.getOrderLedgerVersion());
+                        Collectors.mapping(ledgerEntryFactory::from, Collectors.toList())));
     }
 
     private FinanceOrderLedgerSnapshot snapshotOf(FortuneFinanceOrderEntity order,

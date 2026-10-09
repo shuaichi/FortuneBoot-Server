@@ -2,15 +2,11 @@ package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
-import com.fortuneboot.common.exception.ApiException;
-import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
-import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
-import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
@@ -22,13 +18,11 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.factory.fortune.factory.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
-import com.fortuneboot.service.fortune.order.FinanceOrderRequestService;
-import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
+import com.fortuneboot.service.fortune.order.FortuneBillOrderPipelineAdapter;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
 import com.fortuneboot.strategy.bill.BillStrategyFactory;
 import lombok.RequiredArgsConstructor;
-import cn.hutool.core.bean.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -105,7 +99,7 @@ public class FortuneBillService {
     private final FortuneBillExtraService fortuneBillExtraService;
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
     private final FortuneBillExtraCategoryValidator extraCategoryValidator;
-    private final FinanceOrderRequestService financeOrderRequestService;
+    private final FortuneBillOrderPipelineAdapter orderPipelineAdapter;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -290,8 +284,8 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long add(FortuneBillAddCommand addCommand) {
-        if (isFinanceOrderEntry(addCommand)) {
-            return mutateThroughOrderPipeline(FinanceOrderEntryMutation.Operation.ADD, addCommand, null);
+        if (orderPipelineAdapter.isOrderEntry(addCommand)) {
+            return orderPipelineAdapter.mutate(FinanceOrderEntryMutation.Operation.ADD, addCommand, null);
         }
         extraCategoryValidator.validate(addCommand);
         // 主模型操作
@@ -401,8 +395,8 @@ public class FortuneBillService {
     @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillModifyCommand modifyCommand) {
         FortuneBillModel originalBillForPipeline = fortuneBillFactory.loadById(modifyCommand.getBillId());
-        if (isFinanceOrderEntry(originalBillForPipeline, modifyCommand)) {
-            mutateThroughOrderPipeline(FinanceOrderEntryMutation.Operation.MODIFY, modifyCommand,
+        if (orderPipelineAdapter.isOrderEntry(originalBillForPipeline, modifyCommand)) {
+            orderPipelineAdapter.mutate(FinanceOrderEntryMutation.Operation.MODIFY, modifyCommand,
                     modifyCommand.getBillId());
             return;
         }
@@ -483,8 +477,8 @@ public class FortuneBillService {
     public void remove(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
-        if (isManagedOrderBill(fortuneBillModel)) {
-            mutateStateThroughOrderPipeline(fortuneBillModel, FinanceOrderEntryMutation.Operation.VOID);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.VOID);
             return;
         }
         // 账户金额回滚
@@ -614,8 +608,8 @@ public class FortuneBillService {
     public void confirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
-        if (isManagedOrderBill(fortuneBillModel)) {
-            mutateStateThroughOrderPipeline(fortuneBillModel, FinanceOrderEntryMutation.Operation.CONFIRM);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.CONFIRM);
             return;
         }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
@@ -633,8 +627,8 @@ public class FortuneBillService {
     public void unConfirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
-        if (isManagedOrderBill(fortuneBillModel)) {
-            mutateStateThroughOrderPipeline(fortuneBillModel, FinanceOrderEntryMutation.Operation.UNCONFIRM);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.UNCONFIRM);
             return;
         }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
@@ -646,8 +640,8 @@ public class FortuneBillService {
     public void include(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
-        if (isManagedOrderBill(fortuneBillModel)) {
-            financeOrderRequestService.legacyInclude(bookId, billId, true);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.legacyInclude(bookId, billId, true);
             return;
         }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
@@ -658,8 +652,8 @@ public class FortuneBillService {
     public void exclude(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
-        if (isManagedOrderBill(fortuneBillModel)) {
-            financeOrderRequestService.legacyInclude(bookId, billId, false);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.legacyInclude(bookId, billId, false);
             return;
         }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
@@ -773,68 +767,4 @@ public class FortuneBillService {
         return fortuneBillRepo.getPayeeInclude(CategoryTypeEnum.INCOME, query);
     }
 
-    private boolean isFinanceOrderEntry(FortuneBillAddCommand command) {
-        return Objects.nonNull(command.getOrderId()) || isFinanceOrderBillType(command.getBillType());
-    }
-
-    private boolean isFinanceOrderEntry(FortuneBillEntity bill, FortuneBillAddCommand command) {
-        return Objects.nonNull(bill.getOrderId()) || Objects.nonNull(command.getOrderId())
-                || isFinanceOrderBillType(command.getBillType()) || isFinanceOrderBillType(bill.getBillType());
-    }
-
-    private boolean isManagedOrderBill(FortuneBillEntity bill) {
-        return Objects.nonNull(bill.getOrderId())
-                && Objects.equals(bill.getOrderLedgerVersion(), 1);
-    }
-
-    private boolean isFinanceOrderBillType(Integer billType) {
-        return Objects.nonNull(billType) && billType >= 7 && billType <= 12;
-    }
-
-    private Long mutateThroughOrderPipeline(FinanceOrderEntryMutation.Operation operation,
-                                            FortuneBillAddCommand command,
-                                            Long billId) {
-        if (Objects.isNull(command.getOrderId())) {
-            throw new ApiException(ErrorCode.Business.BILL_ORDER_ID_CAN_NOT_NULL);
-        }
-        FinanceOrderEntryCommand entryCommand = new FinanceOrderEntryCommand();
-        BeanUtil.copyProperties(command, entryCommand);
-        entryCommand.setBookId(command.getBookId());
-        entryCommand.setOrderId(command.getOrderId());
-        entryCommand.setRequestId(command.getRequestIdOrUuid());
-        entryCommand.setExpectedVersion(command.getExpectedVersion());
-        if (StringUtils.isBlank(entryCommand.getOrderComponent())
-                && Objects.nonNull(entryCommand.getBillType()) && entryCommand.getBillType() >= 7
-                && entryCommand.getBillType() <= 12) {
-            entryCommand.setOrderComponent(FinanceOrderComponentEnum.PRINCIPAL.getValue());
-        }
-        FinanceOrderEntryMutation mutation = FinanceOrderEntryMutation.builder()
-                .bookId(command.getBookId())
-                .orderId(command.getOrderId())
-                .billId(billId)
-                .operation(operation)
-                .entryCommand(entryCommand)
-                .requestId(command.getRequestIdOrUuid())
-                .expectedVersion(command.getExpectedVersion())
-                .fileList(command.getFileList())
-                .build();
-        FinanceOrderMutationVo mutationVo = financeOrderRequestService.mutateEntry(mutation);
-        return mutationVo.getBillId();
-    }
-
-    private void mutateStateThroughOrderPipeline(FortuneBillEntity bill,
-                                                  FinanceOrderEntryMutation.Operation operation) {
-        if (!isManagedOrderBill(bill)) {
-            return;
-        }
-        FinanceOrderEntryMutation mutation = FinanceOrderEntryMutation.builder()
-                .bookId(bill.getBookId())
-                .orderId(bill.getOrderId())
-                .billId(bill.getBillId())
-                .operation(operation)
-                .requestId(UUID.randomUUID().toString())
-                .expectedVersion(null)
-                .build();
-        financeOrderRequestService.mutateEntry(mutation);
-    }
 }

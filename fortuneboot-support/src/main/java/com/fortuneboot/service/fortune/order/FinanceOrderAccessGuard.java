@@ -10,6 +10,7 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
+import com.fortuneboot.domain.rule.fortune.order.FinanceOrderFieldRule;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -76,7 +77,7 @@ public class FinanceOrderAccessGuard {
     public String resolveCounterpartyName(Long bookId, Long counterpartyId, String fallbackName) {
         if (counterpartyId == null) {
             String normalized = StringUtils.trimToEmpty(fallbackName);
-            if (StringUtils.isBlank(normalized) || normalized.length() > 64) {
+            if (!FinanceOrderFieldRule.isValidCounterpartyName(normalized)) {
                 throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "交易对象名称必须为1到64个字符");
             }
             return normalized;
@@ -96,9 +97,7 @@ public class FinanceOrderAccessGuard {
                 && !(allowDraft && Objects.equals(order.getStatus(), FinanceOrderStatusEnum.INIT.getValue()))) {
             throw new ApiException(ErrorCode.Business.ORDER_ENTRY_IMMUTABLE);
         }
-        if (!FinanceOrderReconciliationStatusEnum.isReadyValue(order.getReconciliationStatus())) {
-            throw new ApiException(ErrorCode.Business.ORDER_RECONCILIATION_REQUIRED);
-        }
+        checkReconciliationReady(order);
         if (order.getCurrencyCode() == null) {
             order.setCurrencyCode(book.getDefaultCurrency());
         }
@@ -106,6 +105,12 @@ public class FinanceOrderAccessGuard {
             throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH);
         }
         return order;
+    }
+
+    public void checkReconciliationReady(FortuneFinanceOrderEntity order) {
+        if (!FinanceOrderReconciliationStatusEnum.isReadyValue(order.getReconciliationStatus())) {
+            throw new ApiException(ErrorCode.Business.ORDER_RECONCILIATION_REQUIRED);
+        }
     }
 
     public FinanceOrderEntryCommand normalizeCommand(FortuneFinanceOrderEntity order,
@@ -117,7 +122,7 @@ public class FinanceOrderAccessGuard {
                 || !Objects.equals(command.getOrderId(), order.getOrderId())) {
             throw new ApiException(ErrorCode.Business.ORDER_BOOK_NOT_MATCH);
         }
-        if (StringUtils.isBlank(command.getTitle()) || command.getTitle().length() > 50
+        if (!FinanceOrderFieldRule.isValidTitle(command.getTitle())
                 || command.getTradeTime() == null || command.getConfirm() == null) {
             throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "标题、交易时间和确认状态必填");
         }

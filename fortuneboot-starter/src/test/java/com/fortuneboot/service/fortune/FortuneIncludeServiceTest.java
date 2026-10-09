@@ -7,9 +7,8 @@ import com.fortuneboot.domain.vo.fortune.include.IncomeExpenseCalendarQuery;
 import com.fortuneboot.repository.fortune.FortuneBalanceSnapshotRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.system.SysConfigRepo;
-import com.fortuneboot.service.fortune.order.FinanceOrderLedgerCalculator;
+import com.fortuneboot.service.fortune.order.FinanceOrderReportService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -40,8 +39,7 @@ class FortuneIncludeServiceTest {
             mock(FortuneAccountService.class),
             fortuneBillRepo,
             mock(FortuneBookRepo.class),
-            mock(FortuneFinanceOrderRepo.class),
-            mock(FinanceOrderLedgerCalculator.class),
+            mock(FinanceOrderReportService.class),
             mock(FortuneBalanceSnapshotRepo.class),
             mock(SysConfigRepo.class));
 

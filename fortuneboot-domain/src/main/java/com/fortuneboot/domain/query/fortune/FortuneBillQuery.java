@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fortuneboot.common.core.base.BaseEntity;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
 import com.fortuneboot.common.enums.common.DeleteEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -15,7 +15,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -183,12 +182,24 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .eq(Objects.nonNull(orderId), "bill.order_id", orderId)
                 .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
                 .eq("bill.deleted", DeleteEnum.VALID.getValue());
-        queryWrapper.apply("(bill.order_id IS NULL OR (bill.order_ledger_version = 1 AND bill.recycle_bin = 0 "
-                + "AND bill.confirm = 1 AND bill.include = 1))");
+        applyOrderPipelineVisibility(queryWrapper);
 
         // 根据ID进行分组（使用表前缀避免多表 JOIN 时 SQLite 歧义）
         queryWrapper.groupBy("bill.bill_id");
         LambdaQueryWrapper<FortuneBillEntity> lambda = queryWrapper.lambda();
         return lambda;
+    }
+
+    /**
+     * 单据管线流水的可见性条件：普通流水始终可见，关联流水必须是当前版本且有效参与统计。
+     */
+    private void applyOrderPipelineVisibility(QueryWrapper<FortuneBillEntity> queryWrapper) {
+        queryWrapper.apply(
+                "(bill.order_id IS NULL OR (bill.order_ledger_version = {0} AND bill.recycle_bin = {1} "
+                        + "AND bill.confirm = {2} AND bill.include = {3}))",
+                FinanceOrderLedgerVersionEnum.CURRENT.getValue(),
+                Boolean.FALSE,
+                Boolean.TRUE,
+                Boolean.TRUE);
     }
 }

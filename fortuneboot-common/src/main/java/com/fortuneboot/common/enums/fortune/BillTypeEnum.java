@@ -136,6 +136,24 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
     }
 
     /**
+     * 单据管线托管类型：垫付、报销、借出、收回、借入、归还。
+     */
+    public boolean isOrderManaged() {
+        return isClaimType() || isLoanType();
+    }
+
+    public static boolean isOrderManagedValue(Integer value) {
+        return matches(value, BillTypeEnum::isOrderManaged);
+    }
+
+    public static Set<Integer> orderManagedValues() {
+        return Arrays.stream(values())
+                .filter(BillTypeEnum::isOrderManaged)
+                .map(BillTypeEnum::getValue)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
      * 利息收入流水使用收入类型编码。
      */
     public boolean isInterestIncome() {

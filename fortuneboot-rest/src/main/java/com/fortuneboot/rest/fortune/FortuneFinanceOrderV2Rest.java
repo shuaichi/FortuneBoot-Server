@@ -14,6 +14,9 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderEntryQuery;
+import com.fortuneboot.domain.rule.fortune.order.FinanceOrderFieldRule;
+import com.fortuneboot.rest.fortune.request.FinanceOrderEntryActionRequest;
+import com.fortuneboot.rest.fortune.request.FinanceOrderTransitionRequest;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderOptionQuery;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageQuery;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderAuditVo;
@@ -31,7 +34,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -173,7 +175,7 @@ public class FortuneFinanceOrderV2Rest {
     public ResponseDTO<FinanceOrderMutationVo> transition(@PathVariable @Positive Long bookId,
                                                           @PathVariable @Positive Long orderId,
                                                           @PathVariable String action,
-                                                          @RequestBody TransitionRequest request) {
+                                                          @RequestBody FinanceOrderTransitionRequest request) {
         requirePathMatch(request == null ? null : request.bookId(), bookId);
         requirePathMatch(request == null ? null : request.orderId(), orderId);
         FinanceOrderTransitionCommand command = new FinanceOrderTransitionCommand();
@@ -234,7 +236,7 @@ public class FortuneFinanceOrderV2Rest {
                                                            @PathVariable @Positive Long orderId,
                                                            @PathVariable @Positive Long billId,
                                                            @PathVariable String action,
-                                                           @RequestBody EntryActionRequest request) {
+                                                           @RequestBody FinanceOrderEntryActionRequest request) {
         requirePathMatch(request == null ? null : request.bookId(), bookId);
         requirePathMatch(request == null ? null : request.orderId(), orderId);
         requirePathMatch(request == null ? null : request.billId(), billId);
@@ -286,7 +288,8 @@ public class FortuneFinanceOrderV2Rest {
         if (command.getExpectedVersion() == null) {
             throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "期望版本号不能为空");
         }
-        if (command.getTitle() == null || command.getTitle().isBlank() || command.getTitle().length() > 50) {
+        if (command.getTitle() == null || command.getTitle().isBlank()
+                || command.getTitle().length() > FinanceOrderFieldRule.TITLE_MAX_LENGTH) {
             throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "标题必须为1到50个字符");
         }
         if (command.getTradeTime() == null) {
@@ -333,15 +336,4 @@ public class FortuneFinanceOrderV2Rest {
         }
     }
 
-    /**
-     * 生命周期动作请求体：仅幂等ID与期望版本；book/order可选，提供时必须与路径一致。
-     */
-    record TransitionRequest(String requestId, Long expectedVersion, Long bookId, Long orderId) {
-    }
-
-    /**
-     * 流水动作请求体：仅幂等ID与期望版本；路径ID可选，提供时必须与路径一致。
-     */
-    record EntryActionRequest(String requestId, Long expectedVersion, Long bookId, Long orderId, Long billId) {
-    }
 }

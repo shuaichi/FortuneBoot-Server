@@ -10,6 +10,7 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.domain.query.fortune.FortuneFinanceOrderQuery;
+import com.fortuneboot.domain.rule.fortune.order.FinanceOrderFieldRule;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.service.fortune.order.FinanceOrderRequestService;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +41,7 @@ public class FortuneFinanceOrderService {
         createCommand.setRequestId(UUID.randomUUID().toString());
         createCommand.setTitle(command.getTitle());
         createCommand.setType(command.getType());
-        createCommand.setCounterpartyName("未填写");
+        createCommand.setCounterpartyName(FinanceOrderFieldRule.DEFAULT_COUNTERPARTY_NAME);
         createCommand.setRemark(command.getRemark());
         financeOrderRequestService.create(createCommand);
     }
@@ -62,7 +63,8 @@ public class FortuneFinanceOrderService {
         metadataCommand.setTitle(command.getTitle());
         metadataCommand.setType(order.getType());
         metadataCommand.setCounterpartyId(order.getCounterpartyId());
-        metadataCommand.setCounterpartyName(StringUtils.defaultIfBlank(order.getCounterpartyName(), "未填写"));
+        metadataCommand.setCounterpartyName(StringUtils.defaultIfBlank(order.getCounterpartyName(),
+                FinanceOrderFieldRule.DEFAULT_COUNTERPARTY_NAME));
         metadataCommand.setDueDate(order.getDueDate());
         metadataCommand.setRemark(command.getRemark() == null ? order.getRemark() : command.getRemark());
         financeOrderRequestService.modify(metadataCommand);

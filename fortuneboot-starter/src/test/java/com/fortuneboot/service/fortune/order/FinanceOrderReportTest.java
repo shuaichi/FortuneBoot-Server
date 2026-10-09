@@ -1,6 +1,5 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
@@ -20,7 +19,6 @@ import com.fortuneboot.domain.vo.fortune.order.FinanceOrderSummaryVo;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import com.fortuneboot.orderapi.FinanceOrderStage04TestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
-import com.fortuneboot.service.fortune.FortuneIncludeService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,9 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +64,7 @@ class FinanceOrderReportTest {
     @Autowired
     private FinanceOrderQueryService queryService;
     @Autowired
-    private FortuneIncludeService includeService;
+    private FinanceOrderReportService reportService;
     @Autowired
     private FortuneBillService billService;
     @Autowired
@@ -119,8 +115,8 @@ class FinanceOrderReportTest {
         pageQuery.setType(2);
         PageDTO<FinanceOrderDetailVo> page = queryService.page(pageQuery);
         FinanceOrderSummaryVo summary = queryService.summary(fixture.bookIdA());
-        LoanOverviewVo overviewA = includeService.getLoanOverview(fixture.bookIdA());
-        LoanOverviewVo overviewB = includeService.getLoanOverview(fixture.bookIdB());
+        LoanOverviewVo overviewA = reportService.getLoanOverview(fixture.bookIdA());
+        LoanOverviewVo overviewB = reportService.getLoanOverview(fixture.bookIdB());
 
         assertThat(page.getRows()).hasSize(2);
         assertThat(summary.getReceivableCount()).isEqualTo(2);
@@ -141,7 +137,7 @@ class FinanceOrderReportTest {
         requestService.legacyInclude(fixture.bookIdA(), bill.getBillId(), false);
 
         FinanceOrderSummaryVo summary = queryService.summary(fixture.bookIdA());
-        LoanOverviewVo overview = includeService.getLoanOverview(fixture.bookIdA());
+        LoanOverviewVo overview = reportService.getLoanOverview(fixture.bookIdA());
 
         assertThat(summary.getReceivableCount()).isEqualTo(1);
         assertThat(summary.getReimbursementCount()).isEqualTo(1);
@@ -190,7 +186,7 @@ class FinanceOrderReportTest {
         addComponent(loan, "INTEREST", 2, "20.00", true);
         close(loan, issued.getVersion());
 
-        List<FinanceProfitVo> profits = includeService.getFinanceProfit(fixture.bookIdA(), new FinanceProfitQuery());
+        List<FinanceProfitVo> profits = reportService.getFinanceProfit(fixture.bookIdA(), new FinanceProfitQuery());
         assertThat(profits).hasSize(1);
         assertThat(profits.get(0).getProfit()).isEqualByComparingTo(new BigDecimal("15.00"));
         assertThat(profits.get(0).getOutAmount()).isEqualByComparingTo(new BigDecimal("100.00"));

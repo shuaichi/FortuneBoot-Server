@@ -1,6 +1,7 @@
 package com.fortuneboot.domain.command.fortune.order;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fortuneboot.domain.rule.fortune.order.FinanceOrderFieldRule;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +39,7 @@ public class FinanceOrderCreateCommand {
      * 标题
      */
     @NotBlank(message = "标题不能为空")
-    @Size(max = 50, message = "标题长度不能超过50个字符")
+    @Size(max = FinanceOrderFieldRule.TITLE_MAX_LENGTH, message = "标题长度不能超过50个字符")
     private String title;
 
     /**
@@ -60,7 +61,7 @@ public class FinanceOrderCreateCommand {
      * 交易对象名称
      */
     @NotBlank(message = "交易对象名称不能为空")
-    @Size(max = 64, message = "交易对象名称长度不能超过64个字符")
+    @Size(max = FinanceOrderFieldRule.COUNTERPARTY_NAME_MAX_LENGTH, message = "交易对象名称长度不能超过64个字符")
     private String counterpartyName;
 
     /**
@@ -72,6 +73,6 @@ public class FinanceOrderCreateCommand {
     /**
      * 备注
      */
-    @Size(max = 512, message = "备注长度不能超过512个字符")
+    @Size(max = FinanceOrderFieldRule.REMARK_MAX_LENGTH, message = "备注长度不能超过512个字符")
     private String remark = "";
 }

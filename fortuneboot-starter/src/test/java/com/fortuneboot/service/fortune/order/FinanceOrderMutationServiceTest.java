@@ -57,11 +57,9 @@ class FinanceOrderMutationServiceTest {
     @Test
     @DisplayName("账户增量按账户ID升序合并，换账户新旧两侧都参与")
     void mergeDeltas_byAscendingAccountId() {
-        FinanceOrderCashEffectCalculator effectCalculator = new FinanceOrderCashEffectCalculator();
-        Map<Long, BigDecimal> merged = FinanceOrderMutationService.mergeDeltas(
+        Map<Long, BigDecimal> merged = FinanceOrderEntryMutator.mergeDeltas(
                 Map.of(10L, new BigDecimal("100.00"), 20L, new BigDecimal("-30.00")),
-                Map.of(10L, new BigDecimal("-40.00"), 30L, new BigDecimal("8.00")),
-                effectCalculator);
+                Map.of(10L, new BigDecimal("-40.00"), 30L, new BigDecimal("8.00")));
 
         assertThat(merged).containsOnlyKeys(10L, 20L, 30L);
         assertThat(merged.get(10L)).isEqualByComparingTo("-140.00");

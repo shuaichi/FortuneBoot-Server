@@ -5,9 +5,8 @@ import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderOptionQuery;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageQuery;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
-import com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper.FinanceOrderSummaryRow;
+import com.fortuneboot.domain.dto.fortune.order.FinanceOrderSummaryRow;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
-import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,13 +30,21 @@ public interface FortuneFinanceOrderRepo extends IService<FortuneFinanceOrderEnt
     List<FortuneFinanceOrderEntity> getUsingFinanceOrderList(Long bookId);
 
     /**
-     * 理财收益统计
+     * 查询已核对借贷单据，用于借贷总览聚合。
      *
-     * @param bookId 账本ID
-     * @param query 查询条件
-     * @return 理财收益
+     * @param bookId 账本id
+     * @return 已核对借贷单据
      */
-    List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query);
+    List<FortuneFinanceOrderEntity> listLoanOverviewOrders(Long bookId);
+
+    /**
+     * 查询已归档且已核对的借贷单据，用于理财收益统计。
+     *
+     * @param bookId 账本id
+     * @param query 日期范围查询，可为空
+     * @return 符合条件的归档借贷单据
+     */
+    List<FortuneFinanceOrderEntity> listClosedLoanProfitOrders(Long bookId, FinanceProfitQuery query);
 
     int compareAndIncrementVersion(Long orderId, Long bookId, Long expectedVersion);
 

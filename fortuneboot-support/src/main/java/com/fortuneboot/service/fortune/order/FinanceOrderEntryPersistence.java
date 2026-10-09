@@ -1,13 +1,22 @@
 package com.fortuneboot.service.fortune.order;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
-import com.fortuneboot.domain.entity.fortune.*;
-import com.fortuneboot.repository.fortune.*;
+import com.fortuneboot.domain.entity.fortune.FortuneBillExtraEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneCategoryRelationEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneFileEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneMemberRelationEntity;
+import com.fortuneboot.domain.entity.fortune.FortuneTagRelationEntity;
+import com.fortuneboot.repository.fortune.FortuneBillExtraRepo;
+import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
+import com.fortuneboot.repository.fortune.FortuneFileRepo;
+import com.fortuneboot.repository.fortune.FortuneMemberRelationRepo;
+import com.fortuneboot.repository.fortune.FortuneTagRelationRepo;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -16,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -34,6 +42,7 @@ public class FinanceOrderEntryPersistence {
 
 
     private final FortuneBillRepo fortuneBillRepo;
+    private final FinanceOrderBillFactory billFactory;
     private final FortuneCategoryRelationRepo categoryRelationRepo;
     private final FortuneTagRelationRepo tagRelationRepo;
     private final FortuneMemberRelationRepo memberRelationRepo;
@@ -42,11 +51,7 @@ public class FinanceOrderEntryPersistence {
 
     @Transactional(rollbackFor = Exception.class)
     public FortuneBillEntity add(FinanceOrderEntryCommand command, List<MultipartFile> files) {
-        FortuneBillEntity bill = new FortuneBillEntity();
-        BeanUtil.copyProperties(command, bill, "billId", "fileList", "extras", "requestId", "expectedVersion");
-        bill.setOrderLedgerVersion(1);
-        bill.setDeleted(false);
-        bill.setRecycleBin(false);
+        FortuneBillEntity bill = billFactory.buildAddBill(command);
         fortuneBillRepo.save(bill);
         replaceRelations(bill, command, files);
         return bill;
@@ -54,9 +59,7 @@ public class FinanceOrderEntryPersistence {
 
     @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillEntity bill, FinanceOrderEntryCommand command, List<MultipartFile> files) {
-        BeanUtil.copyProperties(command, bill, "billId", "bookId", "orderId", "billType",
-                "orderComponent", "orderLedgerVersion", "deleted", "recycleBin",
-                "fileList", "extras", "requestId", "expectedVersion");
+        billFactory.applyModify(bill, command);
         fortuneBillRepo.updateById(bill);
         categoryRelationRepo.phyRemoveByBillId(bill.getBillId());
         tagRelationRepo.phyRemoveByBillId(bill.getBillId());

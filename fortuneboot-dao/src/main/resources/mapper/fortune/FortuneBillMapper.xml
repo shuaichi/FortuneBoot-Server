@@ -631,55 +631,6 @@
         ORDER BY billType ASC
     </select>
 
-    <!-- ==================== getLoanOverview helpers ==================== -->
-    <select id="getLoanReceivableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanReceivableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanPayableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanPayableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
     <select id="getMaxSingleExpense" databaseId="mysql" resultType="java.math.BigDecimal">
         SELECT COALESCE(MAX(b.amount), 0)
         FROM fortune_bill b

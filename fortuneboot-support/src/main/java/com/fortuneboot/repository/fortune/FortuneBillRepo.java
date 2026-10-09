@@ -191,10 +191,6 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
 
     List<BillTypeDistributionVo> getBillTypeDistribution(BillIncludeQuery query);
 
-    List<LoanDetailVo> getLoanReceivableDetails(Long bookId);
-
-    List<LoanDetailVo> getLoanPayableDetails(Long bookId);
-
     java.math.BigDecimal getMaxSingleExpense(BillIncludeQuery query);
 
     Integer countUnconfirmedBills(BillIncludeQuery query);

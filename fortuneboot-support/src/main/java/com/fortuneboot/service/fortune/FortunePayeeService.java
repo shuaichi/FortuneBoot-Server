@@ -14,8 +14,7 @@ import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortunePayeeRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
-import com.fortuneboot.service.fortune.order.FinanceOrderScopeLock;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,9 +39,7 @@ public class FortunePayeeService {
 
     private final FortuneBookRepo fortuneBookRepo;
 
-    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
-
-    private final FinanceOrderScopeLock financeOrderScopeLock;
+    private final FinanceOrderReferenceGuard financeOrderReferenceGuard;
 
     public IPage<FortunePayeeEntity> getPage(FortunePayeeQuery query) {
         return fortunePayeeRepo.page(query.toPage(),query.addQueryCondition());
@@ -89,12 +86,11 @@ public class FortunePayeeService {
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
         FortuneBookEntity book = fortuneBookRepo.getById(bookId);
-        financeOrderScopeLock.lockGroup(book == null ? null : book.getGroupId());
-        Boolean usedByBill = fortuneBillRepo.existAnyPayeeReferenceIncludeDeleted(payeeId);
-        Boolean usedByOrder = fortuneFinanceOrderRepo.existAnyByCounterpartyIdIncludeDeleted(payeeId);
-        if (usedByBill || usedByOrder) {
+        financeOrderReferenceGuard.lockGroupScope(book == null ? null : book.getGroupId());
+        if (fortuneBillRepo.existAnyPayeeReferenceIncludeDeleted(payeeId)) {
             throw new ApiException(ErrorCode.Business.PAYEE_ALREADY_USED);
         }
+        financeOrderReferenceGuard.ensurePayeeHasNoOrderReference(payeeId);
         fortunePayeeModel.deleteById();
     }
 

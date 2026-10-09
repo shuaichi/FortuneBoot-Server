@@ -203,16 +203,6 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     }
 
     @Override
-    public List<LoanDetailVo> getLoanReceivableDetails(Long bookId) {
-        return fortuneBillMapper.getLoanReceivableDetails(bookId);
-    }
-
-    @Override
-    public List<LoanDetailVo> getLoanPayableDetails(Long bookId) {
-        return fortuneBillMapper.getLoanPayableDetails(bookId);
-    }
-
-    @Override
     public java.math.BigDecimal getMaxSingleExpense(BillIncludeQuery query) {
         return fortuneBillMapper.getMaxSingleExpense(query);
     }
