@@ -67,6 +67,28 @@ public class FinanceOrderAccessGuard {
         return order;
     }
 
+    public void validateOrderType(Integer type) {
+        if (!orderTypeValid(type)) {
+            throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH, String.valueOf(type));
+        }
+    }
+
+    public String resolveCounterpartyName(Long bookId, Long counterpartyId, String fallbackName) {
+        if (counterpartyId == null) {
+            String normalized = StringUtils.trimToEmpty(fallbackName);
+            if (StringUtils.isBlank(normalized) || normalized.length() > 64) {
+                throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "交易对象名称必须为1到64个字符");
+            }
+            return normalized;
+        }
+        FortunePayeeEntity payee = fortunePayeeRepo.getById(counterpartyId);
+        if (payee == null || !Objects.equals(payee.getBookId(), bookId)
+                || !Boolean.TRUE.equals(payee.getEnable())) {
+            throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "交易对象不存在或不可用");
+        }
+        return payee.getPayeeName();
+    }
+
     public FortuneFinanceOrderEntity loadMutableOrder(FortuneBookEntity book, Long orderId,
                                                        boolean allowDraft) {
         FortuneFinanceOrderEntity order = loadOrder(book.getBookId(), orderId);

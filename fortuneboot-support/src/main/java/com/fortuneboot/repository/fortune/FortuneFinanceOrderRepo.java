@@ -2,9 +2,11 @@ package com.fortuneboot.repository.fortune;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
+import com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper.FinanceOrderSummaryRow;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -33,4 +35,12 @@ public interface FortuneFinanceOrderRepo extends IService<FortuneFinanceOrderEnt
     List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query);
 
     int compareAndIncrementVersion(Long orderId, Long bookId, Long expectedVersion);
+
+    FinanceOrderSummaryRow summarizeReadyOrders(Long bookId, LocalDate today);
+
+    int countPendingReadyEntries(Long bookId);
+
+    int countReviewRequired(Long bookId);
+
+    int countOrphanBills(Long bookId);
 }

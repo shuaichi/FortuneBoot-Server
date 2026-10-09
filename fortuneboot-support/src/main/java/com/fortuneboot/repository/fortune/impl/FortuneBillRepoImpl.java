@@ -11,6 +11,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -95,6 +96,19 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
         LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
         queryWrapper.eq(FortuneBillEntity::getOrderId, orderId);
         return this.exists(queryWrapper);
+    }
+
+    @Override
+    public Boolean existAnyByOrderIdIncludeDeleted(Long orderId) {
+        return fortuneBillMapper.countByOrderIdIncludeDeleted(orderId) > 0;
+    }
+
+    @Override
+    public List<Long> listOrderIdsWithAnyBillIncludeDeleted(List<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return List.of();
+        }
+        return fortuneBillMapper.listOrderIdsWithAnyBillIncludeDeleted(orderIds);
     }
 
     @Override

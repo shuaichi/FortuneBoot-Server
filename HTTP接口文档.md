@@ -2291,3 +2291,146 @@
 |------|------|------|------|------|
 | pageNum | Integer | 否 | @Max(200) | 页码，默认 1，最大 200 |
 | pageSize | Integer | 否 | @Max(500) | 每页大小，默认 10，最大 500 |
+
+---
+
+# 单据 V2 API — `FortuneFinanceOrderV2Rest`（2026-10-09 新增）
+
+- **基础路径**：`/fortune/finance/order/v2`
+- **统一响应**：`ResponseDTO {code, msg, data}`，成功码沿用 `0`。
+- **序列化约定**：V2 金额字段全部为十进制字符串（两位小数）；`version / pendingEntryCount / total` 等为整数；日期时间为 24 小时制（`yyyy-MM-dd HH:mm:ss`）。ID 沿用 Long 序列化，两端解析兼容数字和数字字符串。
+- **权限**：读接口 `@fortune.bookVisitorPermission`，写接口 `@fortune.bookActorPermission`；服务内部再次校验单据归属（路径 bookId/orderId 与数据不一致返回 `ORDER_BOOK_NOT_MATCH` 30003）。
+- **幂等**：V2 写请求 `requestId` 必填（UUID）。同 `bookId + requestId` 重放：内容一致返回原结果并 `replayed=true`；内容不一致返回 `ORDER_REQUEST_CONFLICT` 30016。
+- **乐观锁**：`expectedVersion` 必填；CAS 失败返回 `ORDER_VERSION_CONFLICT` 30011。`requestHash` 不包含 `expectedVersion`。
+- **报告路由**：`GET /{bookId}/reconciliation` 与导出路由由阶段04实现，当前版本不存在，不返回空占位数据。
+
+## C08 方法一览
+
+| 方法 | 路径（相对 V2 前缀） | 入参 | data | 权限 |
+|------|----------------------|------|------|------|
+| 分页查询单据 | GET /page | FinanceOrderPageQuery（query params） | PageDTO&lt;FinanceOrderDetailVo&gt; | visitor |
+| 单据看板汇总 | GET /{bookId}/summary | 路径 bookId | FinanceOrderSummaryVo | visitor |
+| 单据选择器 | GET /{bookId}/options | query：billType 必填、keyword、pageNum、pageSize | PageDTO&lt;FinanceOrderDetailVo&gt; | visitor |
+| 单据详情 | GET /{bookId}/{orderId} | 路径 ID | FinanceOrderDetailVo | visitor |
+| 分页查询单据流水 | GET /{bookId}/{orderId}/entries | query：pageNum、pageSize、entryStatus（ACTIVE/VOIDED/ALL，默认 ACTIVE） | PageDTO&lt;FinanceOrderEntryVo&gt; | visitor |
+| 分页查询操作审计 | GET /{bookId}/{orderId}/audit | query：pageNum、pageSize | PageDTO&lt;FinanceOrderAuditVo&gt; | visitor |
+| 新建单据 | POST /create | JSON FinanceOrderCreateCommand | FinanceOrderMutationVo | actor |
+| 修改单据元数据 | PUT /modify | JSON FinanceOrderMetadataCommand | FinanceOrderMutationVo | actor |
+| 生命周期转换 | POST /{bookId}/{orderId}/{action} | action=close/reopen/remove；JSON requestId/expectedVersion | FinanceOrderMutationVo | actor |
+| 新增关联流水 | POST /{bookId}/{orderId}/entries | multipart：`data`（application/json 的 FinanceOrderEntryCommand）+ `files` 可选多文件 | FinanceOrderMutationVo | actor |
+| 修改关联流水 | PUT /{bookId}/{orderId}/entries/{billId} | 同上；data 可含 billId 但必须与路径一致 | FinanceOrderMutationVo | actor |
+| 流水状态动作 | POST /{bookId}/{orderId}/entries/{billId}/{action} | action=confirm/unconfirm/void/restore；JSON requestId/expectedVersion | FinanceOrderMutationVo | actor |
+
+路径与 body 冲突：body 提供 `bookId/orderId/billId` 且与路径不一致时返回 30003；路径必填值在进入校验前补入 command。
+
+## 入参说明
+
+### FinanceOrderCreateCommand（新建，JSON）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| bookId | Long | 是 | 账本 id |
+| requestId | String | 是 | 幂等 UUID（≤64） |
+| title | String | 是 | 标题 1..50，trim |
+| type | Integer | 是 | 1/2/3 |
+| counterpartyId | Long | 否 | 绑定交易对象（须属于同账本且启用） |
+| counterpartyName | String | 是 | 名称快照 1..64；未绑定对象时允许手填 |
+| dueDate | LocalDate | 否 | yyyy-MM-dd |
+| remark | String | 否 | ≤512，默认空 |
+
+服务端填充：币种=账本默认币种、status=100（草稿）、out/in/adjusted=0、version=0、reconciliationStatus=READY；绑定对象时名称取交易对象快照。
+
+### FinanceOrderMetadataCommand（修改元数据，继承 Create 字段）
+
+额外必填：`orderId`、`expectedVersion`。规则：
+
+- `type` 必须与原值一致（30008）；`bookId` 与原值一致（30003）；币种/账本不可改。
+- 仅 100/200 可编辑；已归档拒绝（30001）；待核对拒绝（30013）。
+- `remark=""` 清空备注；`dueDate=null` 清除日期；`counterpartyId=null` 解除绑定并使用传入名称。
+- counterparty 变更仅允许无任何流水历史（含作废/legacy deleted）的单据（30018）；有流水时仍可改 title/dueDate/remark。
+
+### FinanceOrderEntryCommand（关联流水，multipart `data` JSON）
+
+沿用 `FortuneBillAddCommand` 字段并增加：`requestId`（必填）、`expectedVersion`（必填，允许 0）、`orderComponent`（PRINCIPAL/INTEREST/FEE/WRITE_OFF）。
+
+- PRINCIPAL 9—12 要求 `amount`（正数、两位小数、≤999999999999.99）；7/8 及附属组件金额从 `categoryAmountPair` 求和。
+- `title` 1..50、`tradeTime` 必填、`confirm` 必填。
+- 现金流水必须 `accountId` 有效且同币种；WRITE_OFF 禁止账户、必须备注原因。
+- 关联流水禁止修改 bookId/orderId/billType/orderComponent（30017）。
+
+### 生命周期/动作请求体
+
+`POST /{bookId}/{orderId}/{action}` 与 `POST /{bookId}/{orderId}/entries/{billId}/{action}` 的 JSON body：
+
+```json
+{"requestId": "uuid", "expectedVersion": 0}
+```
+
+（可选携带 bookId/orderId/billId，提供时必须与路径一致。）
+
+## 出参说明
+
+### FinanceOrderMutationVo
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| orderId | Long | 单据 id |
+| billId | Long | 流水 id，单据级操作为空 |
+| version | Long | 操作后版本 |
+| replayed | Boolean | 是否幂等重放 |
+
+### FinanceOrderDetailVo（部分关键字段）
+
+- 元数据：orderId/bookId/title/type/typeDesc/status/statusDesc（草稿/进行中/已归档）/counterpartyId/counterpartyName/currencyCode/dueDate/submitTime/closeTime/remark/version/reconciliationStatus/reconciliationNote。
+- 金额（全部字符串，两位小数）：outAmount、inAmount、issuedAmount、settledAmount、adjustedAmount、pendingAmount、interestIncome、interestExpense、feeAmount、netCostOrIncome。
+- 只读派生：settlementState（EMPTY/UNSETTLED/PARTIAL/SETTLED/REVIEW_REQUIRED）、pendingEntryCount、overdue（注入 Clock 服务端判定，dueDate<today 且 pending>0）。
+- 能力：canEdit、canDelete、canClose、canReopen、allowedEntryActions、readOnlyReason。访客所有 can*=false 且 actions=[]。
+- 待核对单据：金额可为 null、settlementState=REVIEW_REQUIRED、readOnlyReason 非空，原记录字段照常返回。
+
+`allowedEntryActions` 固定枚举：ADVANCE/REIMBURSE/LOAN_OUT/LOAN_RECOVER/LOAN_IN/LOAN_REPAY/INTEREST_IN/INTEREST_OUT/FEE/WRITE_OFF。
+
+### FinanceOrderSummaryVo（全账本口径，数据库按 book 聚合）
+
+currencyCode、receivableAmount、payableAmount、reimbursementAmount、三个逾期金额、receivableCount/payableCount/reimbursementCount（pending>0 的单据数）、pendingEntryCount、reviewRequiredCount、orphanLegacyBillCount、asOfDate。只汇总 READY 单据；异常数量单独显示，不伪装为已核对总额。
+
+### FinanceOrderEntryVo
+
+复用 FortuneBillVo 业务字段（分类/标签/成员/附件标记/附加费用），金额字符串化；新增 orderComponent、orderLedgerVersion、recycleBin、allowedActions（EDIT/CONFIRM/UNCONFIRM/VOID/RESTORE/COPY）、readOnlyReason。
+
+### FinanceOrderAuditVo
+
+id、orderId、billId、action、creatorId、createTime、beforeJson、afterJson；按时间倒序分页；审计 JSON 不包含附件 base64。
+
+## 查询规则
+
+- 分页默认 20、最大 100；`status` 为空时包含 100/200/1000；页面默认传 status=200。
+- `settlementState`、`overdueOnly` 为服务端按流水计算的独立筛选；金额不要求客户端由 in-out 推导。
+- 排序：dueDate 非空在前升序，updateTime 降序，orderId 降序。
+- 列表一次批量聚合当前结果集流水，无 N+1；summary 走数据库聚合。
+- 始终排除 deleted；明细 entryStatus 明确控制 recycleBin（ACTIVE=未作废、VOIDED=已作废、ALL=全部）。
+- options：7/9/11 返回 READY 的 100/200 同类型单据；8/10/12 仅返回 READY 的 200 且 pendingAmount>0；1/2 附属动作从详情发起，通用选择器返回空。
+
+## 业务规则摘要
+
+- close：重新按流水聚合校验 issued>0、pending=0、无待确认（30014/30015），要求 READY（30013）；重复归档成功且不加版本。归档设 1000 与 closeTime。
+- reopen：1000→200 并清空 closeTime；重复重开成功且不加版本。
+- remove：仅 100/200 空单据；历史检查包含已作废与逻辑删除流水（30018）。
+- 旧 `/fortune/finance/order/*` 与 `/fortune/bill/*` 的 URL、请求绑定形式、`ResponseDTO<Boolean>` 泛型全部保留；内部委托公共服务执行相同规则。旧 modify 已修复“先覆盖 bookId 再校验”的问题；旧 add 未提供对象名时保留缺省名称“未填写”；旧 type 非法返回 30008。
+
+## 新增错误码（30008—30020）
+
+| code | 常量 | 说明 |
+|------|------|------|
+| 30008 | ORDER_TYPE_MISMATCH | 单据类型不匹配/非法 |
+| 30009 | ORDER_OVER_SETTLED | 结算金额超过待结金额 |
+| 30010 | ORDER_CHRONOLOGY_INVALID | 流水时间前缀不合法 |
+| 30011 | ORDER_VERSION_CONFLICT | 版本冲突，请刷新重试 |
+| 30012 | ORDER_CURRENCY_MISMATCH | 币种不一致 |
+| 30013 | ORDER_RECONCILIATION_REQUIRED | 单据待核对，只读 |
+| 30014 | ORDER_HAS_PENDING_ENTRIES | 存在待确认流水 |
+| 30015 | ORDER_NOT_SETTLED | 未结清不能归档 |
+| 30016 | ORDER_REQUEST_CONFLICT | 请求 ID 与内容不一致 |
+| 30017 | ORDER_ENTRY_IMMUTABLE | 单据或流水状态不允许修改 |
+| 30018 | ORDER_HISTORY_EXISTS | 已存在流水历史 |
+| 30019 | ORDER_REFERENCE_INVALID | 引用非法 |
+| 30020 | ORDER_AMOUNT_INVALID | 金额非法 |

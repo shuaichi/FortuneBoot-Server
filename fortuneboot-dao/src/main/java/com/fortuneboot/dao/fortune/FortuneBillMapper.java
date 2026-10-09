@@ -10,6 +10,7 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,6 +20,20 @@ import java.util.List;
  * @Date 2024/6/3 23:27
  **/
 public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
+
+    @Select("select count(*) from fortune_bill where order_id = #{orderId}")
+    int countByOrderIdIncludeDeleted(@Param("orderId") Long orderId);
+
+    @Select("""
+            <script>
+            select distinct order_id from fortune_bill
+            where order_id in
+            <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+                #{orderId}
+            </foreach>
+            </script>
+            """)
+    List<Long> listOrderIdsWithAnyBillIncludeDeleted(@Param("orderIds") Collection<Long> orderIds);
 
     @Select("""
             SELECT\n

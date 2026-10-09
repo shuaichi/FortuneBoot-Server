@@ -1,6 +1,7 @@
 package com.fortuneboot.domain.command.fortune.order;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,6 @@ public class FinanceOrderMetadataCommand extends FinanceOrderCreateCommand {
      * 期望版本号
      */
     @NotNull(message = "期望版本号不能为空")
-    @Positive(message = "期望版本号只能是正数")
+    @PositiveOrZero(message = "期望版本号不能小于0")
     private Long expectedVersion;
 }

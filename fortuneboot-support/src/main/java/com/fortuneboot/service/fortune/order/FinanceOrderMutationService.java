@@ -1,12 +1,17 @@
 package com.fortuneboot.service.fortune.order;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerEntry;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerSnapshot;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -22,6 +27,7 @@ import com.fortuneboot.repository.fortune.FortuneFinanceOrderAuditRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRequestRepo;
 import com.fortuneboot.service.fortune.FortuneBalanceSnapshotService;
+import org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +62,153 @@ public class FinanceOrderMutationService {
     private final FortuneBalanceSnapshotService snapshotService;
     private final Clock clock;
     private final ObjectMapper objectMapper;
+
+    @Transactional(rollbackFor = Exception.class)
+    public FinanceOrderMutationVo executeCreate(FinanceOrderCreateCommand command, String requestHash) {
+        insertRequestPlaceholder(command.getBookId(), command.getRequestId(), "CREATE", requestHash);
+
+        FortuneBookEntity bookBeforeLock = accessGuard.loadBook(command.getBookId());
+        scopeLock.lockGroup(bookBeforeLock.getGroupId());
+
+        FortuneBookEntity book = accessGuard.loadBook(command.getBookId());
+        accessGuard.validateOrderType(command.getType());
+        String title = normalizeTitle(command.getTitle());
+        String counterpartyName = accessGuard.resolveCounterpartyName(command.getBookId(),
+                command.getCounterpartyId(), command.getCounterpartyName());
+        String remark = normalizeRemark(command.getRemark());
+
+        FortuneFinanceOrderEntity order = new FortuneFinanceOrderEntity();
+        order.setBookId(book.getBookId());
+        order.setTitle(title);
+        order.setType(command.getType());
+        order.setOutAmount(BigDecimal.ZERO);
+        order.setInAmount(BigDecimal.ZERO);
+        order.setAdjustedAmount(BigDecimal.ZERO);
+        order.setStatus(FinanceOrderStatusEnum.INIT.getValue());
+        order.setSubmitTime(LocalDateTime.now(clock));
+        order.setRemark(remark);
+        order.setCounterpartyId(command.getCounterpartyId());
+        order.setCounterpartyName(counterpartyName);
+        order.setCurrencyCode(book.getDefaultCurrency());
+        order.setDueDate(command.getDueDate());
+        order.setVersion(0L);
+        order.setReconciliationStatus(FinanceOrderReconciliationStatusEnum.READY.getValue());
+        orderRepo.save(order);
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null, 0L, false);
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "CREATE",
+                Map.of(), orderAuditSnapshot(order));
+        saveRequestReceipt(command.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public FinanceOrderMutationVo executeModify(FinanceOrderMetadataCommand command, String requestHash) {
+        insertRequestPlaceholder(command.getBookId(), command.getRequestId(), "MODIFY", requestHash);
+
+        FortuneBookEntity bookBeforeLock = accessGuard.loadBook(command.getBookId());
+        scopeLock.lockGroup(bookBeforeLock.getGroupId());
+
+        FortuneFinanceOrderEntity order = accessGuard.loadOrder(command.getBookId(), command.getOrderId());
+        checkReconciliationReady(order);
+        if (Objects.equals(order.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_CLOSE_CAN_NOT_MODIFY);
+        }
+        if (!Objects.equals(order.getType(), command.getType())) {
+            throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH);
+        }
+        String title = normalizeTitle(command.getTitle());
+        String counterpartyName = accessGuard.resolveCounterpartyName(command.getBookId(),
+                command.getCounterpartyId(), command.getCounterpartyName());
+        String remark = normalizeRemark(command.getRemark());
+        boolean counterpartyChanged = !Objects.equals(order.getCounterpartyId(), command.getCounterpartyId())
+                || !Objects.equals(legacyCounterpartyName(order), counterpartyName);
+        if (counterpartyChanged && billRepo.existAnyByOrderIdIncludeDeleted(order.getOrderId())) {
+            throw new ApiException(ErrorCode.Business.ORDER_HISTORY_EXISTS);
+        }
+
+        boolean changed = !Objects.equals(order.getTitle(), title)
+                || !Objects.equals(StringUtils.defaultString(order.getRemark()), remark)
+                || !Objects.equals(order.getDueDate(), command.getDueDate())
+                || counterpartyChanged;
+        if (!changed) {
+            FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                    order.getVersion(), false);
+            saveRequestReceipt(command.getBookId(), command.getRequestId(), requestHash, result);
+            return result;
+        }
+
+        long expectedVersion = Objects.requireNonNullElse(command.getExpectedVersion(), order.getVersion());
+        if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
+        }
+        Map<String, Object> before = orderAuditSnapshot(order);
+        order.setTitle(title);
+        order.setCounterpartyId(command.getCounterpartyId());
+        order.setCounterpartyName(counterpartyName);
+        order.setDueDate(command.getDueDate());
+        order.setRemark(remark);
+        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
+                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
+                .set(FortuneFinanceOrderEntity::getTitle, title)
+                .set(FortuneFinanceOrderEntity::getCounterpartyId, command.getCounterpartyId())
+                .set(FortuneFinanceOrderEntity::getCounterpartyName, counterpartyName)
+                .set(FortuneFinanceOrderEntity::getDueDate, command.getDueDate())
+                .set(FortuneFinanceOrderEntity::getRemark, remark));
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                expectedVersion + 1, false);
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "MODIFY",
+                before, orderAuditSnapshot(order));
+        saveRequestReceipt(command.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public FinanceOrderMutationVo executeTransition(FinanceOrderTransitionCommand command, String requestHash) {
+        insertRequestPlaceholder(command.getBookId(), command.getRequestId(), command.getAction().name(),
+                requestHash);
+
+        FortuneBookEntity bookBeforeLock = accessGuard.loadBook(command.getBookId());
+        scopeLock.lockGroup(bookBeforeLock.getGroupId());
+
+        FortuneFinanceOrderEntity order = accessGuard.loadOrder(command.getBookId(), command.getOrderId());
+        return switch (command.getAction()) {
+            case CLOSE -> closeOrder(command, order, requestHash);
+            case REOPEN -> reopenOrder(command, order, requestHash);
+            case REMOVE -> removeOrder(command, order, requestHash);
+        };
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public FinanceOrderMutationVo executeLegacyUsing(Long bookId, Long orderId, String requestId,
+                                                     String requestHash) {
+        insertRequestPlaceholder(bookId, requestId, "USING", requestHash);
+
+        FortuneBookEntity bookBeforeLock = accessGuard.loadBook(bookId);
+        scopeLock.lockGroup(bookBeforeLock.getGroupId());
+
+        FortuneFinanceOrderEntity order = accessGuard.loadOrder(bookId, orderId);
+        if (!Objects.equals(order.getStatus(), FinanceOrderStatusEnum.INIT.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_USING_STATUS_ERROR);
+        }
+        checkReconciliationReady(order);
+        long expectedVersion = order.getVersion();
+        if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
+        }
+        Map<String, Object> before = orderAuditSnapshot(order);
+        order.setStatus(FinanceOrderStatusEnum.USING.getValue());
+        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
+                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
+                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.USING.getValue()));
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                expectedVersion + 1, false);
+        saveStateAudit(bookId, orderId, null, requestId, "USING", before, orderAuditSnapshot(order));
+        saveRequestReceipt(bookId, requestId, requestHash, result);
+        return result;
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public FinanceOrderMutationVo executeEntry(FinanceOrderEntryMutation command, String requestHash) {
@@ -169,6 +322,158 @@ public class FinanceOrderMutationService {
         oldEffect.forEach((accountId, amount) -> deltas.merge(accountId, amount.negate(), BigDecimal::add));
         newEffect.forEach((accountId, amount) -> deltas.merge(accountId, amount, BigDecimal::add));
         return deltas;
+    }
+
+    private FinanceOrderMutationVo closeOrder(FinanceOrderTransitionCommand command,
+                                              FortuneFinanceOrderEntity order, String requestHash) {
+        checkReconciliationReady(order);
+        if (Objects.equals(order.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
+            return noOpTransition(command, order, requestHash);
+        }
+        if (!Objects.equals(order.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_CLOSE_STATUS_ERROR);
+        }
+        List<FinanceOrderLedgerEntry> entries = billRepo.getByOrderId(order.getOrderId()).stream()
+                .map(this::ledgerEntry)
+                .toList();
+        FinanceOrderLedgerSnapshot snapshot = ledgerCalculator.calculate(order.getType(), entries);
+        if (snapshot.pendingEntryCount() > 0) {
+            throw new ApiException(ErrorCode.Business.ORDER_HAS_PENDING_ENTRIES);
+        }
+        if (snapshot.issuedAmount().compareTo(BigDecimal.ZERO) <= 0
+                || snapshot.pendingAmount().compareTo(BigDecimal.ZERO) != 0) {
+            throw new ApiException(ErrorCode.Business.ORDER_NOT_SETTLED,
+                    snapshot.settledAmount().add(snapshot.adjustedAmount()).toPlainString(),
+                    snapshot.issuedAmount().toPlainString());
+        }
+
+        long expectedVersion = Objects.requireNonNullElse(command.getExpectedVersion(), order.getVersion());
+        if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
+        }
+        Map<String, Object> before = orderAuditSnapshot(order);
+        LocalDateTime closeTime = LocalDateTime.now(clock);
+        order.setStatus(FinanceOrderStatusEnum.CLOSE.getValue());
+        order.setCloseTime(closeTime);
+        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
+                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
+                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.CLOSE.getValue())
+                .set(FortuneFinanceOrderEntity::getCloseTime, closeTime));
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                expectedVersion + 1, false);
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "CLOSE",
+                before, orderAuditSnapshot(order));
+        saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    private FinanceOrderMutationVo reopenOrder(FinanceOrderTransitionCommand command,
+                                               FortuneFinanceOrderEntity order, String requestHash) {
+        checkReconciliationReady(order);
+        if (Objects.equals(order.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            return noOpTransition(command, order, requestHash);
+        }
+        if (!Objects.equals(order.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_REOPEN_STATUS_ERROR);
+        }
+
+        long expectedVersion = Objects.requireNonNullElse(command.getExpectedVersion(), order.getVersion());
+        if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
+        }
+        Map<String, Object> before = orderAuditSnapshot(order);
+        order.setStatus(FinanceOrderStatusEnum.USING.getValue());
+        order.setCloseTime(null);
+        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
+                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
+                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.USING.getValue())
+                .set(FortuneFinanceOrderEntity::getCloseTime, null));
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                expectedVersion + 1, false);
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "REOPEN",
+                before, orderAuditSnapshot(order));
+        saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    private FinanceOrderMutationVo removeOrder(FinanceOrderTransitionCommand command,
+                                               FortuneFinanceOrderEntity order, String requestHash) {
+        checkReconciliationReady(order);
+        if (!Objects.equals(order.getStatus(), FinanceOrderStatusEnum.INIT.getValue())
+                && !Objects.equals(order.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            throw new ApiException(ErrorCode.Business.ORDER_ENTRY_IMMUTABLE);
+        }
+        if (billRepo.existAnyByOrderIdIncludeDeleted(order.getOrderId())) {
+            throw new ApiException(ErrorCode.Business.ORDER_HISTORY_EXISTS);
+        }
+
+        long expectedVersion = Objects.requireNonNullElse(command.getExpectedVersion(), order.getVersion());
+        if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
+        }
+        Map<String, Object> before = orderAuditSnapshot(order);
+        orderRepo.removeById(order.getOrderId());
+
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                expectedVersion + 1, false);
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "REMOVE",
+                before, Map.of("deleted", true));
+        saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    private FinanceOrderMutationVo noOpTransition(FinanceOrderTransitionCommand command,
+                                                  FortuneFinanceOrderEntity order, String requestHash) {
+        FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
+                order.getVersion(), false);
+        saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
+        return result;
+    }
+
+    private void checkReconciliationReady(FortuneFinanceOrderEntity order) {
+        if (!FinanceOrderReconciliationStatusEnum.READY.getValue().equals(order.getReconciliationStatus())) {
+            throw new ApiException(ErrorCode.Business.ORDER_RECONCILIATION_REQUIRED);
+        }
+    }
+
+    private String normalizeTitle(String title) {
+        String normalized = StringUtils.trimToEmpty(title);
+        if (StringUtils.isBlank(normalized) || normalized.length() > 50) {
+            throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "标题必须为1到50个字符");
+        }
+        return normalized;
+    }
+
+    private String normalizeRemark(String remark) {
+        String normalized = StringUtils.trimToEmpty(remark);
+        if (normalized.length() > 512) {
+            throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "备注长度不能超过512个字符");
+        }
+        return normalized;
+    }
+
+    private String legacyCounterpartyName(FortuneFinanceOrderEntity order) {
+        return StringUtils.defaultIfBlank(order.getCounterpartyName(), "未填写");
+    }
+
+    private Map<String, Object> orderAuditSnapshot(FortuneFinanceOrderEntity order) {
+        Map<String, Object> value = new LinkedHashMap<>();
+        value.put("orderId", order.getOrderId());
+        value.put("bookId", order.getBookId());
+        value.put("title", order.getTitle());
+        value.put("type", order.getType());
+        value.put("status", order.getStatus());
+        value.put("counterpartyId", order.getCounterpartyId());
+        value.put("counterpartyName", order.getCounterpartyName());
+        value.put("currencyCode", order.getCurrencyCode());
+        value.put("dueDate", order.getDueDate() == null ? null : order.getDueDate().toString());
+        value.put("remark", order.getRemark());
+        value.put("version", order.getVersion());
+        value.put("reconciliationStatus", order.getReconciliationStatus());
+        value.put("closeTime", order.getCloseTime() == null ? null : order.getCloseTime().toString());
+        return value;
     }
 
     private void insertRequestPlaceholder(Long bookId, String requestId, String operation, String requestHash) {

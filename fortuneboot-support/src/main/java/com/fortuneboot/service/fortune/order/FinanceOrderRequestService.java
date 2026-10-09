@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderRequestEntity;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
@@ -25,9 +28,11 @@ import java.security.MessageDigest;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HexFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -67,6 +72,116 @@ public class FinanceOrderRequestService {
             }
             throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
         }
+    }
+
+    public FinanceOrderMutationVo create(FinanceOrderCreateCommand command) {
+        normalizeCreateCommand(command);
+        String requestHash = hashCreate(command);
+        return executeWithIdempotency(command.getBookId(), command.getRequestId(), requestHash,
+                receipt -> readResponse(receipt.getResponseJson(), true),
+                () -> mutationService.executeCreate(command, requestHash));
+    }
+
+    public FinanceOrderMutationVo modify(FinanceOrderMetadataCommand command) {
+        normalizeCreateCommand(command);
+        String requestHash = hashModify(command);
+        return executeWithIdempotency(command.getBookId(), command.getRequestId(), requestHash,
+                receipt -> readResponse(receipt.getResponseJson(), true),
+                () -> mutationService.executeModify(command, requestHash));
+    }
+
+    public FinanceOrderMutationVo transition(FinanceOrderTransitionCommand command) {
+        if (command.getRequestId() == null || command.getRequestId().isBlank()) {
+            command.setRequestId(UUID.randomUUID().toString());
+        }
+        String requestHash = hashTransition(command.getAction().name(), command.getBookId(), command.getOrderId());
+        return executeWithIdempotency(command.getBookId(), command.getRequestId(), requestHash,
+                receipt -> readResponse(receipt.getResponseJson(), true),
+                () -> mutationService.executeTransition(command, requestHash));
+    }
+
+    public FinanceOrderMutationVo legacyUsing(Long bookId, Long orderId) {
+        String requestId = UUID.randomUUID().toString();
+        String requestHash = hashTransition("USING", bookId, orderId);
+        return executeWithIdempotency(bookId, requestId, requestHash,
+                receipt -> readResponse(receipt.getResponseJson(), true),
+                () -> mutationService.executeLegacyUsing(bookId, orderId, requestId, requestHash));
+    }
+
+    private FinanceOrderMutationVo executeWithIdempotency(Long bookId, String requestId, String requestHash,
+            java.util.function.Function<FortuneFinanceOrderRequestEntity, FinanceOrderMutationVo> replay,
+            java.util.function.Supplier<FinanceOrderMutationVo> execute) {
+        FortuneFinanceOrderRequestEntity receipt = findReceipt(bookId, requestId);
+        if (receipt != null) {
+            if (!Objects.equals(receipt.getRequestHash(), requestHash)) {
+                throw new ApiException(ErrorCode.Business.ORDER_REQUEST_CONFLICT);
+            }
+            return replay.apply(receipt);
+        }
+        try {
+            return execute.get();
+        } catch (DataAccessException exception) {
+            FortuneFinanceOrderRequestEntity concurrentReceipt = findReceipt(bookId, requestId);
+            if (concurrentReceipt != null) {
+                if (!Objects.equals(concurrentReceipt.getRequestHash(), requestHash)) {
+                    throw new ApiException(ErrorCode.Business.ORDER_REQUEST_CONFLICT);
+                }
+                return readResponse(concurrentReceipt.getResponseJson(), true);
+            }
+            throw new ApiException(ErrorCode.Business.ORDER_REQUEST_CONFLICT);
+        }
+    }
+
+    private void normalizeCreateCommand(FinanceOrderCreateCommand command) {
+        if (command.getRequestId() == null || command.getRequestId().isBlank()) {
+            command.setRequestId(UUID.randomUUID().toString());
+        }
+        command.setTitle(StringUtils.trimToEmpty(command.getTitle()));
+        command.setCounterpartyName(StringUtils.trimToEmpty(command.getCounterpartyName()));
+        command.setRemark(StringUtils.trimToEmpty(command.getRemark()));
+    }
+
+    private String hashCreate(FinanceOrderCreateCommand command) {
+        Map<String, Object> value = new TreeMap<>();
+        value.put("operation", "CREATE");
+        value.put("bookId", command.getBookId());
+        value.put("title", command.getTitle());
+        value.put("type", command.getType());
+        value.put("counterpartyId", command.getCounterpartyId());
+        value.put("counterpartyName", command.getCounterpartyName());
+        value.put("dueDate", command.getDueDate() == null ? null : command.getDueDate().toString());
+        value.put("remark", command.getRemark());
+        value.put("operator", operator());
+        return digest(value);
+    }
+
+    private String hashModify(FinanceOrderMetadataCommand command) {
+        Map<String, Object> value = hashMetadataValues(command);
+        value.put("operation", "MODIFY");
+        value.put("orderId", command.getOrderId());
+        return digest(value);
+    }
+
+    private Map<String, Object> hashMetadataValues(FinanceOrderCreateCommand command) {
+        Map<String, Object> value = new TreeMap<>();
+        value.put("bookId", command.getBookId());
+        value.put("title", command.getTitle());
+        value.put("type", command.getType());
+        value.put("counterpartyId", command.getCounterpartyId());
+        value.put("counterpartyName", command.getCounterpartyName());
+        value.put("dueDate", command.getDueDate() == null ? null : command.getDueDate().toString());
+        value.put("remark", command.getRemark());
+        value.put("operator", operator());
+        return value;
+    }
+
+    private String hashTransition(String operation, Long bookId, Long orderId) {
+        Map<String, Object> value = new TreeMap<>();
+        value.put("operation", operation);
+        value.put("bookId", bookId);
+        value.put("orderId", orderId);
+        value.put("operator", operator());
+        return digest(value);
     }
 
     public FinanceOrderMutationVo legacyInclude(Long bookId, Long billId, boolean include) {

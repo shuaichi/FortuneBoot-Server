@@ -12,6 +12,7 @@ import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -42,5 +43,26 @@ public class FortuneFinanceOrderRepoImpl
     @Override
     public int compareAndIncrementVersion(Long orderId, Long bookId, Long expectedVersion) {
         return baseMapper.compareAndIncrementVersion(orderId, bookId, expectedVersion);
+    }
+
+    @Override
+    public com.fortuneboot.dao.fortune.FortuneFinanceOrderMapper.FinanceOrderSummaryRow summarizeReadyOrders(
+            Long bookId, LocalDate today) {
+        return baseMapper.summarizeReadyOrders(bookId, today);
+    }
+
+    @Override
+    public int countPendingReadyEntries(Long bookId) {
+        return baseMapper.countPendingReadyEntries(bookId);
+    }
+
+    @Override
+    public int countReviewRequired(Long bookId) {
+        return baseMapper.countReviewRequired(bookId);
+    }
+
+    @Override
+    public int countOrphanBills(Long bookId) {
+        return baseMapper.countOrphanBills(bookId);
     }
 }
