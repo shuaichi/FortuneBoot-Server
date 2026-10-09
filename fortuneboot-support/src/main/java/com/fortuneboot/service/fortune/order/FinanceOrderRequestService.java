@@ -1,6 +1,8 @@
 package com.fortuneboot.service.fortune.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
@@ -13,7 +15,6 @@ import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderRequestEntity;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRequestRepo;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
@@ -143,7 +144,7 @@ public class FinanceOrderRequestService {
 
     private String hashCreate(FinanceOrderCreateCommand command) {
         Map<String, Object> value = new TreeMap<>();
-        value.put("operation", "CREATE");
+        value.put("operation", FinanceOrderAuditActionEnum.CREATE.name());
         value.put("bookId", command.getBookId());
         value.put("title", command.getTitle());
         value.put("type", command.getType());
@@ -157,7 +158,7 @@ public class FinanceOrderRequestService {
 
     private String hashModify(FinanceOrderMetadataCommand command) {
         Map<String, Object> value = hashMetadataValues(command);
-        value.put("operation", "MODIFY");
+        value.put("operation", FinanceOrderAuditActionEnum.MODIFY.name());
         value.put("orderId", command.getOrderId());
         return digest(value);
     }
@@ -227,7 +228,7 @@ public class FinanceOrderRequestService {
         FinanceOrderComponentEnum component =
                 FinanceOrderComponentEnum.getByValue(entryCommand.getOrderComponent());
         if (component == FinanceOrderComponentEnum.PRINCIPAL
-                && List.of(9, 10, 11, 12).contains(entryCommand.getBillType())) {
+                && BillTypeEnum.isLoanValue(entryCommand.getBillType())) {
             entryCommand.setAmount(scale(entryCommand.getAmount()));
         } else if (entryCommand.getCategoryAmountPair() != null) {
             BigDecimal amount = entryCommand.getCategoryAmountPair().stream()
@@ -268,7 +269,8 @@ public class FinanceOrderRequestService {
 
     private String hashInclude(Long bookId, Long billId, boolean include) {
         Map<String, Object> value = new TreeMap<>();
-        value.put("operation", include ? "INCLUDE" : "EXCLUDE");
+        value.put("operation", include
+                ? FinanceOrderAuditActionEnum.INCLUDE.name() : FinanceOrderAuditActionEnum.EXCLUDE.name());
         value.put("bookId", bookId);
         value.put("billId", billId);
         value.put("operator", operator());
@@ -329,11 +331,7 @@ public class FinanceOrderRequestService {
     }
 
     private FortuneFinanceOrderRequestEntity findReceipt(Long bookId, String requestId) {
-        LambdaQueryWrapper<FortuneFinanceOrderRequestEntity> wrapper =
-                new LambdaQueryWrapper<>(FortuneFinanceOrderRequestEntity.class);
-        wrapper.eq(FortuneFinanceOrderRequestEntity::getBookId, bookId)
-                .eq(FortuneFinanceOrderRequestEntity::getRequestId, requestId);
-        return requestRepo.getOne(wrapper, false);
+        return requestRepo.findByBookIdAndRequestId(bookId, requestId);
     }
 
     private FinanceOrderMutationVo readResponse(String responseJson, boolean replayed) {

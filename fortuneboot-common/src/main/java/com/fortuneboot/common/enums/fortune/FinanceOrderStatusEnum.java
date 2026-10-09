@@ -36,4 +36,37 @@ public enum FinanceOrderStatusEnum implements BasicEnum<Integer> {
         }
         return StringUtils.EMPTY;
     }
+
+    public static FinanceOrderStatusEnum getByValue(Integer value) {
+        for (FinanceOrderStatusEnum status : values()) {
+            if (Objects.equals(status.getValue(), value)) {
+                return status;
+            }
+        }
+        return null;
+    }
+
+    public boolean isInitial() {
+        return this == INIT;
+    }
+
+    public boolean isUsing() {
+        return this == USING;
+    }
+
+    public boolean isClosed() {
+        return this == CLOSE;
+    }
+
+    /**
+     * 可编辑状态：草稿或进行中。
+     */
+    public boolean isEditable() {
+        return this == INIT || this == USING;
+    }
+
+    public static boolean isEditableValue(Integer value) {
+        FinanceOrderStatusEnum status = getByValue(value);
+        return status != null && status.isEditable();
+    }
 }

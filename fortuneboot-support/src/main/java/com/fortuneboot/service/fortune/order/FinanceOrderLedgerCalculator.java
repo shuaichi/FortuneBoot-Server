@@ -1,6 +1,8 @@
 package com.fortuneboot.service.fortune.order;
 
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderSettlementStateEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
@@ -14,9 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,46 +31,11 @@ import org.springframework.stereotype.Component;
 public class FinanceOrderLedgerCalculator {
 
     /**
-     * 单笔新金额上限
-     */
-    private static final BigDecimal MAX_ENTRY_AMOUNT = new BigDecimal("999999999999.99");
-
-    /**
      * DECIMAL(20,4)聚合容量上限
      */
     private static final BigDecimal MAX_AGGREGATE_AMOUNT = new BigDecimal("9999999999999999.9999");
 
     private static final BigDecimal ZERO = BigDecimal.ZERO;
-
-    /**
-     * 形成本金的流水类型：垫付/借出/借入
-     */
-    private static final Set<Integer> PRINCIPAL_OUT_BILL_TYPES = Set.of(7, 9, 12);
-
-    /**
-     * 结算本金的流水类型：报销到账/收回本金/归还本金
-     */
-    private static final Set<Integer> PRINCIPAL_IN_BILL_TYPES = Set.of(8, 10, 11);
-
-    /**
-     * 单据类型 + 组件 + 流水类型 完整白名单
-     */
-    private static final Map<Integer, Map<FinanceOrderComponentEnum, Set<Integer>>> WHITELIST = Map.of(
-            FinanceOrderTypeEnum.EXPENSE_CLAIM.getValue(), Map.of(
-                    FinanceOrderComponentEnum.PRINCIPAL, Set.of(7, 8),
-                    FinanceOrderComponentEnum.FEE, Set.of(1),
-                    FinanceOrderComponentEnum.WRITE_OFF, Set.of(1)),
-            FinanceOrderTypeEnum.LOAN_OUT.getValue(), Map.of(
-                    FinanceOrderComponentEnum.PRINCIPAL, Set.of(9, 10),
-                    FinanceOrderComponentEnum.INTEREST, Set.of(2),
-                    FinanceOrderComponentEnum.FEE, Set.of(1),
-                    FinanceOrderComponentEnum.WRITE_OFF, Set.of(1)),
-            FinanceOrderTypeEnum.LOAN_IN.getValue(), Map.of(
-                    FinanceOrderComponentEnum.PRINCIPAL, Set.of(11, 12),
-                    FinanceOrderComponentEnum.INTEREST, Set.of(1),
-                    FinanceOrderComponentEnum.FEE, Set.of(1),
-                    FinanceOrderComponentEnum.WRITE_OFF, Set.of(2))
-    );
 
     /**
      * 从有效流水重建单据账本汇总
@@ -134,8 +99,8 @@ public class FinanceOrderLedgerCalculator {
         if (Objects.isNull(entry)) {
             throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "空流水记录");
         }
-        if (entry.ledgerVersion() != 1) {
-            if (entry.ledgerVersion() != 0) {
+        if (!FinanceOrderLedgerVersionEnum.isCurrentValue(entry.ledgerVersion())) {
+            if (!FinanceOrderLedgerVersionEnum.isLegacyValue(entry.ledgerVersion())) {
                 throw new ApiException(ErrorCode.Business.ORDER_REFERENCE_INVALID, "非法流水账本版本: " + entry.ledgerVersion());
             }
             return;
@@ -145,7 +110,7 @@ public class FinanceOrderLedgerCalculator {
         }
 
         FinanceOrderComponentEnum component = validateComponent(entry.component());
-        validateWhitelist(orderType, component, entry.billType());
+        BillTypeEnum billType = validateWhitelist(orderType, component, entry.billType());
         BigDecimal amount = validateAmount(entry.amount());
         validateTradeTime(entry);
 
@@ -158,8 +123,8 @@ public class FinanceOrderLedgerCalculator {
         switch (component) {
             case PRINCIPAL -> {
                 boolean issuedSide = Objects.equals(orderType, FinanceOrderTypeEnum.LOAN_IN)
-                        == PRINCIPAL_IN_BILL_TYPES.contains(entry.billType());
-                if (PRINCIPAL_OUT_BILL_TYPES.contains(entry.billType())) {
+                        == billType.isPrincipalIn();
+                if (billType.isPrincipalOut()) {
                     ledger.outAmount = ledger.outAmount.add(amount);
                     ledger.scanEntries.add(new ScanEntry(entry.billId(), amount,
                             issuedSide ? amount : amount.negate(),
@@ -173,7 +138,7 @@ public class FinanceOrderLedgerCalculator {
             }
             case INTEREST -> {
                 ledger.hasEffectiveInterestOrFee = true;
-                if (Objects.equals(entry.billType(), 2)) {
+                if (billType.isInterestIncome()) {
                     ledger.interestIncome = ledger.interestIncome.add(amount);
                 } else {
                     ledger.interestExpense = ledger.interestExpense.add(amount);
@@ -192,12 +157,11 @@ public class FinanceOrderLedgerCalculator {
     }
 
     private FinanceOrderTypeEnum validateOrderType(Integer orderType) {
-        for (FinanceOrderTypeEnum orderTypeEnum : FinanceOrderTypeEnum.values()) {
-            if (Objects.equals(orderTypeEnum.getValue(), orderType)) {
-                return orderTypeEnum;
-            }
+        FinanceOrderTypeEnum orderTypeEnum = FinanceOrderTypeEnum.getByValue(orderType);
+        if (Objects.isNull(orderTypeEnum)) {
+            throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH, String.valueOf(orderType));
         }
-        throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH, String.valueOf(orderType));
+        return orderTypeEnum;
     }
 
     private FinanceOrderComponentEnum validateComponent(String component) {
@@ -208,12 +172,14 @@ public class FinanceOrderLedgerCalculator {
         return componentEnum;
     }
 
-    private void validateWhitelist(FinanceOrderTypeEnum orderType, FinanceOrderComponentEnum component, Integer billType) {
-        Set<Integer> allowedBillTypes = WHITELIST.get(orderType.getValue()).get(component);
-        if (Objects.isNull(allowedBillTypes) || !allowedBillTypes.contains(billType)) {
+    private BillTypeEnum validateWhitelist(FinanceOrderTypeEnum orderType, FinanceOrderComponentEnum component,
+                                           Integer billType) {
+        BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
+        if (Objects.isNull(billTypeEnum) || !orderType.allows(component, billTypeEnum)) {
             throw new ApiException(ErrorCode.Business.ORDER_TYPE_MISMATCH,
                 "type=" + orderType.getValue() + ",billType=" + billType + ",component=" + component.getValue());
         }
+        return billTypeEnum;
     }
 
     private BigDecimal validateAmount(BigDecimal amount) {
@@ -226,7 +192,7 @@ public class FinanceOrderLedgerCalculator {
         } catch (ArithmeticException e) {
             throw amountInvalid(amount);
         }
-        if (normalized.compareTo(MAX_ENTRY_AMOUNT) > 0) {
+        if (normalized.compareTo(FinanceOrderAmountRule.MAX_AMOUNT) > 0) {
             throw amountInvalid(amount);
         }
         return normalized;

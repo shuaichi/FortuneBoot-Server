@@ -16,9 +16,9 @@ import org.apache.commons.lang3.StringUtils;
 @Data
 public class FinanceOrderOptionQuery {
 
-    public static final int DEFAULT_PAGE_NUM = 1;
-    public static final int DEFAULT_PAGE_SIZE = 20;
-    public static final int MAX_PAGE_SIZE = 100;
+    public static final int DEFAULT_PAGE_NUM = FinanceOrderPageUtil.DEFAULT_PAGE_NUM;
+    public static final int DEFAULT_PAGE_SIZE = FinanceOrderPageUtil.DEFAULT_PAGE_SIZE;
+    public static final int MAX_PAGE_SIZE = FinanceOrderPageUtil.MAX_PAGE_SIZE;
 
     /**
      * 账本id

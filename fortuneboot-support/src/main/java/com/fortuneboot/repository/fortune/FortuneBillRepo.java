@@ -6,9 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.query.fortune.order.FinanceOrderEntryQuery;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -156,6 +158,22 @@ public interface FortuneBillRepo extends IService<FortuneBillEntity> {
      * @return
      */
     List<FortuneBillEntity> getByOrderId(Long orderId);
+
+    /**
+     * 单据明细分页查询：按单据隔离并按回收站状态过滤，交易时间倒序。
+     *
+     * @param query 明细分页查询条件
+     * @return 明细分页结果
+     */
+    Page<FortuneBillEntity> pageByEntryQuery(FinanceOrderEntryQuery query);
+
+    /**
+     * 按单据ID批量查询有效流水。
+     *
+     * @param orderIds 单据id集合
+     * @return 关联流水
+     */
+    List<FortuneBillEntity> listByOrderIds(Collection<Long> orderIds);
 
     List<FortuneLineVo> getDateInclude(BillIncludeQuery query);
 

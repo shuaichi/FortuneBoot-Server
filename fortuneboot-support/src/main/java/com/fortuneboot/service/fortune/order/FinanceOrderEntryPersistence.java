@@ -22,6 +22,17 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class FinanceOrderEntryPersistence {
 
+    /**
+     * 关联关系批量入库大小。
+     */
+    private static final int RELATION_BATCH_SIZE = 1000;
+
+    /**
+     * 附件批量入库大小，避免单批过大。
+     */
+    private static final int FILE_BATCH_SIZE = 50;
+
+
     private final FortuneBillRepo fortuneBillRepo;
     private final FortuneCategoryRelationRepo categoryRelationRepo;
     private final FortuneTagRelationRepo tagRelationRepo;
@@ -65,31 +76,31 @@ public class FinanceOrderEntryPersistence {
             List<FortuneCategoryRelationEntity> relations = command.getCategoryAmountPair().stream()
                     .map(category -> relation(bill.getBillId(), category))
                     .toList();
-            categoryRelationRepo.saveBatch(relations, 1000);
+            categoryRelationRepo.saveBatch(relations, RELATION_BATCH_SIZE);
         }
         if (CollectionUtils.isNotEmpty(command.getTagIdList())) {
             List<FortuneTagRelationEntity> relations = command.getTagIdList().stream()
                     .map(tagId -> tagRelation(bill.getBillId(), tagId))
                     .toList();
-            tagRelationRepo.saveBatch(relations, 1000);
+            tagRelationRepo.saveBatch(relations, RELATION_BATCH_SIZE);
         }
         if (CollectionUtils.isNotEmpty(command.getMemberIdList())) {
             List<FortuneMemberRelationEntity> relations = command.getMemberIdList().stream()
                     .map(memberId -> memberRelation(bill.getBillId(), memberId))
                     .toList();
-            memberRelationRepo.saveBatch(relations, 1000);
+            memberRelationRepo.saveBatch(relations, RELATION_BATCH_SIZE);
         }
         if (CollectionUtils.isNotEmpty(command.getExtras())) {
             List<FortuneBillExtraEntity> relations = command.getExtras().stream()
                     .map(extra -> extra(bill.getBillId(), extra))
                     .toList();
-            billExtraRepo.saveBatch(relations, 1000);
+            billExtraRepo.saveBatch(relations, RELATION_BATCH_SIZE);
         }
         if (CollectionUtils.isNotEmpty(files)) {
             List<FortuneFileEntity> relations = files.stream()
                     .map(file -> file(bill.getBillId(), file))
                     .toList();
-            fileRepo.saveBatch(relations, 50);
+            fileRepo.saveBatch(relations, FILE_BATCH_SIZE);
         }
     }
 

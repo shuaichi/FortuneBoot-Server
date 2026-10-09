@@ -1,8 +1,9 @@
 package com.fortuneboot.service.fortune.order;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.exception.ApiException;
@@ -65,7 +66,8 @@ public class FinanceOrderMutationService {
 
     @Transactional(rollbackFor = Exception.class)
     public FinanceOrderMutationVo executeCreate(FinanceOrderCreateCommand command, String requestHash) {
-        insertRequestPlaceholder(command.getBookId(), command.getRequestId(), "CREATE", requestHash);
+        insertRequestPlaceholder(command.getBookId(), command.getRequestId(),
+                FinanceOrderAuditActionEnum.CREATE.name(), requestHash);
 
         FortuneBookEntity bookBeforeLock = accessGuard.loadBook(command.getBookId());
         scopeLock.lockGroup(bookBeforeLock.getGroupId());
@@ -96,7 +98,8 @@ public class FinanceOrderMutationService {
         orderRepo.save(order);
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null, 0L, false);
-        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "CREATE",
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(),
+                FinanceOrderAuditActionEnum.CREATE.name(),
                 Map.of(), orderAuditSnapshot(order));
         saveRequestReceipt(command.getBookId(), command.getRequestId(), requestHash, result);
         return result;
@@ -104,7 +107,8 @@ public class FinanceOrderMutationService {
 
     @Transactional(rollbackFor = Exception.class)
     public FinanceOrderMutationVo executeModify(FinanceOrderMetadataCommand command, String requestHash) {
-        insertRequestPlaceholder(command.getBookId(), command.getRequestId(), "MODIFY", requestHash);
+        insertRequestPlaceholder(command.getBookId(), command.getRequestId(),
+                FinanceOrderAuditActionEnum.MODIFY.name(), requestHash);
 
         FortuneBookEntity bookBeforeLock = accessGuard.loadBook(command.getBookId());
         scopeLock.lockGroup(bookBeforeLock.getGroupId());
@@ -148,17 +152,13 @@ public class FinanceOrderMutationService {
         order.setCounterpartyName(counterpartyName);
         order.setDueDate(command.getDueDate());
         order.setRemark(remark);
-        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
-                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
-                .set(FortuneFinanceOrderEntity::getTitle, title)
-                .set(FortuneFinanceOrderEntity::getCounterpartyId, command.getCounterpartyId())
-                .set(FortuneFinanceOrderEntity::getCounterpartyName, counterpartyName)
-                .set(FortuneFinanceOrderEntity::getDueDate, command.getDueDate())
-                .set(FortuneFinanceOrderEntity::getRemark, remark));
+        orderRepo.updateMetadata(order.getOrderId(), title, command.getCounterpartyId(),
+                counterpartyName, command.getDueDate(), remark);
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
                 expectedVersion + 1, false);
-        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "MODIFY",
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(),
+                FinanceOrderAuditActionEnum.MODIFY.name(),
                 before, orderAuditSnapshot(order));
         saveRequestReceipt(command.getBookId(), command.getRequestId(), requestHash, result);
         return result;
@@ -183,7 +183,7 @@ public class FinanceOrderMutationService {
     @Transactional(rollbackFor = Exception.class)
     public FinanceOrderMutationVo executeLegacyUsing(Long bookId, Long orderId, String requestId,
                                                      String requestHash) {
-        insertRequestPlaceholder(bookId, requestId, "USING", requestHash);
+        insertRequestPlaceholder(bookId, requestId, FinanceOrderAuditActionEnum.USING.name(), requestHash);
 
         FortuneBookEntity bookBeforeLock = accessGuard.loadBook(bookId);
         scopeLock.lockGroup(bookBeforeLock.getGroupId());
@@ -199,13 +199,12 @@ public class FinanceOrderMutationService {
         }
         Map<String, Object> before = orderAuditSnapshot(order);
         order.setStatus(FinanceOrderStatusEnum.USING.getValue());
-        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
-                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
-                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.USING.getValue()));
+        orderRepo.updateStatus(order.getOrderId(), FinanceOrderStatusEnum.USING);
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
                 expectedVersion + 1, false);
-        saveStateAudit(bookId, orderId, null, requestId, "USING", before, orderAuditSnapshot(order));
+        saveStateAudit(bookId, orderId, null, requestId, FinanceOrderAuditActionEnum.USING.name(),
+                before, orderAuditSnapshot(order));
         saveRequestReceipt(bookId, requestId, requestHash, result);
         return result;
     }
@@ -282,7 +281,9 @@ public class FinanceOrderMutationService {
     @Transactional(rollbackFor = Exception.class)
     public FinanceOrderMutationVo executeInclude(Long bookId, Long billId, boolean include,
                                                  String requestId, String requestHash) {
-        insertRequestPlaceholder(bookId, requestId, include ? "INCLUDE" : "EXCLUDE", requestHash);
+        insertRequestPlaceholder(bookId, requestId,
+                include ? FinanceOrderAuditActionEnum.INCLUDE.name() : FinanceOrderAuditActionEnum.EXCLUDE.name(),
+                requestHash);
         FortuneBillEntity billBeforeLock = billRepo.getById(billId);
         if (billBeforeLock == null || billBeforeLock.getOrderId() == null) {
             throw new ApiException(ErrorCode.Business.COMMON_OBJECT_NOT_FOUND, billId, "流水");
@@ -310,7 +311,8 @@ public class FinanceOrderMutationService {
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), billId,
                 expectedVersion + 1, false);
-        saveStateAudit(bookId, order.getOrderId(), billId, requestId, include ? "INCLUDE" : "EXCLUDE",
+        saveStateAudit(bookId, order.getOrderId(), billId, requestId,
+                include ? FinanceOrderAuditActionEnum.INCLUDE.name() : FinanceOrderAuditActionEnum.EXCLUDE.name(),
                 Map.of("include", !include), Map.of("include", include));
         saveRequestReceipt(bookId, requestId, requestHash, result);
         return result;
@@ -355,14 +357,12 @@ public class FinanceOrderMutationService {
         LocalDateTime closeTime = LocalDateTime.now(clock);
         order.setStatus(FinanceOrderStatusEnum.CLOSE.getValue());
         order.setCloseTime(closeTime);
-        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
-                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
-                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.CLOSE.getValue())
-                .set(FortuneFinanceOrderEntity::getCloseTime, closeTime));
+        orderRepo.updateStatusAndCloseTime(order.getOrderId(), FinanceOrderStatusEnum.CLOSE, closeTime);
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
                 expectedVersion + 1, false);
-        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "CLOSE",
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(),
+                FinanceOrderAuditActionEnum.CLOSE.name(),
                 before, orderAuditSnapshot(order));
         saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
         return result;
@@ -385,14 +385,12 @@ public class FinanceOrderMutationService {
         Map<String, Object> before = orderAuditSnapshot(order);
         order.setStatus(FinanceOrderStatusEnum.USING.getValue());
         order.setCloseTime(null);
-        orderRepo.update(new LambdaUpdateWrapper<FortuneFinanceOrderEntity>()
-                .eq(FortuneFinanceOrderEntity::getOrderId, order.getOrderId())
-                .set(FortuneFinanceOrderEntity::getStatus, FinanceOrderStatusEnum.USING.getValue())
-                .set(FortuneFinanceOrderEntity::getCloseTime, null));
+        orderRepo.updateStatusAndCloseTime(order.getOrderId(), FinanceOrderStatusEnum.USING, null);
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
                 expectedVersion + 1, false);
-        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "REOPEN",
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(),
+                FinanceOrderAuditActionEnum.REOPEN.name(),
                 before, orderAuditSnapshot(order));
         saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
         return result;
@@ -418,7 +416,8 @@ public class FinanceOrderMutationService {
 
         FinanceOrderMutationVo result = new FinanceOrderMutationVo(order.getOrderId(), null,
                 expectedVersion + 1, false);
-        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(), "REMOVE",
+        saveStateAudit(order.getBookId(), order.getOrderId(), null, command.getRequestId(),
+                FinanceOrderAuditActionEnum.REMOVE.name(),
                 before, Map.of("deleted", true));
         saveRequestReceipt(order.getBookId(), command.getRequestId(), requestHash, result);
         return result;
@@ -433,7 +432,7 @@ public class FinanceOrderMutationService {
     }
 
     private void checkReconciliationReady(FortuneFinanceOrderEntity order) {
-        if (!FinanceOrderReconciliationStatusEnum.READY.getValue().equals(order.getReconciliationStatus())) {
+        if (!FinanceOrderReconciliationStatusEnum.isReadyValue(order.getReconciliationStatus())) {
             throw new ApiException(ErrorCode.Business.ORDER_RECONCILIATION_REQUIRED);
         }
     }
@@ -510,7 +509,7 @@ public class FinanceOrderMutationService {
         BeanUtil.copyProperties(command, bill, "billId", "fileList", "extras", "requestId", "expectedVersion");
         bill.setOrderId(command.getOrderId());
         bill.setOrderComponent(command.getOrderComponent());
-        bill.setOrderLedgerVersion(1);
+        bill.setOrderLedgerVersion(FinanceOrderLedgerVersionEnum.CURRENT.getValue());
         bill.setDeleted(false);
         bill.setRecycleBin(false);
         return bill;
@@ -566,7 +565,8 @@ public class FinanceOrderMutationService {
         return new FinanceOrderLedgerEntry(bill.getBillId(), bill.getBillType(), bill.getOrderComponent(),
                 bill.getAmount(), bill.getTradeTime(), Boolean.TRUE.equals(bill.getConfirm()),
                 Boolean.TRUE.equals(bill.getDeleted()), Boolean.TRUE.equals(bill.getRecycleBin()),
-                bill.getOrderLedgerVersion() == null ? 0 : bill.getOrderLedgerVersion());
+                bill.getOrderLedgerVersion() == null
+                        ? FinanceOrderLedgerVersionEnum.LEGACY.getValue() : bill.getOrderLedgerVersion());
     }
 
     private void validateAccounts(FortuneBookEntity book, FortuneFinanceOrderEntity order,
@@ -684,10 +684,7 @@ public class FinanceOrderMutationService {
 
     private void saveRequestReceipt(Long bookId, String requestId, String requestHash,
                                     FinanceOrderMutationVo result) {
-        FortuneFinanceOrderRequestEntity request = requestRepo.lambdaQuery()
-                .eq(FortuneFinanceOrderRequestEntity::getBookId, bookId)
-                .eq(FortuneFinanceOrderRequestEntity::getRequestId, requestId)
-                .one();
+        FortuneFinanceOrderRequestEntity request = requestRepo.findByBookIdAndRequestId(bookId, requestId);
         request.setRequestHash(requestHash);
         request.setResponseJson(writeJson(result));
         requestRepo.updateById(request);

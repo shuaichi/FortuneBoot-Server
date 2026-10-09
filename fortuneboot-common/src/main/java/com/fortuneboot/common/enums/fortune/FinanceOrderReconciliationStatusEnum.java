@@ -34,4 +34,20 @@ public enum FinanceOrderReconciliationStatusEnum implements BasicEnum<String> {
                 .findFirst()
                 .orElse(null);
     }
+
+    public boolean isReady() {
+        return this == READY;
+    }
+
+    public boolean isReviewRequired() {
+        return this == REVIEW_REQUIRED;
+    }
+
+    public static boolean isReadyValue(String value) {
+        return READY.getValue().equals(value);
+    }
+
+    public static boolean isReviewRequiredValue(String value) {
+        return REVIEW_REQUIRED.getValue().equals(value);
+    }
 }

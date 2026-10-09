@@ -1,6 +1,9 @@
 package com.fortuneboot.service.fortune.order;
 
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
@@ -28,15 +31,12 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
 public class FinanceOrderAccessGuard {
-
-    private static final BigDecimal MAX_AMOUNT = new BigDecimal("999999999999.99");
 
     private final FortuneBookRepo fortuneBookRepo;
     private final FortuneFinanceOrderRepo financeOrderRepo;
@@ -96,7 +96,7 @@ public class FinanceOrderAccessGuard {
                 && !(allowDraft && Objects.equals(order.getStatus(), FinanceOrderStatusEnum.INIT.getValue()))) {
             throw new ApiException(ErrorCode.Business.ORDER_ENTRY_IMMUTABLE);
         }
-        if (!"READY".equals(order.getReconciliationStatus())) {
+        if (!FinanceOrderReconciliationStatusEnum.isReadyValue(order.getReconciliationStatus())) {
             throw new ApiException(ErrorCode.Business.ORDER_RECONCILIATION_REQUIRED);
         }
         if (order.getCurrencyCode() == null) {
@@ -150,15 +150,14 @@ public class FinanceOrderAccessGuard {
                 || !Objects.equals(bill.getOrderId(), order.getOrderId())) {
             throw new ApiException(ErrorCode.Business.ORDER_BOOK_NOT_MATCH);
         }
-        if (!Integer.valueOf(1).equals(bill.getOrderLedgerVersion())) {
+        if (!FinanceOrderLedgerVersionEnum.isCurrentValue(bill.getOrderLedgerVersion())) {
             throw new ApiException(ErrorCode.Business.ORDER_ENTRY_IMMUTABLE);
         }
         return bill;
     }
 
     private boolean orderTypeValid(Integer type) {
-        return Arrays.stream(FinanceOrderTypeEnum.values())
-                .anyMatch(orderType -> Objects.equals(orderType.getValue(), type));
+        return FinanceOrderTypeEnum.getByValue(type) != null;
     }
 
     public FortuneAccountEntity validateTargetAccount(FortuneBookEntity book,
@@ -191,7 +190,8 @@ public class FinanceOrderAccessGuard {
     }
 
     private BigDecimal resolveAmount(FinanceOrderEntryCommand command, FinanceOrderComponentEnum component) {
-        if (component == FinanceOrderComponentEnum.PRINCIPAL && List.of(9, 10, 11, 12).contains(command.getBillType())) {
+        if (component == FinanceOrderComponentEnum.PRINCIPAL
+                && BillTypeEnum.isLoanValue(command.getBillType())) {
             return command.getAmount();
         }
         List<CategoryAmountDTO> categories = command.getCategoryAmountPair();
@@ -204,10 +204,8 @@ public class FinanceOrderAccessGuard {
     }
 
     private BigDecimal normalizeAmount(BigDecimal amount) {
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
-                || amount.scale() > 2 || amount.compareTo(MAX_AMOUNT) > 0) {
-            throw new ApiException(ErrorCode.Business.ORDER_AMOUNT_INVALID,
-                    amount == null ? "null" : amount.toPlainString());
+        if (!FinanceOrderAmountRule.isValid(amount)) {
+            throw new ApiException(ErrorCode.Business.ORDER_AMOUNT_INVALID, FinanceOrderAmountRule.text(amount));
         }
         return amount.setScale(2, RoundingMode.UNNECESSARY);
     }

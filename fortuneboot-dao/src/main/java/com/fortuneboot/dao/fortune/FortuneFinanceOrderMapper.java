@@ -53,12 +53,6 @@ public interface FortuneFinanceOrderMapper extends BaseMapper<FortuneFinanceOrde
     int countPendingReadyEntries(@Param("bookId") Long bookId);
 
     @Select("""
-            select count(*) from fortune_finance_order
-            where book_id = #{bookId} and deleted = 0 and reconciliation_status = 'REVIEW_REQUIRED'
-            """)
-    int countReviewRequired(@Param("bookId") Long bookId);
-
-    @Select("""
             select count(*) from fortune_bill b
             where b.book_id = #{bookId} and b.deleted = 0 and b.order_id is not null
               and b.bill_type in (9, 10, 11, 12)

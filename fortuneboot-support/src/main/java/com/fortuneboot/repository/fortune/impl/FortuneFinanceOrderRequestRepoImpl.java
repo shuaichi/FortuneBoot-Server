@@ -1,5 +1,6 @@
 package com.fortuneboot.repository.fortune.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fortuneboot.dao.fortune.FortuneFinanceOrderRequestMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderRequestEntity;
@@ -18,4 +19,11 @@ import org.springframework.stereotype.Service;
 public class FortuneFinanceOrderRequestRepoImpl
         extends ServiceImpl<FortuneFinanceOrderRequestMapper, FortuneFinanceOrderRequestEntity>
         implements FortuneFinanceOrderRequestRepo {
+
+    @Override
+    public FortuneFinanceOrderRequestEntity findByBookIdAndRequestId(Long bookId, String requestId) {
+        return this.getOne(new LambdaQueryWrapper<>(FortuneFinanceOrderRequestEntity.class)
+                .eq(FortuneFinanceOrderRequestEntity::getBookId, bookId)
+                .eq(FortuneFinanceOrderRequestEntity::getRequestId, requestId), false);
+    }
 }

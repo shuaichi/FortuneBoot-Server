@@ -2,11 +2,16 @@ package com.fortuneboot.service.fortune.order;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationIssueEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
+import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerEntry;
 import com.fortuneboot.domain.dto.fortune.order.FinanceOrderLedgerSnapshot;
 import com.fortuneboot.domain.entity.fortune.FortuneAccountEntity;
@@ -14,10 +19,10 @@ import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderAuditEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
+import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageUtil;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderReconciliationVo;
 import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
-import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderAuditRepo;
 import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import lombok.RequiredArgsConstructor;
@@ -53,13 +58,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FinanceOrderReconciliationService {
 
-    private static final Set<Integer> LEGACY_CLAIM_BILL_TYPES = Set.of(7, 8);
-    private static final Set<Integer> LEGACY_LOAN_BILL_TYPES = Set.of(9, 10, 11, 12);
-    private static final Set<Integer> ORPHAN_LEGACY_BILL_TYPES = Set.of(9, 10, 11, 12);
-    private static final BigDecimal MAX_AMOUNT = new BigDecimal("999999999999.99");
     private static final DateTimeFormatter GENERATED_AT_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final FortuneBookRepo bookRepo;
     private final FortuneAccountRepo accountRepo;
     private final FortuneFinanceOrderRepo orderRepo;
     private final FortuneBillRepo billRepo;
@@ -84,7 +84,7 @@ public class FinanceOrderReconciliationService {
             try {
                 transactionTemplate.executeWithoutResult(status -> applySafeBackfill(orderScan));
             } catch (RuntimeException exception) {
-                orderScan.issueCodes().add("BACKFILL_FAILED");
+                orderScan.issueCodes().add(FinanceOrderReconciliationIssueEnum.BACKFILL_FAILED.name());
                 orderScan.note(orderScan.note() == null ? exception.getMessage()
                         : orderScan.note() + "; " + exception.getMessage());
                 orderScan.safe(false);
@@ -95,11 +95,7 @@ public class FinanceOrderReconciliationService {
 
     public PageDTO<FinanceOrderReconciliationVo> page(Long bookId, Integer pageNum, Integer pageSize) {
         List<FinanceOrderReconciliationVo> reports = preview(bookId);
-        int size = normalizePageSize(pageSize);
-        int number = Math.max(1, pageNum == null ? 1 : pageNum);
-        int fromIndex = Math.min((number - 1) * size, reports.size());
-        int toIndex = Math.min(fromIndex + size, reports.size());
-        return new PageDTO<>(reports.subList(fromIndex, toIndex), (long) reports.size());
+        return new PageDTO<>(FinanceOrderPageUtil.paginate(reports, pageNum, pageSize), (long) reports.size());
     }
 
     public void writeCsv(Long bookId, OutputStream outputStream) {
@@ -170,11 +166,11 @@ public class FinanceOrderReconciliationService {
         boolean cashEffectKnown = true;
         FinanceOrderTypeEnum orderType = orderType(order.getType());
         if (orderType == null) {
-            issues.add("UNKNOWN_ORDER_TYPE");
+            issues.add(FinanceOrderReconciliationIssueEnum.UNKNOWN_ORDER_TYPE.name());
             cashEffectKnown = false;
         }
         if (!statusValid(order.getStatus())) {
-            issues.add("UNKNOWN_STATUS");
+            issues.add(FinanceOrderReconciliationIssueEnum.UNKNOWN_STATUS.name());
             cashEffectKnown = false;
         }
         String expectedCurrency = order.getCurrencyCode() == null ? book.getDefaultCurrency() : order.getCurrencyCode();
@@ -183,72 +179,70 @@ public class FinanceOrderReconciliationService {
         List<FinanceOrderLedgerEntry> candidateEntries = new ArrayList<>();
         for (FortuneBillEntity bill : bills) {
             if (!Objects.equals(bill.getBookId(), order.getBookId())) {
-                issues.add("CROSS_BOOK");
+                issues.add(FinanceOrderReconciliationIssueEnum.CROSS_BOOK.name());
                 cashEffectKnown = false;
             }
-            if (bill.getOrderLedgerVersion() == null || (bill.getOrderLedgerVersion() != 0
-                    && bill.getOrderLedgerVersion() != 1)) {
-                issues.add("UNKNOWN_LEDGER_VERSION");
+            if (FinanceOrderLedgerVersionEnum.getByValue(bill.getOrderLedgerVersion()) == null) {
+                issues.add(FinanceOrderReconciliationIssueEnum.UNKNOWN_LEDGER_VERSION.name());
                 cashEffectKnown = false;
             }
             FinanceOrderComponentEnum component = FinanceOrderComponentEnum.getByValue(bill.getOrderComponent());
-            if (Integer.valueOf(1).equals(bill.getOrderLedgerVersion()) && component == null) {
-                issues.add("UNKNOWN_COMPONENT");
+            if (FinanceOrderLedgerVersionEnum.isCurrentValue(bill.getOrderLedgerVersion()) && component == null) {
+                issues.add(FinanceOrderReconciliationIssueEnum.UNKNOWN_COMPONENT.name());
                 cashEffectKnown = false;
             }
             if (bill.getBillType() == null || FinanceOrderComponentEnum.getByValue(bill.getOrderComponent()) == null
-                    && !Integer.valueOf(0).equals(bill.getOrderLedgerVersion())) {
-                issues.add("UNKNOWN_BILL_TYPE");
+                    && !FinanceOrderLedgerVersionEnum.isLegacyValue(bill.getOrderLedgerVersion())) {
+                issues.add(FinanceOrderReconciliationIssueEnum.UNKNOWN_BILL_TYPE.name());
                 cashEffectKnown = false;
             }
-            if (bill.getAmount() == null || bill.getAmount().compareTo(BigDecimal.ZERO) <= 0
-                    || bill.getAmount().scale() > 2 || bill.getAmount().compareTo(MAX_AMOUNT) > 0) {
-                issues.add("AMOUNT_INVALID");
+            if (!FinanceOrderAmountRule.isValid(bill.getAmount())) {
+                issues.add(FinanceOrderReconciliationIssueEnum.AMOUNT_INVALID.name());
                 cashEffectKnown = false;
             }
             if (bill.getTradeTime() == null) {
-                issues.add("TRADE_TIME_MISSING");
+                issues.add(FinanceOrderReconciliationIssueEnum.TRADE_TIME_MISSING.name());
                 cashEffectKnown = false;
             }
             if (bill.getToAccountId() != null) {
-                issues.add("TRANSFER_ACCOUNT_INVALID");
+                issues.add(FinanceOrderReconciliationIssueEnum.TRANSFER_ACCOUNT_INVALID.name());
                 cashEffectKnown = false;
             }
             if (bill.getAccountId() != null) {
                 accountIds.add(bill.getAccountId());
                 FortuneAccountEntity account = accountMap.get(bill.getAccountId());
                 if (account == null) {
-                    issues.add("ACCOUNT_MISSING");
+                    issues.add(FinanceOrderReconciliationIssueEnum.ACCOUNT_MISSING.name());
                     cashEffectKnown = false;
                 } else {
                     currencies.add(account.getCurrencyCode());
                     if (!Objects.equals(account.getCurrencyCode(), expectedCurrency)) {
-                        issues.add("CURRENCY_MISMATCH");
+                        issues.add(FinanceOrderReconciliationIssueEnum.CURRENCY_MISMATCH.name());
                         cashEffectKnown = false;
                     }
                 }
             } else if (!isKnownWriteOff(bill)) {
-                issues.add("ACCOUNT_MISSING");
+                issues.add(FinanceOrderReconciliationIssueEnum.ACCOUNT_MISSING.name());
                 cashEffectKnown = false;
             }
 
             if (orderType == FinanceOrderTypeEnum.EXPENSE_CLAIM) {
-                if (Integer.valueOf(0).equals(bill.getOrderLedgerVersion())
-                        && LEGACY_CLAIM_BILL_TYPES.contains(bill.getBillType())) {
+                if (FinanceOrderLedgerVersionEnum.isLegacyValue(bill.getOrderLedgerVersion())
+                        && BillTypeEnum.isClaimValue(bill.getBillType())) {
                     candidateEntries.add(new FinanceOrderLedgerEntry(bill.getBillId(), bill.getBillType(),
                             FinanceOrderComponentEnum.PRINCIPAL.getValue(), bill.getAmount(), bill.getTradeTime(),
                             Boolean.TRUE.equals(bill.getConfirm()), Boolean.TRUE.equals(bill.getRecycleBin()),
-                            Boolean.TRUE.equals(bill.getDeleted()), 1));
-                } else if (Integer.valueOf(1).equals(bill.getOrderLedgerVersion())) {
+                            Boolean.TRUE.equals(bill.getDeleted()), FinanceOrderLedgerVersionEnum.CURRENT.getValue()));
+                } else if (FinanceOrderLedgerVersionEnum.isCurrentValue(bill.getOrderLedgerVersion())) {
                     candidateEntries.add(ledgerEntry(bill));
                 } else {
-                    issues.add("CLAIM_LEGACY_TYPE_UNKNOWN");
+                    issues.add(FinanceOrderReconciliationIssueEnum.CLAIM_LEGACY_TYPE_UNKNOWN.name());
                     cashEffectKnown = false;
                 }
             } else if (orderType == FinanceOrderTypeEnum.LOAN_OUT
                     || orderType == FinanceOrderTypeEnum.LOAN_IN) {
-                if (Integer.valueOf(0).equals(bill.getOrderLedgerVersion())) {
-                    issues.add("LEGACY_LOAN_ISOLATED");
+                if (FinanceOrderLedgerVersionEnum.isLegacyValue(bill.getOrderLedgerVersion())) {
+                    issues.add(FinanceOrderReconciliationIssueEnum.LEGACY_LOAN_ISOLATED.name());
                     cashEffectKnown = false;
                 } else {
                     candidateEntries.add(ledgerEntry(bill));
@@ -257,24 +251,26 @@ public class FinanceOrderReconciliationService {
         }
 
         FinanceOrderLedgerSnapshot snapshot = null;
-        if (orderType != null && issues.stream().noneMatch(code -> code.equals("UNKNOWN_BILL_TYPE")
-                || code.equals("UNKNOWN_COMPONENT") || code.equals("UNKNOWN_LEDGER_VERSION"))) {
+        if (orderType != null && issues.stream().noneMatch(code ->
+                code.equals(FinanceOrderReconciliationIssueEnum.UNKNOWN_BILL_TYPE.name())
+                        || code.equals(FinanceOrderReconciliationIssueEnum.UNKNOWN_COMPONENT.name())
+                        || code.equals(FinanceOrderReconciliationIssueEnum.UNKNOWN_LEDGER_VERSION.name()))) {
             try {
                 snapshot = ledgerCalculator.calculate(order.getType(), candidateEntries);
             } catch (ApiException exception) {
-                issues.add("CALCULATION_INVALID");
+                issues.add(FinanceOrderReconciliationIssueEnum.CALCULATION_INVALID.name());
                 cashEffectKnown = false;
             }
         }
         if (snapshot != null) {
             if (Objects.equals(order.getStatus(), FinanceOrderStatusEnum.CLOSE.getValue())) {
                 if (snapshot.pendingAmount().compareTo(BigDecimal.ZERO) != 0) {
-                    issues.add("CLOSED_NOT_SETTLED");
+                    issues.add(FinanceOrderReconciliationIssueEnum.CLOSED_NOT_SETTLED.name());
                     cashEffectKnown = false;
                 }
                 if (order.getCloseTime() != null && bills.stream().anyMatch(bill ->
                         bill.getTradeTime() != null && bill.getTradeTime().isAfter(order.getCloseTime()))) {
-                    issues.add("ENTRY_AFTER_CLOSE");
+                    issues.add(FinanceOrderReconciliationIssueEnum.ENTRY_AFTER_CLOSE.name());
                     cashEffectKnown = false;
                 }
             }
@@ -283,8 +279,8 @@ public class FinanceOrderReconciliationService {
             cashEffectKnown = true;
         }
 
-        boolean reviewRequired = FinanceOrderReconciliationStatusEnum.REVIEW_REQUIRED.getValue()
-                .equals(order.getReconciliationStatus());
+        boolean reviewRequired = FinanceOrderReconciliationStatusEnum
+                .isReviewRequiredValue(order.getReconciliationStatus());
         boolean safe = reviewRequired && issues.isEmpty() && snapshot != null
                 && (bills.isEmpty() || orderType == FinanceOrderTypeEnum.EXPENSE_CLAIM);
         String issueText = issues.isEmpty() ? null : String.join(";", issues);
@@ -305,7 +301,8 @@ public class FinanceOrderReconciliationService {
             if (bill.getOrderId() == null || existingOrderIds.contains(bill.getOrderId())) {
                 continue;
             }
-            result.add(new OrphanScan(bill, Set.of("ORPHAN_ORDER"), bookId));
+            result.add(new OrphanScan(bill,
+                    Set.of(FinanceOrderReconciliationIssueEnum.ORPHAN_ORDER.name()), bookId));
         }
         return result;
     }
@@ -315,13 +312,12 @@ public class FinanceOrderReconciliationService {
         scopeLock.lockGroup(before.getBookId() == null ? null : accessGuard.loadBook(before.getBookId()).getGroupId());
         FortuneFinanceOrderEntity order = orderRepo.getById(before.getOrderId());
         if (order == null || !Objects.equals(order.getBookId(), before.getBookId())
-                || !FinanceOrderReconciliationStatusEnum.REVIEW_REQUIRED.getValue()
-                .equals(order.getReconciliationStatus())) {
+                || !FinanceOrderReconciliationStatusEnum.isReviewRequiredValue(order.getReconciliationStatus())) {
             return;
         }
         long expectedVersion = order.getVersion();
         if (orderRepo.compareAndIncrementVersion(order.getOrderId(), order.getBookId(), expectedVersion) != 1) {
-            throw new ApiException(com.fortuneboot.common.exception.error.ErrorCode.Business.ORDER_VERSION_CONFLICT);
+            throw new ApiException(ErrorCode.Business.ORDER_VERSION_CONFLICT);
         }
         order.setVersion(expectedVersion + 1);
         Map<String, Object> beforeJson = auditSnapshot(order);
@@ -338,10 +334,10 @@ public class FinanceOrderReconciliationService {
             order.setInAmount(snapshot.inAmount());
             order.setAdjustedAmount(snapshot.adjustedAmount());
             for (FortuneBillEntity bill : orderScan.bills()) {
-                if (Integer.valueOf(0).equals(bill.getOrderLedgerVersion())
-                        && LEGACY_CLAIM_BILL_TYPES.contains(bill.getBillType())) {
+                if (FinanceOrderLedgerVersionEnum.isLegacyValue(bill.getOrderLedgerVersion())
+                        && BillTypeEnum.isClaimValue(bill.getBillType())) {
                     bill.setOrderComponent(FinanceOrderComponentEnum.PRINCIPAL.getValue());
-                    bill.setOrderLedgerVersion(1);
+                    bill.setOrderLedgerVersion(FinanceOrderLedgerVersionEnum.CURRENT.getValue());
                     billRepo.updateById(bill);
                 }
             }
@@ -353,7 +349,7 @@ public class FinanceOrderReconciliationService {
         FortuneFinanceOrderAuditEntity audit = new FortuneFinanceOrderAuditEntity();
         audit.setBookId(order.getBookId());
         audit.setOrderId(order.getOrderId());
-        audit.setAction("RECONCILE");
+        audit.setAction(FinanceOrderAuditActionEnum.RECONCILE.name());
         audit.setBeforeJson(writeJson(beforeJson));
         audit.setAfterJson(writeJson(auditSnapshot(order)));
         auditRepo.save(audit);
@@ -418,7 +414,7 @@ public class FinanceOrderReconciliationService {
         return new FinanceOrderLedgerEntry(bill.getBillId(), bill.getBillType(), bill.getOrderComponent(),
                 bill.getAmount(), bill.getTradeTime(),
                 Boolean.TRUE.equals(bill.getConfirm()), Boolean.TRUE.equals(bill.getRecycleBin()),
-                Boolean.TRUE.equals(bill.getDeleted()), 1);
+                Boolean.TRUE.equals(bill.getDeleted()), FinanceOrderLedgerVersionEnum.CURRENT.getValue());
     }
 
     private boolean isKnownWriteOff(FortuneBillEntity bill) {
@@ -426,18 +422,11 @@ public class FinanceOrderReconciliationService {
     }
 
     private boolean statusValid(Integer status) {
-        return Objects.equals(status, FinanceOrderStatusEnum.INIT.getValue())
-                || Objects.equals(status, FinanceOrderStatusEnum.USING.getValue())
-                || Objects.equals(status, FinanceOrderStatusEnum.CLOSE.getValue());
+        return FinanceOrderStatusEnum.getByValue(status) != null;
     }
 
     private FinanceOrderTypeEnum orderType(Integer type) {
-        for (FinanceOrderTypeEnum value : FinanceOrderTypeEnum.values()) {
-            if (Objects.equals(value.getValue(), type)) {
-                return value;
-            }
-        }
-        return null;
+        return FinanceOrderTypeEnum.getByValue(type);
     }
 
     private String amount(BigDecimal value) {
@@ -483,10 +472,6 @@ public class FinanceOrderReconciliationService {
 
     private List<String> nullSafe(String[] values) {
         return values == null ? List.of() : List.of(values);
-    }
-
-    private int normalizePageSize(Integer pageSize) {
-        return pageSize == null || pageSize < 1 ? 20 : Math.min(pageSize, 100);
     }
 
     /**
