@@ -20,4 +20,6 @@ public interface FortuneGroupRepo extends IService<FortuneGroupEntity> {
      * @return
      */
     List<FortuneGroupEntity> getEnableByGroupIds(List<Long> groupIds);
+
+    int lockGroup(Long groupId);
 }

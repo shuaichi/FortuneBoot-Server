@@ -19,6 +19,8 @@ public interface FortuneBalanceSnapshotRepo extends IService<FortuneBalanceSnaps
 
     void removeBySnapshotDateBetween(LocalDate startDate, LocalDate endDate);
 
+    void removeByAccountIdsAndDateBetween(List<Long> accountIds, LocalDate startDate, LocalDate endDate);
+
     void removeAllSnapshots();
 
     boolean tryLock(String lockName, int timeoutSeconds);

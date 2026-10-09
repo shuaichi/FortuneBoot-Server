@@ -31,4 +31,6 @@ public interface FortuneFinanceOrderRepo extends IService<FortuneFinanceOrderEnt
      * @return 理财收益
      */
     List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query);
+
+    int compareAndIncrementVersion(Long orderId, Long bookId, Long expectedVersion);
 }

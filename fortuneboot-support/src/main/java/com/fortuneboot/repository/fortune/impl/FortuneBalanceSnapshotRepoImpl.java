@@ -36,6 +36,11 @@ public class FortuneBalanceSnapshotRepoImpl
     }
 
     @Override
+    public void removeByAccountIdsAndDateBetween(List<Long> accountIds, LocalDate startDate, LocalDate endDate) {
+        fortuneBalanceSnapshotMapper.deleteByAccountIdsAndDateBetween(accountIds, startDate, endDate);
+    }
+
+    @Override
     public void removeAllSnapshots() {
         fortuneBalanceSnapshotMapper.deleteAllSnapshots();
     }

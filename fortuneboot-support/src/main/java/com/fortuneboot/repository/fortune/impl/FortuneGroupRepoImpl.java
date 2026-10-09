@@ -26,4 +26,9 @@ public class FortuneGroupRepoImpl extends ServiceImpl<FortuneGroupMapper, Fortun
                 .in(FortuneGroupEntity::getGroupId, groupIds);
         return this.list(lambdaQueryWrapper);
     }
+
+    @Override
+    public int lockGroup(Long groupId) {
+        return baseMapper.lockGroup(groupId);
+    }
 }

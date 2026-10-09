@@ -17,6 +17,7 @@ import com.fortuneboot.service.fortune.snapshot.AccountBalanceChange;
 import com.fortuneboot.service.fortune.snapshot.FortuneBillBalanceDeltaCalculator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +52,7 @@ public class FortuneBalanceSnapshotService {
     private final FortuneBookRepo fortuneBookRepo;
     private final FortuneAccountRepo fortuneAccountRepo;
     private final FortuneBalanceSnapshotRepo fortuneBalanceSnapshotRepo;
-    private final FortuneAccountService fortuneAccountService;
+    private final ObjectProvider<FortuneAccountService> fortuneAccountServiceProvider;
     private final FortuneBillRepo fortuneBillRepo;
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
     private final FortuneBillBalanceDeltaCalculator balanceDeltaCalculator;
@@ -105,22 +108,79 @@ public class FortuneBalanceSnapshotService {
                 startDate, anchorDate, accounts.size(), changeLoadResult.billCount(), snapshotCount);
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void rebuildDailySnapshots(List<Long> accountIds, LocalDate anchorDate, LocalDate startDate) {
+        if (accountIds == null || accountIds.isEmpty()) {
+            return;
+        }
+        List<FortuneAccountEntity> targetAccounts = fortuneAccountRepo.listByIds(accountIds).stream()
+                .filter(this::snapshotAccountEnabled)
+                .toList();
+        if (targetAccounts.isEmpty()) {
+            return;
+        }
+        Set<Long> groupIds = targetAccounts.stream()
+                .map(FortuneAccountEntity::getGroupId)
+                .collect(Collectors.toSet());
+        List<FortuneAccountEntity> groupAccounts = listSnapshotAccounts().stream()
+                .filter(account -> groupIds.contains(account.getGroupId()))
+                .toList();
+        LocalDate rebuildStartDate = maxDate(startDate, anchorDate.minusYears(REBUILD_YEARS));
+        ChangeLoadResult changeLoadResult = loadChanges(anchorDate, rebuildStartDate,
+                groupAccounts.stream().map(FortuneAccountEntity::getAccountId).toList());
+        Map<Long, BigDecimal> balanceMap = buildAnchorBalanceMap(groupAccounts, changeLoadResult.futureDeltaMap());
+        Map<Long, FortuneBookEntity> bookMap = fortuneBookRepo.list().stream()
+                .filter(book -> book.getBookId() != null)
+                .collect(Collectors.toMap(FortuneBookEntity::getBookId, book -> book, (left, right) -> left));
+
+        fortuneBalanceSnapshotRepo.removeByAccountIdsAndDateBetween(
+                targetAccounts.stream().map(FortuneAccountEntity::getAccountId).toList(),
+                rebuildStartDate, anchorDate);
+        for (LocalDate date = anchorDate; !date.isBefore(rebuildStartDate); date = date.minusDays(1)) {
+            List<FortuneBalanceSnapshotEntity> snapshots = buildTargetSnapshots(
+                    date, targetAccounts, groupAccounts, balanceMap, bookMap);
+            if (!snapshots.isEmpty()) {
+                fortuneBalanceSnapshotRepo.saveBatch(snapshots, SNAPSHOT_BATCH_SIZE);
+            }
+            Map<Long, BigDecimal> dailyDelta = changeLoadResult.dailyDeltaMap().getOrDefault(date, Map.of());
+            for (Map.Entry<Long, BigDecimal> entry : dailyDelta.entrySet()) {
+                balanceMap.computeIfPresent(entry.getKey(), (accountId, balance) -> balance.subtract(entry.getValue()));
+            }
+        }
+    }
+
     private List<FortuneAccountEntity> listSnapshotAccounts() {
         return fortuneAccountRepo.list().stream()
-                .filter(account -> Boolean.TRUE.equals(account.getEnable()))
-                .filter(account -> Boolean.TRUE.equals(account.getInclude()))
-                .filter(account -> Boolean.FALSE.equals(account.getRecycleBin()))
+                .filter(this::snapshotAccountEnabled)
                 .toList();
     }
 
+    private boolean snapshotAccountEnabled(FortuneAccountEntity account) {
+        return Boolean.TRUE.equals(account.getEnable())
+                && Boolean.TRUE.equals(account.getInclude())
+                && Boolean.FALSE.equals(account.getRecycleBin());
+    }
+
+    private BigDecimal convertToGroupCurrency(Long groupId, FortuneAccountEntity account, BigDecimal balance) {
+        FortuneAccountService fortuneAccountService = fortuneAccountServiceProvider.getIfAvailable();
+        return fortuneAccountService == null ? balance
+                : fortuneAccountService.convertToGroupCurrency(groupId, account, balance);
+    }
+
     private ChangeLoadResult loadAllChanges(LocalDate anchorDate, LocalDate windowStartDate) {
+        return loadChanges(anchorDate, windowStartDate, null);
+    }
+
+    private ChangeLoadResult loadChanges(LocalDate anchorDate, LocalDate windowStartDate,
+                                          List<Long> accountIds) {
         Map<LocalDate, Map<Long, BigDecimal>> dailyDeltaMap = new HashMap<>();
         Map<Long, BigDecimal> futureDeltaMap = new HashMap<>();
         LocalDate startDate = null;
         long billCount = 0L;
         long pageNo = 1L;
         while (true) {
-            Page<FortuneBillEntity> page = fortuneBillRepo.page(new Page<>(pageNo, BILL_PAGE_SIZE), confirmedBillWrapper(windowStartDate));
+            Page<FortuneBillEntity> page = fortuneBillRepo.page(new Page<>(pageNo, BILL_PAGE_SIZE),
+                    confirmedBillWrapper(windowStartDate, accountIds));
             List<FortuneBillEntity> bills = page.getRecords();
             if (bills.isEmpty()) {
                 break;
@@ -147,9 +207,16 @@ public class FortuneBalanceSnapshotService {
     }
 
     private LambdaQueryWrapper<FortuneBillEntity> confirmedBillWrapper(LocalDate windowStartDate) {
+        return confirmedBillWrapper(windowStartDate, null);
+    }
+
+    private LambdaQueryWrapper<FortuneBillEntity> confirmedBillWrapper(LocalDate windowStartDate,
+                                                                         List<Long> accountIds) {
         LambdaQueryWrapper<FortuneBillEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
         wrapper.eq(FortuneBillEntity::getConfirm, Boolean.TRUE)
                 .eq(FortuneBillEntity::getRecycleBin, Boolean.FALSE)
+                .in(accountIds != null && !accountIds.isEmpty(),
+                        FortuneBillEntity::getAccountId, Objects.requireNonNullElse(accountIds, List.of()))
                 .ge(FortuneBillEntity::getTradeTime, LocalDateTime.of(windowStartDate, LocalTime.MIN))
                 .orderByAsc(FortuneBillEntity::getTradeTime)
                 .orderByAsc(FortuneBillEntity::getBillId);
@@ -190,7 +257,9 @@ public class FortuneBalanceSnapshotService {
                                                               Map<Long, BigDecimal> balanceMap,
                                                               Map<Long, FortuneBookEntity> bookMap) {
         List<FortuneBalanceSnapshotEntity> snapshots = new ArrayList<>();
-        for (Map.Entry<Long, List<FortuneAccountEntity>> entry : accounts.stream().collect(Collectors.groupingBy(FortuneAccountEntity::getGroupId)).entrySet()) {
+        for (Map.Entry<Long, List<FortuneAccountEntity>> entry : accounts.stream()
+                .collect(Collectors.groupingBy(FortuneAccountEntity::getGroupId, TreeMap::new, Collectors.toList()))
+                .entrySet()) {
             Long groupId = entry.getKey();
             BigDecimal totalAssets = BigDecimal.ZERO;
             BigDecimal totalLiabilities = BigDecimal.ZERO;
@@ -200,11 +269,61 @@ public class FortuneBalanceSnapshotService {
                     continue;
                 }
                 BigDecimal balance = balanceMap.getOrDefault(account.getAccountId(), BigDecimal.ZERO);
-                BigDecimal converted = fortuneAccountService.convertToGroupCurrency(groupId, account, balance);
+                BigDecimal converted = convertToGroupCurrency(groupId, account, balance);
                 if (converted.compareTo(BigDecimal.ZERO) >= 0) {
                     totalAssets = totalAssets.add(converted);
                 } else {
                     totalLiabilities = totalLiabilities.add(converted.abs());
+                }
+                FortuneBalanceSnapshotEntity snapshot = new FortuneBalanceSnapshotEntity();
+                snapshot.setGroupId(groupId);
+                snapshot.setBookId(resolveBookId(bookMap, groupId));
+                snapshot.setAccountId(account.getAccountId());
+                snapshot.setSnapshotDate(snapshotDate);
+                snapshot.setCurrencyCode(account.getCurrencyCode());
+                snapshot.setBalance(balance);
+                snapshot.setConvertedBalance(converted);
+                groupSnapshots.add(snapshot);
+            }
+            BigDecimal netAssets = totalAssets.subtract(totalLiabilities);
+            for (FortuneBalanceSnapshotEntity snapshot : groupSnapshots) {
+                snapshot.setTotalAssets(totalAssets);
+                snapshot.setTotalLiabilities(totalLiabilities);
+                snapshot.setNetAssets(netAssets);
+            }
+            snapshots.addAll(groupSnapshots);
+        }
+        return snapshots;
+    }
+
+    private List<FortuneBalanceSnapshotEntity> buildTargetSnapshots(LocalDate snapshotDate,
+                                                                    List<FortuneAccountEntity> targetAccounts,
+                                                                    List<FortuneAccountEntity> groupAccounts,
+                                                                    Map<Long, BigDecimal> balanceMap,
+                                                                    Map<Long, FortuneBookEntity> bookMap) {
+        Map<Long, List<FortuneAccountEntity>> accountsByGroup = groupAccounts.stream()
+                .collect(Collectors.groupingBy(FortuneAccountEntity::getGroupId, TreeMap::new, Collectors.toList()));
+        List<FortuneBalanceSnapshotEntity> snapshots = new ArrayList<>();
+        for (Map.Entry<Long, List<FortuneAccountEntity>> entry : accountsByGroup.entrySet()) {
+            Long groupId = entry.getKey();
+            BigDecimal totalAssets = BigDecimal.ZERO;
+            BigDecimal totalLiabilities = BigDecimal.ZERO;
+            List<FortuneBalanceSnapshotEntity> groupSnapshots = new ArrayList<>();
+            for (FortuneAccountEntity account : entry.getValue()) {
+                if (!accountExistsOn(account, snapshotDate)) {
+                    continue;
+                }
+                BigDecimal balance = balanceMap.getOrDefault(account.getAccountId(), BigDecimal.ZERO);
+                BigDecimal converted = convertToGroupCurrency(groupId, account, balance);
+                if (converted.compareTo(BigDecimal.ZERO) >= 0) {
+                    totalAssets = totalAssets.add(converted);
+                } else {
+                    totalLiabilities = totalLiabilities.add(converted.abs());
+                }
+                boolean target = targetAccounts.stream()
+                        .anyMatch(targetAccount -> Objects.equals(targetAccount.getAccountId(), account.getAccountId()));
+                if (!target) {
+                    continue;
                 }
                 FortuneBalanceSnapshotEntity snapshot = new FortuneBalanceSnapshotEntity();
                 snapshot.setGroupId(groupId);

@@ -5,6 +5,7 @@ import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitQuery;
 import com.fortuneboot.domain.vo.fortune.include.FinanceProfitVo;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -15,6 +16,18 @@ import java.util.List;
  * @Date 2024/8/16 18:06
  */
 public interface FortuneFinanceOrderMapper extends BaseMapper<FortuneFinanceOrderEntity> {
+
+    @Update("""
+            UPDATE fortune_finance_order
+            SET version = version + 1
+            WHERE order_id = #{orderId}
+              AND book_id = #{bookId}
+              AND version = #{expectedVersion}
+              AND deleted = 0
+            """)
+    int compareAndIncrementVersion(@Param("orderId") Long orderId,
+                                   @Param("bookId") Long bookId,
+                                   @Param("expectedVersion") Long expectedVersion);
 
     List<FinanceProfitVo> getFinanceProfit(@Param("bookId") Long bookId, @Param("query") FinanceProfitQuery query);
 }

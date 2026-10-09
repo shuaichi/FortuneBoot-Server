@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.stereotype.Component;
 
 /**
  * 单据账本纯计算器
@@ -26,6 +27,7 @@ import java.util.Set;
  * @author work.chi.zhang@gmail.com
  * @date 2026/10/9
  */
+@Component
 public class FinanceOrderLedgerCalculator {
 
     /**

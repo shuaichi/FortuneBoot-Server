@@ -38,4 +38,9 @@ public class FortuneFinanceOrderRepoImpl
     public List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query) {
         return baseMapper.getFinanceProfit(bookId, query);
     }
+
+    @Override
+    public int compareAndIncrementVersion(Long orderId, Long bookId, Long expectedVersion) {
+        return baseMapper.compareAndIncrementVersion(orderId, bookId, expectedVersion);
+    }
 }
