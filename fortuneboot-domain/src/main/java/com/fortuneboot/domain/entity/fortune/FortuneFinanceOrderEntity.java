@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -63,5 +64,37 @@ public class FortuneFinanceOrderEntity extends BaseEntity<FortuneFinanceOrderEnt
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;
+
+    @Schema(description = "交易对象id")
+    @TableField("counterparty_id")
+    private Long counterpartyId;
+
+    @Schema(description = "交易对象名称快照")
+    @TableField("counterparty_name")
+    private String counterpartyName;
+
+    @Schema(description = "币种")
+    @TableField("currency_code")
+    private String currencyCode;
+
+    @Schema(description = "到期日")
+    @TableField("due_date")
+    private LocalDate dueDate;
+
+    @Schema(description = "差额结清累计金额")
+    @TableField("adjusted_amount")
+    private BigDecimal adjustedAmount;
+
+    @Schema(description = "乐观锁版本号")
+    @TableField("version")
+    private Long version;
+
+    @Schema(description = "核对状态")
+    @TableField("reconciliation_status")
+    private String reconciliationStatus;
+
+    @Schema(description = "核对问题摘要")
+    @TableField("reconciliation_note")
+    private String reconciliationNote;
 
 }

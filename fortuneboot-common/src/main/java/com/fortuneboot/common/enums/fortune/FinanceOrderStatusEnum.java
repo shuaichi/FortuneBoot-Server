@@ -14,9 +14,9 @@ import java.util.Objects;
 @Getter
 public enum FinanceOrderStatusEnum implements BasicEnum<Integer> {
 
-    INIT(100, "初始化"),
-    USING(200,"使用中"),
-    CLOSE(1000,"已关闭"),
+    INIT(100, "草稿"),
+    USING(200,"进行中"),
+    CLOSE(1000,"已归档"),
     ;
 
     private final Integer value;

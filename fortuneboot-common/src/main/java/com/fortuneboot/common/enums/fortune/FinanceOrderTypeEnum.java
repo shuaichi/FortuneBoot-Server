@@ -13,9 +13,9 @@ import java.util.Objects;
  **/
 @Getter
 public enum FinanceOrderTypeEnum implements BasicEnum<Integer> {
-    EXPENSE_CLAIM(1, "报销单"),
-    LOAN_OUT(2, "借出单"),
-    LOAN_IN(3, "借入单"),
+    EXPENSE_CLAIM(1, "费用报销单"),
+    LOAN_OUT(2, "债权单"),
+    LOAN_IN(3, "债务单"),
     ;
 
     private final Integer value;
