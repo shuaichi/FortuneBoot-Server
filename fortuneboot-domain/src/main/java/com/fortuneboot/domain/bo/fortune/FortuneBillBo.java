@@ -73,6 +73,11 @@ public class FortuneBillBo {
     private String accountName;
 
     /**
+     * 账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    private String accountIcon;
+
+    /**
      * 金额
      */
     private BigDecimal amount;
@@ -106,6 +111,11 @@ public class FortuneBillBo {
     private String payeeName;
 
     /**
+     * 交易对象图标（Iconify 图标名，如 ep:shop）
+     */
+    private String payeeIcon;
+
+    /**
      * 流水类型
      * com.fortuneboot.common.enums.fortune.BillTypeEnum
      */
@@ -120,6 +130,11 @@ public class FortuneBillBo {
      * 转账到的账户
      */
     private String toAccountName;
+
+    /**
+     * 转入账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    private String toAccountIcon;
 
     /**
      * 是否确认

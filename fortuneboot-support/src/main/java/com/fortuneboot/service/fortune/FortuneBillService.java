@@ -137,6 +137,7 @@ public class FortuneBillService {
                 BillCategoryAmountVo vo = new BillCategoryAmountVo();
                 vo.setCategoryId(fortuneCategoryEntity.getCategoryId());
                 vo.setCategoryName(fortuneCategoryEntity.getCategoryName());
+                vo.setIcon(fortuneCategoryEntity.getIcon());
                 vo.setAmount(relation.getAmount());
                 billBo.getCategoryAmountPair().add(vo);
             }
@@ -188,9 +189,13 @@ public class FortuneBillService {
             return;
         }
         List<FortunePayeeEntity> payeeList = fortunePayeeRepo.getByIdList(payeeIdList);
-        Map<Long, String> map = payeeList.stream().collect(Collectors.toMap(FortunePayeeEntity::getPayeeId, FortunePayeeEntity::getPayeeName));
+        Map<Long, FortunePayeeEntity> map = payeeList.stream().collect(Collectors.toMap(FortunePayeeEntity::getPayeeId, Function.identity()));
         for (FortuneBillBo billBo : list) {
-            billBo.setPayeeName(map.get(billBo.getPayeeId()));
+            FortunePayeeEntity payee = map.get(billBo.getPayeeId());
+            if (payee != null) {
+                billBo.setPayeeName(payee.getPayeeName());
+                billBo.setPayeeIcon(payee.getIcon());
+            }
         }
     }
 
@@ -214,8 +219,10 @@ public class FortuneBillService {
             FortuneAccountEntity account = map.get(billBo.getAccountId());
             FortuneAccountEntity toAccount = map.get(billBo.getToAccountId());
             billBo.setAccountName(Optional.ofNullable(account).map(FortuneAccountEntity::getAccountName).orElse(StringUtils.EMPTY));
+            billBo.setAccountIcon(Optional.ofNullable(account).map(FortuneAccountEntity::getIcon).orElse(StringUtils.EMPTY));
             billBo.setCurrencyCode(Optional.ofNullable(account).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
             billBo.setToAccountName(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getAccountName).orElse(StringUtils.EMPTY));
+            billBo.setToAccountIcon(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getIcon).orElse(StringUtils.EMPTY));
             billBo.setToCurrencyCode(Optional.ofNullable(toAccount).map(FortuneAccountEntity::getCurrencyCode).orElse(StringUtils.EMPTY));
         }
     }

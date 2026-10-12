@@ -17,6 +17,11 @@ public class CreditCardVo {
 
     private String accountName;
 
+    /**
+     * 账户图标（Iconify 图标名，如 ep:credit-card）
+     */
+    private String icon;
+
     private BigDecimal creditLimit;
 
     private BigDecimal usedAmount;
