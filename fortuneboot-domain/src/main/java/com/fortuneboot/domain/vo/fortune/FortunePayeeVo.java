@@ -35,6 +35,11 @@ public class FortunePayeeVo {
     private String payeeName;
 
     /**
+     * 图标（Iconify 图标名，如 ep:shop）
+     */
+    private String icon;
+
+    /**
      * 顺序
      */
     private Integer sort;

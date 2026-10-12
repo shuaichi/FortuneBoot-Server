@@ -31,6 +31,10 @@ public class FortuneMemberEntity extends BaseEntity<FortuneMemberEntity> {
     @TableField("member_name")
     private String memberName;
 
+    @Schema(description = "成员图标（Iconify 图标名，如 ep:user）")
+    @TableField("icon")
+    private String icon;
+
     @Schema(description = "是否启用")
     @TableField("enable")
     private Boolean enable;

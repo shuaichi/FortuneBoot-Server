@@ -32,6 +32,12 @@ public class FortuneAccountAddCommand {
     private String accountName;
 
     /**
+     * 账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    @Size(max = 64, message = "图标名称长度不能超过64个字符")
+    private String icon;
+
+    /**
      * 余额
      */
     private BigDecimal balance;

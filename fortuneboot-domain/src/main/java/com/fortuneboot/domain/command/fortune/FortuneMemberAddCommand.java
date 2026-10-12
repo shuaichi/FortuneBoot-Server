@@ -21,6 +21,9 @@ public class FortuneMemberAddCommand {
     @Size(max = 50, message = "成员名称长度不能超过50个字符")
     private String memberName;
 
+    @Size(max = 64, message = "图标名称长度不能超过64个字符")
+    private String icon;
+
     private Boolean enable;
     private Integer sort;
 

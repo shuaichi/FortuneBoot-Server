@@ -38,6 +38,11 @@ public class FortuneAccountVo {
     private String accountName;
 
     /**
+     * 账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    private String icon;
+
+    /**
      * 余额
      */
     private BigDecimal balance;

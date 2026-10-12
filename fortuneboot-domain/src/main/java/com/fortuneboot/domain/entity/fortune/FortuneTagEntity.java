@@ -29,6 +29,10 @@ public class FortuneTagEntity extends BaseEntity<FortuneTagEntity> {
     @TableField("tag_name")
     private String tagName;
 
+    @Schema(description = "标签图标（Iconify 图标名，如 ep:collection-tag）")
+    @TableField("icon")
+    private String icon;
+
     @Schema(description = "账本ID")
     @TableField("book_id")
     private Long bookId;

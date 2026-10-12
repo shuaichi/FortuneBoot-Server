@@ -28,6 +28,12 @@ public class FortuneTagAddCommand {
     private String tagName;
 
     /**
+     * 图标（Iconify 图标名，如 ep:collection-tag）
+     */
+    @Size(max = 64, message = "图标名称长度不能超过64个字符")
+    private String icon;
+
+    /**
      * 父级ID
      */
     private Long parentId;
