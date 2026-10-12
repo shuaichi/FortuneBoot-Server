@@ -1,18 +1,18 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -29,12 +29,9 @@ import java.util.TreeMap;
  * @date 2026/10/9
  */
 @Component
-@RequiredArgsConstructor
 public class FinanceOrderRequestHasher {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    private final ObjectMapper objectMapper;
 
     public String hashCreate(FinanceOrderCreateCommand command) {
         Map<String, Object> value = metadataValues(command);
@@ -111,7 +108,7 @@ public class FinanceOrderRequestHasher {
 
     private String digest(Map<String, Object> value) {
         try {
-            byte[] json = objectMapper.writeValueAsBytes(value);
+            byte[] json = JacksonUtil.to(value).getBytes(StandardCharsets.UTF_8);
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             return HexFormat.of().formatHex(digest.digest(json));
         } catch (Exception exception) {

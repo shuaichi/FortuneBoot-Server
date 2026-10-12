@@ -2,12 +2,11 @@ package com.fortuneboot.service.fortune.order;
 
 import com.fortuneboot.orderapi.FinanceOrderStage03TestApplication;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +26,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import tools.jackson.databind.JsonNode;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -60,8 +60,6 @@ class FinanceOrderApiContractTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @Autowired
     private FinanceOrderRequestService requestService;
     @Autowired
@@ -582,7 +580,7 @@ class FinanceOrderApiContractTest {
     }
 
     private JsonNode read(String content) throws Exception {
-        return objectMapper.readTree(content);
+        return JacksonUtil.from(content, JsonNode.class);
     }
 
     private void login(Long userId) {

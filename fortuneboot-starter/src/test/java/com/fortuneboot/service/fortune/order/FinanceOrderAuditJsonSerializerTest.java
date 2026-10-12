@@ -1,6 +1,5 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class FinanceOrderAuditJsonSerializerTest {
 
     private final FinanceOrderAuditJsonSerializer serializer =
-            new FinanceOrderAuditJsonSerializer(new ObjectMapper());
+            new FinanceOrderAuditJsonSerializer();
 
     @Test
     @DisplayName("按LinkedMap顺序稳定序列化审计快照")

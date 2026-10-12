@@ -2,7 +2,6 @@ package com.fortuneboot.service.fortune.order;
 
 import com.fortuneboot.infrastructure.config.ApplicationConfig;
 import com.fortuneboot.infrastructure.config.MyBatisConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.domain.bo.fortune.ApplicationScopeBo;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.mybatis.spring.annotation.MapperScan;
@@ -77,8 +76,4 @@ public class FinanceOrderSqliteTestApplication {
                 ZoneId.of("Asia/Shanghai"));
     }
 
-    @Bean
-    ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 }

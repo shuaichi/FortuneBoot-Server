@@ -5,8 +5,7 @@ import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
@@ -45,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.List;
@@ -66,7 +66,6 @@ public class FortuneFinanceOrderV2Rest {
     private final FinanceOrderQueryService financeOrderQueryService;
     private final FinanceOrderRequestService financeOrderRequestService;
     private final FinanceOrderReconciliationService financeOrderReconciliationService;
-    private final ObjectMapper objectMapper;
 
     @Operation(summary = "分页查询单据")
     @GetMapping("/page")
@@ -274,7 +273,7 @@ public class FortuneFinanceOrderV2Rest {
 
     private FinanceOrderEntryCommand readEntryCommand(JsonNode dataNode) {
         try {
-            FinanceOrderEntryCommand command = objectMapper.treeToValue(dataNode, FinanceOrderEntryCommand.class);
+            FinanceOrderEntryCommand command = JacksonUtil.from(dataNode.toString(), FinanceOrderEntryCommand.class);
             return command == null ? new FinanceOrderEntryCommand() : command;
         } catch (Exception exception) {
             throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "流水内容解析失败");

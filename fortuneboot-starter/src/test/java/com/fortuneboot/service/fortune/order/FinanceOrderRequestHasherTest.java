@@ -1,6 +1,5 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("单据请求幂等哈希")
 class FinanceOrderRequestHasherTest {
 
-    private final FinanceOrderRequestHasher hasher = new FinanceOrderRequestHasher(new ObjectMapper());
+    private final FinanceOrderRequestHasher hasher = new FinanceOrderRequestHasher();
 
     @AfterEach
     void clearSecurityContext() {

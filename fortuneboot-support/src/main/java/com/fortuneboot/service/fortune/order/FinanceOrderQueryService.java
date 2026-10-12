@@ -89,7 +89,7 @@ public class FinanceOrderQueryService {
                 .toList();
 
         List<FinanceOrderDetailVo> rows = FinanceOrderPageUtil.paginate(all, query.getPageNum(), query.getPageSize());
-        fillCanDelete(query.getBookId(), rows, actor);
+        fillCanDelete(rows, actor);
         return new PageDTO<>(rows, (long) all.size());
     }
 
@@ -161,7 +161,7 @@ public class FinanceOrderQueryService {
                         .compareTo(BigDecimal.ZERO) > 0)
                 .toList();
         List<FinanceOrderDetailVo> rows = FinanceOrderPageUtil.paginate(all, query.getPageNum(), query.getPageSize());
-        fillCanDelete(query.getBookId(), rows, actor);
+        fillCanDelete(rows, actor);
         return new PageDTO<>(rows, (long) all.size());
     }
 
@@ -190,7 +190,7 @@ public class FinanceOrderQueryService {
         return StringUtils.isBlank(settlementState) || Objects.equals(vo.getSettlementState(), settlementState);
     }
 
-    private void fillCanDelete(Long bookId, List<FinanceOrderDetailVo> rows, boolean actor) {
+    private void fillCanDelete(List<FinanceOrderDetailVo> rows, boolean actor) {
         if (!actor) {
             return;
         }
@@ -207,8 +207,7 @@ public class FinanceOrderQueryService {
     private boolean isActor(Long bookId) {
         try {
             FortunePermissionService permissionService = permissionServiceProvider.getIfAvailable();
-            return permissionService != null
-                    && Boolean.TRUE.equals(permissionService.bookActorPermission(bookId));
+            return permissionService != null && Boolean.TRUE.equals(permissionService.bookActorPermission(bookId));
         } catch (Exception exception) {
             return false;
         }

@@ -11,7 +11,6 @@ import com.fortuneboot.rest.fortune.FortuneFinanceOrderV2Rest;
 import com.fortuneboot.rest.fortune.FortuneBillRest;
 import com.fortuneboot.service.permission.FortunePermissionService;
 import com.fortuneboot.service.fortune.order.FinanceOrderSqliteTestApplication;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flywaydb.core.Flyway;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
@@ -92,8 +91,4 @@ public class FinanceOrderStage03TestApplication {
                 ZoneId.of("Asia/Shanghai"));
     }
 
-    @Bean
-    ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 }

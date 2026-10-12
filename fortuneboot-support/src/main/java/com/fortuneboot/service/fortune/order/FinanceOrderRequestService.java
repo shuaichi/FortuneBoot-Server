@@ -1,11 +1,11 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
+import com.fortuneboot.common.utils.jackson.JacksonUtil;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
@@ -40,7 +40,6 @@ public class FinanceOrderRequestService {
     private final FinanceOrderMutationService mutationService;
     private final FortuneFinanceOrderRequestRepo requestRepo;
     private final FinanceOrderRequestHasher requestHasher;
-    private final ObjectMapper objectMapper;
 
     public FinanceOrderMutationVo mutateEntry(FinanceOrderEntryMutation command) {
         normalizeRequestId(command);
@@ -174,7 +173,7 @@ public class FinanceOrderRequestService {
 
     private FinanceOrderMutationVo readResponse(String responseJson, boolean replayed) {
         try {
-            FinanceOrderMutationVo result = objectMapper.readValue(responseJson, FinanceOrderMutationVo.class);
+            FinanceOrderMutationVo result = JacksonUtil.from(responseJson, FinanceOrderMutationVo.class);
             result.setReplayed(replayed);
             return result;
         } catch (Exception exception) {

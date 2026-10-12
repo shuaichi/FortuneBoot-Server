@@ -8,7 +8,6 @@ import com.fortuneboot.infrastructure.mybatisplus.CustomMetaObjectHandler;
 import com.fortuneboot.rest.fortune.FortuneBillRest;
 import com.fortuneboot.rest.fortune.FortuneFinanceOrderV2Rest;
 import com.fortuneboot.service.permission.FortunePermissionService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,8 +86,4 @@ public class FinanceOrderStage04TestApplication {
                 ZoneId.of("Asia/Shanghai"));
     }
 
-    @Bean
-    ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
 }

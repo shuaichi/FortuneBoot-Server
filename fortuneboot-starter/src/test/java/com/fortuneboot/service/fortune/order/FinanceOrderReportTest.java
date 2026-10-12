@@ -1,6 +1,5 @@
 package com.fortuneboot.service.fortune.order;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
@@ -69,8 +68,6 @@ class FinanceOrderReportTest {
     private FortuneBillService billService;
     @Autowired
     private WebApplicationContext webApplicationContext;
-    @Autowired
-    private ObjectMapper objectMapper;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     private MockMvc mockMvc;
