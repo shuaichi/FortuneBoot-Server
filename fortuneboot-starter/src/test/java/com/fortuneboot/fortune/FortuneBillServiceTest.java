@@ -6,11 +6,12 @@ import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
-import lombok.AllArgsConstructor;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
@@ -22,10 +23,14 @@ import java.util.List;
 @Slf4j
 @SpringBootTest(classes = IntegrationTestApplication.class)
 @ExtendWith(SpringExtension.class)
-@AllArgsConstructor
+@ActiveProfiles({"basic", "test"})
 public class FortuneBillServiceTest {
 
-    private final FortuneBillService fortuneBillService;
+    /**
+     * Spring 测试构造器自动装配默认关闭，这里遵循仓库集成测试惯例使用字段注入
+     */
+    @Resource
+    private FortuneBillService fortuneBillService;
 
     @Test
     public void testGetCategoryExpense() {
