@@ -10,7 +10,7 @@ import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
-import com.fortuneboot.domain.vo.fortune.bill.FortuneBillDownloadVo;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportResultVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillVo;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -129,9 +129,9 @@ public class FortuneBillRest {
         query.setPageNum(1);
         // 限制最大导出数量为 10000，不要使用 Integer.MAX_VALUE，否则可能OOM
         query.setPageSize(10000);
-        PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
-        List<FortuneBillDownloadVo> list = page.getRows().stream().map(FortuneBillDownloadVo::new).toList();
-        CustomExcelUtil.writeToResponse(list, FortuneBillDownloadVo.class, response);
+        // 导出为与导入模板同构的Excel，保证导出的账单可以直接再导入
+        List<FortuneBillImportExcelVo> rows = fortuneBillService.listExportExcelRows(query);
+        CustomExcelUtil.writeToResponse(rows, FortuneBillImportExcelVo.class, response);
     }
 
     @Operation(summary = "账单列表导入")
