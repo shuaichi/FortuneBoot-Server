@@ -28,6 +28,10 @@ public class FortuneCategoryEntity extends BaseEntity<FortuneCategoryEntity> {
     @TableField("category_name")
     private String categoryName;
 
+    @Schema(description = "分类图标（Iconify 图标名，如 ep:menu）")
+    @TableField("icon")
+    private String icon;
+
     /**
      * com.fortuneboot.common.enums.fortune.CategoryTypeEnum
      */

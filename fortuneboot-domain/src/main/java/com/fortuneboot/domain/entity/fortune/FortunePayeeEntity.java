@@ -32,6 +32,10 @@ public class FortunePayeeEntity extends BaseEntity<FortunePayeeEntity> {
     @TableField("payee_name")
     private String payeeName;
 
+    @Schema(description = "交易对象图标（Iconify 图标名，如 ep:shop）")
+    @TableField("icon")
+    private String icon;
+
     @Schema(description = "顺序")
     @TableField("sort")
     private Integer sort;

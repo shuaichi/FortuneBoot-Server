@@ -22,6 +22,11 @@ public class BillCategoryAmountVo {
     private String categoryName;
 
     /**
+     * 分类图标（Iconify 图标名，如 ep:menu）
+     */
+    private String icon;
+
+    /**
      * 金额
      */
     private BigDecimal amount;

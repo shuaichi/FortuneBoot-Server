@@ -22,6 +22,8 @@ public class FortuneMemberVo {
     private Long memberId;
     private Long bookId;
     private String memberName;
+    /** 成员图标（Iconify 图标名，如 ep:user） */
+    private String icon;
     private Boolean enable;
     private Integer sort;
     private String remark;

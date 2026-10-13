@@ -35,6 +35,10 @@ public class FortuneAccountEntity extends BaseEntity<FortuneAccountEntity> {
     @TableField("account_name")
     private String accountName;
 
+    @Schema(description = "账户图标（Iconify 图标名，如 ep:wallet）")
+    @TableField("icon")
+    private String icon;
+
     @Schema(description = "余额")
     @TableField("balance")
     private BigDecimal balance;

@@ -28,6 +28,12 @@ public class FortunePayeeAddCommand {
     private String payeeName;
 
     /**
+     * 图标（Iconify 图标名，如 ep:shop）
+     */
+    @Size(max = 64, message = "图标名称长度不能超过64个字符")
+    private String icon;
+
+    /**
      * 顺序
      */
     private Integer sort;

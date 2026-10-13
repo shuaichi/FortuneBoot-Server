@@ -22,6 +22,12 @@ public class FortuneCategoryAddCommand {
     private String categoryName;
 
     /**
+     * 图标（Iconify 图标名，如 ep:menu）
+     */
+    @Size(max = 64, message = "图标名称长度不能超过64个字符")
+    private String icon;
+
+    /**
      * 类型
      *
      * @see CategoryTypeEnum

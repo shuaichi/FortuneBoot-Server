@@ -430,6 +430,7 @@ public class FortuneAccountService {
                     CreditCardVo vo = new CreditCardVo();
                     vo.setAccountId(account.getAccountId());
                     vo.setAccountName(account.getAccountName());
+                    vo.setIcon(account.getIcon());
                     vo.setCreditLimit(creditLimit.setScale(2, RoundingMode.HALF_UP));
                     vo.setUsedAmount(usedAmount.setScale(2, RoundingMode.HALF_UP));
                     vo.setAvailable(creditLimit.subtract(usedAmount).setScale(2, RoundingMode.HALF_UP));

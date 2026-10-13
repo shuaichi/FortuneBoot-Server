@@ -33,6 +33,11 @@ public class FortuneCategoryVo extends AbstractTreeNode {
     private String categoryName;
 
     /**
+     * 图标（Iconify 图标名，如 ep:menu）
+     */
+    private String icon;
+
+    /**
      * 类型
      * @see CategoryTypeEnum
      */
