@@ -44,6 +44,9 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
 
     @Override
     public List<FortuneBillEntity> getByBookIds(List<Long> bookIds) {
+        if (CollectionUtils.isEmpty(bookIds)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
         queryWrapper.in(FortuneBillEntity::getBookId, bookIds);
         return this.list(queryWrapper);

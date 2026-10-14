@@ -14,6 +14,7 @@ import com.fortuneboot.domain.entity.system.SearchUserDO;
 import com.fortuneboot.domain.entity.system.SysUserEntity;
 import com.fortuneboot.dao.system.SysUserMapper;
 import com.fortuneboot.repository.system.SysUserRepo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -82,6 +83,9 @@ public class SysUserRepoImpl extends ServiceImpl<SysUserMapper, SysUserEntity> i
 
     @Override
     public List<SysUserEntity> getUsersByIds(List<Long> userIds) {
+        if (CollectionUtils.isEmpty(userIds)) {
+            return List.of();
+        }
         LambdaQueryWrapper<SysUserEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(SysUserEntity.class);
         queryWrapper.in(SysUserEntity::getUserId, userIds);
         return this.list(queryWrapper);

@@ -6,6 +6,7 @@ import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneGroupMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneGroupEntity;
 import com.fortuneboot.repository.fortune.FortuneGroupRepo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +22,9 @@ public class FortuneGroupRepoImpl extends ServiceImpl<FortuneGroupMapper, Fortun
 
     @Override
     public List<FortuneGroupEntity> getEnableByGroupIds(List<Long> groupIds) {
+        if (CollectionUtils.isEmpty(groupIds)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortuneGroupEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneGroupEntity.class);
         lambdaQueryWrapper.eq(FortuneGroupEntity::getEnable, Boolean.TRUE)
                 .in(FortuneGroupEntity::getGroupId, groupIds);

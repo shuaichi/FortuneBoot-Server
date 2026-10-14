@@ -51,6 +51,9 @@ public class FortuneTagRepoImpl extends ServiceImpl<FortuneTagMapper, FortuneTag
 
     @Override
     public List<FortuneTagEntity> getByIds(List<Long> tagIds) {
+        if (CollectionUtils.isEmpty(tagIds)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortuneTagEntity> lambdaQueryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         lambdaQueryWrapper.in(FortuneTagEntity::getTagId,tagIds);
         return this.list(lambdaQueryWrapper);
@@ -70,6 +73,9 @@ public class FortuneTagRepoImpl extends ServiceImpl<FortuneTagMapper, FortuneTag
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
+        if (CollectionUtils.isEmpty(bookIds)) {
+            return;
+        }
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.in(FortuneTagEntity::getBookId,bookIds);
         List<FortuneTagEntity> list = this.list(queryWrapper);
@@ -93,6 +99,9 @@ public class FortuneTagRepoImpl extends ServiceImpl<FortuneTagMapper, FortuneTag
 
     @Override
     public Map<Long, List<FortuneTagEntity>> getByParentIds(List<Long> parentIds) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return Map.of();
+        }
         LambdaQueryWrapper<FortuneTagEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagEntity.class);
         queryWrapper.in(FortuneTagEntity::getParentId,parentIds);
         List<FortuneTagEntity> list = this.list(queryWrapper);

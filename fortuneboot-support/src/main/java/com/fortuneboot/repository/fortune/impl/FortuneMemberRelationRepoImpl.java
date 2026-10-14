@@ -36,6 +36,9 @@ public class FortuneMemberRelationRepoImpl extends ServiceImpl<FortuneMemberRela
 
     @Override
     public Map<Long, List<FortuneMemberRelationEntity>> getByBillIdList(List<Long> billIdList) {
+        if (CollectionUtils.isEmpty(billIdList)) {
+            return Map.of();
+        }
         LambdaQueryWrapper<FortuneMemberRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneMemberRelationEntity.class);
         wrapper.in(FortuneMemberRelationEntity::getBillId, billIdList);
         return this.list(wrapper).stream().collect(Collectors.groupingBy(FortuneMemberRelationEntity::getBillId));

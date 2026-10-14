@@ -36,6 +36,9 @@ public class FortuneTagRelationRepositionImpl extends ServiceImpl<FortuneTagRela
 
     @Override
     public Map<Long, List<FortuneTagRelationEntity>> getByBillIdList(List<Long> billIdList) {
+        if (CollectionUtils.isEmpty(billIdList)) {
+            return Map.of();
+        }
         LambdaQueryWrapper<FortuneTagRelationEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneTagRelationEntity.class);
         wrapper.in(FortuneTagRelationEntity::getBillId, billIdList);
         List<FortuneTagRelationEntity> list = this.list(wrapper);

@@ -48,6 +48,9 @@ public class FortunePayeeRepoImpl extends ServiceImpl<FortunePayeeMapper, Fortun
 
     @Override
     public List<FortunePayeeEntity> getByIdList(List<Long> payeeIdList) {
+        if (CollectionUtils.isEmpty(payeeIdList)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.in(FortunePayeeEntity::getPayeeId,payeeIdList);
         return this.list(queryWrapper);
@@ -67,6 +70,9 @@ public class FortunePayeeRepoImpl extends ServiceImpl<FortunePayeeMapper, Fortun
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
+        if (CollectionUtils.isEmpty(bookIds)) {
+            return;
+        }
         LambdaQueryWrapper<FortunePayeeEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortunePayeeEntity.class);
         queryWrapper.in(FortunePayeeEntity::getBookId,bookIds);
         List<FortunePayeeEntity> list = this.list(queryWrapper);

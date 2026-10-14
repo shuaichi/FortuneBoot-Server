@@ -43,6 +43,9 @@ public class FortuneMemberRepoImpl extends ServiceImpl<FortuneMemberMapper, Fort
 
     @Override
     public List<FortuneMemberEntity> getByIds(List<Long> memberIds) {
+        if (CollectionUtils.isEmpty(memberIds)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortuneMemberEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneMemberEntity.class);
         wrapper.in(FortuneMemberEntity::getMemberId, memberIds);
         return this.list(wrapper);
@@ -60,6 +63,9 @@ public class FortuneMemberRepoImpl extends ServiceImpl<FortuneMemberMapper, Fort
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
+        if (CollectionUtils.isEmpty(bookIds)) {
+            return;
+        }
         LambdaQueryWrapper<FortuneMemberEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneMemberEntity.class);
         wrapper.in(FortuneMemberEntity::getBookId, bookIds);
         List<FortuneMemberEntity> list = this.list(wrapper);

@@ -63,6 +63,9 @@ public class FortuneCategoryRepoImpl extends ServiceImpl<FortuneCategoryMapper, 
 
     @Override
     public void removeByBookIds(List<Long> bookIds) {
+        if (CollectionUtils.isEmpty(bookIds)) {
+            return;
+        }
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.in(FortuneCategoryEntity::getBookId,bookIds);
         List<FortuneCategoryEntity> list = this.list(queryWrapper);
@@ -79,6 +82,9 @@ public class FortuneCategoryRepoImpl extends ServiceImpl<FortuneCategoryMapper, 
 
     @Override
     public Map<Long, List<FortuneCategoryEntity>> getByParentIds(List<Long> parentIds) {
+        if (CollectionUtils.isEmpty(parentIds)) {
+            return Map.of();
+        }
         LambdaQueryWrapper<FortuneCategoryEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneCategoryEntity.class);
         queryWrapper.in(FortuneCategoryEntity::getParentId,parentIds);
         List<FortuneCategoryEntity> list = this.list(queryWrapper);

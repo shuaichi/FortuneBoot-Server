@@ -9,6 +9,7 @@ import com.fortuneboot.domain.vo.fortune.include.FortuneAssetsLiabilitiesVo;
 import com.fortuneboot.domain.vo.fortune.include.FortunePieVo;
 import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,6 +38,9 @@ public class FortuneAccountRepoImpl extends ServiceImpl<FortuneAccountMapper, Fo
 
     @Override
     public List<FortuneAccountEntity> getByIds(List<Long> accountIdList) {
+        if (CollectionUtils.isEmpty(accountIdList)) {
+            return List.of();
+        }
         LambdaQueryWrapper<FortuneAccountEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneAccountEntity.class);
         queryWrapper.in(FortuneAccountEntity::getAccountId,accountIdList);
         return this.list(queryWrapper);
