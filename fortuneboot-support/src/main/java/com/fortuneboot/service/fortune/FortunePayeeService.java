@@ -6,12 +6,15 @@ import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
 import com.fortuneboot.domain.command.fortune.FortunePayeeAddCommand;
 import com.fortuneboot.domain.command.fortune.FortunePayeeModifyCommand;
+import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortunePayeeEntity;
 import com.fortuneboot.domain.query.fortune.FortunePayeeQuery;
 import com.fortuneboot.factory.fortune.factory.FortunePayeeFactory;
 import com.fortuneboot.factory.fortune.model.FortunePayeeModel;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortunePayeeRepo;
+import com.fortuneboot.repository.fortune.FortuneBookRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,10 @@ public class FortunePayeeService {
     private final FortunePayeeFactory fortunePayeeFactory;
 
     private final FortuneBillRepo fortuneBillRepo;
+
+    private final FortuneBookRepo fortuneBookRepo;
+
+    private final FinanceOrderReferenceGuard financeOrderReferenceGuard;
 
     public IPage<FortunePayeeEntity> getPage(FortunePayeeQuery query) {
         return fortunePayeeRepo.page(query.toPage(),query.addQueryCondition());
@@ -76,12 +83,14 @@ public class FortunePayeeService {
     }
 
     public void remove(Long bookId, Long payeeId) {
-        Boolean used = fortuneBillRepo.existByPayeeId(payeeId);
-        if (used) {
-            throw new ApiException(ErrorCode.Business.PAYEE_ALREADY_USED);
-        }
         FortunePayeeModel fortunePayeeModel = fortunePayeeFactory.loadById(payeeId);
         fortunePayeeModel.checkBookId(bookId);
+        FortuneBookEntity book = fortuneBookRepo.getById(bookId);
+        financeOrderReferenceGuard.lockGroupScope(book == null ? null : book.getGroupId());
+        if (fortuneBillRepo.existAnyPayeeReferenceIncludeDeleted(payeeId)) {
+            throw new ApiException(ErrorCode.Business.PAYEE_ALREADY_USED);
+        }
+        financeOrderReferenceGuard.ensurePayeeHasNoOrderReference(payeeId);
         fortunePayeeModel.deleteById();
     }
 

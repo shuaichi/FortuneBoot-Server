@@ -2,7 +2,6 @@ package com.fortuneboot.service.fortune;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.bo.fortune.*;
 import com.fortuneboot.domain.bo.fortune.tenplate.BookTemplateBo;
@@ -21,6 +20,7 @@ import com.fortuneboot.factory.fortune.model.FortuneCategoryModel;
 import com.fortuneboot.factory.fortune.model.FortuneGroupModel;
 import com.fortuneboot.factory.fortune.model.FortuneTagModel;
 import com.fortuneboot.repository.fortune.*;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -67,6 +67,8 @@ public class FortuneBookService {
     private final FortuneBillService fortuneBillService;
 
     private final FortuneAccountRepo fortuneAccountRepo;
+
+    private final FinanceOrderReferenceGuard financeOrderReferenceGuard;
 
     public PageDTO<FortuneBookVo> getPage(FortuneBookQuery query) {
         IPage<FortuneBookEntity> page = fortuneBookRepo.page(query.toPage(), query.addQueryCondition());
@@ -214,6 +216,11 @@ public class FortuneBookService {
     public void modify(FortuneBookModifyCommand bookModifyCommand) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookModifyCommand.getBookId());
         fortuneBookModel.checkGroupId(bookModifyCommand.getGroupId());
+        financeOrderReferenceGuard.lockGroupScope(fortuneBookModel.getGroupId());
+        if (StringUtils.isNotBlank(bookModifyCommand.getDefaultCurrency())
+                && !StringUtils.equals(fortuneBookModel.getDefaultCurrency(), bookModifyCommand.getDefaultCurrency())) {
+            financeOrderReferenceGuard.ensureBookHasNoOrderHistory(bookModifyCommand.getBookId());
+        }
         fortuneBookModel.loadModifyCommand(bookModifyCommand);
         fortuneBookModel.checkNotInRecycleBin();
         fortuneBookModel.updateById();
@@ -222,6 +229,8 @@ public class FortuneBookService {
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long bookId) {
         FortuneBookModel fortuneBookModel = fortuneBookFactory.loadById(bookId);
+        financeOrderReferenceGuard.lockGroupScope(fortuneBookModel.getGroupId());
+        financeOrderReferenceGuard.ensureBookHasNoOrderHistory(bookId);
         fortuneBookModel.deleteById();
         fortuneTagRepo.removeByBookId(bookId);
         fortuneCategoryRepo.removeByBookId(bookId);
@@ -262,8 +271,10 @@ public class FortuneBookService {
 
     @Transactional(rollbackFor = Exception.class)
     public void removeByGroupId(Long groupId) {
+        financeOrderReferenceGuard.lockGroupScope(groupId);
         List<FortuneBookEntity> bookList = this.getByGroupId(groupId);
         List<Long> bookIds = bookList.stream().map(FortuneBookEntity::getBookId).toList();
+        financeOrderReferenceGuard.ensureBooksHaveNoOrderHistory(bookIds);
         fortuneBookRepo.removeBatchByIds(bookIds);
         fortuneTagRepo.removeByBookIds(bookIds);
         fortuneCategoryRepo.removeByBookIds(bookIds);

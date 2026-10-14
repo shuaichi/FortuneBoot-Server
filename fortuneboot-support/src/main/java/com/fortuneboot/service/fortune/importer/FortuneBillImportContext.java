@@ -28,6 +28,8 @@ class FortuneBillImportContext {
 
     private Map<Long, FortuneAccountEntity> accountIdMap = new HashMap<>();
 
+    private Map<Long, FortuneFinanceOrderEntity> orderMap = new HashMap<>();
+
     FortuneCategoryEntity getCategory(Integer billType, String name) {
         return categoryMap.getOrDefault(billType, Map.of()).get(name);
     }

@@ -19,6 +19,7 @@ import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.factory.fortune.model.FortuneAccountModel;
 import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,8 @@ public class FortuneAccountService {
     private final FortuneAccountFactory fortuneAccountFactory;
 
     private final FortuneBillRepo fortuneBillRepo;
+
+    private final FinanceOrderReferenceGuard financeOrderReferenceGuard;
 
     private final FortuneBillService fortuneBillService;
 
@@ -88,7 +91,8 @@ public class FortuneAccountService {
     public void remove(Long groupId, Long accountId) {
         FortuneAccountModel fortuneAccountModel = fortuneAccountFactory.loadById(accountId);
         fortuneAccountModel.checkGroupId(groupId);
-        Boolean exist = fortuneBillRepo.existByAccount(accountId);
+        financeOrderReferenceGuard.lockGroupScope(groupId);
+        Boolean exist = fortuneBillRepo.existAnyAccountReferenceIncludeDeleted(accountId);
         if (exist) {
             throw new ApiException(ErrorCode.Business.ACCOUNT_USED_CANNOT_REMOVE, fortuneAccountModel.getAccountName());
         }

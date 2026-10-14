@@ -23,7 +23,9 @@ class FortuneBillImportContextLoaderTest {
     private final FortuneTagRepo tagRepo = mock(FortuneTagRepo.class);
     private final FortunePayeeRepo payeeRepo = mock(FortunePayeeRepo.class);
     private final FortuneMemberRepo memberRepo = mock(FortuneMemberRepo.class);
-    private final FortuneBillImportContextLoader loader = new FortuneBillImportContextLoader(accountRepo, categoryRepo, tagRepo, payeeRepo, memberRepo);
+    private final FortuneFinanceOrderRepo orderRepo = mock(FortuneFinanceOrderRepo.class);
+    private final FortuneBillImportContextLoader loader = new FortuneBillImportContextLoader(
+            accountRepo, categoryRepo, tagRepo, payeeRepo, memberRepo, orderRepo);
 
     @Test
     @DisplayName("按账本和分组加载上下文")

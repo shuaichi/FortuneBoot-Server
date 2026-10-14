@@ -61,7 +61,8 @@ public class FlywayConfiguration {
                     "V1.7.0__balance_snapshot.sql",
                     "V1.7.1__repair_bill_extra_category.sql",
                     "V1.7.2__account_icon.sql",
-                    "V1.7.3__category_tag_member_payee_icon.sql"
+                    "V1.7.3__category_tag_member_payee_icon.sql",
+                    "V1.8.0__finance_order_ledger.sql"
             },
             DbType.MYSQL.getDb(), new String[]{
                     "V1.0.0__init_schema.sql",
@@ -76,7 +77,8 @@ public class FlywayConfiguration {
                     "V1.7.0__balance_snapshot.sql",
                     "V1.7.1__repair_bill_extra_category.sql",
                     "V1.7.2__account_icon.sql",
-                    "V1.7.3__category_tag_member_payee_icon.sql"
+                    "V1.7.3__category_tag_member_payee_icon.sql",
+                    "V1.8.0__finance_order_ledger.sql"
             }
     );
 

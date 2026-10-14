@@ -67,6 +67,9 @@ public class AdvanceStrategy extends AbstractBillStrategy {
     public void operateFinanceOrder(BillStrategyContext context) {
         FortuneBillAddCommand command = context.getCommand();
         FortuneBillModel billModel = context.getBillModel();
+        if (Objects.equals(billModel.getOrderLedgerVersion(), 1)) {
+            return;
+        }
         billModel.checkOrderId();
         FortuneFinanceOrderModel orderModel = fortuneFinanceOrderFactory.loadById(command.getOrderId());
         orderModel.checkBookId(command.getBookId());
@@ -79,6 +82,9 @@ public class AdvanceStrategy extends AbstractBillStrategy {
     public void refuseFinanceOrder(BillStrategyContext context) {
         FortuneBillModel billModel = context.getBillModel();
         if (Objects.isNull(billModel.getOrderId())) {
+            return;
+        }
+        if (Objects.equals(billModel.getOrderLedgerVersion(), 1)) {
             return;
         }
         FortuneFinanceOrderModel orderModel = fortuneFinanceOrderFactory.loadById(billModel.getOrderId());

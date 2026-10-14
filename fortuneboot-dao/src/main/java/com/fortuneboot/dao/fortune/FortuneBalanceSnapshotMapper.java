@@ -24,6 +24,18 @@ public interface FortuneBalanceSnapshotMapper extends BaseMapper<FortuneBalanceS
     @Delete("DELETE FROM fortune_balance_snapshot WHERE snapshot_date BETWEEN #{startDate} AND #{endDate}")
     void deleteBySnapshotDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    @Delete("""
+            <script>
+            DELETE FROM fortune_balance_snapshot
+            WHERE snapshot_date BETWEEN #{startDate} AND #{endDate}
+              AND account_id IN
+              <foreach collection="accountIds" item="accountId" open="(" separator="," close=")">#{accountId}</foreach>
+            </script>
+            """)
+    void deleteByAccountIdsAndDateBetween(@Param("accountIds") List<Long> accountIds,
+                                           @Param("startDate") LocalDate startDate,
+                                           @Param("endDate") LocalDate endDate);
+
     @Delete("DELETE FROM fortune_balance_snapshot")
     void deleteAllSnapshots();
 

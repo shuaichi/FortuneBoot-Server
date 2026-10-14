@@ -11,8 +11,8 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.repository.fortune.FortuneBalanceSnapshotRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
-import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.system.SysConfigRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderReportService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -63,7 +63,7 @@ public class FortuneIncludeService {
     private final FortuneAccountService fortuneAccountService;
     private final FortuneBillRepo fortuneBillRepo;
     private final FortuneBookRepo fortuneBookRepo;
-    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
+    private final FinanceOrderReportService financeOrderReportService;
     private final FortuneBalanceSnapshotRepo fortuneBalanceSnapshotRepo;
     private final SysConfigRepo sysConfigRepo;
 
@@ -82,7 +82,7 @@ public class FortuneIncludeService {
         BillStatisticsVo periodStatistics = normalize(fortuneBillService.getBillStatistics(billQuery));
         BillStatisticsVo previousStatistics = normalize(fortuneBillService.getBillStatistics(toFortuneBillQuery(periodQuery, previous)));
         FortuneAssetsLiabilitiesVo assetsLiabilities = fortuneAccountService.getFortuneAssetsLiabilities(groupId);
-        LoanOverviewVo loanOverview = getLoanOverview(query.getBookId());
+        LoanOverviewVo loanOverview = financeOrderReportService.getLoanOverview(query.getBookId());
 
         DashboardVo vo = new DashboardVo();
         vo.setPeriod(periodStatistics);
@@ -111,19 +111,6 @@ public class FortuneIncludeService {
     public List<FortuneBarVo> getMemberInclude(BillIncludeQuery query) {
         BillIncludeQuery normalized = normalizeBillQuery(query, BillTypeEnum.EXPENSE.getValue());
         return fortuneBillRepo.getMemberInclude(normalized);
-    }
-
-    public LoanOverviewVo getLoanOverview(Long bookId) {
-        List<LoanDetailVo> receivables = fortuneBillRepo.getLoanReceivableDetails(bookId);
-        List<LoanDetailVo> payables = fortuneBillRepo.getLoanPayableDetails(bookId);
-
-        LoanOverviewVo vo = new LoanOverviewVo();
-        vo.setTotalReceivable(sumLoanAmount(receivables));
-        vo.setTotalPayable(sumLoanAmount(payables));
-        vo.setReceivableCount(receivables.size());
-        vo.setPayableCount(payables.size());
-        vo.setTopReceivables(receivables.stream().limit(DEFAULT_TOP_N).toList());
-        return vo;
     }
 
     public List<BillCompareVo> getBillCompare(BillCompareQuery query) {
@@ -198,9 +185,6 @@ public class FortuneIncludeService {
         return completePeriodSeries(fortuneBalanceSnapshotRepo.getAccountBalanceTrend(query.getAccountId(), periodType), periodType);
     }
 
-    public List<FinanceProfitVo> getFinanceProfit(Long bookId, FinanceProfitQuery query) {
-        return fortuneFinanceOrderRepo.getFinanceProfit(bookId, query);
-    }
 
     public IncludePolicyVo getIncludePolicy() {
         IncludePolicyVo vo = new IncludePolicyVo();

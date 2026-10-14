@@ -3,6 +3,7 @@ package com.fortuneboot.service.fortune;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.common.exception.error.ErrorCode;
@@ -228,10 +229,16 @@ public class FortuneCategoryService {
     }
 
     public List<FortuneCategoryEntity> getEnableCategoryList(Long bookId, Integer billType) {
-        CategoryTypeEnum categoryTypeEnum = CategoryTypeEnum.getByValue(billType);
+        BillTypeEnum billTypeEnum = BillTypeEnum.getByValue(billType);
+        if (billTypeEnum != null && billTypeEnum.isLoanType()) {
+            return Collections.emptyList();
+        }
+        CategoryTypeEnum categoryTypeEnum = billTypeEnum == null
+                ? null
+                : billTypeEnum.getCategoryType();
         switch (categoryTypeEnum) {
             case INCOME, EXPENSE -> {
-                return fortuneCategoryRepo.getEnableCategoryList(bookId, billType);
+                return fortuneCategoryRepo.getEnableCategoryList(bookId, categoryTypeEnum.getValue());
             }
             case null -> {
                 return fortuneCategoryRepo.getEnableCategoryList(bookId, null);

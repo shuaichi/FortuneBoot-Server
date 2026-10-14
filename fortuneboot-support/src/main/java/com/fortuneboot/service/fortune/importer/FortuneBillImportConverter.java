@@ -1,6 +1,9 @@
 package com.fortuneboot.service.fortune.importer;
 
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.common.exception.ApiException;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillExtraAddCommand;
@@ -65,7 +68,7 @@ public class FortuneBillImportConverter {
             fillExtras(row, context, command);
             validateExtraCategories(row, command);
             validateExtraNetAmount(row, command, source);
-            validateTypeRules(row, command, source);
+            validateTypeRules(row, context, command, source);
         }
 
         row.setCommand(command);
@@ -380,7 +383,8 @@ public class FortuneBillImportConverter {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private void validateTypeRules(FortuneBillImportRow row, FortuneBillAddCommand command, FortuneBillImportExcelVo source) {
+    private void validateTypeRules(FortuneBillImportRow row, FortuneBillImportContext context,
+                                   FortuneBillAddCommand command, FortuneBillImportExcelVo source) {
         if (Objects.equals(command.getBillType(), BillTypeEnum.TRANSFER.getValue())) {
             if (Objects.isNull(command.getAccountId())) {
                 row.addError("第" + row.getRowNum() + "行：转账必须填写账户");
@@ -402,8 +406,35 @@ public class FortuneBillImportConverter {
                 && Objects.isNull(command.getOrderId())) {
             row.addError("第" + row.getRowNum() + "行：垫付和报销必须填写单据ID");
         }
+        if (Objects.equals(command.getBillType(), BillTypeEnum.ADVANCE.getValue())
+                || Objects.equals(command.getBillType(), BillTypeEnum.REIMBURSE.getValue())) {
+            validateOrderForImport(row, context, command);
+        }
         if (StringUtils.isNotBlank(source.getFiles())) {
             row.addError("第" + row.getRowNum() + "行：账单Excel导入暂不支持附件，请清空后重试");
+        }
+    }
+
+    private void validateOrderForImport(FortuneBillImportRow row, FortuneBillImportContext context,
+                                        FortuneBillAddCommand command) {
+        if (Objects.isNull(command.getOrderId())) {
+            return;
+        }
+        FortuneFinanceOrderEntity order = context.getOrderMap().get(command.getOrderId());
+        if (Objects.isNull(order) || !Objects.equals(order.getBookId(), command.getBookId())) {
+            row.addError("第" + row.getRowNum() + "行：单据不存在或不属于当前账本");
+            return;
+        }
+        if (!Objects.equals(order.getType(), FinanceOrderTypeEnum.EXPENSE_CLAIM.getValue())) {
+            row.addError("第" + row.getRowNum() + "行：垫付和报销只能关联费用报销单");
+        }
+        if (!Objects.equals(order.getStatus(), FinanceOrderStatusEnum.INIT.getValue())
+                && !Objects.equals(order.getStatus(), FinanceOrderStatusEnum.USING.getValue())) {
+            row.addError("第" + row.getRowNum() + "行：单据状态只允许草稿或进行中");
+        }
+        if (!Objects.equals(order.getReconciliationStatus(),
+                FinanceOrderReconciliationStatusEnum.READY.getValue())) {
+            row.addError("第" + row.getRowNum() + "行：单据待核对，不能导入流水");
         }
     }
 

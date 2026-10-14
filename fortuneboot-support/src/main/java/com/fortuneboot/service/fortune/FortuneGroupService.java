@@ -26,6 +26,7 @@ import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneGroupRepo;
 import com.fortuneboot.repository.fortune.FortuneUserGroupRelationRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import com.fortuneboot.repository.system.SysUserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -76,6 +77,8 @@ public class FortuneGroupService {
      */
     private final FortuneBookRepo fortuneBookRepo;
 
+    private final FinanceOrderReferenceGuard financeOrderReferenceGuard;
+
     /**
      * 用户repo
      */
@@ -124,6 +127,10 @@ public class FortuneGroupService {
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long groupId) {
         FortuneGroupModel fortuneGroupModel = fortuneGroupFactory.loadById(groupId);
+        financeOrderReferenceGuard.lockGroupScope(groupId);
+        List<FortuneBookEntity> bookList = fortuneBookService.getByGroupId(groupId);
+        List<Long> bookIds = bookList.stream().map(FortuneBookEntity::getBookId).toList();
+        financeOrderReferenceGuard.ensureBooksHaveNoOrderHistory(bookIds);
         fortuneGroupModel.deleteById();
         fortuneUserGroupRelationRepo.removeByGroupId(groupId);
         fortuneBookService.removeByGroupId(groupId);

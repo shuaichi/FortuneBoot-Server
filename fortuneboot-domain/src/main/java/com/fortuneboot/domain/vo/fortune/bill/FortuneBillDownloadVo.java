@@ -2,6 +2,7 @@ package com.fortuneboot.domain.vo.fortune.bill;
 
 import com.fortuneboot.common.annotation.ExcelColumn;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
+import com.fortuneboot.common.enums.fortune.FinanceOrderTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import lombok.Data;
@@ -40,6 +41,10 @@ public class FortuneBillDownloadVo {
             this.accountName = bo.getAccountName() + " -> " + bo.getToAccountName();
         }
         this.hasFileDesc = bo.getHasFile() ? "是" : "否";
+        this.orderTypeDesc = FinanceOrderTypeEnum.getDescByValue(bo.getOrderType());
+        this.orderConfirm = Boolean.TRUE.equals(bo.getConfirm()) ? "是" : "否";
+        this.orderVoided = Boolean.TRUE.equals(bo.getRecycleBin()) ? "是" : "否";
+        this.orderCurrencyCode = bo.getOrderCurrencyCode();
     }
 
     /**
@@ -130,5 +135,23 @@ public class FortuneBillDownloadVo {
      */
     @ExcelColumn(name = "备注")
     private String remark;
+
+    @ExcelColumn(name = "单据ID")
+    private Long orderId;
+
+    @ExcelColumn(name = "单据类型")
+    private String orderTypeDesc;
+
+    @ExcelColumn(name = "单据组件")
+    private String orderComponent;
+
+    @ExcelColumn(name = "确认状态")
+    private String orderConfirm;
+
+    @ExcelColumn(name = "作废状态")
+    private String orderVoided;
+
+    @ExcelColumn(name = "单据币种")
+    private String orderCurrencyCode;
 
 }

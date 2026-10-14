@@ -67,6 +67,16 @@ public class FortuneBillBo {
     private Long orderId;
 
     /**
+     * 单据类型
+     */
+    private Integer orderType;
+
+    /**
+     * 单据币种
+     */
+    private String orderCurrencyCode;
+
+    /**
      * 账户
      */
     @ExcelColumn(name = "账户")
@@ -145,6 +155,21 @@ public class FortuneBillBo {
      * 是否统计
      */
     private Boolean include;
+
+    /**
+     * 单据组件
+     */
+    private String orderComponent;
+
+    /**
+     * 单据账本版本
+     */
+    private Integer orderLedgerVersion;
+
+    /**
+     * 是否作废
+     */
+    private Boolean recycleBin;
 
     /**
      * 备注

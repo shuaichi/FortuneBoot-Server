@@ -3,6 +3,7 @@ package com.fortuneboot.service.fortune.snapshot;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBillExtraEntity;
+import com.fortuneboot.service.fortune.order.FinanceOrderCashEffectCalculator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,9 @@ public class FortuneBillBalanceDeltaCalculator {
     private static final int ACCOUNT_SIDE_FROM = 1;
     private static final int ACCOUNT_SIDE_TO = 2;
 
+    private final FinanceOrderCashEffectCalculator financeOrderCashEffectCalculator =
+            new FinanceOrderCashEffectCalculator();
+
     public List<AccountBalanceChange> calculate(FortuneBillEntity bill, List<FortuneBillExtraEntity> extras) {
         if (bill == null || bill.getTradeTime() == null) {
             return Collections.emptyList();
@@ -36,6 +40,11 @@ public class FortuneBillBalanceDeltaCalculator {
             return Collections.emptyList();
         }
         LocalDate tradeDate = bill.getTradeTime().toLocalDate();
+        if (Integer.valueOf(1).equals(bill.getOrderLedgerVersion())) {
+            return financeOrderCashEffectCalculator.calculate(bill).entrySet().stream()
+                    .map(entry -> new AccountBalanceChange(entry.getKey(), tradeDate, entry.getValue()))
+                    .toList();
+        }
         return switch (billType) {
             case EXPENSE -> expenseChange(bill, extras, tradeDate);
             case INCOME -> accountChange(bill.getAccountId(), tradeDate, amount(bill.getAmount()));

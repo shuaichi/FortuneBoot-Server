@@ -7,6 +7,7 @@ import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.FortuneCategoryRelationAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneTagRelationAddCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
@@ -17,6 +18,7 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.factory.fortune.factory.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
+import com.fortuneboot.service.fortune.order.FortuneBillOrderPipelineAdapter;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
 import com.fortuneboot.strategy.bill.BillStrategyFactory;
@@ -51,6 +53,8 @@ import java.util.stream.IntStream;
 public class FortuneBillService {
 
     private final FortuneBillRepo fortuneBillRepo;
+
+    private final FortuneFinanceOrderRepo fortuneFinanceOrderRepo;
 
     private final FortuneBillFactory fortuneBillFactory;
 
@@ -95,6 +99,7 @@ public class FortuneBillService {
     private final FortuneBillExtraService fortuneBillExtraService;
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
     private final FortuneBillExtraCategoryValidator extraCategoryValidator;
+    private final FortuneBillOrderPipelineAdapter orderPipelineAdapter;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -113,6 +118,7 @@ public class FortuneBillService {
         this.fillTag(list);
         this.fillMember(list);
         this.fillPayee(list);
+        this.fillOrder(list);
         // 批量填充是否存在附件，避免N+1
         this.fillHasFiles(list);
         // 批量填充附加费用（手续费/优惠）
@@ -245,6 +251,27 @@ public class FortuneBillService {
         }
     }
 
+    private void fillOrder(List<FortuneBillBo> list) {
+        List<Long> orderIds = list.stream()
+                .map(FortuneBillBo::getOrderId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return;
+        }
+        Map<Long, FortuneFinanceOrderEntity> orderMap = fortuneFinanceOrderRepo.listByIds(orderIds).stream()
+                .collect(Collectors.toMap(FortuneFinanceOrderEntity::getOrderId, Function.identity()));
+        for (FortuneBillBo billBo : list) {
+            FortuneFinanceOrderEntity order = orderMap.get(billBo.getOrderId());
+            if (order == null) {
+                continue;
+            }
+            billBo.setOrderType(order.getType());
+            billBo.setOrderCurrencyCode(order.getCurrencyCode());
+        }
+    }
+
     /**
      * 批量填充附加费用（手续费/优惠），避免N+1
      */
@@ -264,6 +291,9 @@ public class FortuneBillService {
 
     @Transactional(rollbackFor = Exception.class)
     public Long add(FortuneBillAddCommand addCommand) {
+        if (orderPipelineAdapter.isOrderEntry(addCommand)) {
+            return orderPipelineAdapter.mutate(FinanceOrderEntryMutation.Operation.ADD, addCommand, null);
+        }
         extraCategoryValidator.validate(addCommand);
         // 主模型操作
         FortuneBillModel fortuneBillModel = fortuneBillFactory.create();
@@ -371,6 +401,12 @@ public class FortuneBillService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void modify(FortuneBillModifyCommand modifyCommand) {
+        FortuneBillModel originalBillForPipeline = fortuneBillFactory.loadById(modifyCommand.getBillId());
+        if (orderPipelineAdapter.isOrderEntry(originalBillForPipeline, modifyCommand)) {
+            orderPipelineAdapter.mutate(FinanceOrderEntryMutation.Operation.MODIFY, modifyCommand,
+                    modifyCommand.getBillId());
+            return;
+        }
         extraCategoryValidator.validate(modifyCommand);
         // 1. 加载原账单
         FortuneBillModel originalBill = fortuneBillFactory.loadById(modifyCommand.getBillId());
@@ -391,6 +427,7 @@ public class FortuneBillService {
 
         // 3. 更新账单主体信息
         originalBill.loadModifyCommand(modifyCommand);
+        strategy = strategyFactory.getStrategy(originalBill.getBillType());
 
         // 4. 交易对象校验
         if (Objects.nonNull(modifyCommand.getPayeeId())) {
@@ -447,6 +484,10 @@ public class FortuneBillService {
     public void remove(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.VOID);
+            return;
+        }
         // 账户金额回滚
         this.refundBalance(fortuneBillModel);
         // 回滚单据
@@ -574,6 +615,10 @@ public class FortuneBillService {
     public void confirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.CONFIRM);
+            return;
+        }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setConfirm(Boolean.TRUE);
 
@@ -589,6 +634,10 @@ public class FortuneBillService {
     public void unConfirm(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.mutateState(fortuneBillModel, FinanceOrderEntryMutation.Operation.UNCONFIRM);
+            return;
+        }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
         this.refundBalance(fortuneBillModel);
         fortuneBillModel.setConfirm(Boolean.FALSE);
@@ -598,6 +647,10 @@ public class FortuneBillService {
     public void include(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.legacyInclude(bookId, billId, true);
+            return;
+        }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setInclude(Boolean.TRUE);
         fortuneBillModel.updateById();
@@ -606,6 +659,10 @@ public class FortuneBillService {
     public void exclude(Long bookId, Long billId) {
         FortuneBillModel fortuneBillModel = fortuneBillFactory.loadById(billId);
         fortuneBillModel.checkBookId(bookId);
+        if (orderPipelineAdapter.isManagedOrderBill(fortuneBillModel)) {
+            orderPipelineAdapter.legacyInclude(bookId, billId, false);
+            return;
+        }
         fortuneBillModel.checkBillTypeConfirmAndInclude();
         fortuneBillModel.setInclude(Boolean.FALSE);
         fortuneBillModel.updateById();
@@ -613,7 +670,14 @@ public class FortuneBillService {
 
     public BillStatisticsVo getBillStatistics(FortuneBillQuery query) {
         query.setInclude(Boolean.TRUE);
-        return fortuneBillRepo.getBillStatistics(query);
+        BillStatisticsVo statistics = fortuneBillRepo.getBillStatistics(query);
+        if (statistics == null) {
+            statistics = new BillStatisticsVo();
+        }
+        statistics.setIncome(Objects.requireNonNullElse(statistics.getIncome(), BigDecimal.ZERO));
+        statistics.setExpense(Objects.requireNonNullElse(statistics.getExpense(), BigDecimal.ZERO));
+        statistics.setSurplus(Objects.requireNonNullElse(statistics.getSurplus(), BigDecimal.ZERO));
+        return statistics;
     }
 
     public List<FortuneLineVo> getExpenseTrends(BillTrendsQuery billTrendsQuery) {
@@ -709,4 +773,5 @@ public class FortuneBillService {
     public List<FortunePieVo> getPayeeIncome(PayeeIncludeQuery query) {
         return fortuneBillRepo.getPayeeInclude(CategoryTypeEnum.INCOME, query);
     }
+
 }

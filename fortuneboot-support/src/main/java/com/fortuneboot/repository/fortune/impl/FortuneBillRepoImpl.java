@@ -8,12 +8,16 @@ import com.fortuneboot.common.enums.fortune.CategoryTypeEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.dao.fortune.FortuneBillMapper;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
+import com.fortuneboot.domain.query.fortune.order.FinanceOrderEntryQuery;
+import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageUtil;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import org.apache.commons.collections4.CollectionUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -98,10 +102,64 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     }
 
     @Override
+    public List<FortuneBillEntity> listByBookIdIncludeDeleted(Long bookId) {
+        return fortuneBillMapper.listByBookIdIncludeDeleted(bookId);
+    }
+
+    @Override
+    public boolean existAnyAccountReferenceIncludeDeleted(Long accountId) {
+        return fortuneBillMapper.countAccountReferencesIncludeDeleted(accountId) > 0;
+    }
+
+    @Override
+    public boolean existAnyPayeeReferenceIncludeDeleted(Long payeeId) {
+        return fortuneBillMapper.countPayeeReferencesIncludeDeleted(payeeId) > 0;
+    }
+
+    @Override
+    public Boolean existAnyByOrderIdIncludeDeleted(Long orderId) {
+        return fortuneBillMapper.countByOrderIdIncludeDeleted(orderId) > 0;
+    }
+
+    @Override
+    public List<Long> listOrderIdsWithAnyBillIncludeDeleted(List<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return List.of();
+        }
+        return fortuneBillMapper.listOrderIdsWithAnyBillIncludeDeleted(orderIds);
+    }
+
+    @Override
     public List<FortuneBillEntity> getByOrderId(Long orderId) {
         LambdaQueryWrapper<FortuneBillEntity> queryWrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
         queryWrapper.eq(FortuneBillEntity::getOrderId, orderId);
         return this.list(queryWrapper);
+    }
+
+    @Override
+    public Page<FortuneBillEntity> pageByEntryQuery(FinanceOrderEntryQuery query) {
+        LambdaQueryWrapper<FortuneBillEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
+        wrapper.eq(FortuneBillEntity::getOrderId, query.getOrderId());
+        FinanceOrderEntryQuery.EntryStatus entryStatus = query.getEntryStatus();
+        if (entryStatus == FinanceOrderEntryQuery.EntryStatus.ACTIVE) {
+            wrapper.eq(FortuneBillEntity::getRecycleBin, false);
+        } else if (entryStatus == FinanceOrderEntryQuery.EntryStatus.VOIDED) {
+            wrapper.eq(FortuneBillEntity::getRecycleBin, true);
+        }
+        wrapper.orderByDesc(FortuneBillEntity::getTradeTime)
+                .orderByDesc(FortuneBillEntity::getBillId);
+        return this.page(new Page<>(FinanceOrderPageUtil.pageNum(query.getPageNum()),
+                FinanceOrderPageUtil.pageSize(query.getPageSize())), wrapper);
+    }
+
+    @Override
+    public List<FortuneBillEntity> listByOrderIds(Collection<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return List.of();
+        }
+        LambdaQueryWrapper<FortuneBillEntity> wrapper = WrapperUtil.getLambdaQueryWrapper(FortuneBillEntity.class);
+        wrapper.in(FortuneBillEntity::getOrderId, orderIds);
+        return this.list(wrapper);
     }
 
     @Override
@@ -142,16 +200,6 @@ public class FortuneBillRepoImpl extends ServiceImpl<FortuneBillMapper, FortuneB
     @Override
     public List<BillTypeDistributionVo> getBillTypeDistribution(BillIncludeQuery query) {
         return fortuneBillMapper.getBillTypeDistribution(query);
-    }
-
-    @Override
-    public List<LoanDetailVo> getLoanReceivableDetails(Long bookId) {
-        return fortuneBillMapper.getLoanReceivableDetails(bookId);
-    }
-
-    @Override
-    public List<LoanDetailVo> getLoanPayableDetails(Long bookId) {
-        return fortuneBillMapper.getLoanPayableDetails(bookId);
     }
 
     @Override

@@ -26,6 +26,8 @@
         WHERE deleted = 0
             AND book_id = #{billTrendsQuery.bookId}
             AND include = TRUE
+            AND recycle_bin = 0
+            AND (order_id IS NULL OR (order_ledger_version = 1 AND recycle_bin = 0 AND confirm = 1 AND include = 1))
             AND bill_type = #{billTrendsQuery.billType}
         <choose>
             <when test="billTrendsQuery.timeGranularity == 1">
@@ -65,6 +67,8 @@
         WHERE deleted = 0
             AND book_id = #{billTrendsQuery.bookId}
             AND include = 1
+            AND recycle_bin = 0
+            AND (order_id IS NULL OR (order_ledger_version = 1 AND recycle_bin = 0 AND confirm = 1 AND include = 1))
             AND bill_type = #{billTrendsQuery.billType}
         <choose>
             <when test="billTrendsQuery.timeGranularity == 1">
@@ -86,6 +90,9 @@
 
     <!-- ==================== 公共 SQL 片段 ==================== -->
     <sql id="categoryIncludeFilter">
+        AND b.recycle_bin = 0
+        AND (b.order_id IS NULL OR (b.order_ledger_version = 1 AND b.recycle_bin = 0
+            AND b.confirm = 1 AND b.include = 1))
         <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
         <if test='query.startDate != null'> AND b.trade_time >= #{query.startDate}</if>
         <if test='query.accountIds != null and query.accountIds.size() > 0'>
@@ -168,6 +175,9 @@
 
     <!-- ==================== 公共 SQL 片段 - 标签/对象查询条件 ==================== -->
     <sql id="tagPayeeBaseFilter">
+        AND b.recycle_bin = 0
+        AND (b.order_id IS NULL OR (b.order_ledger_version = 1 AND b.recycle_bin = 0
+            AND b.confirm = 1 AND b.include = 1))
         <if test='query.bookId != null'> AND b.book_id = #{query.bookId} </if>
         <if test='query.startDate != null'> AND b.trade_time >= #{query.startDate} </if>
         <if test='query.accountIds != null and query.accountIds.size() > 0'>
@@ -272,6 +282,9 @@
 
     <!-- ==================== 统计模块公共查询条件 ==================== -->
     <sql id="billIncludeBaseFilter">
+        AND b.recycle_bin = 0
+        AND (b.order_id IS NULL OR (b.order_ledger_version = 1 AND b.recycle_bin = 0
+            AND b.confirm = 1 AND b.include = 1))
         <if test='query.bookId != null'> AND b.book_id = #{query.bookId}</if>
         <if test='query.startDate != null'> AND b.trade_time &gt;= #{query.startDate}</if>
         <if test='query.accountIds != null and query.accountIds.size() &gt; 0'>
@@ -302,6 +315,9 @@
     </sql>
 
     <sql id="billIncludeBaseFilterForB2">
+        AND b2.recycle_bin = 0
+        AND (b2.order_id IS NULL OR (b2.order_ledger_version = 1 AND b2.recycle_bin = 0
+            AND b2.confirm = 1 AND b2.include = 1))
         <if test='query.bookId != null'> AND b2.book_id = #{query.bookId}</if>
         <if test='query.startDate != null'> AND b2.trade_time &gt;= #{query.startDate}</if>
         <if test='query.accountIds != null and query.accountIds.size() &gt; 0'>
@@ -583,6 +599,7 @@
             FROM fortune_bill b
             WHERE b.deleted = 0
               AND b.include = TRUE
+              AND b.bill_type IN (1, 2, 3, 4, 5, 6)
               <include refid="billIncludeBaseFilter"/>
               <if test='query.title != null and query.title != ""'> AND b.title LIKE CONCAT('%', #{query.title}, '%')</if>
               <if test='query.endDate != null'> AND b.trade_time &lt;= CONCAT(#{query.endDate}, ' 23:59:59')</if>
@@ -601,6 +618,7 @@
             FROM fortune_bill b
             WHERE b.deleted = 0
               AND b.include = 1
+              AND b.bill_type IN (1, 2, 3, 4, 5, 6)
               <include refid="billIncludeBaseFilter"/>
               <if test='query.title != null and query.title != ""'> AND b.title LIKE '%' || #{query.title} || '%'</if>
               <if test='query.endDate != null'> AND b.trade_time &lt;= #{query.endDate} || ' 23:59:59'</if>
@@ -611,55 +629,6 @@
                     ELSE CAST(value AS REAL) / (SELECT total_amount FROM total) * 100 END AS percent
         FROM type_amount
         ORDER BY billType ASC
-    </select>
-
-    <!-- ==================== getLoanOverview helpers ==================== -->
-    <select id="getLoanReceivableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanReceivableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 9 THEN b.amount WHEN b.bill_type = 10 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (9, 10)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanPayableDetails" databaseId="mysql" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = TRUE AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
-    </select>
-
-    <select id="getLoanPayableDetails" databaseId="sqlite" resultType="com.fortuneboot.domain.vo.fortune.include.LoanDetailVo">
-        SELECT COALESCE(p.payee_name, '未设置交易对象') AS payeeName,
-               SUM(CASE WHEN b.bill_type = 11 THEN b.amount WHEN b.bill_type = 12 THEN -b.amount ELSE 0 END) AS amount,
-               MAX(b.trade_time) AS lastTradeTime
-        FROM fortune_bill b
-        LEFT JOIN fortune_payee p ON b.payee_id = p.payee_id AND p.deleted = 0
-        WHERE b.deleted = 0 AND b.include = 1 AND b.book_id = #{bookId} AND b.bill_type IN (11, 12)
-        GROUP BY b.payee_id, p.payee_name
-        HAVING amount &gt; 0
-        ORDER BY amount DESC
     </select>
 
     <select id="getMaxSingleExpense" databaseId="mysql" resultType="java.math.BigDecimal">

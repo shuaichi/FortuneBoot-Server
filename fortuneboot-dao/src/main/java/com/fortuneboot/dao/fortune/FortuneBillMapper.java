@@ -10,6 +10,7 @@ import com.fortuneboot.domain.vo.fortune.include.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,6 +20,32 @@ import java.util.List;
  * @Date 2024/6/3 23:27
  **/
 public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
+
+    @Select("select count(*) from fortune_bill where order_id = #{orderId}")
+    int countByOrderIdIncludeDeleted(@Param("orderId") Long orderId);
+
+    @Select("select * from fortune_bill where book_id = #{bookId} order by bill_id")
+    List<FortuneBillEntity> listByBookIdIncludeDeleted(@Param("bookId") Long bookId);
+
+    @Select("""
+            select count(*) from fortune_bill
+            where account_id = #{accountId} or to_account_id = #{accountId}
+            """)
+    int countAccountReferencesIncludeDeleted(@Param("accountId") Long accountId);
+
+    @Select("select count(*) from fortune_bill where payee_id = #{payeeId}")
+    int countPayeeReferencesIncludeDeleted(@Param("payeeId") Long payeeId);
+
+    @Select("""
+            <script>
+            select distinct order_id from fortune_bill
+            where order_id in
+            <foreach collection="orderIds" item="orderId" open="(" separator="," close=")">
+                #{orderId}
+            </foreach>
+            </script>
+            """)
+    List<Long> listOrderIdsWithAnyBillIncludeDeleted(@Param("orderIds") Collection<Long> orderIds);
 
     @Select("""
             SELECT\n
@@ -110,16 +137,6 @@ public interface FortuneBillMapper extends BaseMapper<FortuneBillEntity> {
      * 账单类型分布
      */
     List<BillTypeDistributionVo> getBillTypeDistribution(@Param("query") BillIncludeQuery query);
-
-    /**
-     * 借贷待收明细
-     */
-    List<LoanDetailVo> getLoanReceivableDetails(@Param("bookId") Long bookId);
-
-    /**
-     * 借贷待还明细
-     */
-    List<LoanDetailVo> getLoanPayableDetails(@Param("bookId") Long bookId);
 
     /**
      * 最大单笔支出
