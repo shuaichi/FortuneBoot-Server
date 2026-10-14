@@ -12,6 +12,7 @@ import com.fortuneboot.factory.fortune.factory.FortuneAccountFactory;
 import com.fortuneboot.factory.fortune.factory.FortuneGroupFactory;
 import com.fortuneboot.repository.fortune.FortuneAccountRepo;
 import com.fortuneboot.repository.fortune.FortuneBillRepo;
+import com.fortuneboot.service.fortune.order.FinanceOrderReferenceGuard;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +31,7 @@ class FortuneAccountServiceCreditCardIconTest {
         fortuneAccountRepo,
         mock(FortuneAccountFactory.class),
         mock(FortuneBillRepo.class),
+        mock(FinanceOrderReferenceGuard.class),
         mock(FortuneBillService.class),
         mock(FortuneGroupFactory.class),
         mock(ApplicationScopeBo.class));

@@ -30,6 +30,7 @@ import com.fortuneboot.repository.fortune.FortuneBookRepo;
 import com.fortuneboot.repository.fortune.FortuneCategoryRelationRepo;
 import com.fortuneboot.repository.fortune.FortuneCategoryRepo;
 import com.fortuneboot.repository.fortune.FortuneFileRepo;
+import com.fortuneboot.repository.fortune.FortuneFinanceOrderRepo;
 import com.fortuneboot.repository.fortune.FortuneMemberRelationRepo;
 import com.fortuneboot.repository.fortune.FortuneMemberRepo;
 import com.fortuneboot.repository.fortune.FortunePayeeRepo;
@@ -41,6 +42,7 @@ import com.fortuneboot.service.fortune.FortuneBillService;
 import com.fortuneboot.service.fortune.FortuneCategoryRelationService;
 import com.fortuneboot.service.fortune.FortuneFileService;
 import com.fortuneboot.service.fortune.FortuneMemberRelationService;
+import com.fortuneboot.service.fortune.order.FortuneBillOrderPipelineAdapter;
 import com.fortuneboot.service.fortune.FortuneTagRelationService;
 import com.fortuneboot.strategy.bill.BillStrategyFactory;
 import java.math.BigDecimal;
@@ -88,6 +90,7 @@ class FortuneBillServiceIconTest {
 
     private final FortuneBillService fortuneBillService = new FortuneBillService(
         fortuneBillRepo,
+        mock(FortuneFinanceOrderRepo.class),
         fortuneBillFactory,
         fortuneAccountFactory,
         fortuneTagRelationService,
@@ -112,7 +115,8 @@ class FortuneBillServiceIconTest {
         fortuneMemberFactory,
         fortuneBillExtraService,
         fortuneBillExtraRepo,
-        extraCategoryValidator);
+        extraCategoryValidator,
+        mock(FortuneBillOrderPipelineAdapter.class));
 
     @Test
     @DisplayName("账单列表应批量填充账户、转入账户、交易对象和分类图标")
