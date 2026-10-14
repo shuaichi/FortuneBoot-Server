@@ -3,6 +3,8 @@ package com.fortuneboot.fortune;
 import com.fortuneboot.common.core.page.PageDTO;
 import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.integrationTest.IntegrationTestApplication;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -15,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author zhangchi118
@@ -31,6 +35,21 @@ public class FortuneBillServiceTest {
      */
     @Resource
     private FortuneBillService fortuneBillService;
+
+    @Test
+    public void testListImportExcelRows() {
+        FortuneBillQuery query = new FortuneBillQuery();
+        query.setBookId(1L);
+        List<FortuneBillImportExcelVo> rows = fortuneBillService.listImportExcelRows(query);
+        log.info("[testListImportExcelRows] rows = {}", rows);
+        assertThat(rows).allSatisfy(row -> {
+            assertThat(row.getBillType()).isNotBlank();
+            if (row.getExtras() != null) {
+                assertThat(row.getExtras())
+                        .matches("^((手续费|优惠):[^:]+:(转出账户|转入账户):[^；]*)(；(手续费|优惠):[^:]+:(转出账户|转入账户):[^；]*)*$");
+            }
+        });
+    }
 
     @Test
     public void testGetCategoryExpense() {

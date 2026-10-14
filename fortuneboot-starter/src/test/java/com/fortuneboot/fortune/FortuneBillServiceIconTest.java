@@ -42,6 +42,7 @@ import com.fortuneboot.service.fortune.FortuneBillService;
 import com.fortuneboot.service.fortune.FortuneCategoryRelationService;
 import com.fortuneboot.service.fortune.FortuneFileService;
 import com.fortuneboot.service.fortune.FortuneMemberRelationService;
+import com.fortuneboot.service.fortune.exporter.FortuneBillImportExcelExporter;
 import com.fortuneboot.service.fortune.order.FortuneBillOrderPipelineAdapter;
 import com.fortuneboot.service.fortune.FortuneTagRelationService;
 import com.fortuneboot.strategy.bill.BillStrategyFactory;
@@ -116,7 +117,8 @@ class FortuneBillServiceIconTest {
         fortuneBillExtraService,
         fortuneBillExtraRepo,
         extraCategoryValidator,
-        mock(FortuneBillOrderPipelineAdapter.class));
+        mock(FortuneBillOrderPipelineAdapter.class),
+        mock(FortuneBillImportExcelExporter.class));
 
     @Test
     @DisplayName("账单列表应批量填充账户、转入账户、交易对象和分类图标")

@@ -62,6 +62,7 @@
                     <skipTests>false</skipTests>
                     <includes>
                         <include>**/service/fortune/importer/*Test.java</include>
+                        <include>**/service/fortune/exporter/*Test.java</include>
                     </includes>
                 </configuration>
             </plugin>

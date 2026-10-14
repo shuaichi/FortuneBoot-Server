@@ -11,6 +11,7 @@ import com.fortuneboot.domain.command.fortune.FortuneBillAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneBillModifyCommand;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillDownloadVo;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportResultVo;
 import com.fortuneboot.domain.vo.fortune.bill.FortuneBillVo;
 import com.fortuneboot.service.fortune.FortuneBillService;
@@ -40,6 +41,12 @@ import java.util.List;
 @RequestMapping("/fortune/bill")
 @Tag(name = "账单API", description = "账单相关的增删查改")
 public class FortuneBillRest {
+
+    /**
+     * 导出单次最大行数，防止一次性加载过多数据导致OOM
+     */
+    private static final int MAX_EXPORT_SIZE = 10000;
+
 
     private final FortuneBillService fortuneBillService;
 
@@ -129,10 +136,22 @@ public class FortuneBillRest {
         query.setPageNum(1);
         query.setRecycleBin(Boolean.FALSE);
         // 限制最大导出数量为 10000，不要使用 Integer.MAX_VALUE，否则可能OOM
-        query.setPageSize(10000);
+        query.setPageSize(MAX_EXPORT_SIZE);
         PageDTO<FortuneBillBo> page = fortuneBillService.getPage(query);
         List<FortuneBillDownloadVo> list = page.getRows().stream().map(FortuneBillDownloadVo::new).toList();
         CustomExcelUtil.writeToResponse(list, FortuneBillDownloadVo.class, response);
+    }
+
+    @Operation(summary = "账单列表导出为可导入格式")
+    @AccessLog(title = "好记-账单管理", businessType = BusinessTypeEnum.EXPORT)
+    @PreAuthorize("@fortune.bookVisitorPermission(#query.getBookId())")
+    @GetMapping("/import/excel")
+    public void exportImportableExcel(HttpServletResponse response, @Valid FortuneBillQuery query) {
+        query.setPageNum(1);
+        query.setRecycleBin(Boolean.FALSE);
+        query.setPageSize(MAX_EXPORT_SIZE);
+        List<FortuneBillImportExcelVo> rows = fortuneBillService.listImportExcelRows(query);
+        CustomExcelUtil.writeToResponse(rows, FortuneBillImportExcelVo.class, response);
     }
 
     @Operation(summary = "账单列表导入")

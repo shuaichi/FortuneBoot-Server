@@ -1,5 +1,7 @@
 package com.fortuneboot.service.fortune.importer;
 
+import com.fortuneboot.common.enums.fortune.BillExtraAccountSideEnum;
+import com.fortuneboot.common.enums.fortune.BillExtraTypeEnum;
 import com.fortuneboot.common.enums.fortune.BillTypeEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderReconciliationStatusEnum;
 import com.fortuneboot.common.enums.fortune.FinanceOrderStatusEnum;
@@ -35,10 +37,6 @@ public class FortuneBillImportConverter {
             BillTypeEnum.ADVANCE.getValue(),
             BillTypeEnum.REIMBURSE.getValue()
     );
-    private static final int EXTRA_TYPE_FEE = 1;
-    private static final int EXTRA_TYPE_DISCOUNT = 2;
-    private static final int ACCOUNT_SIDE_FROM = 1;
-    private static final int ACCOUNT_SIDE_TO = 2;
 
     private final FortuneBillExtraCategoryValidator extraCategoryValidator;
 
@@ -270,7 +268,7 @@ public class FortuneBillImportConverter {
             FortuneBillExtraAddCommand extra = new FortuneBillExtraAddCommand();
             extra.setExtraType(parseExtraType(row, parts[0]));
             extra.setAmount(parsePositiveAmount(row, parts[1], "附加费用金额"));
-            extra.setAccountSide(parts.length > 2 && StringUtils.isNotBlank(parts[2]) ? parseAccountSide(row, parts[2]) : ACCOUNT_SIDE_FROM);
+            extra.setAccountSide(parts.length > 2 && StringUtils.isNotBlank(parts[2]) ? parseAccountSide(row, parts[2]) : BillExtraAccountSideEnum.FROM.getValue());
             if (parts.length > 3 && StringUtils.isNotBlank(parts[3])) {
                 FortuneCategoryEntity category = context.getCategory(command.getBillType(), StringUtils.trim(parts[3]));
                 if (Objects.isNull(category)) {
@@ -291,11 +289,9 @@ public class FortuneBillImportConverter {
 
     private Integer parseExtraType(FortuneBillImportRow row, String value) {
         String text = StringUtils.trim(value);
-        if (Objects.equals(text, "手续费")) {
-            return EXTRA_TYPE_FEE;
-        }
-        if (Objects.equals(text, "优惠")) {
-            return EXTRA_TYPE_DISCOUNT;
+        BillExtraTypeEnum extraType = BillExtraTypeEnum.getByDescription(text);
+        if (Objects.nonNull(extraType)) {
+            return extraType.getValue();
         }
         row.addError("第" + row.getRowNum() + "行：附加费用类型【" + text + "】仅支持手续费或优惠");
         return null;
@@ -303,11 +299,9 @@ public class FortuneBillImportConverter {
 
     private Integer parseAccountSide(FortuneBillImportRow row, String value) {
         String text = StringUtils.trim(value);
-        if (Objects.equals(text, "转出账户")) {
-            return ACCOUNT_SIDE_FROM;
-        }
-        if (Objects.equals(text, "转入账户")) {
-            return ACCOUNT_SIDE_TO;
+        BillExtraAccountSideEnum accountSide = BillExtraAccountSideEnum.getByDescription(text);
+        if (Objects.nonNull(accountSide)) {
+            return accountSide.getValue();
         }
         row.addError("第" + row.getRowNum() + "行：附加费用账户方向【" + text + "】仅支持转出账户或转入账户");
         return null;
@@ -356,8 +350,8 @@ public class FortuneBillImportConverter {
         BigDecimal amount = command.getCategoryAmountPair().stream()
                 .map(CategoryAmountDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal fee = sumExtras(command.getExtras(), EXTRA_TYPE_FEE, null);
-        BigDecimal discount = sumExtras(command.getExtras(), EXTRA_TYPE_DISCOUNT, null);
+        BigDecimal fee = sumExtras(command.getExtras(), BillExtraTypeEnum.FEE.getValue(), null);
+        BigDecimal discount = sumExtras(command.getExtras(), BillExtraTypeEnum.DISCOUNT.getValue(), null);
         if (amount.add(fee).subtract(discount).compareTo(BigDecimal.ZERO) <= 0) {
             row.addError("第" + row.getRowNum() + "行：优惠金额不能大于或等于账单金额与手续费合计");
         }
@@ -367,8 +361,8 @@ public class FortuneBillImportConverter {
         if (Objects.isNull(amount)) {
             return;
         }
-        BigDecimal fromFee = sumExtras(extras, EXTRA_TYPE_FEE, ACCOUNT_SIDE_FROM);
-        BigDecimal fromDiscount = sumExtras(extras, EXTRA_TYPE_DISCOUNT, ACCOUNT_SIDE_FROM);
+        BigDecimal fromFee = sumExtras(extras, BillExtraTypeEnum.FEE.getValue(), BillExtraAccountSideEnum.FROM.getValue());
+        BigDecimal fromDiscount = sumExtras(extras, BillExtraTypeEnum.DISCOUNT.getValue(), BillExtraAccountSideEnum.FROM.getValue());
         if (amount.add(fromFee).subtract(fromDiscount).compareTo(BigDecimal.ZERO) <= 0) {
             row.addError("第" + row.getRowNum() + "行：转出账户侧优惠金额不能大于或等于转账金额与手续费合计");
         }

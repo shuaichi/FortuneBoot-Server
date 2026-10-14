@@ -14,10 +14,12 @@ import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.*;
 import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.bill.BillCategoryAmountVo;
+import com.fortuneboot.domain.vo.fortune.bill.FortuneBillImportExcelVo;
 import com.fortuneboot.domain.vo.fortune.include.*;
 import com.fortuneboot.factory.fortune.factory.*;
 import com.fortuneboot.factory.fortune.model.*;
 import com.fortuneboot.repository.fortune.*;
+import com.fortuneboot.service.fortune.exporter.FortuneBillImportExcelExporter;
 import com.fortuneboot.service.fortune.order.FortuneBillOrderPipelineAdapter;
 import com.fortuneboot.strategy.bill.BillProcessStrategy;
 import com.fortuneboot.strategy.bill.BillStrategyContext;
@@ -100,11 +102,21 @@ public class FortuneBillService {
     private final FortuneBillExtraRepo fortuneBillExtraRepo;
     private final FortuneBillExtraCategoryValidator extraCategoryValidator;
     private final FortuneBillOrderPipelineAdapter orderPipelineAdapter;
+    private final FortuneBillImportExcelExporter importExcelExporter;
 
     private final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
     private final DateTimeFormatter YEAR_FORMATTER = DateTimeFormatter.ofPattern("yyyy");
 
+
+    /**
+     * 查询账单并转换为与导入模板同构的Excel行，用于「可回导」导出。
+     * 展示用导出仍走 FortuneBillDownloadVo，两种格式互不影响。
+     */
+    public List<FortuneBillImportExcelVo> listImportExcelRows(FortuneBillQuery query) {
+        PageDTO<FortuneBillBo> page = this.getPage(query);
+        return importExcelExporter.toImportExcelRows(page.getRows());
+    }
 
     public PageDTO<FortuneBillBo> getPage(FortuneBillQuery query) {
         IPage<FortuneBillEntity> page = fortuneBillRepo.getPage(query.toPage(), query.toQueryWrapper());
