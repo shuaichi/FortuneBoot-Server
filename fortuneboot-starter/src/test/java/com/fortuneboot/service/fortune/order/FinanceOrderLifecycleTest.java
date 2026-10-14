@@ -10,7 +10,10 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
+import com.fortuneboot.service.fortune.FortuneBillService;
 import com.fortuneboot.service.fortune.FortuneFinanceOrderService;
 import com.fortuneboot.infrastructure.user.web.SystemLoginUser;
 import org.junit.jupiter.api.AfterAll;
@@ -54,6 +57,8 @@ class FinanceOrderLifecycleTest {
     @Autowired
     private FortuneFinanceOrderService legacyOrderService;
     @Autowired
+    private FortuneBillService fortuneBillService;
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private FinanceOrderStage03TestSupport.Stage03Fixture fixture;
@@ -94,6 +99,23 @@ class FinanceOrderLifecycleTest {
         assertThatThrownBy(() -> requestService.create(conflict))
                 .isInstanceOfSatisfying(ApiException.class, e ->
                         assertThat(e.getErrorCode()).isEqualTo(ErrorCode.Business.ORDER_REQUEST_CONFLICT));
+    }
+
+    @Test
+    @DisplayName("旧账单页可见include=false本金流水，待确认流水仍不可见")
+    void billPageListsOrderPrincipalEntriesWithoutIncludeFilterButHidesPending() {
+        FinanceOrderMutationVo created = requestService.create(createCommand("借给张三", 2, null, ""));
+        FinanceOrderMutationVo first = addEntry(created.getOrderId(), 0L, 9, "1000.00", fixture.accountIdA(), true, UUID.randomUUID());
+        addEntry(created.getOrderId(), 1L, 9, "500.00", fixture.accountIdA(), false, UUID.randomUUID());
+
+        FortuneBillQuery pageQuery = new FortuneBillQuery();
+        pageQuery.setBookId(fixture.bookIdA());
+        com.fortuneboot.common.core.page.PageDTO<FortuneBillBo> page = fortuneBillService.getPage(pageQuery);
+
+        assertThat(page.getRows()).hasSize(1);
+        assertThat(page.getRows().get(0).getBillId()).isEqualTo(first.getBillId());
+        assertThat(page.getRows().get(0).getBillType()).isEqualTo(9);
+        assertThat(page.getRows().get(0).getInclude()).isFalse();
     }
 
     @Test

@@ -191,15 +191,15 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     }
 
     /**
-     * 单据管线流水的可见性条件：普通流水始终可见，关联流水必须是当前版本且有效参与统计。
+     * 单据管线流水在账单列表的可见性条件：普通流水始终可见，关联流水必须是当前版本、
+     * 未作废且已确认。include 只决定收支统计口径，只读的账单列表不得据此隐藏本金流水。
      */
     private void applyOrderPipelineVisibility(QueryWrapper<FortuneBillEntity> queryWrapper) {
         queryWrapper.apply(
                 "(bill.order_id IS NULL OR (bill.order_ledger_version = {0} AND bill.recycle_bin = {1} "
-                        + "AND bill.confirm = {2} AND bill.include = {3}))",
+                        + "AND bill.confirm = {2}))",
                 FinanceOrderLedgerVersionEnum.CURRENT.getValue(),
                 Boolean.FALSE,
-                Boolean.TRUE,
                 Boolean.TRUE);
     }
 }

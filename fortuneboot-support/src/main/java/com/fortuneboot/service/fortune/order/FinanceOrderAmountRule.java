@@ -25,7 +25,7 @@ public final class FinanceOrderAmountRule {
     public static boolean isValid(BigDecimal amount) {
         return amount != null
                 && amount.compareTo(BigDecimal.ZERO) > 0
-                && amount.scale() <= MAX_SCALE
+                && amount.stripTrailingZeros().scale() <= MAX_SCALE
                 && amount.compareTo(MAX_AMOUNT) <= 0;
     }
 

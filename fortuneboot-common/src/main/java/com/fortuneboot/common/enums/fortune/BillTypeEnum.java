@@ -69,6 +69,32 @@ public enum BillTypeEnum implements BasicEnum<Integer> {
         return this == ADVANCE || this == LOAN_OUT || this == LOAN_IN;
     }
 
+    /**
+     * 分类选择类型：垫付仍使用支出分类，报销到账使用收入分类；
+     * 转账/调整等无分类动作由调用方沿用全部分类的旧行为。
+     */
+    public CategoryTypeEnum getCategoryType() {
+        if (this == ADVANCE) {
+            return CategoryTypeEnum.EXPENSE;
+        }
+        if (this == REIMBURSE) {
+            return CategoryTypeEnum.INCOME;
+        }
+        if (this == LOAN_OUT) {
+            return CategoryTypeEnum.EXPENSE;
+        }
+        if (this == LOAN_RECOVER) {
+            return CategoryTypeEnum.INCOME;
+        }
+        if (this == LOAN_REPAY) {
+            return CategoryTypeEnum.EXPENSE;
+        }
+        if (this == LOAN_IN) {
+            return CategoryTypeEnum.INCOME;
+        }
+        return CategoryTypeEnum.getByValue(value);
+    }
+
     public static boolean isOrderFormationValue(Integer value) {
         return matches(value, BillTypeEnum::isOrderFormation);
     }
