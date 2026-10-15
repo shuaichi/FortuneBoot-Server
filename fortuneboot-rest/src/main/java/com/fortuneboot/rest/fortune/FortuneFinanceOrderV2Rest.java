@@ -11,10 +11,12 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderReconciliationConfirmCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderEntryQuery;
 import com.fortuneboot.domain.rule.fortune.order.FinanceOrderFieldRule;
 import com.fortuneboot.rest.fortune.request.FinanceOrderEntryActionRequest;
+import com.fortuneboot.rest.fortune.request.FinanceOrderReconciliationConfirmRequest;
 import com.fortuneboot.rest.fortune.request.FinanceOrderTransitionRequest;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderOptionQuery;
 import com.fortuneboot.domain.query.fortune.order.FinanceOrderPageQuery;
@@ -99,6 +101,25 @@ public class FortuneFinanceOrderV2Rest {
         response.setContentType("text/csv;charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=finance-order-reconciliation.csv");
         financeOrderReconciliationService.writeCsv(bookId, response.getOutputStream());
+    }
+
+    @Operation(summary = "用户人工确认历史核对单据")
+    @PostMapping("/{bookId}/{orderId}/reconciliation/confirm")
+    @AccessLog(title = "好记-单据管理", businessType = BusinessTypeEnum.MODIFY)
+    @PreAuthorize("@fortune.bookActorPermission(#bookId)")
+    public ResponseDTO<FinanceOrderMutationVo> confirmReconciliation(
+            @PathVariable @Positive Long bookId,
+            @PathVariable @Positive Long orderId,
+            @RequestBody FinanceOrderReconciliationConfirmRequest request) {
+        requirePathMatch(request == null ? null : request.bookId(), bookId);
+        requirePathMatch(request == null ? null : request.orderId(), orderId);
+        FinanceOrderReconciliationConfirmCommand command = new FinanceOrderReconciliationConfirmCommand();
+        command.setBookId(bookId);
+        command.setOrderId(orderId);
+        command.setRequestId(request == null || request.requestId() == null ? null : request.requestId());
+        command.setExpectedVersion(request == null ? null : request.expectedVersion());
+        requireReconciliationConfirmCommand(command);
+        return ResponseDTO.ok(financeOrderRequestService.confirmReconciliation(command));
     }
 
     @Operation(summary = "查询单据选择器")
@@ -296,6 +317,15 @@ public class FortuneFinanceOrderV2Rest {
         }
         if (command.getConfirm() == null) {
             throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "确认状态不能为空");
+        }
+    }
+
+    private void requireReconciliationConfirmCommand(FinanceOrderReconciliationConfirmCommand command) {
+        if (command.getRequestId() == null || command.getRequestId().isBlank()) {
+            throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "请求幂等ID不能为空");
+        }
+        if (command.getExpectedVersion() == null) {
+            throw new ApiException(ErrorCode.Client.COMMON_REQUEST_PARAMETERS_INVALID, "期望版本号不能为空");
         }
     }
 

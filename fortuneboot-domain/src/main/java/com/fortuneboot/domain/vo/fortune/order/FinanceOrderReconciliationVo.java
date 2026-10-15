@@ -32,6 +32,11 @@ public class FinanceOrderReconciliationVo {
     private String[] issueCodes;
 
     /**
+     * 单据版本号，用于人工确认乐观锁
+     */
+    private Long version;
+
+    /**
      * 原单据状态
      */
     private Integer originalStatus;

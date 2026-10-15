@@ -42,6 +42,7 @@ public class FinanceOrderReconciliationReportAssembler {
         FinanceOrderReconciliationVo vo = baseReport(orderScan.getOrder().getBookId(),
                 orderScan.getIssueCodes(), orderScan.getCurrencies());
         vo.setOrderId(orderScan.getOrder().getOrderId());
+        vo.setVersion(orderScan.getOrder().getVersion());
         vo.setOriginalStatus(orderScan.getOrder().getStatus());
         vo.setOriginalOutAmount(amount(orderScan.getOrder().getOutAmount()));
         vo.setOriginalInAmount(amount(orderScan.getOrder().getInAmount()));

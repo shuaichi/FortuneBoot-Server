@@ -4,11 +4,13 @@ import com.fortuneboot.common.enums.fortune.FinanceOrderAuditActionEnum;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderReconciliationConfirmCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneBookEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderEntity;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
+import com.fortuneboot.service.fortune.order.reconciliation.FinanceOrderManualConfirmMutator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class FinanceOrderMutationService {
     private final FinanceOrderMutationAuditRecorder auditRecorder;
     private final FinanceOrderMetadataMutator metadataMutator;
     private final FinanceOrderTransitionMutator transitionMutator;
+    private final FinanceOrderManualConfirmMutator manualConfirmMutator;
     private final FinanceOrderEntryMutator entryMutator;
 
     @Transactional(rollbackFor = Exception.class)
@@ -54,6 +57,16 @@ public class FinanceOrderMutationService {
         lockBookGroup(command.getBookId());
         FortuneFinanceOrderEntity order = accessGuard.loadOrder(command.getBookId(), command.getOrderId());
         return transitionMutator.transition(command, order, requestHash);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public FinanceOrderMutationVo executeConfirmReconciliation(FinanceOrderReconciliationConfirmCommand command,
+                                                               String requestHash) {
+        auditRecorder.insertRequestPlaceholder(command.getBookId(), command.getRequestId(),
+                FinanceOrderAuditActionEnum.RECONCILE_CONFIRM.name(), requestHash);
+        lockBookGroup(command.getBookId());
+        FortuneFinanceOrderEntity order = accessGuard.loadOrder(command.getBookId(), command.getOrderId());
+        return manualConfirmMutator.confirm(command, order, requestHash);
     }
 
     @Transactional(rollbackFor = Exception.class)

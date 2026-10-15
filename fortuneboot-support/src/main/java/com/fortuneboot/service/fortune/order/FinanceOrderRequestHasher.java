@@ -6,6 +6,7 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderReconciliationConfirmCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -80,6 +81,16 @@ public class FinanceOrderRequestHasher {
             value.put("members", entry.getMemberIdList());
             value.put("files", fileHashes(command.getFileList()));
         }
+        return digest(value);
+    }
+
+    public String hashReconciliationConfirm(FinanceOrderReconciliationConfirmCommand command) {
+        Map<String, Object> value = new TreeMap<>();
+        value.put("operation", FinanceOrderAuditActionEnum.RECONCILE_CONFIRM.name());
+        value.put("bookId", command.getBookId());
+        value.put("orderId", command.getOrderId());
+        value.put("expectedVersion", command.getExpectedVersion());
+        value.put("operator", operator());
         return digest(value);
     }
 

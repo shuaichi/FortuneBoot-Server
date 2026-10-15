@@ -16,5 +16,6 @@ public enum FinanceOrderAuditActionEnum {
     CLOSE,
     REOPEN,
     REMOVE,
-    RECONCILE
+    RECONCILE,
+    RECONCILE_CONFIRM
 }

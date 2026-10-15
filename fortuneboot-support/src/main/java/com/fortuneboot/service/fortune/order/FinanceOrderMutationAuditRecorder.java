@@ -73,6 +73,24 @@ public class FinanceOrderMutationAuditRecorder {
         auditRepo.save(audit);
     }
 
+    /**
+     * 人工核对确认审计快照。金额是确认语义的核心证据，必须随前后状态落库。
+     */
+    public Map<String, Object> reconciliationAuditSnapshot(FortuneFinanceOrderEntity order) {
+        Map<String, Object> value = new LinkedHashMap<>();
+        value.put("orderId", order.getOrderId());
+        value.put("bookId", order.getBookId());
+        value.put("currencyCode", order.getCurrencyCode());
+        value.put("counterpartyName", order.getCounterpartyName());
+        value.put("outAmount", order.getOutAmount());
+        value.put("inAmount", order.getInAmount());
+        value.put("adjustedAmount", order.getAdjustedAmount());
+        value.put("version", order.getVersion());
+        value.put("reconciliationStatus", order.getReconciliationStatus());
+        value.put("reconciliationNote", order.getReconciliationNote());
+        return value;
+    }
+
     public Map<String, Object> orderAuditSnapshot(FortuneFinanceOrderEntity order) {
         Map<String, Object> value = new LinkedHashMap<>();
         value.put("orderId", order.getOrderId());

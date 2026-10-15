@@ -10,6 +10,7 @@ import com.fortuneboot.domain.command.fortune.order.FinanceOrderCreateCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderEntryMutation;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderMetadataCommand;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderReconciliationConfirmCommand;
 import com.fortuneboot.domain.command.fortune.order.FinanceOrderTransitionCommand;
 import com.fortuneboot.domain.dto.fortune.CategoryAmountDTO;
 import com.fortuneboot.domain.entity.fortune.FortuneFinanceOrderRequestEntity;
@@ -71,6 +72,13 @@ public class FinanceOrderRequestService {
                 () -> mutationService.executeTransition(command, requestHash));
     }
 
+    public FinanceOrderMutationVo confirmReconciliation(FinanceOrderReconciliationConfirmCommand command) {
+        normalizeRequestId(command);
+        String requestHash = requestHasher.hashReconciliationConfirm(command);
+        return executeWithIdempotency(command.getBookId(), command.getRequestId(), requestHash,
+                () -> mutationService.executeConfirmReconciliation(command, requestHash));
+    }
+
     public FinanceOrderMutationVo legacyUsing(Long bookId, Long orderId) {
         String requestId = UUID.randomUUID().toString();
         String requestHash = requestHasher.hashTransition(FinanceOrderAuditActionEnum.USING.name(),
@@ -124,6 +132,12 @@ public class FinanceOrderRequestService {
     }
 
     private void normalizeRequestId(FinanceOrderTransitionCommand command) {
+        if (command.getRequestId() == null || command.getRequestId().isBlank()) {
+            command.setRequestId(UUID.randomUUID().toString());
+        }
+    }
+
+    private void normalizeRequestId(FinanceOrderReconciliationConfirmCommand command) {
         if (command.getRequestId() == null || command.getRequestId().isBlank()) {
             command.setRequestId(UUID.randomUUID().toString());
         }

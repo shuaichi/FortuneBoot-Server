@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -473,6 +474,46 @@ class FinanceOrderApiContractTest {
                         .param("overdueOnly", "true"))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
         assertThat(orderIds(overduePage)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("V2 用户人工确认历史核对单据")
+    void v2ManualConfirmReconciliation() throws Exception {
+        Long orderId = createOrder("人工核对单据", 2, null);
+        jdbcTemplate.update("""
+                update fortune_finance_order
+                set out_amount = 100.00, reconciliation_status = 'REVIEW_REQUIRED',
+                    reconciliation_note = '历史流水无法证明现金效果'
+                where order_id = ?
+                """, orderId);
+        jdbcTemplate.update("""
+                insert into fortune_bill(book_id,title,trade_time,account_id,amount,converted_amount,
+                    order_id,bill_type,confirm,include,order_ledger_version,recycle_bin,deleted)
+                values (?, '人工核对历史流水', '2026-10-01 09:00:00', ?, 100.00, 100.00, ?, 9, 1, 1, 0, 0, 0)
+                """, fixture.bookIdA(), fixture.accountIdA(), orderId);
+
+        JsonNode report = read(mockMvc.perform(get(
+                        "/fortune/finance/order/v2/{bookId}/reconciliation", fixture.bookIdA()))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
+        assertThat(report.get("data").get("rows").get(0).get("orderId").asLong()).isEqualTo(orderId);
+
+        JsonNode confirm = read(mockMvc.perform(post(
+                        "/fortune/finance/order/v2/{bookId}/{orderId}/reconciliation/confirm",
+                        fixture.bookIdA(), orderId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"requestId":"manual-confirm-api","expectedVersion":0,
+                                 "bookId":%d,"orderId":%d}
+                                """.formatted(fixture.bookIdA(), orderId)))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8));
+        assertThat(confirm.get("code").asInt()).isEqualTo(SUCCESS);
+        assertThat(confirm.get("data").get("version").asLong()).isEqualTo(1L);
+        assertThat(report.get("data").get("rows").get(0).get("version").asLong()).isZero();
+
+        Map<String, Object> state = jdbcTemplate.queryForMap(
+                "select reconciliation_status, version from fortune_finance_order where order_id = ?", orderId);
+        assertThat(state.get("reconciliation_status")).isEqualTo("READY");
+        assertThat(((Number) state.get("version")).longValue()).isEqualTo(1L);
     }
 
     @Test

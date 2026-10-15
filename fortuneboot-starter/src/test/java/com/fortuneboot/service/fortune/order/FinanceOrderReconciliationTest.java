@@ -1,6 +1,8 @@
 package com.fortuneboot.service.fortune.order;
 
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.domain.command.fortune.order.FinanceOrderReconciliationConfirmCommand;
+import com.fortuneboot.domain.vo.fortune.order.FinanceOrderMutationVo;
 import com.fortuneboot.domain.vo.fortune.order.FinanceOrderReconciliationVo;
 import com.fortuneboot.orderapi.FinanceOrderStage04TestApplication;
 import org.junit.jupiter.api.AfterAll;
@@ -18,6 +20,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,6 +38,8 @@ class FinanceOrderReconciliationTest {
 
     @Autowired
     private FinanceOrderReconciliationService reconciliationService;
+    @Autowired
+    private FinanceOrderRequestService requestService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -76,6 +81,28 @@ class FinanceOrderReconciliationTest {
         reconciliationService.backfillSafe(fixture.bookIdA());
         assertThat(orderVersion(1L)).isEqualTo(1L);
         assertThat(auditCount(1L, "RECONCILE")).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("用户人工确认待核单据不改余额且写审计")
+    void manualConfirm_marksReviewedOrderReadyWithoutBalanceChange() {
+        jdbcTemplate.update("update fortune_finance_order set out_amount = 100.00 where order_id = 2");
+        String before = balanceText(fixture.accountIdA());
+
+        FinanceOrderReconciliationConfirmCommand command = new FinanceOrderReconciliationConfirmCommand();
+        command.setBookId(fixture.bookIdA());
+        command.setOrderId(2L);
+        command.setRequestId(UUID.randomUUID().toString());
+        command.setExpectedVersion(0L);
+        FinanceOrderMutationVo first = requestService.confirmReconciliation(command);
+        FinanceOrderMutationVo replay = requestService.confirmReconciliation(command);
+
+        assertThat(first.getReplayed()).isFalse();
+        assertThat(replay.getReplayed()).isTrue();
+        assertThat(orderStatus(2L)).isEqualTo("READY");
+        assertThat(orderVersion(2L)).isEqualTo(1L);
+        assertThat(balanceText(fixture.accountIdA())).isEqualTo(before);
+        assertThat(auditCount(2L, "RECONCILE_CONFIRM")).isEqualTo(1);
     }
 
     @Test
