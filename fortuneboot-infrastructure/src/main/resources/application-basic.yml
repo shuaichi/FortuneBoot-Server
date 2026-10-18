@@ -4,7 +4,7 @@ fortuneboot:
   # 名称
   name: 好记
   # 版本
-  version: 1.8.0
+  version: 1.8.1
   # 版权年份
   copyright-year: 2025
   # 实例演示开关
@@ -124,7 +124,6 @@ springdoc:
       enabled: true
   # 配置需要生成接口文档的扫描包
   packages-to-scan: com.fortuneboot
-
 
 
 
