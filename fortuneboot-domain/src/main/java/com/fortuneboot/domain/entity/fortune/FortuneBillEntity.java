@@ -78,6 +78,18 @@ public class FortuneBillEntity extends BaseEntity<FortuneBillEntity> {
     @TableField("order_id")
     private Long orderId;
 
+    @Schema(description = "单据组件")
+    @TableField("order_component")
+    private String orderComponent;
+
+    @Schema(description = "单据账本版本")
+    @TableField("order_ledger_version")
+    private Integer orderLedgerVersion;
+
+    @Schema(description = "关联归物id（仅收入/支出账单可关联）")
+    @TableField("goods_keeper_id")
+    private Long goodsKeeperId;
+
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;

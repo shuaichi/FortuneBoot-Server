@@ -8,6 +8,8 @@ import com.fortuneboot.repository.fortune.FortuneGoodsKeeperRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 /**
  * 归物
  *
@@ -23,5 +25,10 @@ public class FortuneGoodsKeeperRepoImpl extends ServiceImpl<FortuneGoodsKeeperMa
     @Override
     public FortuneGoodsKeeperStatisticsVo getGoodsKeeperStatistics(Long bookId) {
         return fortuneGoodsKeeperMapper.getGoodsKeeperStatistics(bookId);
+    }
+
+    @Override
+    public BigDecimal sumLinkedBillAmount(Long goodsKeeperId) {
+        return fortuneGoodsKeeperMapper.sumLinkedBillAmount(goodsKeeperId);
     }
 }

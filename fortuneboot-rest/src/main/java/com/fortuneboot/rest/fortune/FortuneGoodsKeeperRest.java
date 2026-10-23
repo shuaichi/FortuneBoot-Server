@@ -6,9 +6,13 @@ import com.fortuneboot.common.enums.common.BusinessTypeEnum;
 import com.fortuneboot.customize.accessLog.AccessLog;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperModifyCommand;
+import com.fortuneboot.domain.query.fortune.FortuneBillQuery;
 import com.fortuneboot.domain.query.fortune.FortuneGoodsKeeperQuery;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperVo;
+import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperOptionVo;
+import com.fortuneboot.domain.bo.fortune.FortuneBillBo;
+import com.fortuneboot.service.fortune.FortuneBillService;
 import com.fortuneboot.service.fortune.FortuneGoodsKeeperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +38,7 @@ import java.util.List;
 public class FortuneGoodsKeeperRest {
 
     private final FortuneGoodsKeeperService fortuneGoodsKeeperService;
+    private final FortuneBillService fortuneBillService;
 
     @Operation(summary = "分页查询")
     @GetMapping("/getPage")
@@ -78,5 +83,23 @@ public class FortuneGoodsKeeperRest {
     public ResponseDTO<Void> remove(@PathVariable("bookId") Long bookId, @PathVariable Long keeperId) {
         fortuneGoodsKeeperService.remove(bookId, keeperId);
         return ResponseDTO.ok();
+    }
+
+    @Operation(summary = "归物下拉选项")
+    @GetMapping("/{bookId}/options")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<List<FortuneGoodsKeeperOptionVo>> getOptions(@PathVariable @Positive Long bookId) {
+        return ResponseDTO.ok(fortuneGoodsKeeperService.getOptions(bookId));
+    }
+
+    @Operation(summary = "查询归物关联的流水")
+    @GetMapping("/{bookId}/{keeperId}/bills")
+    @PreAuthorize("@fortune.bookVisitorPermission(#bookId)")
+    public ResponseDTO<PageDTO<FortuneBillBo>> getLinkedBills(@PathVariable @Positive Long bookId,
+                                                              @PathVariable Long keeperId,
+                                                              FortuneBillQuery query) {
+        query.setBookId(bookId);
+        query.setGoodsKeeperId(keeperId);
+        return ResponseDTO.ok(fortuneBillService.getPage(query));
     }
 }

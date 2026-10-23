@@ -88,4 +88,18 @@
             AND deleted = 0
     </select>
 
+    <!-- ==================== sumLinkedBillAmount - 跨数据库通用（MySQL/SQLite 均支持 CASE/SUM） ==================== -->
+    <select id="sumLinkedBillAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(
+            CASE
+                WHEN bill_type = 1 THEN amount
+                WHEN bill_type = 2 THEN -amount
+                ELSE 0
+            END), 0)
+        FROM fortune_bill
+        WHERE goods_keeper_id = #{goodsKeeperId}
+          AND deleted = 0
+          AND recycle_bin = 0
+    </select>
+
 </mapper>

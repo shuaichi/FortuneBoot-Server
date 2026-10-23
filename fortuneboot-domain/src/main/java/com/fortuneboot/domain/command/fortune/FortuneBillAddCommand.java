@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author work.chi.zhang@gmail.com
@@ -119,5 +120,31 @@ public class FortuneBillAddCommand {
      * 附加费用列表（手续费/优惠）
      */
     private List<FortuneBillExtraAddCommand> extras;
+
+    /**
+     * 单据组件；仅统一单据管线使用，普通流水保持为空。
+     *
+     * @see com.fortuneboot.common.enums.fortune.FinanceOrderComponentEnum
+     */
+    private String orderComponent;
+
+    /**
+     * 关联归物id（仅收入/支出账单可关联；由后端维护累计成本，前端仅传关联主键）
+     */
+    private Long goodsKeeperId;
+
+    /**
+     * 请求幂等ID；旧接口为空时由服务端生成一次UUID，不承诺跨请求去重。
+     */
+    private String requestId;
+
+    /**
+     * 期望单据版本；旧接口为空时由服务端读取当前版本后执行CAS。
+     */
+    private Long expectedVersion;
+
+    public String getRequestIdOrUuid() {
+        return requestId == null || requestId.isBlank() ? UUID.randomUUID().toString() : requestId;
+    }
 
 }

@@ -2,12 +2,14 @@ package com.fortuneboot.service.fortune;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.fortuneboot.common.core.page.PageDTO;
+import com.fortuneboot.common.enums.common.DeleteEnum;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperAddCommand;
 import com.fortuneboot.domain.command.fortune.FortuneGoodsKeeperModifyCommand;
 import com.fortuneboot.domain.entity.fortune.FortuneCategoryEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneGoodsKeeperEntity;
 import com.fortuneboot.domain.entity.fortune.FortuneTagEntity;
 import com.fortuneboot.domain.query.fortune.FortuneGoodsKeeperQuery;
+import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperOptionVo;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperVo;
 import com.fortuneboot.factory.fortune.factory.FortuneGoodsKeeperFactory;
@@ -20,8 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -98,5 +102,37 @@ public class FortuneGoodsKeeperService {
 
     public FortuneGoodsKeeperStatisticsVo getGoodsKeeperStatistics(Long bookId) {
         return fortuneGoodsKeeperRepo.getGoodsKeeperStatistics(bookId);
+    }
+
+    /**
+     * 重新计算并写回某个归物的「关联账单累计净成本」。
+     * 支出账单(amount, bill_type=1)累加，收入账单(amount, bill_type=2)冲减。
+     * 采用「从源重算」而非增量加减，避免修改/删除场景下的漂移。
+     *
+     * @param goodsKeeperId 归物id，为空时直接返回
+     */
+    public void recalculateAccumulatedCost(Long goodsKeeperId) {
+        if (Objects.isNull(goodsKeeperId)) {
+            return;
+        }
+        BigDecimal accumulatedCost = fortuneGoodsKeeperRepo.sumLinkedBillAmount(goodsKeeperId);
+        FortuneGoodsKeeperModel model = fortuneGoodsKeeperFactory.loadById(goodsKeeperId);
+        model.setAccumulatedCost(accumulatedCost);
+        model.updateById();
+    }
+
+    /**
+     * 查询某账本下的归物下拉选项（id + 名称 + 价格 + 累计成本）。
+     *
+     * @param bookId 账本id
+     * @return 归物选项列表
+     */
+    public List<FortuneGoodsKeeperOptionVo> getOptions(Long bookId) {
+        List<FortuneGoodsKeeperEntity> list = fortuneGoodsKeeperRepo.lambdaQuery()
+                .eq(FortuneGoodsKeeperEntity::getBookId, bookId)
+                .eq(FortuneGoodsKeeperEntity::getDeleted, DeleteEnum.VALID.getValue())
+                .orderByAsc(FortuneGoodsKeeperEntity::getGoodsName)
+                .list();
+        return list.stream().map(FortuneGoodsKeeperOptionVo::new).toList();
     }
 }

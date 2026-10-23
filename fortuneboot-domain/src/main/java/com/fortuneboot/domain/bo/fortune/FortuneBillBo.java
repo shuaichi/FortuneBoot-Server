@@ -67,10 +67,25 @@ public class FortuneBillBo {
     private Long orderId;
 
     /**
+     * 单据类型
+     */
+    private Integer orderType;
+
+    /**
+     * 单据币种
+     */
+    private String orderCurrencyCode;
+
+    /**
      * 账户
      */
     @ExcelColumn(name = "账户")
     private String accountName;
+
+    /**
+     * 账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    private String accountIcon;
 
     /**
      * 金额
@@ -106,6 +121,11 @@ public class FortuneBillBo {
     private String payeeName;
 
     /**
+     * 交易对象图标（Iconify 图标名，如 ep:shop）
+     */
+    private String payeeIcon;
+
+    /**
      * 流水类型
      * com.fortuneboot.common.enums.fortune.BillTypeEnum
      */
@@ -122,6 +142,11 @@ public class FortuneBillBo {
     private String toAccountName;
 
     /**
+     * 转入账户图标（Iconify 图标名，如 ep:wallet）
+     */
+    private String toAccountIcon;
+
+    /**
      * 是否确认
      */
     private Boolean confirm;
@@ -130,6 +155,26 @@ public class FortuneBillBo {
      * 是否统计
      */
     private Boolean include;
+
+    /**
+     * 单据组件
+     */
+    private String orderComponent;
+
+    /**
+     * 单据账本版本
+     */
+    private Integer orderLedgerVersion;
+
+    /**
+     * 关联归物id
+     */
+    private Long goodsKeeperId;
+
+    /**
+     * 是否作废
+     */
+    private Boolean recycleBin;
 
     /**
      * 备注

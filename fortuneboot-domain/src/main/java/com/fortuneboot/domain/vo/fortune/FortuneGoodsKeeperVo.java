@@ -56,8 +56,9 @@ public class FortuneGoodsKeeperVo {
             this.usageNum = null;
             between = new BigDecimal(this.holdingTime);
         }
-        // 计算公式：(价格 - 出二手价格（没有则是0）) / 使用次数(时间间隔)
+        // 计算公式：(价格 + 关联账单累计净成本 - 售出价格（没有则是0）) / 使用次数(时间间隔)
         return this.getPrice()
+                .add(Optional.ofNullable(this.getAccumulatedCost()).orElse(BigDecimal.ZERO))
                 .subtract(Optional.ofNullable(this.getSoldPrice()).orElse(BigDecimal.ZERO))
                 .divide(between, 2, RoundingMode.HALF_UP);
     }
@@ -175,6 +176,11 @@ public class FortuneGoodsKeeperVo {
      * 出售价格
      */
     private BigDecimal soldPrice;
+
+    /**
+     * 关联账单自动叠加的净成本（支出账单金额累加、收入账单金额冲减）
+     */
+    private BigDecimal accumulatedCost;
 
     /**
      * 备注

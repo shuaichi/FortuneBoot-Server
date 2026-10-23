@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.fortuneboot.domain.entity.fortune.FortuneGoodsKeeperEntity;
 import com.fortuneboot.domain.vo.fortune.FortuneGoodsKeeperStatisticsVo;
 
+import java.math.BigDecimal;
+
 /**
  * 归物
  *
@@ -19,4 +21,12 @@ public interface FortuneGoodsKeeperRepo extends IService<FortuneGoodsKeeperEntit
      * @return
      */
     FortuneGoodsKeeperStatisticsVo getGoodsKeeperStatistics(Long bookId);
+
+    /**
+     * 关联账单自动叠加的净成本（支出加/收入减）
+     *
+     * @param goodsKeeperId 归物id
+     * @return 净成本，未关联任何账单时为 0
+     */
+    BigDecimal sumLinkedBillAmount(Long goodsKeeperId);
 }

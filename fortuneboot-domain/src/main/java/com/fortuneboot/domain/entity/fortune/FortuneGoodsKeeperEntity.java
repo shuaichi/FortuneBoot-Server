@@ -75,6 +75,10 @@ public class FortuneGoodsKeeperEntity extends BaseEntity<FortuneGoodsKeeperEntit
     @TableField("sold_price")
     private BigDecimal soldPrice;
 
+    @Schema(description = "关联账单自动叠加的净成本（支出账单金额累加、收入账单金额冲减）")
+    @TableField("accumulated_cost")
+    private BigDecimal accumulatedCost;
+
     @Schema(description = "备注")
     @TableField("remark")
     private String remark;

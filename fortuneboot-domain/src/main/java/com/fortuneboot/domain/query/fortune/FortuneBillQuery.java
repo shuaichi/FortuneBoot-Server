@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fortuneboot.common.core.base.BaseEntity;
 import com.fortuneboot.common.core.page.AbstractLambdaPageQuery;
+import com.fortuneboot.common.enums.fortune.FinanceOrderLedgerVersionEnum;
 import com.fortuneboot.common.enums.common.DeleteEnum;
 import com.fortuneboot.common.utils.mybatis.WrapperUtil;
 import com.fortuneboot.domain.entity.fortune.FortuneBillEntity;
@@ -15,7 +15,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -80,6 +79,11 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
     private Long orderId;
 
     /**
+     * 关联归物id（按归物查询其关联流水）
+     */
+    private Long goodsKeeperId;
+
+    /**
      * 分类id
      */
     private List<Integer> categoryIds;
@@ -108,6 +112,11 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
      * 是否统计
      */
     private Boolean include;
+
+    /**
+     * 是否作废；为空时不过滤，普通导出固定false
+     */
+    private Boolean recycleBin;
 
     /**
      * 是否有文件
@@ -174,13 +183,29 @@ public class FortuneBillQuery extends AbstractLambdaPageQuery<FortuneBillEntity>
                 .eq(Objects.nonNull(payeeId), "bill.payee_id", payeeId)
                 .eq(Objects.nonNull(confirm), "bill.confirm", confirm)
                 .eq(Objects.nonNull(include), "bill.include", include)
+                .eq(Objects.nonNull(recycleBin), "bill.recycle_bin", recycleBin)
                 .eq(Objects.nonNull(orderId), "bill.order_id", orderId)
+                .eq(Objects.nonNull(goodsKeeperId), "bill.goods_keeper_id", goodsKeeperId)
                 .like(StringUtils.isNotBlank(remark), "bill.remark", remark)
                 .eq("bill.deleted", DeleteEnum.VALID.getValue());
+        applyOrderPipelineVisibility(queryWrapper);
 
         // 根据ID进行分组（使用表前缀避免多表 JOIN 时 SQLite 歧义）
         queryWrapper.groupBy("bill.bill_id");
         LambdaQueryWrapper<FortuneBillEntity> lambda = queryWrapper.lambda();
         return lambda;
+    }
+
+    /**
+     * 单据管线流水在账单列表的可见性条件：普通流水始终可见，关联流水必须是当前版本、
+     * 未作废且已确认。include 只决定收支统计口径，只读的账单列表不得据此隐藏本金流水。
+     */
+    private void applyOrderPipelineVisibility(QueryWrapper<FortuneBillEntity> queryWrapper) {
+        queryWrapper.apply(
+                "(bill.order_id IS NULL OR (bill.order_ledger_version = {0} AND bill.recycle_bin = {1} "
+                        + "AND bill.confirm = {2}))",
+                FinanceOrderLedgerVersionEnum.CURRENT.getValue(),
+                Boolean.FALSE,
+                Boolean.TRUE);
     }
 }

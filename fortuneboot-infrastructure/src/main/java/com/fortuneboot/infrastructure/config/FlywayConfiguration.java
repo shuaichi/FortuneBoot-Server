@@ -53,13 +53,17 @@ public class FlywayConfiguration {
      * <p>
      * 【注意】新增迁移脚本时，必须同步更新此列表！
      */
-    private static final Map<String, String[]> MIGRATION_FILES = Map.of(
+    static final Map<String, String[]> MIGRATION_FILES = Map.of(
             DbType.SQLITE.getDb(), new String[]{
                     "V1.5.0__init_schema.sql",
                     "V1.5.1__init_data.sql",
                     "V1.6.0__member.sql",
                     "V1.7.0__balance_snapshot.sql",
-                    "V1.7.1__repair_bill_extra_category.sql"
+                    "V1.7.1__repair_bill_extra_category.sql",
+                    "V1.7.2__account_icon.sql",
+                    "V1.7.3__category_tag_member_payee_icon.sql",
+                    "V1.8.0__finance_order_ledger.sql",
+                    "V1.8.1__bill_goods_keeper_link.sql"
             },
             DbType.MYSQL.getDb(), new String[]{
                     "V1.0.0__init_schema.sql",
@@ -72,7 +76,11 @@ public class FlywayConfiguration {
                     "V1.5.0__login_token.sql",
                     "V1.6.0__member.sql",
                     "V1.7.0__balance_snapshot.sql",
-                    "V1.7.1__repair_bill_extra_category.sql"
+                    "V1.7.1__repair_bill_extra_category.sql",
+                    "V1.7.2__account_icon.sql",
+                    "V1.7.3__category_tag_member_payee_icon.sql",
+                    "V1.8.0__finance_order_ledger.sql",
+                    "V1.8.1__bill_goods_keeper_link.sql"
             }
     );
 
